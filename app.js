@@ -26,7 +26,10 @@ function applySettings(){
  if(settings.accent_color&&/^#[0-9a-f]{6}$/i.test(settings.accent_color))document.documentElement.style.setProperty("--red",settings.accent_color);
  document.title="DRM PREMIUM";
 }
-function render(){
+function videoCardHTML(v){
+ return `<article class="video-card" data-id="${esc(v.id)}"><img class="thumb" src="${esc(thumb(v))}" alt="" width="640" height="360" loading="lazy" decoding="async" fetchpriority="low" onerror="this.onerror=null;this.src='https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM'"><div class="card-copy"><h4>${esc(v.title)}</h4><p>${esc(v.description||"ভিডিও দেখুন")}</p></div></article>`;
+}
+function render(append=false){
  const q=$("#search").value.toLowerCase().trim(),cat=$("#categoryFilter").value;
  const cats=[...new Set(categories.map(c=>c.name).filter(Boolean))].sort();
  const categoryKey=cats.join("\u0000");
@@ -37,15 +40,23 @@ function render(){
  }
  const activeCategory=$("#categoryFilter").value;
  const filteredAll=videos.filter(v=>(activeCategory==="all"||v.category===activeCategory)&&(`${v.title} ${v.category} ${v.description||""}`.toLowerCase().includes(q)));
- const filtered=filteredAll.slice(0,renderLimit);
+ const from=append?Math.max(0,renderLimit-RENDER_BATCH):0;
+ const visible=filteredAll.slice(from,renderLimit);
  const featured=videos.find(v=>Number(v.featured))||videos[0];
  const heroTitle=$("#heroTitle");if(heroTitle)heroTitle.textContent=settings.hero_title||(featured?featured.title:"আপনার পরবর্তী পছন্দের ভিডিও");
  $("#heroDescription").textContent=settings.hero_description||(featured?(featured.description||featured.category):"নতুন ভিডিও শিগগিরই আসছে।");
  $("#heroPlay").disabled=!featured;$("#heroPlay").onclick=()=>featured&&play(featured);
- const groups={};filtered.forEach(v=>(groups[v.category||"অন্যান্য"]??=[]).push(v));
- $("#videoRows").innerHTML=Object.entries(groups).map(([name,items])=>`<section class="video-row"><h3>${esc(name)}</h3><div class="cards">${items.map(v=>`<article class="video-card" data-id="${esc(v.id)}"><img class="thumb" src="${esc(thumb(v))}" alt="" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM'"><div class="card-copy"><h4>${esc(v.title)}</h4><p>${esc(v.description||"ভিডিও দেখুন")}</p></div></article>`).join("")}</div></section>`).join("");
+ if(!append)$("#videoRows").replaceChildren();
+ const groups=new Map();
+ visible.forEach(v=>{const name=v.category||"অন্যান্য";if(!groups.has(name))groups.set(name,[]);groups.get(name).push(v);});
+ for(const [name,items] of groups){
+  let section=[...$("#videoRows").children].find(el=>el.dataset.category===name);
+  if(!section){section=document.createElement("section");section.className="video-row";section.dataset.category=name;section.innerHTML=`<h3>${esc(name)}</h3><div class="cards"></div>`;$("#videoRows").append(section);}
+  const cards=section.querySelector(".cards");
+  cards.insertAdjacentHTML("beforeend",items.map(videoCardHTML).join(""));
+ }
  $("#emptyState").hidden=filteredAll.length>0;
- const more=$("#loadMoreVideos");if(more){more.hidden=filtered.length>=filteredAll.length;more.textContent="আরও ভিডিও দেখুন ("+Math.min(RENDER_BATCH,filteredAll.length-filtered.length)+")";}
+ const more=$("#loadMoreVideos");if(more){more.hidden=renderLimit>=filteredAll.length;more.textContent="আরও ভিডিও দেখুন ("+Math.min(RENDER_BATCH,filteredAll.length-renderLimit)+")";}
 }
 
 async function sendTabView(tab){try{await fetch("/api/analytics/event",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({tab})});}catch{}}
@@ -66,7 +77,7 @@ function showLogoutToast(){displayAccountToast("#logoutToast");}
 async function submitLogout(){const button=$("#logoutButton");button.disabled=true;try{const res=await fetch("/api/auth/logout",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}",credentials:"same-origin"});if(!res.ok)throw new Error("Logout করা যায়নি। আবার চেষ্টা করুন।");setSignedIn(null);openAccountMenu(false);showLogoutToast();}catch(e){$("#drawerAccountLabel").textContent=e.message;}finally{button.disabled=false;}}
 
 async function init(){
- $("#headerLoginForm").addEventListener("submit",submitHeaderLogin);$("#menuToggle").addEventListener("click",()=>openAccountMenu(!$("#accountDrawer").classList.contains("open")));$("#menuClose").addEventListener("click",()=>openAccountMenu(false));$("#menuBackdrop").addEventListener("click",()=>openAccountMenu(false));$("#logoutButton").addEventListener("click",submitLogout);$("#accountDrawer").addEventListener("click",e=>{const action=e.target.closest("a,button,[role=menuitem]");if(action&&!action.matches("#logoutButton,#menuClose")&&!action.disabled)openAccountMenu(false);});$("#quickUploadButton").addEventListener("click",async()=>{const button=$("#quickUploadButton");button.disabled=true;try{const response=await fetch("/api/auth/me",{credentials:"same-origin"});const me=await response.json();if(me.authenticated&&["owner","admin"].includes(me.user?.role)){window.location.href="/upload-studio.html";return;}setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}finally{button.disabled=false;}});document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});document.addEventListener("pointerdown",e=>{const drawer=$("#accountDrawer"),toggle=$("#menuToggle");if(!drawer?.classList.contains("open"))return;if(drawer.contains(e.target)||toggle?.contains(e.target))return;openAccountMenu(false);},true);restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.target.closest(".video-card");if(!card)return;const video=videos.find(v=>v.id===card.dataset.id);if(video)play(video);});$("#search").addEventListener("input",()=>{clearTimeout(searchRenderTimer);renderLimit=RENDER_BATCH;searchRenderTimer=setTimeout(render,140);});$("#categoryFilter").addEventListener("change",()=>{renderLimit=RENDER_BATCH;render();});$("#loadMoreVideos").addEventListener("click",()=>{renderLimit+=RENDER_BATCH;render();});trackNavigation();
+ $("#headerLoginForm").addEventListener("submit",submitHeaderLogin);$("#menuToggle").addEventListener("click",()=>openAccountMenu(!$("#accountDrawer").classList.contains("open")));$("#menuClose").addEventListener("click",()=>openAccountMenu(false));$("#menuBackdrop").addEventListener("click",()=>openAccountMenu(false));$("#logoutButton").addEventListener("click",submitLogout);$("#accountDrawer").addEventListener("click",e=>{const action=e.target.closest("a,button,[role=menuitem]");if(action&&!action.matches("#logoutButton,#menuClose")&&!action.disabled)openAccountMenu(false);});$("#quickUploadButton").addEventListener("click",async()=>{const button=$("#quickUploadButton");button.disabled=true;try{const response=await fetch("/api/auth/me",{credentials:"same-origin"});const me=await response.json();if(me.authenticated&&["owner","admin"].includes(me.user?.role)){window.location.href="/upload-studio.html";return;}setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}finally{button.disabled=false;}});document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});document.addEventListener("pointerdown",e=>{const drawer=$("#accountDrawer"),toggle=$("#menuToggle");if(!drawer?.classList.contains("open"))return;if(drawer.contains(e.target)||toggle?.contains(e.target))return;openAccountMenu(false);},true);restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.target.closest(".video-card");if(!card)return;const video=videos.find(v=>v.id===card.dataset.id);if(video)play(video);});$("#search").addEventListener("input",()=>{clearTimeout(searchRenderTimer);renderLimit=RENDER_BATCH;searchRenderTimer=setTimeout(render,140);});$("#categoryFilter").addEventListener("change",()=>{renderLimit=RENDER_BATCH;render();});$("#loadMoreVideos").addEventListener("click",()=>{renderLimit+=RENDER_BATCH;render(true);});trackNavigation();
  document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.close);d.close();$("#playerFrame").innerHTML="";});
  $("#playerDialog").addEventListener("close",()=>$("#playerFrame").innerHTML="");
  let apiReady=false;
