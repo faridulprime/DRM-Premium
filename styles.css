@@ -830,3 +830,39 @@ body.view-modern .topbar .menu-toggle span,body.view-basic .topbar .menu-toggle 
   .topbar>.top-actions{order:4!important;flex:1 0 100%!important;width:100%!important;justify-content:center!important;margin:0!important}
   .topbar .header-field{width:clamp(130px,19vw,190px)!important}
 }
+
+
+/* HACKER COLOR DESIGN 04 — drawer account labels
+   Bold typography with restrained neon blue / green / red accents. */
+.account-drawer .drawer-kicker{
+  color:#32b9ff!important;
+  font-family:Inter,'Hind Siliguri',sans-serif!important;
+  font-size:11px!important;
+  font-weight:850!important;
+  letter-spacing:.22em!important;
+  text-shadow:0 0 10px rgba(50,185,255,.22)!important;
+}
+.account-drawer .drawer-account-label{
+  color:#19c979!important;
+  font-family:Inter,'Hind Siliguri',sans-serif!important;
+  font-size:14px!important;
+  font-weight:850!important;
+  letter-spacing:.035em!important;
+  text-shadow:0 0 10px rgba(25,201,121,.20)!important;
+}
+.account-drawer .logout-button{
+  color:#ff405d!important;
+  font-weight:850!important;
+  letter-spacing:.13em!important;
+  text-shadow:0 0 9px rgba(255,64,93,.20)!important;
+}
+.account-drawer .logout-button span{
+  color:inherit!important;
+  font-family:Inter,'Hind Siliguri',sans-serif!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.13em!important;
+}
+.account-drawer .logout-button svg{
+  stroke:#ff405d!important;
+}
