@@ -2115,3 +2115,26 @@ body.view-modern :is(.video-card,.metric-card,.admin-report,.topbar,nav a,.quick
   transition:none!important;
 }
 body.view-modern .video-card:hover { transform:none!important; }
+
+
+/* FINAL SCROLL FIX — remove expensive paint/compositing work from page content. */
+html,body{scroll-behavior:auto!important;-webkit-overflow-scrolling:touch}
+body,body.view-modern,body.view-basic{background-attachment:scroll!important}
+body.view-modern :is(.topbar,.hero,.hero-visual,.content,.resource-section,.admin-section,
+.video-row,.video-card,.thumb,.metric-card,.admin-report,.admin-message,.admin-error,
+.account-drawer,footer,.player-dialog,.menu-backdrop,.quick-upload-button),
+body.view-basic :is(.topbar,.hero,.hero-visual,.content,.resource-section,.admin-section,
+.video-row,.video-card,.thumb,.metric-card,.admin-report,.admin-message,.admin-error,
+.account-drawer,footer,.player-dialog,.menu-backdrop,.quick-upload-button){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+}
+body.view-modern :is(.video-card,.metric-card,.admin-report,.topbar,nav a,.quick-upload-button),
+body.view-basic :is(.video-card,.metric-card,.admin-report,.topbar,nav a,.quick-upload-button){
+  transition:none!important;
+}
+body.view-modern .video-card:hover,body.view-basic .video-card:hover{
+  transform:none!important;box-shadow:none!important;
+}
+.video-card img{backface-visibility:visible!important}
