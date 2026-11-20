@@ -15,3 +15,5 @@ input,textarea,select{background:#100f26cc;border:1px solid #9d91ce33;border-rad
 .primary{background:linear-gradient(110deg,#8667e7,#5f68d9);border:1px solid #b8a5ff;border-radius:9px;color:#fff;box-shadow:0 8px 22px #6854d944}.primary:hover{background:linear-gradient(110deg,#9679f5,#6f7aeb)}
 .data-row{background:#100f26aa;border:1px solid var(--line);border-radius:10px}.data-row small{color:#aaa5c6}.row-actions button{background:#ffffff08;border:1px solid var(--line);border-radius:8px;color:#e7e2ff}.row-actions .delete{border-color:#b45b78;color:#ffb9c7}
 .notice{color:#9de2c1}.notice.error{color:#ffb5c0}.hint{font-size:12px}
+
+.admin-links{display:flex;align-items:center;gap:10px;flex-wrap:wrap}@media(max-width:520px){.admin-links{width:100%}.admin-links a{flex:1;text-align:center}}
