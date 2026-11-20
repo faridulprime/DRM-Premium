@@ -590,3 +590,226 @@ footer,body.view-modern footer,body.view-basic footer{
     box-shadow:0 5px 9px rgba(61,78,100,.13),inset 0 2px 0 #fff,inset 0 -2px 3px rgba(113,132,154,.16)!important;
   }
 }
+
+
+/* =========================================================
+   DRM PREMIUM HEADER — DESIGN 09: MINIMAL ELEGANT
+   Platinum-silver molecular identity, centered navigation,
+   crown PRO pill and matching glass menu control.
+   ========================================================= */
+.topbar{
+  position:sticky!important;top:0!important;z-index:50!important;
+  min-height:82px!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:clamp(14px,2vw,30px)!important;
+  padding:12px clamp(18px,3.4vw,58px)!important;
+  background:linear-gradient(110deg,rgba(250,252,254,.92),rgba(235,241,247,.84) 52%,rgba(248,250,253,.91))!important;
+  border-bottom:1px solid rgba(135,151,169,.28)!important;
+  box-shadow:0 8px 26px rgba(58,74,92,.09),inset 0 1px 0 rgba(255,255,255,.98)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(150%)!important;
+  backdrop-filter:blur(24px) saturate(150%)!important;
+}
+.topbar>.brand{
+  position:relative!important;z-index:3!important;
+  display:flex!important;align-items:center!important;gap:11px!important;
+  flex:0 0 auto!important;margin:0!important;
+  color:#465667!important;text-decoration:none!important;
+}
+.topbar>.brand .brand-mark{
+  display:block!important;width:55px!important;height:40px!important;flex:0 0 55px!important;
+  object-fit:contain!important;color:#9ba8b5!important;
+  filter:grayscale(1) contrast(.92) brightness(1.08)!important;
+}
+.topbar>.brand #brandName{
+  color:#465667!important;font-family:Inter,'Hind Siliguri',sans-serif!important;
+  font-size:19px!important;font-weight:850!important;letter-spacing:.13em!important;
+  line-height:1!important;white-space:nowrap!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.95)!important;
+}
+.topbar>nav#mainNav{
+  position:absolute!important;left:50%!important;top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:2!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex-wrap:nowrap!important;width:max-content!important;
+  max-width:calc(100% - 650px)!important;
+  margin:0!important;padding:0 4px!important;gap:clamp(16px,1.75vw,30px)!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+.topbar>nav#mainNav a{
+  position:relative!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;
+  min-height:44px!important;padding:9px 3px 11px!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  color:#647284!important;font-family:'Hind Siliguri',Inter,sans-serif!important;
+  font-size:13px!important;font-weight:650!important;line-height:1.2!important;
+  text-decoration:none!important;white-space:nowrap!important;
+  box-shadow:none!important;text-shadow:0 1px 0 rgba(255,255,255,.8)!important;
+  transition:color .2s ease,transform .2s ease!important;
+}
+.topbar>nav#mainNav a:after{
+  content:""!important;display:block!important;position:absolute!important;
+  left:50%!important;right:auto!important;bottom:2px!important;
+  width:0!important;height:2px!important;border-radius:3px!important;
+  transform:translateX(-50%)!important;
+  background:linear-gradient(90deg,#aab8c7,#657d96)!important;
+  box-shadow:0 1px 4px rgba(102,126,151,.18)!important;
+  transition:width .22s ease!important;
+}
+.topbar>nav#mainNav a:hover{
+  color:#26384a!important;background:transparent!important;
+  border:0!important;box-shadow:none!important;transform:translateY(-1px)!important;
+}
+.topbar>nav#mainNav a:hover:after,
+.topbar>nav#mainNav a.active:after{width:100%!important}
+.topbar>nav#mainNav a.active{
+  color:#27394c!important;background:transparent!important;
+  border:0!important;box-shadow:none!important;
+  text-shadow:0 1px 0 #fff!important;
+}
+.topbar>.top-actions{
+  position:relative!important;z-index:3!important;
+  display:flex!important;align-items:center!important;gap:8px!important;
+  margin-left:auto!important;flex:0 1 auto!important;
+}
+.topbar .header-field{
+  height:39px!important;width:clamp(100px,8.2vw,132px)!important;
+  display:flex!important;align-items:center!important;gap:7px!important;
+  padding:0 10px!important;border:1px solid rgba(145,160,177,.34)!important;
+  border-radius:11px!important;background:rgba(255,255,255,.57)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.98),0 3px 9px rgba(66,82,101,.045)!important;
+}
+.topbar .header-field:focus-within{
+  border-color:rgba(105,130,157,.72)!important;
+  box-shadow:0 0 0 3px rgba(125,151,179,.12),inset 0 1px 0 #fff!important;
+}
+.topbar .field-icon{color:#8291a1!important}
+.topbar .header-field input,.topbar .header-field input::placeholder{
+  color:#536477!important;font-size:11px!important;
+}
+.topbar .login-button,.topbar .signup-button{
+  height:37px!important;min-height:37px!important;padding:0 13px!important;
+  border-radius:10px!important;font-size:11px!important;font-weight:750!important;
+  box-shadow:0 4px 10px rgba(68,85,104,.09),inset 0 1px 0 rgba(255,255,255,.7)!important;
+}
+.topbar .login-button{
+  color:#fff!important;background:linear-gradient(145deg,#77899d,#4c6076)!important;
+  border:1px solid rgba(75,94,115,.65)!important;
+}
+.topbar .signup-button{
+  color:#536477!important;background:linear-gradient(145deg,#fff,#e3eaf1)!important;
+  border:1px solid rgba(145,160,177,.48)!important;
+}
+.topbar>.account-controls{
+  position:relative!important;z-index:4!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;gap:13px!important;margin:0 0 0 4px!important;
+}
+.topbar .pro-badge{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:7px!important;min-height:39px!important;padding:0 15px!important;
+  border:1px solid rgba(137,153,171,.52)!important;border-radius:999px!important;
+  color:#405268!important;
+  background:linear-gradient(145deg,#fff 0%,#e8eef4 55%,#d5dfe9 100%)!important;
+  box-shadow:0 5px 13px rgba(61,78,98,.12),inset 0 1px 0 #fff,inset 0 -1px 2px rgba(100,120,143,.12)!important;
+  font:850 12px/1 Inter,Arial,sans-serif!important;letter-spacing:1.6px!important;
+  text-shadow:0 1px 0 #fff!important;
+}
+.topbar .pro-badge .pro-crown{
+  display:block!important;width:16px!important;height:16px!important;flex:0 0 16px!important;
+  fill:rgba(117,137,158,.16)!important;stroke:#71849a!important;
+  stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+.topbar>.account-controls .menu-toggle{
+  width:42px!important;height:42px!important;flex:0 0 42px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:5px!important;border:1px solid rgba(137,153,171,.48)!important;
+  border-radius:50%!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(222,231,240,.92))!important;
+  box-shadow:0 6px 15px rgba(59,76,96,.13),inset 0 1px 0 #fff,inset 0 -2px 3px rgba(109,128,150,.12)!important;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease!important;
+}
+.topbar>.account-controls .menu-toggle span{
+  width:15px!important;height:1.6px!important;border-radius:2px!important;
+  background:#536579!important;
+}
+.topbar>.account-controls .menu-toggle:hover{
+  transform:translateY(-2px)!important;border-color:rgba(101,126,153,.7)!important;
+  box-shadow:0 9px 19px rgba(59,76,96,.17),inset 0 1px 0 #fff!important;
+}
+.topbar>.account-controls .menu-toggle:active{transform:translateY(0) scale(.97)!important}
+body.view-modern .topbar,body.view-basic .topbar{
+  background:linear-gradient(110deg,rgba(250,252,254,.94),rgba(235,241,247,.88) 52%,rgba(248,250,253,.94))!important;
+  border-bottom-color:rgba(135,151,169,.28)!important;
+}
+body.view-modern .topbar .brand #brandName,body.view-basic .topbar .brand #brandName,
+body.view-modern .topbar>nav#mainNav a,body.view-basic .topbar>nav#mainNav a{
+  color:#536477!important;
+}
+body.view-modern .topbar>nav#mainNav a.active,body.view-basic .topbar>nav#mainNav a.active,
+body.view-modern .topbar>nav#mainNav a:hover,body.view-basic .topbar>nav#mainNav a:hover{color:#26384a!important}
+body.view-modern .topbar .pro-badge,body.view-basic .topbar .pro-badge{
+  color:#405268!important;border-color:rgba(137,153,171,.52)!important;
+  background:linear-gradient(145deg,#fff,#e8eef4 55%,#d5dfe9)!important;
+}
+body.view-modern .topbar .menu-toggle,body.view-basic .topbar .menu-toggle{
+  background:linear-gradient(145deg,#fff,#dce6ef)!important;border-color:rgba(137,153,171,.48)!important;
+}
+body.view-modern .topbar .menu-toggle span,body.view-basic .topbar .menu-toggle span{background:#536579!important}
+@media(min-width:761px) and (max-width:1250px){
+  .topbar{gap:14px!important;padding-left:20px!important;padding-right:18px!important}
+  .topbar>.brand .brand-mark{width:47px!important;height:36px!important;flex-basis:47px!important}
+  .topbar>.brand #brandName{font-size:16px!important;letter-spacing:.09em!important}
+  .topbar>nav#mainNav{gap:clamp(10px,1.15vw,16px)!important;max-width:calc(100% - 510px)!important}
+  .topbar>nav#mainNav a{font-size:12px!important}
+  .topbar .header-field{width:104px!important}
+  .topbar .header-field input{font-size:10px!important}
+  .topbar .login-button,.topbar .signup-button{padding:0 9px!important}
+  .topbar>.account-controls{gap:9px!important}
+}
+@media(max-width:760px){
+  .topbar{
+    position:sticky!important;top:0!important;min-height:0!important;
+    display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+    gap:10px!important;padding:11px 4vw 9px!important;
+  }
+  .topbar>.brand{order:1!important;gap:8px!important}
+  .topbar>.brand .brand-mark{width:43px!important;height:32px!important;flex-basis:43px!important}
+  .topbar>.brand #brandName{font-size:15px!important;letter-spacing:.08em!important}
+  .topbar>.account-controls{order:2!important;margin-left:auto!important;gap:9px!important}
+  .topbar .pro-badge{min-height:34px!important;padding:0 11px!important;font-size:10px!important}
+  .topbar .pro-badge .pro-crown{width:14px!important;height:14px!important;flex-basis:14px!important}
+  .topbar>.account-controls .menu-toggle{width:36px!important;height:36px!important;flex-basis:36px!important}
+  .topbar>nav#mainNav{
+    position:static!important;left:auto!important;top:auto!important;transform:none!important;
+    order:3!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;
+    width:100%!important;max-width:100%!important;flex:1 0 100%!important;
+    gap:clamp(18px,5vw,28px)!important;margin:0!important;padding:7px 2px 5px!important;
+    overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;
+    border:0!important;border-top:1px solid rgba(135,151,169,.2)!important;border-radius:0!important;
+    background:transparent!important;box-shadow:none!important;
+  }
+  .topbar>nav#mainNav::-webkit-scrollbar{display:none!important}
+  .topbar>nav#mainNav a{flex:0 0 auto!important;min-height:36px!important;padding:8px 1px 10px!important;font-size:12px!important}
+  .topbar>nav#mainNav a:after{bottom:0!important}
+  .topbar>.top-actions{
+    order:4!important;flex:1 0 100%!important;width:100%!important;margin:0!important;
+    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto auto!important;gap:6px!important;
+  }
+  .topbar .header-field{width:100%!important;height:35px!important;padding:0 7px!important}
+  .topbar .header-field input{font-size:10px!important}
+  .topbar .login-button,.topbar .signup-button{height:35px!important;min-height:35px!important;padding:0 9px!important;font-size:10px!important}
+}
+@media(max-width:420px){
+  .topbar{gap:8px!important}
+  .topbar>.brand .brand-mark{width:37px!important;height:29px!important;flex-basis:37px!important}
+  .topbar>.brand #brandName{font-size:13px!important;letter-spacing:.06em!important}
+  .topbar>.top-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  .topbar .login-button,.topbar .signup-button{width:100%!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .topbar>nav#mainNav a,.topbar>nav#mainNav a:after,
+  .topbar>.account-controls .menu-toggle{transition:none!important}
+}
