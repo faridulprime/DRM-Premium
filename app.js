@@ -227,16 +227,13 @@ function sbApplyLiveChanges(save){
  const applyButton=host.querySelector("#sbApplyLive"),saveButton=host.querySelector("#sbSaveLive");
  if(applyButton)applyButton.disabled=true;if(saveButton){saveButton.disabled=true;saveButton.textContent="Saving…";}
  $("#sbMessage").textContent="Cloudflare D1-এ style সংরক্ষণ হচ্ছে…";
- fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:encoded})})
+ fetch("/api/builder/style",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({config})})
  .then(async response=>{
   const body=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(body.error||("HTTP "+response.status));
-  if(body.ok!==true)throw new Error("API save confirmation পাওয়া যায়নি।");
-  const check=await fetch("/api/settings",{method:"GET",credentials:"same-origin",cache:"no-store"});
-  if(!check.ok)throw new Error("D1 save-এর পর read-back verification ব্যর্থ (HTTP "+check.status+")");
-  const saved=await check.json();
-  if(saved.visual_editor_config!==encoded)throw new Error("D1-এ সংরক্ষিত style configuration পাঠানো value-এর সঙ্গে মেলেনি।");
-  visualConfig=config;
+  if(body.ok!==true||body.saved!==true)throw new Error(body.error||"API save confirmation পাওয়া যায়নি।");
+  if(JSON.stringify(body.config)!==encoded)throw new Error("D1-এ সংরক্ষিত configuration মিলেনি।");
+  visualConfig=body.config;
   $("#sbMessage").textContent="সফল: Style Cloudflare D1-এ সংরক্ষিত এবং পুনরায় পড়ে যাচাই করা হয়েছে।";
  })
  .catch(error=>{$("#sbMessage").textContent="Save failed: "+(error?.message||String(error));})
