@@ -85,7 +85,7 @@ body.drawer-open{overflow:hidden}
 .intro-mark{font:900 clamp(38px,8vw,68px) Inter,Arial,sans-serif;letter-spacing:.12em;text-shadow:0 0 24px rgba(60,190,255,.25);animation:introPulse 1.2s ease-in-out both}
 .intro-mark span{color:#58caff}.site-intro p{margin:0;color:#69c9f4;font:700 10px Inter,Arial,sans-serif;letter-spacing:.38em}
 @keyframes introPulse{0%{opacity:0;transform:translateY(12px) scale(.96);filter:blur(8px)}55%{opacity:1;filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1)}}
-body.view-modern{background:#070b10;color:#e9f5ff;color-scheme:dark}
+body.view-modern{background:linear-gradient(135deg,#070b10 0%,#0b1823 48%,#071019 100%) fixed;color:#e9f5ff;color-scheme:dark}
 body.view-modern .topbar,body.view-modern footer{background:rgba(7,12,18,.96);border-color:rgba(91,190,235,.2);color:#e9f5ff}
 body.view-modern .brand,body.view-modern nav a,body.view-modern .field-icon,body.view-modern .header-field input,body.view-modern .header-field input::placeholder{color:#e9f5ff}
 body.view-modern .brand-mark{color:#65cfff}body.view-modern .header-field{border-bottom-color:#4d829e}
@@ -135,3 +135,9 @@ body.view-basic .section-head select option{background:#101820;color:#e8edf2}
 .library-tools input:focus{border-color:#58caff;box-shadow:0 0 0 3px rgba(88,202,255,.12)}
 body.view-modern .library-tools input{background:rgba(13,26,37,.8);border-color:#34576b;color:#eaf6ff}
 @media(max-width:600px){.library-tools{grid-template-columns:1fr}.library-tools select{width:100%}}
+
+body.view-modern .primary,body.view-modern .secondary,body.view-modern .login-button,body.view-modern .signup-button{border:1px solid rgba(110,204,244,.3);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+body.view-modern .secondary,body.view-modern .signup-button{background:rgba(16,34,48,.72);color:#eaf6ff}
+body.view-modern .primary,body.view-modern .login-button{background:rgba(24,111,153,.82);border-color:rgba(88,202,255,.55);color:#fff}
+body.view-modern .video-card{border-radius:12px}
+body.view-modern .thumb{background:#10202b}
