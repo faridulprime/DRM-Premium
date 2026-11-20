@@ -19,7 +19,7 @@ function doPost(e) {
     if (!ownerEmail || recipient !== ownerEmail) {
       return output({ ok: false, error: "Recipient is not the configured Owner email." });
     }
-    if (!/^\\d{6}$/.test(code)) {
+    if (!/^\d{6}$/.test(code)) {
       return output({ ok: false, error: "Invalid verification code." });
     }
 
