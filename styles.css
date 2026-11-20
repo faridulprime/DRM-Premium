@@ -2035,9 +2035,10 @@ body{overscroll-behavior-y:contain}
 
 /* Large translucent surfaces were using very expensive 24–32px blur.
    A smaller blur keeps the frosted-glass appearance with less repaint work. */
-.topbar,.topbar>nav#mainNav,.hero,.content,.resource-section,.admin-section,
-.video-row,.video-card,.metric-card,.admin-report,.account-drawer,footer,
-.player-dialog,.logout-toast{
+body.view-modern :is(.topbar,.topbar>nav#mainNav,.hero,.content,.resource-section,.admin-section,
+.video-row,.video-card,.metric-card,.admin-report,.account-drawer,footer,.player-dialog,.logout-toast),
+body.view-basic :is(.topbar,.topbar>nav#mainNav,.hero,.content,.resource-section,.admin-section,
+.video-row,.video-card,.metric-card,.admin-report,.account-drawer,footer,.player-dialog,.logout-toast){
   -webkit-backdrop-filter:blur(10px) saturate(125%)!important;
   backdrop-filter:blur(10px) saturate(125%)!important;
 }
