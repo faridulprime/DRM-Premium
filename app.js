@@ -142,35 +142,43 @@ function sbSelectLiveElement(el){
 }
 function rgbToHex(value){const m=String(value).match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);return m?"#"+[m[1],m[2],m[3]].map(v=>Number(v).toString(16).padStart(2,"0")).join(""):"#ffffff";}
 function sbAttachLivePreview(frame){
- sbLiveFrame=frame;
- const bind=()=>{
-  let doc;try{doc=frame.contentDocument;if(!doc||!doc.body)return;}catch{$("#sbMessage").textContent="Preview control requires same-origin access.";return;}
-  if(doc.__drmBuilderBound)return;doc.__drmBuilderBound=true;
-  const style=doc.createElement("style");style.id="drm-builder-selection-style";style.textContent="body *{cursor:crosshair!important}";(doc.head||doc.documentElement).appendChild(style);
-  doc.addEventListener("click",e=>{
-   const el=e.target instanceof Element?e.target.closest("body *"):null;
-   if(!el)return;
-   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-   sbSelectLiveElement(el);
-  },true);
-  doc.addEventListener("auxclick",e=>{e.preventDefault();e.stopImmediatePropagation();},true);
-  doc.addEventListener("submit",e=>{e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();},true);
-  doc.addEventListener("pointerover",e=>{
-   const el=e.target instanceof Element?e.target.closest("body *"):null;if(!el||el===sbLiveSelected)return;
-   if(sbLiveHover&&sbLiveHover!==sbLiveSelected)sbLiveHover.style.outline=sbLiveHover.dataset.sbHoverOutline||"";
-   sbLiveHover=el;if(!el.dataset.sbHoverOutline)el.dataset.sbHoverOutline=el.style.outline||"";
-   el.style.setProperty("outline","1px dashed #e11d48","important");
-  },true);
-  doc.addEventListener("pointerout",e=>{
-   const el=e.target instanceof Element?e.target.closest("body *"):null;
-   if(el&&el!==sbLiveSelected){el.style.outline=el.dataset.sbHoverOutline||"";if(sbLiveHover===el)sbLiveHover=null;}
-  },true);
-  $("#sbMessage").textContent="Editing mode active · click a website element to select it.";
+ const wrap=frame.parentElement;
+ if(!wrap||!wrap.classList.contains("sb-live-preview-wrap")){$("#sbMessage").textContent="Builder preview overlay could not initialize.";return;}
+ let overlay=wrap.querySelector(".sb-live-edit-overlay");
+ if(!overlay){overlay=document.createElement("div");overlay.className="sb-live-edit-overlay";overlay.setAttribute("aria-label","Website element selection layer");wrap.appendChild(overlay);}
+ sbLiveFrame=frame;frame.style.pointerEvents="none";
+ const getElement=e=>{
+  let doc;try{doc=frame.contentDocument;if(!doc||!doc.body)return null;}catch{return null;}
+  const r=frame.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+  if(x<0||y<0||x>r.width||y>r.height)return null;
+  return doc.elementFromPoint(x,y)?.closest("body *")||null;
  };
- frame.addEventListener("load",bind);
- // The iframe often finishes loading before the Builder attaches handlers.
- // Bind immediately when its same-origin document is already available.
- bind();
+ overlay.addEventListener("click",e=>{
+  e.preventDefault();e.stopPropagation();
+  const el=getElement(e);if(el)sbSelectLiveElement(el);
+ },true);
+ overlay.addEventListener("pointermove",e=>{
+  const el=getElement(e);if(!el||el===sbLiveSelected)return;
+  if(sbLiveHover&&sbLiveHover!==sbLiveSelected)sbLiveHover.style.outline=sbLiveHover.dataset.sbHoverOutline||"";
+  sbLiveHover=el;if(!el.dataset.sbHoverOutline)el.dataset.sbHoverOutline=el.style.outline||"";
+  el.style.setProperty("outline","1px dashed #e11d48","important");
+ },true);
+ overlay.addEventListener("pointerleave",()=>{
+  if(sbLiveHover&&sbLiveHover!==sbLiveSelected)sbLiveHover.style.outline=sbLiveHover.dataset.sbHoverOutline||"";
+  sbLiveHover=null;
+ });
+ overlay.addEventListener("wheel",e=>{
+  let doc;try{doc=frame.contentDocument;}catch{return;}
+  if(!doc)return;e.preventDefault();
+  const scroller=doc.scrollingElement||doc.documentElement;
+  scroller.scrollTop+=e.deltaY;scroller.scrollLeft+=e.deltaX;
+ },{passive:false});
+ frame.addEventListener("load",()=>{
+  try{if(!frame.contentDocument?.body)throw new Error();$("#sbMessage").textContent="Editing mode active · click any website element to select it.";}
+  catch{$("#sbMessage").textContent="Preview unavailable: same-origin access is required for editing.";}
+ });
+ try{if(frame.contentDocument?.body)$("#sbMessage").textContent="Editing mode active · click any website element to select it.";}
+ catch{$("#sbMessage").textContent="Preview unavailable: same-origin access is required for editing.";}
 }
 function sbApplyLiveChanges(save){
  const el=sbLiveSelected,host=$("#sbInspectorBody");if(!el)return;
@@ -217,8 +225,8 @@ function sbRender(){
  $("#sbPage").innerHTML=sbDoc.pages.map((p,i)=>'<option value="'+i+'">'+esc(p.title||p.slug)+'</option>').join("");$("#sbPage").value=String(sbPageIndex);
  $("#sbLayers").innerHTML=(page.nodes||[]).map(n=>sbLayerHTML(n,0)).join("")||'<p class="sb-muted">No elements yet.</p>';
  const canvas=$("#sbCanvas");let preview=canvas.querySelector(".sb-live-preview");
- if(!preview){canvas.innerHTML='<div class="sb-live-preview-head"><strong>বর্তমান DRM PREMIUM ওয়েবসাইট</strong><span>Live reference preview · read-only</span></div><iframe class="sb-live-preview" title="বর্তমান DRM PREMIUM ওয়েবসাইটের প্রিভিউ" src="/?builderPreview=1#home" loading="eager"></iframe><div class="sb-draft-area"><div class="sb-draft-area-head"><strong>Builder Draft Elements</strong><span>এখানে নতুন draft elements তৈরি ও সাজানো যাবে</span></div><div id="sbDraftNodes"></div></div>';}
- preview=canvas.querySelector(".sb-live-preview");if(preview&&!preview.dataset.sbBound){preview.dataset.sbBound="1";sbAttachLivePreview(preview);}
+ if(!preview){canvas.innerHTML='<div class="sb-live-preview-head"><strong>বর্তমান DRM PREMIUM ওয়েবসাইট</strong><span>Live reference preview · read-only</span></div><div class="sb-live-preview-wrap"><iframe class="sb-live-preview" title="বর্তমান DRM PREMIUM ওয়েবসাইটের প্রিভিউ" src="/?builderPreview=1#home" loading="eager"></iframe></div><div class="sb-draft-area"><div class="sb-draft-area-head"><strong>Builder Draft Elements</strong><span>এখানে নতুন draft elements তৈরি ও সাজানো যাবে</span></div><div id="sbDraftNodes"></div></div>';}
+ preview=canvas.querySelector(".sb-live-preview");if(preview&&!preview.dataset.sbBound){preview.dataset.sbBound="1";sbAttachLivePreview(preview);preview.dataset.sbBound="1";}
  $("#sbDraftNodes").innerHTML=(page.nodes||[]).map(n=>sbCanvasHTML(n)).join("")||'<div class="sb-empty">Draft এখনো খালি। বাম পাশের ＋ Section বা ＋ Element দিয়ে শুরু করুন।</div>';
  $("#sbSelectedType").textContent=sbSelected?(SB_LABELS[sbFind(sbSelected)?.node?.type]||"Selected"):"Nothing selected";
  canvas.querySelectorAll("[data-sb-node]").forEach(el=>{el.classList.toggle("sb-selected",el.dataset.sbNode===sbSelected);el.draggable=true;});sbRenderInspector();
