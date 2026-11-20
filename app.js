@@ -174,11 +174,11 @@ function sbAttachLivePreview(frame){
   const scroller=doc.scrollingElement||doc.documentElement;
   scroller.scrollTop+=e.deltaY;scroller.scrollLeft+=e.deltaX;
  },{passive:false});
- frame.addEventListener("load",()=>{
-  try{if(!frame.contentDocument?.body)throw new Error();sbApplySavedLiveDraft(doc);$("#sbMessage").textContent="Editing mode active · click any website element to select it.";}
-  catch{$("#sbMessage").textContent="Preview unavailable: same-origin access is required for editing.";}
- });
- try{if(frame.contentDocument?.body)$("#sbMessage").textContent="Editing mode active · click any website element to select it.";}
+ const initializePreview=()=>{
+  try{const doc=frame.contentDocument;if(!doc?.body)throw new Error("iframe document unavailable");sbApplySavedLiveDraft(doc);$("#sbMessage").textContent="Editing mode active · click any website element to select it.";}catch(err){$("#sbMessage").textContent="Preview access error: "+(err?.message||String(err));}
+ };
+ frame.addEventListener("load",initializePreview);
+ initializePreview();
  catch{$("#sbMessage").textContent="Preview unavailable: same-origin access is required for editing.";}
 }
 function sbApplySavedLiveDraft(doc){
