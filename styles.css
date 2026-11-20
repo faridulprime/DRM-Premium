@@ -1715,3 +1715,116 @@ footer,body.view-modern footer,body.view-basic footer{
     background:rgba(231,239,248,.98)!important;
   }
 }
+
+
+/* Header refinements requested: standalone square tabs, text depth,
+   red cloud-upload control, and red premium wordmark. */
+.topbar>nav#mainNav{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  padding:0!important;
+  border-radius:0!important;
+  gap:8px!important;
+}
+.topbar>nav#mainNav a,
+body.view-modern .topbar>nav#mainNav a,
+body.view-basic .topbar>nav#mainNav a{
+  border-radius:0!important;
+  border:1px solid rgba(255,255,255,.94)!important;
+  box-shadow:
+    0 7px 13px rgba(31,53,78,.19),
+    0 0 10px rgba(255,255,255,.42),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -3px 5px rgba(65,91,121,.17)!important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.98),
+    0 2px 3px rgba(29,54,82,.34),
+    0 4px 8px rgba(35,61,90,.18)!important;
+}
+.topbar>nav#mainNav a:hover{
+  border-radius:0!important;
+  text-shadow:0 1px 0 #fff,0 2px 4px rgba(31,57,86,.38),0 5px 10px rgba(36,62,94,.22)!important;
+}
+.topbar>nav#mainNav a.active{
+  border-radius:0!important;
+  text-shadow:0 1px 1px rgba(255,255,255,.22),0 2px 5px rgba(7,25,48,.62),0 4px 10px rgba(8,29,54,.34)!important;
+}
+.topbar .pro-badge,
+body.view-modern .topbar .pro-badge,
+body.view-basic .topbar .pro-badge{
+  color:#d7192d!important;
+  font-family:"Arial Black","Segoe UI",sans-serif!important;
+  font-size:12px!important;
+  font-style:italic!important;
+  font-weight:1000!important;
+  letter-spacing:.15em!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.98),0 2px 5px rgba(117,15,29,.25),0 0 10px rgba(222,31,53,.20)!important;
+}
+.topbar .pro-badge .pro-crown{
+  fill:#d7192d!important;
+  stroke:#a70e20!important;
+  filter:drop-shadow(0 2px 3px rgba(125,17,30,.24))!important;
+}
+.quick-upload-button,
+.quick-upload-button:hover,
+body.view-modern .quick-upload-button,
+body.view-basic .quick-upload-button{
+  background:linear-gradient(145deg,#ff6b76 0%,#e3263d 48%,#a90d26 100%)!important;
+  border:1px solid rgba(255,255,255,.98)!important;
+  box-shadow:
+    0 16px 32px rgba(133,12,32,.34),
+    0 0 0 3px rgba(255,255,255,.48),
+    0 0 25px rgba(229,37,62,.48),
+    inset 0 2px 0 rgba(255,255,255,.74),
+    inset 0 -5px 8px rgba(89,5,20,.38)!important;
+}
+.quick-upload-button .upload-icon{
+  position:relative!important;
+  display:grid!important;
+  place-items:center!important;
+  width:36px!important;height:36px!important;
+  color:#fff!important;
+  font-size:0!important;
+}
+.quick-upload-button .upload-icon svg{display:none!important}
+.quick-upload-button .upload-icon:before{
+  content:"☁"!important;
+  position:absolute!important;
+  inset:0!important;
+  display:grid!important;
+  place-items:center!important;
+  color:#fff!important;
+  font-family:"Segoe UI Symbol",sans-serif!important;
+  font-size:32px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  text-shadow:0 2px 4px rgba(91,5,20,.35)!important;
+}
+.quick-upload-button .upload-icon:after{
+  content:"↑"!important;
+  position:absolute!important;
+  left:50%!important;top:48%!important;
+  transform:translate(-50%,-43%)!important;
+  color:#c8142e!important;
+  font-family:Arial,sans-serif!important;
+  font-size:20px!important;
+  font-weight:1000!important;
+  line-height:1!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.95),0 0 3px rgba(255,255,255,.55)!important;
+}
+.quick-upload-button:hover{
+  box-shadow:
+    0 22px 40px rgba(133,12,32,.40),
+    0 0 0 4px rgba(255,255,255,.58),
+    0 0 34px rgba(229,37,62,.62),
+    inset 0 2px 0 rgba(255,255,255,.82)!important;
+}
+.quick-upload-button:active{
+  box-shadow:0 7px 14px rgba(133,12,32,.28),inset 0 4px 8px rgba(89,5,20,.34)!important;
+}
+@media(max-width:760px){
+  .topbar>nav#mainNav{padding:0!important;gap:7px!important}
+}
