@@ -67,7 +67,7 @@ body.drawer-open{overflow:hidden}
 
 /* DRM GLOBAL VIEW MODES — phase 1 */
 :root{--drm-cyan:#58caff;--drm-dark:#070b10;--drm-text:#e9f5ff}
-.view-mode-switcher{position:fixed;z-index:25;right:18px;bottom:18px;display:flex;gap:4px;padding:5px;border:1px solid rgba(88,202,255,.28);border-radius:999px;background:rgba(5,10,15,.9);box-shadow:0 8px 28px #0005;backdrop-filter:blur(12px)}
+.view-mode-switcher{position:absolute;z-index:25;right:18px;top:14px;display:flex;gap:4px;padding:5px;border:1px solid rgba(88,202,255,.28);border-radius:999px;background:rgba(5,10,15,.9);box-shadow:0 8px 28px #0005;backdrop-filter:blur(12px)}
 .view-mode-switcher button{position:relative;border:1px solid transparent;border-radius:999px;padding:8px 12px;background:transparent;color:#b8c9d6;font:600 11px 'Hind Siliguri',sans-serif;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
 .view-mode-switcher button:hover,.view-mode-switcher button.active{color:#eaf9ff;border-color:rgba(88,202,255,.42);background:rgba(37,160,220,.18);box-shadow:0 0 13px rgba(40,177,255,.13)}
 .view-mode-switcher button:focus-visible{outline:2px solid var(--drm-cyan);outline-offset:2px}
@@ -111,7 +111,7 @@ body.view-basic *,body.view-basic *:before,body.view-basic *:after{animation:non
 body.view-basic .view-mode-switcher{backdrop-filter:none;background:#080d12}
 body.view-basic .video-card,body.view-basic .metric-card,body.view-basic .admin-report{backdrop-filter:none}
 body.view-basic .hero-visual{filter:grayscale(1)}
-@media(max-width:760px){.view-mode-switcher{right:10px;bottom:10px}.view-mode-switcher button{padding:7px 10px;font-size:10px}.mode-notice{min-width:min(300px,88vw);padding:22px 18px}}
+@media(max-width:760px){.view-mode-switcher{right:10px;top:10px}.view-mode-switcher button{padding:7px 10px;font-size:10px}.mode-notice{min-width:min(300px,88vw);padding:22px 18px}}
 @media(prefers-reduced-motion:reduce){.view-mode-switcher,.mode-transition,.site-intro{transition:none}}
 
 /* Mode transitions remain available in Basic View */
@@ -141,3 +141,6 @@ body.view-modern .secondary,body.view-modern .signup-button{background:rgba(16,3
 body.view-modern .primary,body.view-modern .login-button{background:rgba(24,111,153,.82);border-color:rgba(88,202,255,.55);color:#fff}
 body.view-modern .video-card{border-radius:12px}
 body.view-modern .thumb{background:#10202b}
+
+/* View switcher belongs to the homepage top corner and scrolls with the page */
+main#home{position:relative}
