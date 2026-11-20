@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#111027">
+<title>Upload Studio · DRM Premium</title><link rel="stylesheet" href="upload-studio.css">
+</head>
+<body>
+<div class="studio-shell">
+<aside class="sidebar">
+ <a class="brand" href="/" aria-label="DRM Premium"><span class="brand-mark">D</span><span>DRM<span class="brand-muted"> PREMIUM</span><small>CREATOR STUDIO</small></span></a>
+ <div class="side-label">WORKSPACE</div>
+ <nav class="side-nav" aria-label="Studio navigation">
+  <a class="active" href="#create"><span>＋</span> Create Post</a>
+  <a href="#drafts" data-local-tab="drafts"><span>▤</span> Drafts <b id="draftCount">0</b></a>
+  <a href="#manage" data-local-tab="manage"><span>▣</span> Manage Posts</a>
+  <div class="side-label">ORGANIZE</div>
+  <a href="#categories" data-local-tab="categories"><span>◈</span> Categories</a>
+  <a href="#folders" data-local-tab="folders"><span>▰</span> Folders</a>
+  <a href="#media" data-local-tab="media"><span>▧</span> Media Library</a>
+ </nav>
+ <div class="sidebar-bottom"><div class="secure-mark">● <span>Secure workspace</span></div><a href="/admin.html">Legacy Admin Panel ↗</a><a href="/">← Back to website</a></div>
+</aside>
+<main class="main-area">
+ <header class="topbar"><div><p class="eyebrow">DRM PREMIUM / CREATOR WORKSPACE</p><h1>Upload Studio</h1><p class="subhead">Create, organize and publish your content.</p></div><div class="top-actions"><span class="status-pill"><i></i> Preview workspace</span><span id="identity" class="identity">Checking access…</span></div></header>
+ <div id="accessError" class="notice error" hidden></div>
+ <section id="studioContent" hidden>
+ <div class="page-tabs"><button class="tab active" data-tab="create">Create Post</button><button class="tab" data-tab="drafts">Drafts <span id="tabDraftCount">0</span></button><button class="tab" data-tab="manage">Manage Posts</button><button class="tab" data-tab="categories">Categories</button><button class="tab" data-tab="folders">Folders</button><button class="tab" data-tab="media">Media Library</button></div>
+ <section id="view-create" class="view active">
+  <div class="view-heading"><div><p class="eyebrow">NEW CONTENT</p><h2>Create a post</h2><p>Start with a video, article or external link.</p></div><div class="autosave" id="saveStatus">● Not saved</div></div>
+  <div class="type-switch" role="group" aria-label="Post type"><button class="type active" data-type="video">▶ <span>Video</span></button><button class="type" data-type="article">▤ <span>Article</span></button><button class="type" data-type="link">↗ <span>Link</span></button></div>
+  <div class="editor-grid">
+   <div class="editor-column">
+    <section class="panel source-panel" id="videoSource"><div class="panel-title"><span class="step">01</span><div><h3>YouTube video</h3><p>Paste a YouTube URL to load its thumbnail preview.</p></div></div><label for="youtubeUrl">YouTube URL</label><div class="url-row"><input id="youtubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off"><button id="loadYoutube" type="button">Load</button></div><div id="youtubeFeedback" class="field-hint" aria-live="polite">Supported: youtube.com, youtu.be and Shorts links.</div><div id="youtubePreview" class="youtube-preview" hidden><button type="button" id="playPreview" class="preview-thumb"><img id="youtubeThumb" alt="YouTube thumbnail"><span>▶</span></button><div class="yt-meta"><strong id="ytTitle">Video preview</strong><span id="ytChannel">YouTube video</span><small id="ytDescription"></small></div><button type="button" id="useYoutube" class="use-button">Use video details</button></div><div id="inlinePlayer" class="inline-player" hidden></div></section>
+    <section class="panel"><div class="panel-title"><span class="step">02</span><div><h3>Post details</h3><p>Give your content a clear title and description.</p></div></div>
+     <label for="postTitle">Title <em>*</em></label><input id="postTitle" maxlength="120" placeholder="Write a compelling title">
+     <label for="postDescription">Description</label><textarea id="postDescription" rows="4" maxlength="3000" placeholder="What is this post about?"></textarea>
+     <div id="linkFields" hidden><label for="externalUrl">Destination URL <em>*</em></label><input id="externalUrl" type="url" placeholder="https://example.com"></div>
+     <div id="articleFields" hidden><label for="articleMarkdown">Article content (Markdown)</label><div class="markdown-grid"><textarea id="articleMarkdown" rows="12" placeholder="# Article heading&#10;&#10;Write your article in Markdown…"></textarea><div id="markdownPreview" class="markdown-preview"><span class="preview-empty">Live preview appears here.</span></div></div><p class="field-hint">Preview is a safe basic Markdown rendering. Raw HTML is not executed.</p></div>
+    </section>
+    <section class="panel"><div class="panel-title"><span class="step">03</span><div><h3>Cover image</h3><p>Use the YouTube thumbnail or provide a custom cover URL.</p></div></div><div class="cover-preview" id="coverPreview"><span>No cover selected</span></div><label for="coverUrl">Custom cover image URL</label><div class="url-row"><input id="coverUrl" type="url" placeholder="https://…"><button id="applyCover" type="button">Apply</button></div><div class="field-hint">Direct file upload and image library storage are not connected yet; this stage supports HTTPS image URLs.</div></section>
+    <section class="panel"><div class="panel-title"><span class="step">04</span><div><h3>Organization</h3><p>Assign categories and folders to make posts easy to find.</p></div></div><label for="categorySelect">Categories</label><select id="categorySelect" multiple size="3" aria-label="Choose categories"></select><label for="folderSelect">Folders</label><select id="folderSelect" multiple size="3" aria-label="Choose folders"></select><div class="manage-inline"><button type="button" id="newCategory">＋ New category</button><button type="button" id="newFolder">＋ New folder</button></div><label for="postTags">Tags <span class="optional">comma separated</span></label><input id="postTags" placeholder="education, documentary, science"><label for="postSlug">Custom URL slug</label><input id="postSlug" maxlength="140" placeholder="custom-post-url"><div class="check-line"><label><input id="commentsEnabled" type="checkbox" checked> Allow comments</label></div></section>
+   </div>
+   <aside class="preview-column"><section class="panel sticky-preview"><div class="preview-head"><div><p class="eyebrow">LIVE PREVIEW</p><h3>Post appearance</h3></div><div class="device-switch"><button class="active" data-device="desktop" title="Desktop">▰</button><button data-device="tablet" title="Tablet">▯</button><button data-device="mobile" title="Mobile">▯</button></div></div><div id="postPreview" class="post-preview desktop"><div class="post-cover" id="previewCover"><span>Cover preview</span></div><div class="post-preview-copy"><span class="preview-type" id="previewType">VIDEO</span><h2 id="previewTitle">Your post title</h2><p id="previewDescription">Your description will appear here.</p><div class="preview-meta">DRM PREMIUM · PREVIEW</div></div></div><div class="preview-foot">Preview updates as you edit the form.</div></section>
+    <section class="panel publish-panel"><p class="eyebrow">PUBLISHING</p><label for="publishStatus">Post status</label><select id="publishStatus"><option value="draft">Save as Draft</option><option value="published">Publish Now</option><option value="scheduled">Schedule (coming in next backend phase)</option></select><div id="scheduleFields" hidden><label for="scheduleAt">Publish date and time</label><input id="scheduleAt" type="datetime-local" disabled><p class="field-hint">Scheduling is not enabled until the scheduled publishing backend is deployed.</p></div><button id="savePost" class="publish-button">Save Draft</button><button id="resetForm" class="secondary-button">Discard changes</button><p id="formMessage" class="form-message" role="status"></p></section>
+   </aside>
+  </div>
+ </section>
+ <section id="view-drafts" class="view"><div class="view-heading"><div><p class="eyebrow">WORK IN PROGRESS</p><h2>Drafts</h2><p>Unpublished content saved in this workspace.</p></div></div><div id="draftList" class="list-panel"></div></section>
+ <section id="view-manage" class="view"><div class="view-heading"><div><p class="eyebrow">CONTENT LIBRARY</p><h2>Manage Posts</h2><p>Manage your existing video posts.</p></div></div><div id="managedList" class="list-panel"></div></section>
+ <section id="view-categories" class="view"><div class="view-heading"><div><p class="eyebrow">ORGANIZATION</p><h2>Categories</h2><p>Categories currently available to your account.</p></div></div><div id="categoryList" class="list-panel"></div></section>
+ <section id="view-folders" class="view"><div class="view-heading"><div><p class="eyebrow">ORGANIZATION</p><h2>Folders</h2><p>Folder relationships will be enabled with the content schema phase.</p></div></div><div id="folderList" class="list-panel"><div class="empty-state">Folder storage is not available yet.</div></div></section>
+ <section id="view-media" class="view"><div class="view-heading"><div><p class="eyebrow">ASSET LIBRARY</p><h2>Media Library</h2><p>Reusable image assets.</p></div></div><div class="list-panel"><div class="empty-state">Media Library storage requires an approved Cloudflare storage binding. For now, use HTTPS image URLs.</div></div></section>
+ </section>
+ <footer class="studio-footer">DRM PREMIUM · UPLOAD STUDIO <span>Preview branch workspace</span></footer>
+</main>
+</div>
+<dialog id="confirmDialog"><form method="dialog"><h3 id="confirmTitle">Confirm action</h3><p id="confirmText">Are you sure?</p><div class="dialog-actions"><button value="cancel" class="secondary-button">Cancel</button><button id="confirmAccept" value="confirm" class="publish-button">Confirm</button></div></form></dialog>
+<script src="upload-studio.js"></script>
+</body></html>
