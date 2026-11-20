@@ -13,7 +13,7 @@ const clearCookie=()=>`${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Ma
 function cookieToken(req){return (req.headers.get("Cookie")||"").split(";").map(v=>v.trim()).find(v=>v.startsWith(COOKIE+"="))?.slice(COOKIE.length+1)||""}
 async function readBody(req){const len=Number(req.headers.get("content-length")||0);if(len>20000)return null;try{return await req.json()}catch{return null}}
 const emailOK=v=>typeof v==="string"&&v.length<255&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const passwordOK=v=>typeof v==="string"&&v.length>=12&&v.length<=200;
+const passwordOK=v=>typeof v==="string"&&v.length>=8&&v.length<=200;
 const textOK=(v,n)=>typeof v==="string"&&v.trim().length>0&&v.length<=n;
 function yt(s){if(typeof s!=="string")return"";const v=s.trim();if(/^[\w-]{11}$/.test(v))return v;try{const u=new URL(v);if(u.hostname==="youtu.be")return u.pathname.slice(1).split("/")[0];if(u.searchParams.get("v"))return u.searchParams.get("v");return u.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/)?.[1]||""}catch{return""}}
 async function adminsExist(DB){const r=await DB.prepare("SELECT COUNT(*) AS n FROM users WHERE role IN ('owner','admin')").first();return Number(r.n)>0}
@@ -26,22 +26,42 @@ async function handle(req,env){
  const u=new URL(req.url),p=u.pathname.replace(/^\/api\/?/,"").split("/").filter(Boolean),m=req.method;
  if(m!=="GET"){if(!originOK(req))return fail("Cross-origin request blocked.",403);if(!(req.headers.get("content-type")||"").toLowerCase().includes("application/json"))return fail("JSON content type required.",415)}
  if(p[0]==="auth"&&p[1]==="status"&&m==="GET")return json({configured:await adminsExist(env.DB)});
- if(p[0]==="auth"&&p[1]==="setup"&&m==="POST"){
-  if(!env.BOOTSTRAP_SECRET)return fail("Cloudflare BOOTSTRAP_SECRET is not configured.",503);
+ if(p[0]==="auth"&&p[1]==="owner-otp"&&m==="POST"){
   if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
-  const supplied=req.headers.get("x-setup-secret")||"",a=new TextEncoder().encode(supplied),b=new TextEncoder().encode(env.BOOTSTRAP_SECRET);let diff=a.length^b.length;for(let i=0;i<Math.max(a.length,b.length);i++)diff|=(a[i]||0)^(b[i]||0);if(diff!==0)return fail("Bootstrap Secret সঠিক নয়।",403);
-  const d=await readBody(req);if(!emailOK(d?.email)||!passwordOK(d?.password)||!textOK(d?.username,30)||!/^[a-zA-Z0-9_]{3,30}$/.test(d.username)||d.email.toLowerCase()!==(env.OWNER_EMAIL||"").toLowerCase())return fail("OWNER_EMAIL-এর সঙ্গে মিলে এমন email, ৩-৩০ অক্ষরের username (শুধু ইংরেজি অক্ষর/সংখ্যা/_) এবং অন্তত ১২ অক্ষরের password দিন।");
+  if(!env.OWNER_EMAIL||!env.RESEND_API_KEY||!env.RESEND_FROM||!env.SESSION_SECRET)return fail("Owner email verification is not configured. Set OWNER_EMAIL, RESEND_API_KEY, RESEND_FROM and SESSION_SECRET.",503);
+  const d=await readBody(req),email=String(d?.email||"").trim().toLowerCase();
+  if(!emailOK(email)||email!==env.OWNER_EMAIL.toLowerCase())return fail("ইমেইলটি Owner-এর নির্ধারিত ইমেইলের সঙ্গে মিলছে না।",403);
+  const now=Math.floor(Date.now()/1000),recent=await env.DB.prepare("SELECT created_at FROM owner_setup_otps ORDER BY created_at DESC LIMIT 1").first();
+  if(recent&&now-Number(recent.created_at)<60)return fail("নতুন কোড পাঠানোর আগে ১ মিনিট অপেক্ষা করুন।",429);
+  const code=String(crypto.randomInt?crypto.randomInt(100000,1000000):Math.floor(100000+Math.random()*900000));
+  const codeHash=await hash(email+":"+code+":"+env.SESSION_SECRET);
+  await env.DB.prepare("DELETE FROM owner_setup_otps").run();
+  await env.DB.prepare("INSERT INTO owner_setup_otps(email,code_hash,expires_at,attempts,created_at) VALUES(?,?,?,0,?)").bind(email,codeHash,now+600,now).run();
+  const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json"},body:JSON.stringify({from:env.RESEND_FROM,to:[email],subject:"DRM Premium — Owner verification code",text:"Your DRM Premium Owner verification code is "+code+". It expires in 10 minutes. If you did not request this, ignore this email."})});
+  if(!sent.ok){await env.DB.prepare("DELETE FROM owner_setup_otps").run();console.error("Owner OTP email failed",sent.status,await sent.text());return fail("ইমেইল পাঠানো যায়নি। Resend sender configuration পরীক্ষা করুন।",502)}
+  return json({ok:true,message:"ইমেইলে verification code পাঠানো হয়েছে।"});
+ }
+ if(p[0]==="auth"&&p[1]==="setup"&&m==="POST"){
+  if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
+  if(!env.SESSION_SECRET)return fail("Cloudflare SESSION_SECRET is not configured.",503);
+  const d=await readBody(req),email=String(d?.email||"").trim().toLowerCase(),otp=String(d?.code||"").trim();
+  if(!emailOK(email)||email!==String(env.OWNER_EMAIL||"").toLowerCase()||!passwordOK(d?.password)||!textOK(d?.username,30)||!/^[a-zA-Z0-9_]{3,30}$/.test(d.username)||!/^\\d{6}$/.test(otp))return fail("সঠিক Owner email, ৬ সংখ্যার কোড, username এবং অন্তত ৮ অক্ষরের password দিন।");
+  const now=Math.floor(Date.now()/1000),record=await env.DB.prepare("SELECT * FROM owner_setup_otps WHERE email=?").bind(email).first();
+  if(!record||Number(record.expires_at)<now||Number(record.attempts)>=5)return fail("কোডের মেয়াদ শেষ বা চেষ্টা সীমা অতিক্রম হয়েছে। নতুন কোড নিন।",403);
+  const expected=await hash(email+":"+otp+":"+env.SESSION_SECRET);
+  if(expected!==record.code_hash){await env.DB.prepare("UPDATE owner_setup_otps SET attempts=attempts+1 WHERE email=?").bind(email).run();return fail("Verification code সঠিক নয়।",403)}
   const id=crypto.randomUUID();
   try {
    await env.DB.batch([
-    env.DB.prepare("INSERT INTO users(id,email,username,password_hash,role,email_verified,created_at) VALUES(?,?,?,?,'owner',1,?)").bind(id,d.email.toLowerCase(),String(d.username).toLowerCase(),await makePassword(d.password),Date.now()),
+    env.DB.prepare("INSERT INTO users(id,email,username,password_hash,role,email_verified,created_at) VALUES(?,?,?,?,'owner',1,?)").bind(id,email,String(d.username).toLowerCase(),await makePassword(d.password),Date.now()),
     env.DB.prepare("UPDATE videos SET owner_id=? WHERE owner_id IS NULL").bind(id),
-    env.DB.prepare("UPDATE categories SET owner_id=? WHERE owner_id IS NULL").bind(id)
+    env.DB.prepare("UPDATE categories SET owner_id=? WHERE owner_id IS NULL").bind(id),
+    env.DB.prepare("DELETE FROM owner_setup_otps").bind()
    ]);
   } catch(e) {
    if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
    console.error("Owner bootstrap failed",e);
-   return fail("Owner account তৈরি করা যায়নি। Email/username আগে ব্যবহৃত হয়েছে কি না পরীক্ষা করুন।",409);
+   return fail("Owner account তৈরি করা যায়নি। Database migration ও username পরীক্ষা করুন।",409);
   }
   const token=await newSession(id,env);return json({ok:true},201,{"set-cookie":cookie(token)});
  }
