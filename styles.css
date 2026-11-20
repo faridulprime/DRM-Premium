@@ -181,3 +181,11 @@ footer{background:#0b0a19cc;border-top:1px solid var(--line);color:#c8c1e4}foote
 .logout-toast{background:#211d45;border:1px solid var(--line);color:#f3f0ff;box-shadow:0 18px 50px #0007}
 .quick-upload-button{background:linear-gradient(145deg,#a88cff,#5b62d9);border:1px solid #c4b5ff;color:#fff;box-shadow:0 12px 35px #8c70ff55}
 @media(max-width:760px){.topbar{position:relative;gap:12px}.hero{margin:14px 4vw;border-radius:17px}.hero-copy{min-height:340px}.hero-visual{min-height:260px;border-left:0;border-top:1px solid var(--line)}.library-tools{flex-direction:column}.content{padding-top:38px}}
+
+
+/* Scientific silver molecular identity — public header brand */
+.topbar .brand{display:flex;align-items:center;gap:12px;flex:0 0 auto;}
+.topbar .brand-mark{display:block;width:58px;height:42px;flex:0 0 58px;object-fit:contain;color:inherit;filter:drop-shadow(0 1px 2px rgba(255,255,255,.16));}
+.topbar .brand #brandName{color:#dfe4e8;font-size:20px;font-weight:800;letter-spacing:.12em;line-height:1;white-space:nowrap;text-shadow:0 1px 0 rgba(255,255,255,.12);}
+@media(max-width:760px){.topbar .brand-mark{width:48px;height:36px;flex-basis:48px}.topbar .brand #brandName{font-size:17px;letter-spacing:.09em}}
+@media(max-width:380px){.topbar .brand-mark{width:42px;height:32px;flex-basis:42px}.topbar .brand #brandName{font-size:15px;letter-spacing:.07em}}
