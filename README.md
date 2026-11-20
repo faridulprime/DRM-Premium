@@ -14,7 +14,7 @@
 
 ## Required Cloudflare setup (the Admin Panel will not function until these steps are completed)
 1. Create a Cloudflare D1 database, for example `frame-db`.
-2. Open the existing Pages project `drm-premium` (your live site) → Settings → Functions → D1 database bindings.
+2. Open the existing Pages project `drm-premium` (your live site) → Settings → Bindings → Add → D1 database bindings (the current dashboard path).
 3. Add a binding with variable name `DB` and select the new D1 database. Bind it in both Production and Preview environments if you will test the feature branch preview before merging.
 4. Open the selected D1 database → Console. Run the complete SQL from `migrations/0001_admin.sql` once.
 5. Pages project → Settings → Variables and Secrets. Add encrypted secrets:
