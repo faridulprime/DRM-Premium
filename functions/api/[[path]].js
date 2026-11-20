@@ -138,7 +138,7 @@ async function handle(req,env){
    if(Number(current.revision)!==d.baseRevision)return fail("Draft অন্য জায়গায় পরিবর্তিত হয়েছে। Reload করে আবার চেষ্টা করুন।",409);
    const result=await env.DB.batch([
     env.DB.prepare("UPDATE site_builder_documents SET draft_json=?,revision=revision+1,updated_at=? WHERE id='primary' AND revision=?").bind(encoded,now,d.baseRevision),
-    env.DB.prepare("INSERT INTO site_builder_revisions(document_id,revision,snapshot_json,created_at,actor_id,summary) SELECT 'primary',revision,draft_json,?,?, 'Draft auto-save' FROM site_builder_documents WHERE id='primary' AND revision=?").bind(now,user.id,d.baseRevision+1),
+    env.DB.prepare("INSERT INTO site_builder_revisions(document_id,revision,snapshot_json,created_at,actor_id,summary) SELECT 'primary',revision,draft_json,?,?, 'Draft auto-save' FROM site_builder_documents WHERE id='primary' AND revision=? AND changes()=1").bind(now,user.id,d.baseRevision+1),
     env.DB.prepare("DELETE FROM site_builder_revisions WHERE document_id='primary' AND created_at<?").bind(now-2592000)
    ]);
    if(!result?.[0]?.meta?.changes)return fail("Draft conflict হয়েছে। সর্বশেষ সংস্করণ Reload করুন।",409);
