@@ -4,3 +4,17 @@
 @media(max-width:1050px){.sidebar{width:215px}.main-area{margin-left:215px;padding:25px 20px}.editor-grid{grid-template-columns:minmax(0,1fr) minmax(260px,.8fr)}}
 @media(max-width:800px){.sidebar{position:relative;width:auto;height:auto;padding:15px 18px}.brand small{display:none}.side-label,.sidebar-bottom{display:none}.side-nav{display:flex;overflow:auto;margin-top:14px}.side-nav a{white-space:nowrap;padding:9px 11px}.side-nav a .side-label{display:none}.main-area{margin:0;padding:20px 15px}.editor-grid{grid-template-columns:1fr}.sticky-preview{position:static}.topbar{align-items:flex-start;flex-direction:column}.top-actions{flex-wrap:wrap}.page-tabs{padding-top:8px}.view-heading{align-items:flex-start;flex-direction:column}}
 @media(max-width:520px){.panel{padding:15px}.markdown-grid{grid-template-columns:1fr}.markdown-preview{min-height:120px}.youtube-preview{grid-template-columns:95px minmax(0,1fr)}.topbar h1{font-size:28px}.identity{display:none}.studio-footer{flex-direction:column;gap:8px}}
+
+
+/* Opaque, non-sticky creator workspace surfaces. */
+.sidebar,.panel,.list-panel,.status-pill,.identity,.page-tabs,.markdown-preview,
+.panel input:not([type=checkbox]),.panel textarea,.panel select,.youtube-preview,
+.post-preview,.cover-preview,dialog{
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+.sidebar{position:relative!important;background:#171b30!important}
+.panel{background:#242943!important}
+.list-panel{background:#20243c!important}
+.panel input:not([type=checkbox]),.panel textarea,.panel select,.markdown-preview{background:#171b30!important}
+.sticky-preview{position:static!important;top:auto!important}
+dialog::backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
