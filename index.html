@@ -9,6 +9,28 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<aside class="dashboard-sidebar" aria-label="ড্যাশবোর্ড সাইডবার">
+  <a class="sidebar-brand" href="#home"><span class="sidebar-crown">♛</span><span>DRM PREMIUM<small>PROFESSIONAL CONTENT HUB</small></span></a>
+  <div class="sidebar-profile"><div class="profile-avatar" aria-hidden="true">D</div><div><span class="profile-caption">ACCOUNT TYPE</span><strong id="sidebarRole">GUEST</strong><small id="sidebarIdentity">Sign in to access your workspace</small></div></div>
+  <p class="sidebar-label">WORKSPACE</p>
+  <nav class="sidebar-nav" aria-label="ড্যাশবোর্ড মেনু">
+    <a class="selected" href="#home"><span>⌂</span> Home</a>
+    <a href="#browse"><span>▣</span> Videos</a>
+    <a href="#articles"><span>▤</span> Articles</a>
+    <a href="#references"><span>◫</span> Reference</a>
+    <a href="#books"><span>▧</span> Books</a>
+    <a href="#admin"><span>⚙</span> Admin Dashboard</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="sidebar-secure"><i></i> Secure workspace</div>
+    <div id="viewModeSwitcher" class="view-mode-switcher" aria-label="ভিউ নির্বাচন">
+      <button type="button" data-view-mode="basic" title="বেসিক ভিউ" aria-pressed="false">Basic</button>
+      <button type="button" data-view-mode="modern" class="active" aria-pressed="true">Modern</button>
+    </div>
+    <button class="sidebar-menu-button" type="button" id="sidebarMenuButton">☰ <span>Account & Settings</span></button>
+  </div>
+</aside>
+
 <header class="topbar">
   <a class="brand" href="/" aria-label="DRM Premium home"><img class="brand-mark" src="/assets/testosterone-molecule.svg" alt="" aria-hidden="true" decoding="async"><span id="brandName">DRM PREMIUM</span></a>
   <nav id="mainNav" aria-label="প্রধান নেভিগেশন"><a class="active" href="#home">মূল পৃষ্ঠা</a><a href="#browse">ভিডিও</a><a href="#references">রেফারেন্স</a><a href="#articles">আর্টিকেল</a><a href="#books">বইপত্র</a><a href="#admin">এডমিন</a></nav>
@@ -43,7 +65,7 @@
 </div>
 <div class="site-intro" id="siteIntro" aria-hidden="true"><div class="intro-mark">DRM<span>–</span></div><p>PREMIUM EXPERIENCE</p></div>
 <main id="home">
-<div class="view-mode-switcher" id="viewModeSwitcher" aria-label="ভিউ নির্বাচন">
+<div class="view-mode-switcher legacy-view-switcher" aria-label="ভিউ নির্বাচন">
   <button type="button" data-view-mode="basic" title="এটি স্লো ইন্টারনেটের জন্য" aria-pressed="false">বেসিক ভিউ</button>
   <button type="button" data-view-mode="modern" title="এটি ফাস্ট ইন্টারনেটের জন্য" class="active" aria-pressed="true">মডার্ন ভিউ</button>
 </div>
@@ -58,8 +80,18 @@
   <div class="hero-visual" role="img" aria-label="Minimal architectural composition with a tree"></div>
   <div class="hero-corner"></div>
 </section>
+
+<section class="dashboard-overview" aria-label="Overview">
+  <div class="overview-heading"><div><p class="eyebrow">YOUR WORKSPACE</p><h2>Dashboard Overview</h2></div><span class="live-indicator"><i></i> LIVE WORKSPACE</span></div>
+  <div class="overview-metrics">
+    <article class="overview-card"><span class="overview-icon video-icon">▶</span><div><small>VIDEOS</small><strong id="dashboardVideoCount">০</strong></div></article>
+    <article class="overview-card"><span class="overview-icon article-icon">▤</span><div><small>CATEGORIES</small><strong id="dashboardCategoryCount">০</strong></div></article>
+    <article class="overview-card"><span class="overview-icon reference-icon">▱</span><div><small>ARTICLES</small><strong id="dashboardArticleCount">০</strong></div></article>
+    <article class="overview-card"><span class="overview-icon member-icon">♙</span><div><small>REFERENCES</small><strong id="dashboardReferenceCount">০</strong></div></article>
+  </div>
+</section>
 <section class="content" id="browse">
-  <div class="section-head"><div><p class="eyebrow" id="libraryEyebrow">DISCOVER</p><h2 id="libraryTitle">ভিডিও লাইব্রেরি</h2></div></div><div class="library-tools"><input id="search" type="search" placeholder="শিরোনাম, বর্ণনা বা ক্যাটাগরি খুঁজুন..." aria-label="কনটেন্ট খুঁজুন"><select id="categoryFilter"><option value="all">সব ক্যাটাগরি</option></select></div>
+  <div class="section-head"><div><p class="eyebrow" id="libraryEyebrow">DISCOVER</p><h2 id="libraryTitle">ভিডিও লাইব্রেরি</h2></div></div><div class="dashboard-segment-tabs" aria-label="Content shortcuts"><a class="active" href="#browse">▶ <span>Latest Videos</span></a><a href="#articles">▤ <span>Articles</span></a><a href="#references">▱ <span>Reference</span></a><a href="#books">▧ <span>Books</span></a></div><div class="library-tools"><input id="search" type="search" placeholder="শিরোনাম, বর্ণনা বা ক্যাটাগরি খুঁজুন..." aria-label="কনটেন্ট খুঁজুন"><select id="categoryFilter"><option value="all">সব ক্যাটাগরি</option></select></div>
   <div id="videoRows"></div><p id="emptyState" class="empty" hidden>কোনো ভিডিও পাওয়া যায়নি।</p>
 </section>
 <section class="content resource-section" id="references"><div class="section-head"><div><p class="eyebrow">REFERENCE</p><h2>রেফারেন্স</h2></div></div><p class="empty">রেফারেন্স বিভাগে শিগগিরই কনটেন্ট যোগ করা হবে।</p></section>
@@ -71,5 +103,6 @@
 <footer id="about"><span id="footerBrand">DRM PREMIUM</span><span id="footerText">একটি ব্যক্তিগত ভিডিও লাইব্রেরি</span></footer>
 <dialog id="playerDialog" class="player-dialog"><button class="close" data-close="playerDialog">✕</button><div id="playerFrame" class="player-frame"></div><div class="player-info"><h2 id="playerTitle"></h2><p id="playerDescription"></p></div></dialog>
 <script src="app.js"></script>
+<script>document.getElementById("sidebarMenuButton")?.addEventListener("click",()=>document.getElementById("menuToggle")?.click());</script>
 </body>
 </html>
