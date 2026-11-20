@@ -26,15 +26,27 @@
     <span id="headerLoginStatus" class="header-login-status" role="status" aria-live="polite"></span>
   </form>
   <div class="account-controls">
-    <span id="proBadge" class="pro-badge" hidden><svg class="pro-crown" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 18.5h18l-1.6-10-5.1 4.1L12 5l-2.3 7.6L4.6 8.5 3 18.5Z"/><path d="M4.5 21h15"/></svg><span>PRO</span></span>
-    <button id="menuToggle" class="menu-toggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false"><span></span><span></span></button>
+    <span id="proBadge" class="pro-badge" hidden><svg class="pro-crown" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 18.5h18l-1.6-10-5.1 4.1L12 5l-2.3 7.6L4.6 8.5 3 18.5Z"/><path d="M4.5 21h15"/></svg><span>PRO ELITE</span></span>
+    <button id="menuToggle" class="menu-toggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false"><span></span><span></span><span class="menu-toggle-core"></span></button>
   </div>
 </header>
   <div id="menuBackdrop" class="menu-backdrop" hidden></div>
   <aside id="accountDrawer" class="account-drawer" aria-hidden="true">
-    <div class="drawer-head"><span>DRM PREMIUM</span><button id="menuClose" type="button" aria-label="মেনু বন্ধ করুন">×</button></div>
-    <div class="drawer-content"><p class="drawer-kicker">Account Type</p><p id="drawerAccountLabel" class="drawer-account-label">Guest access</p></div>
-    <div class="drawer-bottom"><button id="logoutButton" class="logout-button" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9"/></svg><span>LogOut</span></button></div>
+    <div class="drawer-head"><div class="drawer-brand"><span class="drawer-brand-mark">D</span><span><strong>DRM PREMIUM</strong><small>THE PRIVATE EXPERIENCE</small></span></div><button id="menuClose" type="button" aria-label="মেনু বন্ধ করুন">×</button></div>
+    <div class="drawer-content">
+      <div class="drawer-profile"><span class="drawer-profile-icon">✦</span><div><p class="drawer-kicker">ACCOUNT ACCESS</p><p id="drawerAccountLabel" class="drawer-account-label">অতিথি</p></div><span class="drawer-access-tag">SECURE</span></div>
+      <p class="drawer-section-label">EXPLORE</p>
+      <nav class="drawer-nav" aria-label="মেনু নেভিগেশন">
+        <a href="#home"><span class="drawer-nav-icon">⌂</span><span>মূল পৃষ্ঠা</span><span class="drawer-nav-arrow">↗</span></a>
+        <a href="#browse"><span class="drawer-nav-icon">▣</span><span>ভিডিও লাইব্রেরি</span><span class="drawer-nav-arrow">↗</span></a>
+        <a href="#references"><span class="drawer-nav-icon">◇</span><span>রেফারেন্স</span><span class="drawer-nav-arrow">↗</span></a>
+        <a href="#articles"><span class="drawer-nav-icon">▤</span><span>আর্টিকেল</span><span class="drawer-nav-arrow">↗</span></a>
+        <a href="#books"><span class="drawer-nav-icon">▥</span><span>বইপত্র</span><span class="drawer-nav-arrow">↗</span></a>
+        <a href="#admin"><span class="drawer-nav-icon">⌘</span><span>এডমিন ড্যাশবোর্ড</span><span class="drawer-nav-arrow">↗</span></a>
+      </nav>
+      <div class="drawer-note"><span>✧</span><p><strong>Curated for curious minds</strong><small>Video · Story · Knowledge</small></p></div>
+    </div>
+    <div class="drawer-bottom"><button id="logoutButton" class="logout-button" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9"/></svg><span>Log Out</span></button></div>
   </aside>
 
 <main id="home">
