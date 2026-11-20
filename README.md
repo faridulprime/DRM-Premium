@@ -36,14 +36,14 @@ The management API requires the D1 database binding and encrypted secrets.
 8. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
    - In Project Settings → Script Properties, add `DRM_OTP_TOKEN` (a long random value) and `OWNER_EMAIL` (the same Owner email).
    - Deploy → New deployment → Web app. Execute as **Me**; access: **Anyone**. Authorize Gmail sending when prompted and copy the Web app URL ending in `/exec`.
-8. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
+9. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
    - `OWNER_EMAIL`: the one email address allowed to create the single Owner account.
    - `GOOGLE_APPS_SCRIPT_URL`: the Apps Script Web app `/exec` URL.
    - `GOOGLE_APPS_SCRIPT_TOKEN`: exactly the same random value saved as Apps Script property `DRM_OTP_TOKEN`.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
 10. Deploy the `feature/full-admin-panel` branch to a Preview URL.
 11. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
-11. Test Owner and Admin permissions using separate test accounts before merging.
+12. Test Owner and Admin permissions using separate test accounts before merging.
 
 Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only. Do not use a password previously shared in chat.
 
@@ -62,6 +62,7 @@ Run all six migration files once per database in the documented order: `0001`, `
 - The initial Owner setup verifies the configured Owner email with a one-time code sent through Gmail using the Google Apps Script mailer; no Owner password, OTP, or mailer token is stored in source code.
 - Direct binary image upload is not included; the current site accepts HTTPS image URLs.
 - Admin content ownership currently covers videos and categories. Article, reference and folder content types need their own owner_id schema/API before those features are enabled.
+- Website Builder foundation: Owner-only draft/state/history API, schema-validated JSON documents, optimistic revision conflict checks and a 30-day revision timeline. The visual editing UI, live renderer, publish pipeline and media management are not yet implemented; `/api/builder/state` explicitly reports `publishEnabled: false` until that work is complete.
 - Dashboard tab-view analytics, online Admin presence and video post counts are implemented. Analytics currently records main navigation tab visits; it does not yet measure unique visitors or detailed engagement.
 - Use YouTube videos you own or are authorized to embed. Unlisted links are not access-controlled.
 
