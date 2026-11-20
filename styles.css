@@ -2531,3 +2531,184 @@ body.view-basic *,body.view-basic *:before,body.view-basic *:after{
 @media(prefers-reduced-motion:reduce){
   .account-drawer,.menu-toggle,.menu-toggle span,.drawer-nav a,.drawer-head button{transition:none!important}
 }
+
+
+/* === WORKSPACE DASHBOARD · ULTRA PREMIUM SIDE PANEL ONLY ===
+   Scope is intentionally limited to #accountDrawer. The site header,
+   menu toggle, page layout, backdrop, and all non-drawer components are untouched. */
+#accountDrawer.workspace-drawer{
+  width:min(438px,94vw)!important;
+  padding:24px 22px 20px!important;
+  color:#edf2f7!important;
+  background:
+    radial-gradient(ellipse at 82% 0%,rgba(113,143,170,.16),transparent 36%),
+    linear-gradient(158deg,#151b22 0%,#0c1117 54%,#111820 100%)!important;
+  border-left:1px solid rgba(184,199,213,.2)!important;
+  box-shadow:-28px 0 82px rgba(0,0,0,.42),inset 1px 0 0 rgba(255,255,255,.055)!important;
+}
+#accountDrawer .drawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 0 18px!important;border-bottom:1px solid rgba(190,204,218,.13)!important;
+}
+#accountDrawer .drawer-brand{gap:12px}
+#accountDrawer .drawer-brand-mark{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(145deg,#dce5ed,#8998a7 58%,#4a5968)!important;
+  color:#111820!important;font:900 22px/1 Georgia,serif!important;
+  border:1px solid rgba(255,255,255,.52)!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.8)!important;
+}
+#accountDrawer .drawer-brand strong{
+  color:#f2f5f8!important;font:800 13px Inter,Arial,sans-serif!important;letter-spacing:.13em!important;
+}
+#accountDrawer .drawer-brand small{
+  color:#8998a8!important;font:700 8px Inter,Arial,sans-serif!important;letter-spacing:.22em!important;
+}
+#accountDrawer .drawer-head button{
+  width:35px;height:35px;border:1px solid rgba(190,204,218,.2)!important;border-radius:11px!important;
+  background:linear-gradient(145deg,#27323e,#151d26)!important;color:#dce5ed!important;
+  box-shadow:0 5px 15px rgba(0,0,0,.22)!important;
+}
+#accountDrawer .workspace-content{padding-top:20px!important}
+#accountDrawer .workspace-identity{
+  position:relative;overflow:hidden;padding:17px 16px 13px;
+  border:1px solid rgba(192,207,222,.2);border-radius:17px;
+  background:
+    linear-gradient(112deg,rgba(255,255,255,.075),rgba(255,255,255,.018)),
+    radial-gradient(ellipse at 100% 0%,rgba(124,153,179,.2),transparent 56%),
+    #171f28;
+  box-shadow:0 15px 35px rgba(0,0,0,.23),inset 0 1px 0 rgba(255,255,255,.08);
+}
+#accountDrawer .workspace-identity:after{
+  content:"";position:absolute;right:-38px;top:-64px;width:170px;height:170px;border-radius:50%;
+  border:1px solid rgba(208,221,233,.1);box-shadow:0 0 0 15px rgba(208,221,233,.025),0 0 0 31px rgba(208,221,233,.018);
+  pointer-events:none;
+}
+#accountDrawer .workspace-identity-top{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+#accountDrawer .workspace-avatar{
+  display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;border-radius:15px;
+  color:#18212a;background:linear-gradient(145deg,#f0f4f7,#9eacba);
+  border:1px solid rgba(255,255,255,.72);font:900 23px Georgia,serif;
+  box-shadow:0 7px 18px rgba(0,0,0,.25),inset 0 1px 0 #fff;
+}
+#accountDrawer .workspace-identity-copy{min-width:0;flex:1}
+#accountDrawer .drawer-kicker{
+  margin:0 0 5px!important;color:#94a7b9!important;
+  font:750 8px Inter,Arial,sans-serif!important;letter-spacing:.2em!important;
+}
+#accountDrawer .drawer-account-label{
+  color:#f4f7fa!important;font:700 16px 'Hind Siliguri',sans-serif!important;margin:0!important;
+}
+#accountDrawer .workspace-member-caption{
+  display:block;margin-top:3px;color:#8091a2;font:650 7px Inter,Arial,sans-serif;letter-spacing:.16em;
+}
+#accountDrawer .workspace-access-mark{
+  color:#b7c5d2;font:700 15px Inter,Arial,sans-serif;opacity:.8;
+}
+#accountDrawer .workspace-meta{
+  display:flex;justify-content:space-between;gap:8px;margin-top:15px;padding-top:11px;
+  border-top:1px solid rgba(195,209,223,.12);color:#8293a4;
+  font:700 7px Inter,Arial,sans-serif;letter-spacing:.16em;
+}
+#accountDrawer .workspace-meta span:first-child{display:flex;align-items:center;gap:6px}
+#accountDrawer .workspace-meta i{
+  width:6px;height:6px;border-radius:50%;background:#9eafbf;
+  box-shadow:0 0 0 3px rgba(158,175,191,.12);
+}
+#accountDrawer .workspace-section-heading{
+  display:flex;align-items:end;justify-content:space-between;gap:10px;margin:22px 1px 12px;
+}
+#accountDrawer .drawer-section-label{
+  margin:0 0 4px!important;color:#aab8c5!important;
+  font:800 8px Inter,Arial,sans-serif!important;letter-spacing:.2em!important;
+}
+#accountDrawer .workspace-section-heading>div>span{
+  color:#738394;font:500 11px 'Hind Siliguri',sans-serif;
+}
+#accountDrawer .workspace-count{
+  padding:5px 7px;border:1px solid rgba(174,190,205,.17);border-radius:6px;
+  color:#9baaba;background:rgba(255,255,255,.035);
+  font:700 7px Inter,Arial,sans-serif;letter-spacing:.12em;white-space:nowrap;
+}
+#accountDrawer .workspace-nav{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px!important;
+}
+#accountDrawer .workspace-nav .workspace-link{
+  position:relative;display:flex!important;align-items:center;gap:9px;min-width:0;min-height:62px;
+  padding:10px 10px!important;border:1px solid rgba(185,201,216,.13)!important;border-radius:12px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.022))!important;
+  color:#e7edf3!important;text-decoration:none!important;
+  box-shadow:0 7px 17px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.045)!important;
+  transform:none!important;transition:background .2s ease,border-color .2s ease,box-shadow .2s ease!important;
+}
+#accountDrawer .workspace-nav .workspace-link:hover,
+#accountDrawer .workspace-nav .workspace-link:focus-visible{
+  background:linear-gradient(145deg,rgba(174,195,214,.17),rgba(255,255,255,.045))!important;
+  border-color:rgba(198,214,229,.38)!important;
+  box-shadow:0 10px 23px rgba(0,0,0,.23),inset 0 1px 0 rgba(255,255,255,.1)!important;
+  outline:none;
+}
+#accountDrawer .workspace-nav .workspace-link-featured{
+  grid-column:1/-1;min-height:55px;
+  background:linear-gradient(105deg,rgba(151,173,194,.17),rgba(255,255,255,.035))!important;
+  border-color:rgba(192,208,223,.23)!important;
+}
+#accountDrawer .workspace-nav .drawer-nav-icon{
+  display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;
+  border:1px solid rgba(195,210,225,.16)!important;border-radius:9px!important;
+  background:linear-gradient(145deg,#344250,#1b2631)!important;color:#d7e1ea!important;
+  font-size:17px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.09)!important;
+}
+#accountDrawer .workspace-link-copy{display:grid;gap:3px;min-width:0;flex:1}
+#accountDrawer .workspace-link-copy strong{
+  overflow:hidden;color:#e9eff4;font:650 12px 'Hind Siliguri',sans-serif;white-space:nowrap;text-overflow:ellipsis;
+}
+#accountDrawer .workspace-link-copy small{
+  color:#758698;font:700 6px Inter,Arial,sans-serif;letter-spacing:.11em;white-space:nowrap;
+}
+#accountDrawer .drawer-nav-arrow{
+  margin-left:auto;color:#91a2b2!important;font:600 12px Inter,Arial,sans-serif!important;opacity:.8;
+}
+#accountDrawer .workspace-footer-card{
+  display:flex;align-items:center;gap:11px;margin-top:17px;padding:12px 13px;
+  border:1px solid rgba(185,201,216,.12);border-radius:12px;
+  background:linear-gradient(110deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+}
+#accountDrawer .workspace-footer-icon{
+  display:grid;place-items:center;width:31px;height:31px;border-radius:9px;
+  color:#d4dee7;background:#293541;border:1px solid rgba(195,210,225,.16);font-size:17px;
+}
+#accountDrawer .workspace-footer-card div{display:grid;gap:4px}
+#accountDrawer .workspace-footer-card strong{color:#cbd5df;font:650 9px Inter,Arial,sans-serif}
+#accountDrawer .workspace-footer-card small{color:#718294;font:650 6px Inter,Arial,sans-serif;letter-spacing:.12em}
+#accountDrawer .drawer-bottom{
+  margin-top:auto;padding-top:15px!important;border-top:1px solid rgba(190,204,218,.13)!important;
+}
+#accountDrawer .logout-button{
+  width:100%;min-height:45px!important;justify-content:center;
+  border:1px solid rgba(193,208,222,.2)!important;border-radius:11px!important;
+  color:#e5ebf1!important;background:linear-gradient(145deg,#34414e,#1b2530)!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.09)!important;
+  font:750 10px Inter,Arial,sans-serif!important;letter-spacing:.1em!important;
+}
+#accountDrawer .logout-button:hover{
+  background:linear-gradient(145deg,#42515f,#202c38)!important;
+  border-color:rgba(210,223,235,.36)!important;
+}
+@media(max-width:760px){
+  #accountDrawer.workspace-drawer{width:min(420px,94vw)!important;padding:19px 16px 16px!important}
+  #accountDrawer .workspace-nav{gap:7px!important}
+  #accountDrawer .workspace-nav .workspace-link{min-height:58px;padding:8px!important}
+  #accountDrawer .workspace-nav .drawer-nav-icon{width:30px;height:30px;flex-basis:30px}
+}
+@media(max-height:720px){
+  #accountDrawer.workspace-drawer{padding-top:15px!important;padding-bottom:13px!important}
+  #accountDrawer .workspace-content{padding-top:13px!important}
+  #accountDrawer .workspace-identity{padding:12px 13px 10px}
+  #accountDrawer .workspace-section-heading{margin:15px 1px 9px}
+  #accountDrawer .workspace-nav .workspace-link{min-height:52px}
+  #accountDrawer .workspace-footer-card{margin-top:11px;padding:9px 11px}
+}
+@media(prefers-reduced-motion:reduce){
+  #accountDrawer .workspace-nav .workspace-link{transition:none!important}
+}
