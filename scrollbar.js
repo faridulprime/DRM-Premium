@@ -67,16 +67,19 @@
     };
 
     const scrollFromPointer = (clientY) => {
-      const m = getMetrics();
-      if (!m.maxScroll || !m.travel) return;
+      const m = metrics;
+      if (!m || !m.maxScroll || !m.travel) return;
       const top = Math.min(m.travel, Math.max(0, clientY - drag.grabOffset));
       window.scrollTo({ top: (top / m.travel) * m.maxScroll, behavior: "auto" });
     };
 
     thumb.addEventListener("pointerdown", (event) => {
       if (event.button !== 0 && event.pointerType === "mouse") return;
-      const m = getMetrics();
-      const currentTop = m.maxScroll ? (m.scrollTop / m.maxScroll) * m.travel : 0;
+      const m = metrics;
+      if (!m) return;
+      const doc = document.scrollingElement || root;
+      const currentScroll = Math.min(m.maxScroll, Math.max(0, window.scrollY || doc.scrollTop || 0));
+      const currentTop = m.maxScroll ? (currentScroll / m.maxScroll) * m.travel : 0;
       drag = { pointerId: event.pointerId, startY: event.clientY, startTop: currentTop, grabOffset: event.clientY - currentTop };
       thumb.setPointerCapture?.(event.pointerId);
       event.preventDefault();
