@@ -29,13 +29,11 @@ function applySettings(){
 }
 
 function visualSelector(el){
- if(el.id)return "#"+CSS.escape(el.id);
- const parts=[];let node=el;
- while(node&&node!==document.body){let part=node.tagName.toLowerCase();if(node.parentElement){const siblings=[...node.parentElement.children].filter(x=>x.tagName===node.tagName);if(siblings.length>1)part+=":nth-of-type("+(siblings.indexOf(node)+1)+")";}parts.unshift(part);node=node.parentElement;}
- return "body>"+parts.join(">");
+ const doc=el.ownerDocument||document,root=doc.body;if(el.id)return "#"+CSS.escape(el.id);
+ const parts=[];let node=el;while(node&&node!==root){let part=node.tagName.toLowerCase();if(node.parentElement){const siblings=[...node.parentElement.children].filter(x=>x.tagName===node.tagName);if(siblings.length>1)part+=":nth-of-type("+(siblings.indexOf(node)+1)+")";}parts.unshift(part);node=node.parentElement;}return "body>"+parts.join(">");
 }
 function applyVisualConfig(){
- for(const item of Object.values(visualConfig)){if(!item||typeof item.selector!=="string")continue;let el;try{el=document.querySelector(item.selector)}catch{}if(!el)continue;if(typeof item.text==="string")el.textContent=item.text;const s=item.style||{};if(Number.isFinite(s.fontSize))el.style.fontSize=s.fontSize+"px";if(/^#[0-9a-f]{6}$/i.test(s.color||""))el.style.color=s.color;if(/^#[0-9a-f]{6}$/i.test(s.background||""))el.style.backgroundColor=s.background;if(s.shadow&&/^#[0-9a-f]{6}$/i.test(s.shadow.color||""))el.style.textShadow=(s.shadow.x||0)+"px "+(s.shadow.y||0)+"px "+(s.shadow.blur||0)+"px "+s.shadow.color;}
+ for(const item of Object.values(visualConfig)){if(!item||typeof item.selector!=="string")continue;let el;try{el=document.querySelector(item.selector)}catch{}if(!el)continue;if(typeof item.text==="string"&&item.replaceText===true&&el.children.length===0)el.textContent=item.text;const s=item.style||{};if(Number.isFinite(s.fontSize))el.style.fontSize=s.fontSize+"px";if(/^#[0-9a-f]{6}$/i.test(s.color||""))el.style.color=s.color;if(/^#[0-9a-f]{6}$/i.test(s.background||""))el.style.backgroundColor=s.background;if(s.shadow&&/^#[0-9a-f]{6}$/i.test(s.shadow.color||""))el.style.textShadow=(s.shadow.x||0)+"px "+(s.shadow.y||0)+"px "+(s.shadow.blur||0)+"px "+s.shadow.color;}
 }
 function setVisualEditor(user){
  const toggle=$("#visualEditorToggle");if(!toggle)return;toggle.hidden=Boolean(new URLSearchParams(location.search).has("builderPreview"))||!(user&&user.role==="owner");
@@ -45,7 +43,7 @@ function selectVisualElement(el){
 }
 function visualDraft(){
  if(!visualSelected)return null;const selector=visualSelector(visualSelected);
- return {selector,text:$("#veText").value.slice(0,2000),style:{fontSize:Math.min(96,Math.max(8,Number($("#veFontSize").value)||16)),color:$("#veColor").value,background:$("#veBackground").value,shadow:{color:$("#veShadowColor").value,x:Math.min(20,Math.max(-20,Number($("#veShadowX").value)||0)),y:Math.min(20,Math.max(-20,Number($("#veShadowY").value)||0)),blur:Math.min(30,Math.max(0,Number($("#veShadowBlur").value)||0))}}};
+ return {selector,text:$("#veText").value.slice(0,2000),replaceText:true,style:{fontSize:Math.min(96,Math.max(8,Number($("#veFontSize").value)||16)),color:$("#veColor").value,background:$("#veBackground").value,shadow:{color:$("#veShadowColor").value,x:Math.min(20,Math.max(-20,Number($("#veShadowX").value)||0)),y:Math.min(20,Math.max(-20,Number($("#veShadowY").value)||0)),blur:Math.min(30,Math.max(0,Number($("#veShadowBlur").value)||0))}}};
 }
 function applyVisualDraft(item){
  if(!item||!visualSelected)return;visualSelected.textContent=item.text;const s=item.style;visualSelected.style.fontSize=s.fontSize+"px";visualSelected.style.color=s.color;visualSelected.style.backgroundColor=s.background;visualSelected.style.textShadow=s.shadow.x+"px "+s.shadow.y+"px "+s.shadow.blur+"px "+s.shadow.color;
@@ -139,7 +137,7 @@ function sbSelectLiveElement(el){
  sbLiveSelected=el;if(!el.dataset.sbOriginalOutline)el.dataset.sbOriginalOutline=el.style.outline||"";
  el.style.setProperty("outline","2px solid #e11d48","important");el.style.setProperty("outline-offset","2px","important");
  const cs=el.ownerDocument.defaultView.getComputedStyle(el),host=$("#sbInspectorBody");
- host.innerHTML='<p>Selected website element: <strong>'+esc(el.tagName.toLowerCase()+(el.id?"#"+el.id:""))+'</strong></p>'+sbField("Text / label","liveText",(el.innerText||el.textContent||"").trim().slice(0,2000))+sbField("Font size (px)","liveFontSize",parseFloat(cs.fontSize)||16,"number")+sbField("Text color","liveColor",rgbToHex(cs.color),"color")+sbField("Background","liveBackground",rgbToHex(cs.backgroundColor),"color")+'<div class="sb-inspector-actions"><button id="sbApplyLive" type="button">Apply preview</button><button id="sbSaveLive" type="button">Save website style</button></div><p class="sb-muted">Website navigation and actions are disabled in Builder mode.</p>';
+ host.innerHTML='<p>Selected website element: <strong>'+esc(el.tagName.toLowerCase()+(el.id?"#"+el.id:""))+'</strong></p>'+(el.children.length===0?sbField("Text / label","liveText",(el.innerText||el.textContent||"").trim().slice(0,2000)):'<p class="sb-muted">Text editing is disabled for this container to preserve its child elements. Select a text element inside it.</p>')+sbField("Font size (px)","liveFontSize",parseFloat(cs.fontSize)||16,"number")+sbField("Text color","liveColor",rgbToHex(cs.color),"color")+sbField("Background","liveBackground",rgbToHex(cs.backgroundColor),"color")+'<div class="sb-inspector-actions"><button id="sbApplyLive" type="button">Apply preview</button><button id="sbSaveLive" type="button">Save website style</button></div><p class="sb-muted">Website navigation and actions are disabled in Builder mode.</p>';
  $("#sbSelectedType").textContent="Website · "+el.tagName.toLowerCase();
 }
 function rgbToHex(value){const m=String(value).match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);return m?"#"+[m[1],m[2],m[3]].map(v=>Number(v).toString(16).padStart(2,"0")).join(""):"#ffffff";}
@@ -159,12 +157,12 @@ function sbApplyLiveChanges(save){
  const el=sbLiveSelected,host=$("#sbInspectorBody");if(!el)return;
  const get=k=>host.querySelector('[data-sb-prop="'+k+'"]')?.value;
  const text=get("liveText"),font=Number(get("liveFontSize")),color=get("liveColor"),bg=get("liveBackground");
- if(text!==undefined){if(el.matches("input,textarea"))el.value=text;else if(el.children.length===0)el.textContent=text;}
+ if(text!==undefined&&el.children.length===0){if(el.matches("input,textarea"))el.value=text;else el.textContent=text;}
  if(Number.isFinite(font)&&font>=8&&font<=96)el.style.fontSize=font+"px";
  if(/^#[0-9a-f]{6}$/i.test(color||""))el.style.color=color;
  if(/^#[0-9a-f]{6}$/i.test(bg||""))el.style.backgroundColor=bg;
  if(!save){$("#sbMessage").textContent="Preview changes applied.";return;}
- const selector=visualSelector(el),item={selector,text:(el.innerText||el.textContent||"").slice(0,2000),style:{fontSize:Math.min(96,Math.max(8,font||16)),color:color||"#ffffff",background:bg||"#ffffff",shadow:{color:"#000000",x:0,y:0,blur:0}}},config={...visualConfig,[selector]:item};
+ const selector=visualSelector(el),item={selector,text:el.children.length===0?(el.innerText||el.textContent||"").slice(0,2000):"",replaceText:el.children.length===0,style:{fontSize:Math.min(96,Math.max(8,font||16)),color:color||"#ffffff",background:bg||"#ffffff",shadow:{color:"#000000",x:0,y:0,blur:0}}},config={...visualConfig,[selector]:item};
  fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:JSON.stringify(config)})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Save failed");visualConfig=config;$("#sbMessage").textContent="Website style saved.";}).catch(e=>$("#sbMessage").textContent=e.message);
 }
 function sbLayerHTML(n,depth){return '<button class="sb-layer '+(n.id===sbSelected?'active':'')+'" data-sb-select="'+esc(n.id)+'" style="--depth:'+Math.min(depth,8)+'" type="button"><span>▧</span>'+esc(SB_LABELS[n.type]||n.type)+' <small>'+esc(n.id.slice(-5))+'</small></button>'+(n.children||[]).map(c=>sbLayerHTML(c,depth+1)).join("");}
