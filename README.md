@@ -31,17 +31,18 @@ The management API requires the D1 database binding and encrypted secrets.
 3. In the `drmdatabase-preview` Console, run `migrations/0001_admin.sql` once.
 4. Then run `migrations/0002_owner_roles_and_content_ownership.sql` once.
 5. Then run `migrations/0003_single_owner_guard.sql` once. This adds a database-level unique constraint so only one Owner can exist.
-6. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
+6. Then run **both** `migrations/0004_admin_analytics.sql` and `migrations/0004_owner_email_otp.sql` once. The first creates the analytics and admin-presence tables; the second creates the Owner OTP table. Both are required by the current API.
+7. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
    - In Project Settings → Script Properties, add `DRM_OTP_TOKEN` (a long random value) and `OWNER_EMAIL` (the same Owner email).
    - Deploy → New deployment → Web app. Execute as **Me**; access: **Anyone**. Authorize Gmail sending when prompted and copy the Web app URL ending in `/exec`.
-7. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
+8. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
    - `OWNER_EMAIL`: the one email address allowed to create the single Owner account.
    - `GOOGLE_APPS_SCRIPT_URL`: the Apps Script Web app `/exec` URL.
    - `GOOGLE_APPS_SCRIPT_TOKEN`: exactly the same random value saved as Apps Script property `DRM_OTP_TOKEN`.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
-8. Deploy the `feature/full-admin-panel` branch to a Preview URL.
-9. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
-10. Test Owner and Admin permissions using separate test accounts before merging.
+9. Deploy the `feature/full-admin-panel` branch to a Preview URL.
+10. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
+11. Test Owner and Admin permissions using separate test accounts before merging.
 
 Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only. Do not use a password previously shared in chat.
 
@@ -51,7 +52,7 @@ The first migration creates the original users, sessions, login-attempt throttli
 
 The second migration adds usernames, email-verification state, Owner role and content ownership columns. It promotes the first existing account to Owner. If the Owner is created after migration, the bootstrap endpoint assigns any legacy unowned content to that Owner.
 
-Run each migration only once per database, in numerical order. Keep D1 backups/exports before applying schema changes to a database containing important data.
+Run all five migration files once per database in the documented order: `0001`, `0002`, `0003`, then both `0004` files. Keep D1 backups/exports before applying schema changes to a database containing important data.
 
 ## Important implementation status / limitations
 
@@ -60,7 +61,7 @@ Run each migration only once per database, in numerical order. Keep D1 backups/e
 - The initial Owner setup verifies the configured Owner email with a one-time code sent through Gmail using the Google Apps Script mailer; no Owner password, OTP, or mailer token is stored in source code.
 - Direct binary image upload is not included; the current site accepts HTTPS image URLs.
 - Admin content ownership currently covers videos and categories. Article, reference and folder content types need their own owner_id schema/API before those features are enabled.
-- Dashboard activity/online indicators and upload-count analytics are not implemented yet.
+- Dashboard tab-view analytics, online Admin presence and video post counts are implemented. Analytics currently records main navigation tab visits; it does not yet measure unique visitors or detailed engagement.
 - Use YouTube videos you own or are authorized to embed. Unlisted links are not access-controlled.
 
 ## Site identity
