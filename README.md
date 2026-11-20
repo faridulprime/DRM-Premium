@@ -31,13 +31,16 @@ The management API requires the D1 database binding and encrypted secrets.
 3. In the `drmdatabase-preview` Console, run `migrations/0001_admin.sql` once.
 4. Then run `migrations/0002_owner_roles_and_content_ownership.sql` once.
 5. Then run `migrations/0003_single_owner_guard.sql` once. This adds a database-level unique constraint so only one Owner can exist.
-6. Pages project → Settings → Variables and Secrets. Add encrypted secrets:
+6. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
+   - In Project Settings → Script Properties, add `DRM_OTP_TOKEN` (a long random value) and `OWNER_EMAIL` (the same Owner email).
+   - Deploy → New deployment → Web app. Execute as **Me**; access: **Anyone**. Authorize Gmail sending when prompted and copy the Web app URL ending in `/exec`.
+7. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
    - `OWNER_EMAIL`: the one email address allowed to create the single Owner account.
-   - `RESEND_API_KEY`: an API key from Resend with permission to send email.\n   - `RESEND_FROM`: a sender address verified in Resend, e.g. `DRM Premium <verify@your-verified-domain>`.
+   - `GOOGLE_APPS_SCRIPT_URL`: the Apps Script Web app `/exec` URL.
+   - `GOOGLE_APPS_SCRIPT_TOKEN`: exactly the same random value saved as Apps Script property `DRM_OTP_TOKEN`.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
-7. Deploy the `feature/full-admin-panel` branch to a Preview URL.
-8. Open the preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), desired username, a new password of at least 12 characters, and the Bootstrap Secret.
-9. After Owner setup succeeds, remove `BOOTSTRAP_SECRET` from the Preview environment. Keep `OWNER_EMAIL` and `SESSION_SECRET`. Do not change Production secrets or bindings yet.
+8. Deploy the `feature/full-admin-panel` branch to a Preview URL.
+9. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
 10. Test Owner and Admin permissions using separate test accounts before merging.
 
 Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only. Do not use a password previously shared in chat.
@@ -54,7 +57,7 @@ Run each migration only once per database, in numerical order. Keep D1 backups/e
 
 - Public account registration and email-verification delivery are not implemented yet. The Owner can only promote an existing verified User once registration/verification is added. Until then, the Owner role controls are not yet a complete public onboarding flow.
 - Google Authenticator (TOTP), SMS OTP, password reset and email-based account recovery are not implemented yet.
-- The initial Owner setup verifies the configured Owner email with a one-time code sent through Resend; no Owner password or OTP is stored in source code.
+- The initial Owner setup verifies the configured Owner email with a one-time code sent through Gmail using the Google Apps Script mailer; no Owner password, OTP, or mailer token is stored in source code.
 - Direct binary image upload is not included; the current site accepts HTTPS image URLs.
 - Admin content ownership currently covers videos and categories. Article, reference and folder content types need their own owner_id schema/API before those features are enabled.
 - Dashboard activity/online indicators and upload-count analytics are not implemented yet.
