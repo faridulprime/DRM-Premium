@@ -62,7 +62,7 @@ async function handle(req,env){
   } catch(e) {
    if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
    console.error("Owner bootstrap failed",e);
-   return fail("Owner account তৈরি করা যায়নি। Database migration ও username পরীক্ষা করুন।",409);
+   return fail("Owner setup database error: "+String(e?.message||e).slice(0,240),409);
   }
   const token=await newSession(id,env);return json({ok:true},201,{"set-cookie":cookie(token)});
  }
