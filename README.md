@@ -33,7 +33,7 @@ The management API requires the D1 database binding and encrypted secrets.
 5. Then run `migrations/0003_single_owner_guard.sql` once. This adds a database-level unique constraint so only one Owner can exist.
 6. Pages project → Settings → Variables and Secrets. Add encrypted secrets:
    - `OWNER_EMAIL`: the one email address allowed to create the single Owner account.
-   - `BOOTSTRAP_SECRET`: a one-time random secret, at least 32 random characters.
+   - `RESEND_API_KEY`: an API key from Resend with permission to send email.\n   - `RESEND_FROM`: a sender address verified in Resend, e.g. `DRM Premium <verify@your-verified-domain>`.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
 7. Deploy the `feature/full-admin-panel` branch to a Preview URL.
 8. Open the preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), desired username, a new password of at least 12 characters, and the Bootstrap Secret.
@@ -54,7 +54,7 @@ Run each migration only once per database, in numerical order. Keep D1 backups/e
 
 - Public account registration and email-verification delivery are not implemented yet. The Owner can only promote an existing verified User once registration/verification is added. Until then, the Owner role controls are not yet a complete public onboarding flow.
 - Google Authenticator (TOTP), SMS OTP, password reset and email-based account recovery are not implemented yet.
-- The initial Owner bootstrap is protected by Cloudflare secrets; no Owner password is stored in source code.
+- The initial Owner setup verifies the configured Owner email with a one-time code sent through Resend; no Owner password or OTP is stored in source code.
 - Direct binary image upload is not included; the current site accepts HTTPS image URLs.
 - Admin content ownership currently covers videos and categories. Article, reference and folder content types need their own owner_id schema/API before those features are enabled.
 - Dashboard activity/online indicators and upload-count analytics are not implemented yet.
