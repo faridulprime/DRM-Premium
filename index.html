@@ -11,7 +11,7 @@
 <body>
 <header class="topbar">
   <a class="brand" href="/" aria-label="DRM Premium home"><svg class="brand-mark" viewBox="0 0 100 100" role="img" aria-label="Original molecular emblem"><g fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 39 29 29 46 39 46 59 29 69 12 59Z"/><path d="M46 39 63 29 80 39 80 59 63 69 46 59Z"/><path d="M29 29 29 10 46 1 63 10 63 29"/><path d="M63 69 63 88 80 98 94 88 94 69 80 59"/><path d="M12 39 3 24M12 59 3 74M80 39 94 29M80 59 94 69"/><path d="M29 10 46 1 63 10"/><path d="M29 69 29 88 46 98 63 88"/></g><g fill="currentColor"><circle cx="29" cy="29" r="3"/><circle cx="63" cy="29" r="3"/><circle cx="80" cy="59" r="3"/><circle cx="29" cy="69" r="3"/></g></svg><span id="brandName">DRM– Premium</span></a>
-  <nav id="mainNav" aria-label="Main navigation"><a class="active" href="/">Home</a><a href="#browse">Videos</a><span id="navCategories" class="nav-categories"></span><a href="#about">About</a></nav>
+  <nav id="mainNav" aria-label="প্রধান নেভিগেশন"><a class="active" href="#home">মূল পৃষ্ঠা</a><a href="#browse">ভিডিও</a><a href="#references">রেফারেন্স</a><a href="#articles">আর্টিকেল</a><a href="#books">বইপত্র</a><a href="/admin">এডমিন</a></nav>
   <div class="top-actions" aria-label="Account access preview">
     <label class="header-field"><span class="sr-only">Email</span><span class="field-icon">✉</span><input id="headerEmail" type="email" placeholder="Email" autocomplete="email"></label>
     <label class="header-field"><span class="sr-only">Password</span><span class="field-icon">▣</span><input id="headerPassword" type="password" placeholder="Password" autocomplete="current-password"></label>
@@ -35,6 +35,9 @@
   <div class="section-head"><div><p class="eyebrow" id="libraryEyebrow">DISCOVER</p><h2 id="libraryTitle">ভিডিও লাইব্রেরি</h2></div><select id="categoryFilter"><option value="all">সব ক্যাটাগরি</option></select></div>
   <div id="videoRows"></div><p id="emptyState" class="empty" hidden>কোনো ভিডিও পাওয়া যায়নি।</p>
 </section>
+<section class="content resource-section" id="references"><div class="section-head"><div><p class="eyebrow">REFERENCE</p><h2>রেফারেন্স</h2></div></div><p class="empty">রেফারেন্স বিভাগে শিগগিরই কনটেন্ট যোগ করা হবে।</p></section>
+<section class="content resource-section" id="articles"><div class="section-head"><div><p class="eyebrow">ARTICLES</p><h2>আর্টিকেল</h2></div></div><p class="empty">আর্টিকেল বিভাগে শিগগিরই কনটেন্ট যোগ করা হবে।</p></section>
+<section class="content resource-section" id="books"><div class="section-head"><div><p class="eyebrow">BOOKS</p><h2>বইপত্র</h2></div></div><p class="empty">বইপত্র বিভাগে শিগগিরই কনটেন্ট যোগ করা হবে।</p></section>
 </main>
 <footer id="about"><span id="footerBrand">DRM– Premium</span><span id="footerText">একটি ব্যক্তিগত ভিডিও লাইব্রেরি</span></footer>
 <dialog id="playerDialog" class="player-dialog"><button class="close" data-close="playerDialog">✕</button><div id="playerFrame" class="player-frame"></div><div class="player-info"><h2 id="playerTitle"></h2><p id="playerDescription"></p></div></dialog>
