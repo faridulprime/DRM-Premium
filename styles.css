@@ -866,3 +866,59 @@ body.view-modern .topbar .menu-toggle span,body.view-basic .topbar .menu-toggle 
 .account-drawer .logout-button svg{
   stroke:#ff405d!important;
 }
+
+
+/* QUICK UPLOAD — DESIGN 03: FLOAT GLASS
+   Soft pearl-glass capsule, folder-upload glyph, restrained depth. */
+.quick-upload-button{
+  position:fixed!important;z-index:45!important;right:25px!important;bottom:25px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:10px!important;min-height:48px!important;padding:10px 17px!important;
+  border:1px solid rgba(255,255,255,.88)!important;border-radius:15px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.94) 0%,rgba(242,246,250,.84) 52%,rgba(220,229,238,.76) 100%)!important;
+  color:#334457!important;
+  box-shadow:0 9px 24px rgba(62,80,101,.14),0 2px 5px rgba(62,80,101,.06),
+    inset 0 1px 0 rgba(255,255,255,1),inset 0 -1px 2px rgba(117,137,158,.13)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(155%)!important;
+  backdrop-filter:blur(20px) saturate(155%)!important;
+  font:750 11px/1 Inter,'Hind Siliguri',sans-serif!important;
+  letter-spacing:1.15px!important;text-transform:uppercase!important;
+  cursor:pointer!important;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease!important;
+}
+.quick-upload-button .upload-icon{
+  display:grid!important;place-items:center!important;
+  width:23px!important;height:23px!important;flex:0 0 23px!important;
+  padding:0!important;border:0!important;border-radius:0!important;
+  background:transparent!important;color:#52667b!important;
+  box-shadow:none!important;
+}
+.quick-upload-button .upload-icon svg{
+  display:block!important;width:23px!important;height:23px!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.65!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+.quick-upload-button small{
+  color:#334457!important;font:800 10px/1 Inter,Arial,sans-serif!important;
+  letter-spacing:1.25px!important;
+}
+.quick-upload-button:hover{
+  transform:translateY(-2px)!important;
+  border-color:rgba(160,177,195,.78)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.99),rgba(231,238,245,.91))!important;
+  box-shadow:0 13px 29px rgba(62,80,101,.18),0 3px 7px rgba(62,80,101,.08),
+    inset 0 1px 0 #fff,inset 0 -1px 2px rgba(117,137,158,.15)!important;
+}
+.quick-upload-button:active{
+  transform:translateY(0) scale(.985)!important;
+  box-shadow:0 4px 11px rgba(62,80,101,.13),inset 0 2px 4px rgba(117,137,158,.12)!important;
+}
+.quick-upload-button:focus-visible{outline:2px solid #71869c!important;outline-offset:4px!important}
+.quick-upload-button:disabled{opacity:.62!important;cursor:wait!important;transform:none!important}
+@media(max-width:600px){
+  .quick-upload-button{right:16px!important;bottom:16px!important;min-height:44px!important;padding:8px 13px!important;gap:8px!important;border-radius:14px!important}
+  .quick-upload-button .upload-icon,.quick-upload-button .upload-icon svg{width:21px!important;height:21px!important}
+  .quick-upload-button .upload-icon{flex-basis:21px!important}
+  .quick-upload-button small{font-size:9px!important;letter-spacing:1.1px!important}
+}
+@media(prefers-reduced-motion:reduce){.quick-upload-button{transition:none!important}}
