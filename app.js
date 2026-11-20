@@ -7,6 +7,8 @@ const demoVideos=[
 let videos=[],categories=[],settings={};
 let categoryOptionsKey="";
 let searchRenderTimer=null;
+let renderLimit=24;
+const RENDER_BATCH=24;
 const bn=n=>Number(n||0).toLocaleString("bn-BD");
 let adminHeartbeat=null;
 function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -34,14 +36,16 @@ function render(){
   $("#categoryFilter").value=cats.includes(cat)?cat:"all";
  }
  const activeCategory=$("#categoryFilter").value;
- const filtered=videos.filter(v=>(activeCategory==="all"||v.category===activeCategory)&&(`${v.title} ${v.category} ${v.description||""}`.toLowerCase().includes(q)));
+ const filteredAll=videos.filter(v=>(activeCategory==="all"||v.category===activeCategory)&&(`${v.title} ${v.category} ${v.description||""}`.toLowerCase().includes(q)));
+ const filtered=filteredAll.slice(0,renderLimit);
  const featured=videos.find(v=>Number(v.featured))||videos[0];
  const heroTitle=$("#heroTitle");if(heroTitle)heroTitle.textContent=settings.hero_title||(featured?featured.title:"আপনার পরবর্তী পছন্দের ভিডিও");
  $("#heroDescription").textContent=settings.hero_description||(featured?(featured.description||featured.category):"নতুন ভিডিও শিগগিরই আসছে।");
  $("#heroPlay").disabled=!featured;$("#heroPlay").onclick=()=>featured&&play(featured);
  const groups={};filtered.forEach(v=>(groups[v.category||"অন্যান্য"]??=[]).push(v));
  $("#videoRows").innerHTML=Object.entries(groups).map(([name,items])=>`<section class="video-row"><h3>${esc(name)}</h3><div class="cards">${items.map(v=>`<article class="video-card" data-id="${esc(v.id)}"><img class="thumb" src="${esc(thumb(v))}" alt="" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM'"><div class="card-copy"><h4>${esc(v.title)}</h4><p>${esc(v.description||"ভিডিও দেখুন")}</p></div></article>`).join("")}</div></section>`).join("");
- $("#emptyState").hidden=filtered.length>0;
+ $("#emptyState").hidden=filteredAll.length>0;
+ const more=$("#loadMoreVideos");if(more){more.hidden=filtered.length>=filteredAll.length;more.textContent="আরও ভিডিও দেখুন ("+Math.min(RENDER_BATCH,filteredAll.length-filtered.length)+")";}
 }
 
 async function sendTabView(tab){try{await fetch("/api/analytics/event",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({tab})});}catch{}}
@@ -78,7 +82,7 @@ function initViewMode(){
  if(intro){if(initial==="modern"&&!seen){setTimeout(()=>{intro.classList.add("done");try{sessionStorage.setItem("drm-intro-seen","1");}catch{}},2000);}else intro.classList.add("done");}
 }
 async function init(){
- initViewMode();$("#headerLoginForm").addEventListener("submit",submitHeaderLogin);$("#menuToggle").addEventListener("click",()=>openAccountMenu(!$("#accountDrawer").classList.contains("open")));$("#menuClose").addEventListener("click",()=>openAccountMenu(false));$("#menuBackdrop").addEventListener("click",()=>openAccountMenu(false));$("#logoutButton").addEventListener("click",submitLogout);$("#accountDrawer").addEventListener("click",e=>{const action=e.target.closest("a,button,[role=menuitem]");if(action&&!action.matches("#logoutButton,#menuClose")&&!action.disabled)openAccountMenu(false);});$("#quickUploadButton").addEventListener("click",async()=>{const button=$("#quickUploadButton");button.disabled=true;try{const response=await fetch("/api/auth/me",{credentials:"same-origin"});const me=await response.json();if(me.authenticated&&["owner","admin"].includes(me.user?.role)){window.location.href="/upload-studio.html";return;}setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}finally{button.disabled=false;}});document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});document.addEventListener("pointerdown",e=>{const drawer=$("#accountDrawer"),toggle=$("#menuToggle");if(!drawer?.classList.contains("open"))return;if(drawer.contains(e.target)||toggle?.contains(e.target))return;openAccountMenu(false);},true);restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.target.closest(".video-card");if(!card)return;const video=videos.find(v=>v.id===card.dataset.id);if(video)play(video);});$("#search").addEventListener("input",()=>{clearTimeout(searchRenderTimer);searchRenderTimer=setTimeout(render,140);});$("#categoryFilter").addEventListener("change",render);trackNavigation();
+ initViewMode();$("#headerLoginForm").addEventListener("submit",submitHeaderLogin);$("#menuToggle").addEventListener("click",()=>openAccountMenu(!$("#accountDrawer").classList.contains("open")));$("#menuClose").addEventListener("click",()=>openAccountMenu(false));$("#menuBackdrop").addEventListener("click",()=>openAccountMenu(false));$("#logoutButton").addEventListener("click",submitLogout);$("#accountDrawer").addEventListener("click",e=>{const action=e.target.closest("a,button,[role=menuitem]");if(action&&!action.matches("#logoutButton,#menuClose")&&!action.disabled)openAccountMenu(false);});$("#quickUploadButton").addEventListener("click",async()=>{const button=$("#quickUploadButton");button.disabled=true;try{const response=await fetch("/api/auth/me",{credentials:"same-origin"});const me=await response.json();if(me.authenticated&&["owner","admin"].includes(me.user?.role)){window.location.href="/upload-studio.html";return;}setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}finally{button.disabled=false;}});document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});document.addEventListener("pointerdown",e=>{const drawer=$("#accountDrawer"),toggle=$("#menuToggle");if(!drawer?.classList.contains("open"))return;if(drawer.contains(e.target)||toggle?.contains(e.target))return;openAccountMenu(false);},true);restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.target.closest(".video-card");if(!card)return;const video=videos.find(v=>v.id===card.dataset.id);if(video)play(video);});$("#search").addEventListener("input",()=>{clearTimeout(searchRenderTimer);renderLimit=RENDER_BATCH;searchRenderTimer=setTimeout(render,140);});$("#categoryFilter").addEventListener("change",()=>{renderLimit=RENDER_BATCH;render();});$("#loadMoreVideos").addEventListener("click",()=>{renderLimit+=RENDER_BATCH;render();});trackNavigation();
  document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.close);d.close();$("#playerFrame").innerHTML="";});
  $("#playerDialog").addEventListener("close",()=>$("#playerFrame").innerHTML="");
  let apiReady=false;
