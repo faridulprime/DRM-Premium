@@ -20,3 +20,26 @@ footer{border-top:1px solid var(--line);padding:25px clamp(24px,5vw,84px);color:
 
 /* Public-facing Admin tab: same light editorial design as the homepage. */
 .admin-section{border-top:1px solid var(--line);background:rgba(255,255,255,.22)}.admin-message,.admin-error{padding:22px 24px;border:1px solid var(--line);background:#fffdfa;color:#262321;font-size:15px;line-height:1.7}.admin-error{color:#a51d1d}.admin-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:22px 0}.metric-card,.admin-report{background:#fffdfa;border:1px solid var(--line);padding:20px}.metric-card span{display:block;color:var(--muted);font-size:13px}.metric-card strong{display:block;font-size:32px;margin-top:9px}.admin-report-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.admin-report h3{font-size:17px;margin:0 0 20px}.report-row{margin:15px 0}.report-label{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin-bottom:7px}.report-track{height:7px;background:#e7e0d7;overflow:hidden}.report-track i{display:block;height:100%;background:var(--red)}.admin-empty,.admin-updated{font-size:12px;color:var(--muted)}.admin-updated{margin-top:18px}@media(max-width:760px){.admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-report-grid{grid-template-columns:1fr}.metric-card{padding:15px}.metric-card strong{font-size:26px}}
+
+/* Premium account state and right-side slide-out menu */
+[hidden]{display:none!important}
+.account-controls{display:flex;align-items:center;gap:14px;margin-left:2px;flex:0 0 auto}
+.pro-badge{font-family:Inter,serif;font-size:17px;font-weight:900;font-style:italic;letter-spacing:2.2px;color:#171512;padding:7px 2px;border-bottom:2px solid var(--red);text-shadow:0 1px 0 #fff}
+.menu-toggle{width:38px;height:38px;border:1px solid #aaa198;border-radius:50%;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:background .2s,border-color .2s;flex:0 0 38px}
+.menu-toggle:hover{background:#eee7de;border-color:#292622}
+.menu-toggle span{width:15px;height:1.5px;background:#171512;display:block;transition:transform .2s}
+.menu-backdrop{position:fixed;inset:0;background:rgba(15,13,11,.38);z-index:30;backdrop-filter:blur(2px)}
+.account-drawer{position:fixed;z-index:31;right:0;top:0;height:100dvh;width:min(390px,88vw);background:#f8f4ed;border-left:1px solid #d7cec3;box-shadow:-18px 0 55px #0002;transform:translateX(105%);transition:transform .32s cubic-bezier(.2,.75,.25,1);display:flex;flex-direction:column;padding:28px 26px 24px}
+.account-drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid #d9d1c7;font-size:17px;font-weight:900;letter-spacing:.5px}
+.drawer-head button{border:0;background:transparent;font-size:28px;line-height:1;color:#25221e}
+.drawer-content{padding-top:32px}
+.drawer-kicker{font-size:10px;font-weight:800;letter-spacing:3px;color:var(--red);margin:0 0 12px}
+.drawer-account-label{font-size:14px;color:#514b44;overflow-wrap:anywhere}
+.drawer-bottom{margin-top:auto;padding-top:24px;border-top:1px solid #d9d1c7}
+.logout-button{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid #25221e;background:#171614;color:#f8f4ed;border-radius:4px;font:700 13px Inter,sans-serif;letter-spacing:2px;transition:background .2s,border-color .2s,transform .2s}
+.logout-button:hover{background:var(--red);border-color:var(--red);transform:translateY(-1px)}
+.logout-button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+body.drawer-open{overflow:hidden}
+@media(max-width:1100px){.account-controls{margin-left:auto}.top-actions{margin-left:0}}
+@media(max-width:760px){.topbar{position:relative;padding-right:4vw}.account-controls{order:2;margin-left:auto}.top-actions{order:3}.pro-badge{font-size:15px}.menu-toggle{width:35px;height:35px;flex-basis:35px}}
