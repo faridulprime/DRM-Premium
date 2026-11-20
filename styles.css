@@ -1049,3 +1049,78 @@ body.view-basic .account-drawer .logout-button{
 @media(prefers-reduced-motion:reduce){
   .account-drawer .drawer-head button,.account-drawer .logout-button{transition:none!important}
 }
+
+
+/* =========================================================
+   DRAWER DETAIL — separated glass segments + soft typography depth
+   ========================================================= */
+
+/* Keep each drawer item visually distinct, like compact dashboard cards. */
+.account-drawer .drawer-head{
+  margin:0 0 26px!important;
+  padding:14px 15px!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(202,214,228,.48))!important;
+  box-shadow:0 5px 15px rgba(54,72,94,.08),
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 -1px 1px rgba(111,131,154,.08)!important;
+  text-shadow:0 1px 1px rgba(42,59,78,.12)!important;
+}
+.account-drawer .drawer-head>span{
+  text-shadow:0 1px 2px rgba(42,59,78,.15)!important;
+}
+
+/* Account Type is its own compact segment. */
+.account-drawer .drawer-kicker{
+  display:block!important;
+  width:fit-content!important;
+  margin:0 0 10px!important;
+  padding:8px 12px!important;
+  border:0!important;
+  border-radius:9px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(204,216,230,.58))!important;
+  box-shadow:0 4px 10px rgba(54,72,94,.08),
+    inset 0 1px 0 rgba(255,255,255,.92)!important;
+  color:#087eae!important;
+  text-shadow:0 1px 2px rgba(8,126,174,.16)!important;
+}
+
+/* Owner / account value gets a separate, slightly larger glass card. */
+.account-drawer .drawer-account-label{
+  display:block!important;
+  width:100%!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:12px 14px!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(196,210,226,.62))!important;
+  box-shadow:0 6px 14px rgba(54,72,94,.10),
+    inset 0 1px 0 rgba(255,255,255,.96),
+    inset 0 -1px 2px rgba(100,121,145,.08)!important;
+  color:#087b4c!important;
+  text-shadow:0 1px 2px rgba(8,123,76,.16)!important;
+}
+
+/* Logout is a separate action segment with the same visual language. */
+.account-drawer .drawer-bottom{
+  margin-top:auto!important;
+  padding:17px 0 0!important;
+  border:0!important;
+}
+.account-drawer .logout-button{
+  min-height:42px!important;
+  padding:0 17px!important;
+  border-radius:11px!important;
+  text-shadow:0 1px 2px rgba(143,31,54,.16)!important;
+  box-shadow:0 7px 16px rgba(47,64,84,.15),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -1px 2px rgba(105,125,148,.13)!important;
+}
+.account-drawer .logout-button span{
+  text-shadow:0 1px 2px rgba(143,31,54,.16)!important;
+}
+.account-drawer .drawer-head button{
+  text-shadow:0 1px 2px rgba(42,59,78,.12)!important;
+}
