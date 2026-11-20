@@ -11,6 +11,7 @@ let renderLimit=24;
 const RENDER_BATCH=24;
 const bn=n=>Number(n||0).toLocaleString("bn-BD");
 let adminHeartbeat=null;
+let visualConfig={},visualSelected=null,visualMode=false;
 function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function thumb(v){return v.thumbnail_url||`https://img.youtube.com/vi/${encodeURIComponent(v.youtube_id)}/hqdefault.jpg`;}
 function play(v){$("#playerTitle").textContent=v.title;$("#playerDescription").textContent=v.description||"";$("#playerFrame").innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube_id)}?autoplay=1&rel=0" title="${esc(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;$("#playerDialog").showModal();}
@@ -26,6 +27,39 @@ function applySettings(){
  if(settings.accent_color&&/^#[0-9a-f]{6}$/i.test(settings.accent_color))document.documentElement.style.setProperty("--red",settings.accent_color);
  document.title="DRM PREMIUM";
 }
+
+function visualSelector(el){
+ if(el.id)return "#"+CSS.escape(el.id);
+ const parts=[];let node=el;
+ while(node&&node!==document.body){let part=node.tagName.toLowerCase();if(node.parentElement){const siblings=[...node.parentElement.children].filter(x=>x.tagName===node.tagName);if(siblings.length>1)part+=":nth-of-type("+(siblings.indexOf(node)+1)+")";}parts.unshift(part);node=node.parentElement;}
+ return "body>"+parts.join(">");
+}
+function applyVisualConfig(){
+ for(const item of Object.values(visualConfig)){if(!item||typeof item.selector!=="string")continue;let el;try{el=document.querySelector(item.selector)}catch{}if(!el)continue;if(typeof item.text==="string")el.textContent=item.text;const s=item.style||{};if(Number.isFinite(s.fontSize))el.style.fontSize=s.fontSize+"px";if(/^#[0-9a-f]{6}$/i.test(s.color||""))el.style.color=s.color;if(/^#[0-9a-f]{6}$/i.test(s.background||""))el.style.backgroundColor=s.background;if(s.shadow&&/^#[0-9a-f]{6}$/i.test(s.shadow.color||""))el.style.textShadow=(s.shadow.x||0)+"px "+(s.shadow.y||0)+"px "+(s.shadow.blur||0)+"px "+s.shadow.color;}
+}
+function setVisualEditor(user){
+ const toggle=$("#visualEditorToggle");if(!toggle)return;toggle.hidden=!(user&&user.role==="owner");
+}
+function selectVisualElement(el){
+ visualSelected=el;const id=visualSelector(el),saved=visualConfig[id]||{};$("#veText").value=el.textContent;$("#veFontSize").value=parseFloat(getComputedStyle(el).fontSize)||16;$("#veColor").value=saved.style?.color||"#183d5c";$("#veBackground").value=saved.style?.background||"#ffffff";$("#veShadowColor").value=saved.style?.shadow?.color||"#000000";$("#veShadowX").value=saved.style?.shadow?.x||0;$("#veShadowY").value=saved.style?.shadow?.y||0;$("#veShadowBlur").value=saved.style?.shadow?.blur||0;$("#veHelp").textContent="নির্বাচিত: "+el.tagName.toLowerCase()+(el.id?"#"+el.id:"");
+}
+function visualDraft(){
+ if(!visualSelected)return null;const selector=visualSelector(visualSelected);
+ return {selector,text:$("#veText").value.slice(0,2000),style:{fontSize:Math.min(96,Math.max(8,Number($("#veFontSize").value)||16)),color:$("#veColor").value,background:$("#veBackground").value,shadow:{color:$("#veShadowColor").value,x:Math.min(20,Math.max(-20,Number($("#veShadowX").value)||0)),y:Math.min(20,Math.max(-20,Number($("#veShadowY").value)||0)),blur:Math.min(30,Math.max(0,Number($("#veShadowBlur").value)||0))}}};
+}
+function applyVisualDraft(item){
+ if(!item||!visualSelected)return;visualSelected.textContent=item.text;const s=item.style;visualSelected.style.fontSize=s.fontSize+"px";visualSelected.style.color=s.color;visualSelected.style.backgroundColor=s.background;visualSelected.style.textShadow=s.shadow.x+"px "+s.shadow.y+"px "+s.shadow.blur+"px "+s.shadow.color;
+}
+function initVisualEditor(){
+ const toggle=$("#visualEditorToggle"),panel=$("#visualEditorPanel");
+ toggle.addEventListener("click",()=>{visualMode=!visualMode;panel.hidden=!visualMode;toggle.classList.toggle("active",visualMode);$("#veStatus").textContent=visualMode?"এডিট করার জন্য পেজের লেখা নির্বাচন করুন।":"";});
+ $("#veClose").onclick=()=>{visualMode=false;panel.hidden=true;toggle.classList.remove("active");};
+ document.addEventListener("click",e=>{if(!visualMode||panel.contains(e.target)||e.target===toggle)return;const el=e.target.closest("h1,h2,h3,h4,p,a,button,label,span,small,strong,li");if(!el||el.closest("#visualEditorPanel")||el.children.length)return;e.preventDefault();e.stopPropagation();selectVisualElement(el);},{capture:true});
+ $("#veApply").onclick=()=>{const item=visualDraft();if(!item){$("#veStatus").textContent="আগে একটি লেখা নির্বাচন করুন।";return;}applyVisualDraft(item);visualConfig[item.selector]=item;$("#veStatus").textContent="Preview প্রয়োগ হয়েছে। Save Changes চাপলে স্থায়ী হবে।";};
+ $("#veSave").onclick=async()=>{const item=visualDraft();if(!item){$("#veStatus").textContent="আগে একটি লেখা নির্বাচন করুন।";return;}applyVisualDraft(item);visualConfig[item.selector]=item;const button=$("#veSave");button.disabled=true;$("#veStatus").textContent="সংরক্ষণ হচ্ছে…";try{const r=await fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:JSON.stringify(visualConfig)})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Save করা যায়নি।");$("#veStatus").textContent="পরিবর্তন সংরক্ষিত হয়েছে।";}catch(err){$("#veStatus").textContent=err.message;}finally{button.disabled=false;}};
+ $("#veReset").onclick=()=>{if(!visualSelected)return;const id=visualSelector(visualSelected);delete visualConfig[id];visualSelected.removeAttribute("style");$("#veStatus").textContent="এই element-এর local style reset হয়েছে। Save Changes চাপলে reset সংরক্ষণ হবে না; সম্পূর্ণ reset API থেকে করতে হবে।";};
+}
+
 function videoCardHTML(v){
  return `<article class="video-card" data-id="${esc(v.id)}"><img class="thumb" src="${esc(thumb(v))}" alt="" width="640" height="360" loading="lazy" decoding="async" fetchpriority="low" onerror="this.onerror=null;this.src='https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM'"><div class="card-copy"><h4>${esc(v.title)}</h4><p>${esc(v.description||"ভিডিও দেখুন")}</p></div></article>`;
 }
@@ -67,7 +101,7 @@ function renderBars(el,items,labelKey,valueKey){if(!items.length){el.innerHTML='
 async function startAdminPresence(){try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated||!["owner","admin"].includes(me.user?.role))return;const beat=()=>fetch("/api/admin/presence",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:"{}"}).catch(()=>{});beat();if(adminHeartbeat)clearInterval(adminHeartbeat);adminHeartbeat=setInterval(beat,30000);}catch{}}
 async function loadAdminDashboard(){const guest=$("#adminGuest"),stats=$("#adminStats"),error=$("#adminError");if(!guest||!stats)return;guest.hidden=false;stats.hidden=true;error.hidden=true;try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated||!["owner","admin"].includes(me.user?.role))return;guest.hidden=true;stats.hidden=false;const data=await fetch("/api/admin/analytics",{credentials:"same-origin"}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||"ড্যাশবোর্ড লোড করা যায়নি।");return d;});$("#onlineAdminCount").textContent=bn(data.online_count);$("#totalAdminCount").textContent=bn(data.admin_count);$("#totalPostCount").textContent=bn(data.total_posts);$("#totalTabViews").textContent=bn(data.total_tab_views);renderAdminActivity(data.admins);renderBars($("#tabActivity"),data.tabs,"label","view_count");$("#adminUpdated").textContent="সর্বশেষ আপডেট: "+new Date().toLocaleTimeString("bn-BD");}catch(e){error.hidden=false;error.textContent=e.message;}}
 
-function setSignedIn(user){const form=$("#headerLoginForm"),badge=$("#proBadge"),label=$("#drawerAccountLabel"),logout=$("#logoutButton"),upload=$("#quickUploadButton");form.hidden=!!user;badge.hidden=!user;logout.hidden=!user;if(upload)upload.hidden=!(user&&["owner","admin"].includes(user.role));label.textContent=!user?"অতিথি":user.role==="owner"?"Owner":user.role==="admin"?"Admin":"DRM- Member";if(user)startAdminPresence();}
+function setSignedIn(user){setVisualEditor(user);const form=$("#headerLoginForm"),badge=$("#proBadge"),label=$("#drawerAccountLabel"),logout=$("#logoutButton"),upload=$("#quickUploadButton");form.hidden=!!user;badge.hidden=!user;logout.hidden=!user;if(upload)upload.hidden=!(user&&["owner","admin"].includes(user.role));label.textContent=!user?"অতিথি":user.role==="owner"?"Owner":user.role==="admin"?"Admin":"DRM- Member";if(user)startAdminPresence();}
 function openAccountMenu(open){const drawer=$("#accountDrawer"),backdrop=$("#menuBackdrop"),toggle=$("#menuToggle");if(!drawer||!backdrop||!toggle)return;const state=Boolean(open);drawer.classList.toggle("open",state);backdrop.hidden=!state;drawer.setAttribute("aria-hidden",String(!state));toggle.setAttribute("aria-expanded",String(state));toggle.setAttribute("aria-label",state?"মেনু বন্ধ করুন":"মেনু খুলুন");document.body.classList.toggle("drawer-open",state);}
 async function restoreAccount(){try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}}
 async function submitHeaderLogin(e){e.preventDefault();const form=e.currentTarget,button=$("#headerLoginButton"),status=$("#headerLoginStatus"),email=$("#headerEmail").value.trim(),password=$("#headerPassword").value;status.classList.remove("error");status.textContent="";button.disabled=true;button.textContent="...";try{const res=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,password})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"লগইন করা যায়নি।");const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated)throw new Error("লগইন সেশন তৈরি হয়নি। আবার চেষ্টা করুন।");form.reset();setSignedIn(me.user);status.textContent="";}catch(err){status.textContent=err.message;status.classList.add("error");}finally{button.disabled=false;button.textContent="Login";}}
@@ -83,6 +117,6 @@ async function init(){
  try{const [vr,cr,sr]=await Promise.all([fetch("/api/videos"),fetch("/api/categories"),fetch("/api/settings")]);if(vr.ok){videos=await vr.json();apiReady=true;}if(cr.ok)categories=await cr.json();if(sr.ok)settings=await sr.json();}
  catch(e){console.warn("DRM PREMIUM API is not available yet.",e);}
  if(!apiReady)videos=demoVideos;if(!categories.length)categories=[...new Set(videos.map(v=>v.category))].map(name=>({name}));
- applySettings();render();
+ applySettings();visualConfig={};try{visualConfig=JSON.parse(settings.visual_editor_config||"{}");}catch{}applyVisualConfig();initVisualEditor();render();
 }
 init();
