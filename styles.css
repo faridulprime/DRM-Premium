@@ -1930,85 +1930,12 @@ body.view-basic .topbar>nav#mainNav a:hover{
 }
 
 /* S2 — Deep Red, 3px slim track with fully rounded ends. */
-html,body,body.view-modern,body.view-basic,*{
-  scrollbar-width:thin!important;
-  scrollbar-color:#a90d26 transparent!important;
-}
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-*::-webkit-scrollbar{
-  width:3px!important;
-  height:3px!important;
-}
-html::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track,
-*::-webkit-scrollbar-track{
-  background:transparent!important;
-  border-radius:999px!important;
-}
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb,
-*::-webkit-scrollbar-thumb{
-  min-height:28px!important;
-  background:#a90d26!important;
-  border:0!important;
-  border-radius:999px!important;
-  background-clip:padding-box!important;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 0 4px rgba(169,13,38,.20)!important;
-}
-html::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover,
-*::-webkit-scrollbar-thumb:hover{
-  background:#c51632!important;
-  border-radius:999px!important;
-  box-shadow:0 0 7px rgba(169,13,38,.35)!important;
-}
-html::-webkit-scrollbar-corner,
-body::-webkit-scrollbar-corner,
-*::-webkit-scrollbar-corner{
-  background:transparent!important;
-}
-
-
-/* ==========================================================
-   DRM PREMIUM — S2 CROSS-BROWSER CUSTOM PAGE SCROLLBAR
-   Visible thumb: 3px deep red, fully rounded caps.
-   Native scrolling remains the source of truth.
-   ========================================================== */
-html,body{scrollbar-width:thin!important;scrollbar-color:#b5122b transparent!important}
-*:not(html):not(body){scrollbar-color:auto;scrollbar-width:auto}
-html.drm-custom-scrollbar-ready,body.drm-custom-scrollbar-ready{
-  scrollbar-width:none!important;-ms-overflow-style:none!important;
-}
-html.drm-custom-scrollbar-ready::-webkit-scrollbar:vertical,
-body.drm-custom-scrollbar-ready::-webkit-scrollbar:vertical{
-  width:0!important;display:none!important;
-}
-#drmPageScrollbar{
-  position:fixed;z-index:2147483000;top:0;right:0;bottom:0;width:16px;
-  pointer-events:none;opacity:0;transition:opacity .18s ease;
-}
-#drmPageScrollbar.is-visible{opacity:1}
-#drmPageScrollbar[hidden]{display:none!important}
-#drmPageScrollbar .drm-scrollbar-thumb{
-  position:absolute;top:0;left:6.5px;width:3px;min-height:24px;
-  border:0;border-radius:999px;background:#b5122b;
-  box-shadow:0 0 5px rgba(181,18,43,.22);
-  pointer-events:auto;cursor:grab;touch-action:none;will-change:transform,height;
-  outline:none;
-}
-#drmPageScrollbar .drm-scrollbar-thumb::before{
-  content:"";position:absolute;top:0;bottom:0;left:-6.5px;width:16px;background:transparent;
-}
-#drmPageScrollbar .drm-scrollbar-thumb:hover,
-#drmPageScrollbar .drm-scrollbar-thumb:focus-visible{
-  background:#d21d3b;box-shadow:0 0 8px rgba(181,18,43,.42);
-}
-#drmPageScrollbar .drm-scrollbar-thumb:active{cursor:grabbing}
-#drmPageScrollbar .drm-scrollbar-thumb:focus-visible{
-  outline:2px solid rgba(181,18,43,.45);outline-offset:3px;
-}
-@media(prefers-reduced-motion:reduce){#drmPageScrollbar{transition:none}}
+html,body{scrollbar-width:thin!important;scrollbar-color:#a90d26 transparent!important}
+html::-webkit-scrollbar,body::-webkit-scrollbar{width:3px!important;height:3px!important}
+html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:transparent!important}
+html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb{background:#a90d26!important;border:0!important;border-radius:999px!important}
+html::-webkit-scrollbar-thumb:hover,body::-webkit-scrollbar-thumb:hover{background:#c51632!important}
+html::-webkit-scrollbar-corner,body::-webkit-scrollbar-corner{background:transparent!important}
 
 
 /* ==========================================================
@@ -2138,3 +2065,9 @@ body.view-modern .video-card:hover,body.view-basic .video-card:hover{
   transform:none!important;box-shadow:none!important;
 }
 .video-card img{backface-visibility:visible!important}
+
+/* Keep off-screen library cards out of the active paint/layout workload. */
+#videoRows .video-card{content-visibility:auto;contain-intrinsic-size:auto 245px}
+#videoRows .thumb{content-visibility:auto}
+.load-more-videos{display:block;margin:28px auto 0;min-width:190px;border:1px solid #58caff;cursor:pointer}
+body.view-modern .load-more-videos{background:#0b1b27;color:#eaf6ff}
