@@ -134,7 +134,7 @@ function sbNewNode(type){const props={};if(["text","heading","button","link","he
 function sbSafeText(v){return String(v??"").slice(0,2000);}
 function sbSelectLiveElement(el){
  if(!el||!el.isConnected)return;
- if(sbLiveSelected&&sbLiveSelected!==el)sbLiveSelected.style.outline=sbLiveSelected.dataset.sbOriginalOutline||"";
+ if(sbLiveSelected&&sbLiveSelected!==el){sbCaptureLiveDraft();sbLiveSelected.style.outline=sbLiveSelected.dataset.sbOriginalOutline||"";}
  sbLiveSelected=el;if(!el.dataset.sbOriginalOutline)el.dataset.sbOriginalOutline=el.style.outline||"";
  el.style.setProperty("outline","2px solid #e11d48","important");el.style.setProperty("outline-offset","2px","important");
  const cs=el.ownerDocument.defaultView.getComputedStyle(el),host=$("#sbInspectorBody");
@@ -249,7 +249,7 @@ function sbRender(){
  $("#sbLayers").innerHTML=(page.nodes||[]).map(n=>sbLayerHTML(n,0)).join("")||'<p class="sb-muted">No elements yet.</p>';
  const canvas=$("#sbCanvas");let preview=canvas.querySelector(".sb-live-preview");
  if(!preview){canvas.innerHTML='<div class="sb-live-preview-head"><strong>বর্তমান DRM PREMIUM ওয়েবসাইট</strong><span>Live reference preview · read-only</span></div><div class="sb-live-preview-wrap"><iframe class="sb-live-preview" title="বর্তমান DRM PREMIUM ওয়েবসাইটের প্রিভিউ" src="/?builderPreview=1#home" loading="eager"></iframe></div><div class="sb-draft-area"><div class="sb-draft-area-head"><strong>Builder Draft Elements</strong><span>এখানে নতুন draft elements তৈরি ও সাজানো যাবে</span></div><div id="sbDraftNodes"></div></div>';}
- preview=canvas.querySelector(".sb-live-preview");if(preview&&!preview.dataset.sbBound){preview.dataset.sbBound="1";sbAttachLivePreview(preview);preview.dataset.sbBound="1";}
+ preview=canvas.querySelector(".sb-live-preview");if(preview&&!preview.dataset.sbBound){preview.dataset.sbBound="1";sbAttachLivePreview(preview);preview.dataset.sbBound="1";}if(preview){try{if(preview.contentDocument?.body)sbApplySavedLiveDraft(preview.contentDocument);}catch{}}
  $("#sbDraftNodes").innerHTML=(page.nodes||[]).map(n=>sbCanvasHTML(n)).join("")||'<div class="sb-empty">Draft এখনো খালি। বাম পাশের ＋ Section বা ＋ Element দিয়ে শুরু করুন।</div>';
  $("#sbSelectedType").textContent=sbSelected?(SB_LABELS[sbFind(sbSelected)?.node?.type]||"Selected"):"Nothing selected";
  canvas.querySelectorAll("[data-sb-node]").forEach(el=>{el.classList.toggle("sb-selected",el.dataset.sbNode===sbSelected);el.draggable=true;});sbRenderInspector();
