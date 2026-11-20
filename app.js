@@ -140,6 +140,9 @@ function sbSelectLiveElement(el){
  const cs=el.ownerDocument.defaultView.getComputedStyle(el),host=$("#sbInspectorBody");
  host.innerHTML='<p>Selected website element: <strong>'+esc(el.tagName.toLowerCase()+(el.id?"#"+el.id:""))+'</strong></p>'+(el.children.length===0?sbField("Text / label","liveText",(el.innerText||el.textContent||"").trim().slice(0,2000)):'<p class="sb-muted">Text editing is disabled for this container to preserve its child elements. Select a text element inside it.</p>')+sbField("Font size (px)","liveFontSize",parseFloat(cs.fontSize)||16,"number")+sbField("Text color","liveColor",rgbToHex(cs.color),"color")+sbField("Background","liveBackground",rgbToHex(cs.backgroundColor),"color")+'<div class="sb-inspector-actions"><button id="sbApplyLive" type="button">Apply preview</button><button id="sbSaveLive" type="button">Save website style</button></div><p class="sb-muted">Website navigation and actions are disabled in Builder mode.</p>';
  $("#sbSelectedType").textContent="Website · "+el.tagName.toLowerCase();
+ const applyButton=host.querySelector("#sbApplyLive"),saveButton=host.querySelector("#sbSaveLive");
+ if(applyButton)applyButton.onclick=()=>sbApplyLiveChanges(false);
+ if(saveButton)saveButton.onclick=()=>sbApplyLiveChanges(true);
 }
 function rgbToHex(value){const m=String(value).match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);return m?"#"+[m[1],m[2],m[3]].map(v=>Number(v).toString(16).padStart(2,"0")).join(""):"#ffffff";}
 function sbAttachLivePreview(frame){
@@ -203,22 +206,41 @@ function sbCaptureLiveDraft(){
  return true;
 }
 function sbApplyLiveChanges(save){
- const el=sbLiveSelected,host=$("#sbInspectorBody");if(!el){$("#sbMessage").textContent="আগে ওয়েবসাইটের একটি element নির্বাচন করো।";return;}
+ const el=sbLiveSelected,host=$("#sbInspectorBody");
+ if(!el||!el.isConnected){$("#sbMessage").textContent="আগে Preview থেকে একটি element নির্বাচন করো।";return;}
  const get=k=>host.querySelector('[data-sb-prop="'+k+'"]')?.value;
- const text=get("liveText"),font=Number(get("liveFontSize")),color=get("liveColor"),bg=get("liveBackground");
+ const text=get("liveText"),fontRaw=get("liveFontSize"),font=Number(fontRaw),color=get("liveColor"),bg=get("liveBackground");
+ if(fontRaw!==undefined&&(!Number.isFinite(font)||font<8||font>96)){$("#sbMessage").textContent="Font size 8 থেকে 96 px-এর মধ্যে দিতে হবে।";return;}
+ if(color!==undefined&&!/^#[0-9a-f]{6}$/i.test(color)){$("#sbMessage").textContent="Text color সঠিক HEX color হতে হবে।";return;}
+ if(bg!==undefined&&!/^#[0-9a-f]{6}$/i.test(bg)){$("#sbMessage").textContent="Background সঠিক HEX color হতে হবে।";return;}
+ // Apply explicitly from the current inspector values; do not depend on input events.
  if(text!==undefined&&el.children.length===0){if(el.matches("input,textarea"))el.value=text;else el.textContent=text;}
- if(Number.isFinite(font)&&font>=8&&font<=96)el.style.fontSize=font+"px";
- if(/^#[0-9a-f]{6}$/i.test(color||""))el.style.color=color;
- if(/^#[0-9a-f]{6}$/i.test(bg||""))el.style.backgroundColor=bg;
- if(!save){$("#sbMessage").textContent="Preview updated · পরিবর্তনটি এখনো সংরক্ষিত হয়নি।";return;}
+ if(fontRaw!==undefined)el.style.setProperty("font-size",font+"px","important");
+ if(color)el.style.setProperty("color",color,"important");
+ if(bg)el.style.setProperty("background-color",bg,"important");
+ if(!save){$("#sbMessage").textContent="Preview updated · পরিবর্তনটি Preview-তে প্রয়োগ হয়েছে, এখনো সংরক্ষিত হয়নি।";return;}
  const selector=visualSelector(el);
- const item={selector,text:el.children.length===0?(el.innerText||el.textContent||"").slice(0,2000):"",replaceText:el.children.length===0,style:{fontSize:Math.min(96,Math.max(8,font||16)),color:color||"#ffffff",background:bg||"#ffffff",shadow:{color:"#000000",x:0,y:0,blur:0}}};
+ const item={selector,text:el.children.length===0?(el.innerText||el.textContent||"").slice(0,2000):"",replaceText:el.children.length===0,style:{fontSize:font,color,background:bg,shadow:{color:"#000000",x:0,y:0,blur:0}}};
  const config={...visualConfig,[selector]:item},encoded=JSON.stringify(config);
+ if(Object.keys(config).length>100){$("#sbMessage").textContent="সর্বোচ্চ ১০০টি website style সংরক্ষণ করা যাবে।";return;}
  if(encoded.length>25000){$("#sbMessage").textContent="Style configuration 25 KB সীমা অতিক্রম করেছে।";return;}
- const buttons=host.querySelectorAll("button");buttons.forEach(b=>b.disabled=true);$("#sbMessage").textContent="Website style Cloudflare D1-এ সংরক্ষণ হচ্ছে…";
+ const applyButton=host.querySelector("#sbApplyLive"),saveButton=host.querySelector("#sbSaveLive");
+ if(applyButton)applyButton.disabled=true;if(saveButton){saveButton.disabled=true;saveButton.textContent="Saving…";}
+ $("#sbMessage").textContent="Cloudflare D1-এ style সংরক্ষণ হচ্ছে…";
  fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:encoded})})
- .then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||("HTTP "+r.status));if(d.ok!==true)throw new Error("Server save confirmation পাওয়া যায়নি।");const verify=await fetch("/api/settings",{credentials:"same-origin",cache:"no-store"});if(!verify.ok)throw new Error("Save হয়েছে, কিন্তু পুনরায় পড়ে যাচাই করা যায়নি।");const stored=await verify.json();if(stored.visual_editor_config!==encoded)throw new Error("Server-এ সংরক্ষিত value পাঠানো value-এর সঙ্গে মেলেনি।");visualConfig=config;$("#sbMessage").textContent="সফল: Website style Cloudflare D1-এ সংরক্ষিত ও পুনরায় যাচাই করা হয়েছে।";}
- ).catch(e=>$("#sbMessage").textContent="সংরক্ষণ ব্যর্থ: "+e.message).finally(()=>buttons.forEach(b=>b.disabled=false));
+ .then(async response=>{
+  const body=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(body.error||("HTTP "+response.status));
+  if(body.ok!==true)throw new Error("API save confirmation পাওয়া যায়নি।");
+  const check=await fetch("/api/settings",{method:"GET",credentials:"same-origin",cache:"no-store"});
+  if(!check.ok)throw new Error("D1 save-এর পর read-back verification ব্যর্থ (HTTP "+check.status+")");
+  const saved=await check.json();
+  if(saved.visual_editor_config!==encoded)throw new Error("D1-এ সংরক্ষিত style configuration পাঠানো value-এর সঙ্গে মেলেনি।");
+  visualConfig=config;
+  $("#sbMessage").textContent="সফল: Style Cloudflare D1-এ সংরক্ষিত এবং পুনরায় পড়ে যাচাই করা হয়েছে।";
+ })
+ .catch(error=>{$("#sbMessage").textContent="Save failed: "+(error?.message||String(error));})
+ .finally(()=>{if(applyButton)applyButton.disabled=false;if(saveButton){saveButton.disabled=false;saveButton.textContent="Save website style";}});
 }
 function sbLayerHTML(n,depth){return '<button class="sb-layer '+(n.id===sbSelected?'active':'')+'" data-sb-select="'+esc(n.id)+'" style="--depth:'+Math.min(depth,8)+'" type="button"><span>▧</span>'+esc(SB_LABELS[n.type]||n.type)+' <small>'+esc(n.id.slice(-5))+'</small></button>'+(n.children||[]).map(c=>sbLayerHTML(c,depth+1)).join("");}
 function sbCanvasHTML(n){const p=n.props||{},txt=esc(p.text||SB_LABELS[n.type]||"");let inner="";if(n.type==="image")inner=p.src?'<img src="'+esc(p.src)+'" alt="'+esc(p.alt||"")+'">':'<div class="sb-image-placeholder">Image · add URL in settings</div>';else if(n.type==="divider")inner="<hr>";else if(n.type==="spacer")inner='<div style="height:'+(Number(p.height)||24)+'px"></div>';else inner=txt?'<span>'+txt+'</span>':"";const children=(n.children||[]).map(sbCanvasHTML).join("");return '<div class="sb-node sb-node-'+esc(n.type)+'" data-sb-node="'+esc(n.id)+'" style="'+(p.background?'background:'+esc(p.background)+';':'')+(p.color?'color:'+esc(p.color)+';':'')+(p.padding?'padding:'+Number(p.padding)+'px;':'')+'">'+(inner||'<span class="sb-node-kind">'+esc(SB_LABELS[n.type])+'</span>')+children+'</div>';}
