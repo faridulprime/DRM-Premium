@@ -46,9 +46,9 @@ body.drawer-open{overflow:hidden}
 
 
 /* Premium logout confirmation toast — occupies the drawer's logout-button position */
-.logout-toast{position:fixed;z-index:60;right:26px;left:auto;bottom:24px;width:fit-content;max-width:calc(100vw - 52px);min-height:52px;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 11px;background:#05090d;color:#65cfff;border:1px solid #164b69;border-radius:4px;box-shadow:0 0 18px rgba(0,155,255,.13),0 12px 36px rgba(0,0,0,.3);font:700 12px Inter,Arial,sans-serif;letter-spacing:.45px;text-align:center;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(14px);transition:opacity .25s ease,transform .25s ease,visibility .25s ease}
+.logout-toast{position:fixed;z-index:60;right:26px;left:auto;bottom:24px;width:fit-content;max-width:calc(100vw - 52px);min-height:52px;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 11px 10px 13px;background:#05090d;color:#65cfff;border:1px solid #164b69;border-radius:4px;box-shadow:0 0 18px rgba(0,155,255,.13),0 12px 36px rgba(0,0,0,.3);font:700 12px Inter,Arial,sans-serif;letter-spacing:.45px;text-align:center;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(14px);transition:opacity .25s ease,transform .25s ease,visibility .25s ease}
 .logout-toast:before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:2px;background:#26baff;box-shadow:0 0 9px #26baff}
 .logout-toast.show{opacity:1;visibility:visible;transform:translateY(0)}
 .logout-toast-icon{width:34px;height:34px;flex:0 0 34px;fill:none;stroke:#58caff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(39,183,255,.65))}
 .logout-toast span{display:block}
-@media(max-width:480px){.logout-toast{right:26px;bottom:24px;width:fit-content;max-width:calc(100vw - 52px);white-space:normal;font-size:11px;padding:9px 10px;gap:8px}.logout-toast-icon{width:29px;height:29px;flex-basis:29px}}
+@media(max-width:480px){.logout-toast{right:26px;bottom:24px;width:fit-content;max-width:calc(100vw - 52px);white-space:normal;font-size:11px;padding:9px 10px 9px 12px;gap:8px}.logout-toast-icon{width:29px;height:29px;flex-basis:29px}}
