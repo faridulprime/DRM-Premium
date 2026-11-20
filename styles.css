@@ -2066,8 +2066,37 @@ body.view-modern .video-card:hover,body.view-basic .video-card:hover{
 }
 .video-card img{backface-visibility:visible!important}
 
-/* Keep off-screen library cards out of the active paint/layout workload. */
-#videoRows .video-card{content-visibility:auto;contain-intrinsic-size:auto 245px}
-#videoRows .thumb{content-visibility:auto}
+/* Scroll stability: do not defer each card or thumbnail independently.
+   The previous nested content-visibility rules caused scroll-time layout
+   activation and made card geometry depend on an estimated intrinsic size. */
+#videoRows .video-card,
+#videoRows .thumb{
+  content-visibility:visible!important;
+  contain:none!important;
+}
+#videoRows .video-card{
+  box-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  transition:none!important;
+  transform:none!important;
+}
+#videoRows .video-card:hover{
+  box-shadow:none!important;
+  transform:none!important;
+}
+#videoRows .video-row{
+  box-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#videoRows .thumb{
+  display:block;
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+}
 .load-more-videos{display:block;margin:28px auto 0;min-width:190px;border:1px solid #58caff;cursor:pointer}
 body.view-modern .load-more-videos{background:#0b1b27;color:#eaf6ff}
