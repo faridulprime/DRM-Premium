@@ -2,7 +2,7 @@
 -- Run this migration once, after 0001_admin.sql and before first Owner setup.
 
 ALTER TABLE users ADD COLUMN username TEXT;
-ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 1;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users(username) WHERE username IS NOT NULL;
 
 ALTER TABLE videos ADD COLUMN owner_id TEXT REFERENCES users(id) ON DELETE SET NULL;
