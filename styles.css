@@ -113,3 +113,25 @@ body.view-basic .video-card,body.view-basic .metric-card,body.view-basic .admin-
 body.view-basic .hero-visual{filter:grayscale(1)}
 @media(max-width:760px){.view-mode-switcher{right:10px;bottom:10px}.view-mode-switcher button{padding:7px 10px;font-size:10px}.mode-notice{min-width:min(300px,88vw);padding:22px 18px}}
 @media(prefers-reduced-motion:reduce){.view-mode-switcher,.mode-transition,.site-intro{transition:none}}
+
+/* Mode transitions remain available in Basic View */
+body.mode-fading>header,body.mode-fading>main,body.mode-fading>footer{opacity:0}
+body>header,body>main,body>footer{transition:opacity .18s ease}
+body.view-basic .mode-transition,body.view-basic .mode-transition *,body.view-basic .site-intro,body.view-basic .site-intro *{animation:initial!important;transition:initial!important}
+body.view-basic{background:#080d12;color:#e8edf2;color-scheme:dark}
+body.view-basic .topbar,body.view-basic footer{background:#080d12;border-color:#27323b;color:#e8edf2}
+body.view-basic .brand,body.view-basic nav a,body.view-basic .field-icon,body.view-basic .header-field input,body.view-basic .header-field input::placeholder{color:#e8edf2}
+body.view-basic .brand-mark{color:#e8edf2}
+body.view-basic .menu-toggle{border-color:#52616c}body.view-basic .menu-toggle span{background:#e8edf2}
+body.view-basic .pro-badge{color:#e8edf2;border-color:#58caff}
+body.view-basic .hero,body.view-basic .content,body.view-basic .admin-section{background:transparent;border-color:#27323b}
+body.view-basic .hero-description,body.view-basic .hero h1,body.view-basic .hero-kicker,body.view-basic .section-head h2,body.view-basic .video-row h3{color:#e8edf2}
+body.view-basic .video-card,body.view-basic .metric-card,body.view-basic .admin-report,body.view-basic .admin-message,body.view-basic .admin-error{background:#101820;border:1px solid #2a3944;color:#e8edf2}
+body.view-basic .card-copy p,body.view-basic .metric-card span,body.view-basic .admin-empty,body.view-basic .admin-updated{color:#a9b6c0}
+body.view-basic .section-head select,body.view-basic .library-tools input{background:#101820;color:#e8edf2;border:1px solid #52616c}
+body.view-basic .section-head select option{background:#101820;color:#e8edf2}
+.library-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px);gap:12px;margin:-12px 0 30px}
+.library-tools input{min-width:0;width:100%;padding:12px 14px;border:1px solid #b9b1a8;border-radius:7px;background:rgba(255,255,255,.65);color:inherit;font:500 13px 'Hind Siliguri',sans-serif;outline:none}
+.library-tools input:focus{border-color:#58caff;box-shadow:0 0 0 3px rgba(88,202,255,.12)}
+body.view-modern .library-tools input{background:rgba(13,26,37,.8);border-color:#34576b;color:#eaf6ff}
+@media(max-width:600px){.library-tools{grid-template-columns:1fr}.library-tools select{width:100%}}
