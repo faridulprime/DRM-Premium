@@ -52,3 +52,15 @@ body.drawer-open{overflow:hidden}
 .logout-toast-icon{width:34px;height:34px;flex:0 0 34px;fill:none;stroke:#58caff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(39,183,255,.65))}
 .logout-toast span{display:block}
 @media(max-width:480px){.logout-toast{right:26px;bottom:24px;width:fit-content;max-width:calc(100vw - 52px);white-space:normal;font-size:11px;padding:9px 10px 9px 12px;gap:8px}.logout-toast-icon{width:29px;height:29px;flex-basis:29px}}
+
+
+/* Sci-fi notification motion: scan-in, brief energy flash, and digital dissolve */
+.logout-toast{will-change:transform,opacity,filter;overflow:hidden}
+.logout-toast.show{animation:drmToastEnter .42s cubic-bezier(.16,.9,.24,1) both}
+.logout-toast.show:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(90,205,255,.2) 48%,transparent 64%);transform:translateX(-130%);animation:drmToastScan .62s .08s ease-out both}
+.logout-toast.closing{animation:drmToastExit .36s cubic-bezier(.55,.05,.8,.35) both}
+.logout-toast.closing:after{animation:none}
+@keyframes drmToastEnter{0%{opacity:0;transform:translate(22px,9px) scale(.94);filter:blur(5px);clip-path:inset(0 0 0 100%)}55%{opacity:1;filter:blur(0);clip-path:inset(0 0 0 0)}72%{transform:translate(-2px,0) scale(1.01)}100%{opacity:1;transform:translate(0,0) scale(1);filter:blur(0);clip-path:inset(0 0 0 0)}}
+@keyframes drmToastScan{to{transform:translateX(130%)}}
+@keyframes drmToastExit{0%{opacity:1;transform:translateX(0) scale(1);filter:blur(0);clip-path:inset(0 0 0 0)}45%{opacity:.85;filter:blur(1px)}100%{opacity:0;transform:translateX(24px) scale(.96);filter:blur(5px);clip-path:inset(0 0 0 100%)}}
+@media(prefers-reduced-motion:reduce){.logout-toast,.logout-toast.show,.logout-toast.closing,.logout-toast.show:after{animation:none!important;transition:none!important}}
