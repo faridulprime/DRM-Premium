@@ -33,7 +33,7 @@ async function handle(req,env){
   if(!emailOK(email)||email!==env.OWNER_EMAIL.toLowerCase())return fail("ইমেইলটি Owner-এর নির্ধারিত ইমেইলের সঙ্গে মিলছে না।",403);
   const now=Math.floor(Date.now()/1000),recent=await env.DB.prepare("SELECT created_at FROM owner_setup_otps ORDER BY created_at DESC LIMIT 1").first();
   if(recent&&now-Number(recent.created_at)<60)return fail("নতুন কোড পাঠানোর আগে ১ মিনিট অপেক্ষা করুন।",429);
-  const code=String(crypto.randomInt?crypto.randomInt(100000,1000000):Math.floor(100000+Math.random()*900000));
+  const random=new Uint32Array(1);crypto.getRandomValues(random);const code=String(100000+(random[0]%900000));
   const codeHash=await hash(email+":"+code+":"+env.SESSION_SECRET);
   await env.DB.prepare("DELETE FROM owner_setup_otps").run();
   await env.DB.prepare("INSERT INTO owner_setup_otps(email,code_hash,expires_at,attempts,created_at) VALUES(?,?,?,0,?)").bind(email,codeHash,now+600,now).run();
