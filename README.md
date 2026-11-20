@@ -32,7 +32,8 @@ The management API requires the D1 database binding and encrypted secrets.
 4. Then run `migrations/0002_owner_roles_and_content_ownership.sql` once.
 5. Then run `migrations/0003_single_owner_guard.sql` once. This adds a database-level unique constraint so only one Owner can exist.
 6. Then run **both** `migrations/0004_admin_analytics.sql` and `migrations/0004_owner_email_otp.sql` once. The first creates the analytics and admin-presence tables; the second creates the Owner OTP table. Both are required by the current API.
-7. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
+7. Apply `migrations/0005_site_builder_foundation.sql` once to the Preview D1 database. This creates the isolated Owner-only Website Builder draft document and 30-day revision timeline; it does not change the currently published site.
+8. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
    - In Project Settings → Script Properties, add `DRM_OTP_TOKEN` (a long random value) and `OWNER_EMAIL` (the same Owner email).
    - Deploy → New deployment → Web app. Execute as **Me**; access: **Anyone**. Authorize Gmail sending when prompted and copy the Web app URL ending in `/exec`.
 8. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
@@ -40,8 +41,8 @@ The management API requires the D1 database binding and encrypted secrets.
    - `GOOGLE_APPS_SCRIPT_URL`: the Apps Script Web app `/exec` URL.
    - `GOOGLE_APPS_SCRIPT_TOKEN`: exactly the same random value saved as Apps Script property `DRM_OTP_TOKEN`.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
-9. Deploy the `feature/full-admin-panel` branch to a Preview URL.
-10. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
+10. Deploy the `feature/full-admin-panel` branch to a Preview URL.
+11. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
 11. Test Owner and Admin permissions using separate test accounts before merging.
 
 Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only. Do not use a password previously shared in chat.
@@ -52,7 +53,7 @@ The first migration creates the original users, sessions, login-attempt throttli
 
 The second migration adds usernames, email-verification state, Owner role and content ownership columns. It promotes the first existing account to Owner. If the Owner is created after migration, the bootstrap endpoint assigns any legacy unowned content to that Owner.
 
-Run all five migration files once per database in the documented order: `0001`, `0002`, `0003`, then both `0004` files. Keep D1 backups/exports before applying schema changes to a database containing important data.
+Run all six migration files once per database in the documented order: `0001`, `0002`, `0003`, both `0004` files, then `0005_site_builder_foundation.sql`. Keep D1 backups/exports before applying schema changes to a database containing important data.
 
 ## Important implementation status / limitations
 
