@@ -52,12 +52,12 @@ function applyVisualDraft(item){
 }
 function initVisualEditor(){
  const toggle=$("#visualEditorToggle"),panel=$("#visualEditorPanel");
- toggle.addEventListener("click",()=>{visualMode=!visualMode;panel.hidden=!visualMode;toggle.classList.toggle("active",visualMode);$("#veStatus").textContent=visualMode?"এডিট করার জন্য পেজের লেখা নির্বাচন করুন।":"";});
- $("#veClose").onclick=()=>{visualMode=false;panel.hidden=true;toggle.classList.remove("active");};
+ toggle.addEventListener("click",()=>{visualMode=!visualMode;panel.hidden=!visualMode;document.body.classList.toggle("visual-editor-active",visualMode);toggle.classList.toggle("active",visualMode);$("#veStatus").textContent=visualMode?"এডিট করার জন্য পেজের লেখা নির্বাচন করুন।":"";});
+ $("#veClose").onclick=()=>{visualMode=false;panel.hidden=true;document.body.classList.remove("visual-editor-active");toggle.classList.remove("active");};
  document.addEventListener("click",e=>{if(!visualMode||panel.contains(e.target)||e.target===toggle)return;const el=e.target.closest("h1,h2,h3,h4,p,a,button,label,span,small,strong,li");if(!el||el.closest("#visualEditorPanel")||el.children.length)return;e.preventDefault();e.stopPropagation();selectVisualElement(el);},{capture:true});
  $("#veApply").onclick=()=>{const item=visualDraft();if(!item){$("#veStatus").textContent="আগে একটি লেখা নির্বাচন করুন।";return;}applyVisualDraft(item);visualConfig[item.selector]=item;$("#veStatus").textContent="Preview প্রয়োগ হয়েছে। Save Changes চাপলে স্থায়ী হবে।";};
  $("#veSave").onclick=async()=>{const item=visualDraft();if(!item){$("#veStatus").textContent="আগে একটি লেখা নির্বাচন করুন।";return;}applyVisualDraft(item);visualConfig[item.selector]=item;const button=$("#veSave");button.disabled=true;$("#veStatus").textContent="সংরক্ষণ হচ্ছে…";try{const r=await fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:JSON.stringify(visualConfig)})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Save করা যায়নি।");$("#veStatus").textContent="পরিবর্তন সংরক্ষিত হয়েছে।";}catch(err){$("#veStatus").textContent=err.message;}finally{button.disabled=false;}};
- $("#veReset").onclick=()=>{if(!visualSelected)return;const id=visualSelector(visualSelected);delete visualConfig[id];visualSelected.removeAttribute("style");$("#veStatus").textContent="এই element-এর local style reset হয়েছে। Save Changes চাপলে reset সংরক্ষণ হবে না; সম্পূর্ণ reset API থেকে করতে হবে।";};
+ $("#veReset").onclick=()=>{if(!visualSelected)return;const id=visualSelector(visualSelected);delete visualConfig[id];visualSelected.removeAttribute("style");fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:JSON.stringify(visualConfig)})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Reset save failed");$("#veStatus").textContent="নির্বাচিত element reset ও সংরক্ষণ হয়েছে।";}).catch(e=>$("#veStatus").textContent=e.message);};
 }
 
 function videoCardHTML(v){
