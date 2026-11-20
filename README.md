@@ -1,4 +1,4 @@
-# FRAME — Netflix-style YouTube video library
+DRM Premium v1
 
 A static, responsive video-library starter. Videos are embedded from YouTube; this project does not upload or store video files.
 
