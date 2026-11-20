@@ -14,4 +14,4 @@ INSERT OR IGNORE INTO videos(id,title,category,youtube_id,thumbnail_url,descript
 ('demo2','Learn Something New Today','Education','ScMzIvxBSi4','','শিক্ষামূলক ভিডিওর নমুনা।',0,1,2,0,0),
 ('demo3','Creative Inspiration','Entertainment','aqz-KE-bpKQ','','বিনোদন বিভাগের নমুনা ভিডিও।',0,1,3,0,0);
 INSERT OR IGNORE INTO settings(key,value) VALUES
-('site_name','FRAME'),('hero_eyebrow','EDITOR''S PICK'),('hero_title',''),('hero_description',''),('library_eyebrow','DISCOVER'),('library_title','ভিডিও লাইব্রেরি'),('footer_text','একটি ব্যক্তিগত ভিডিও লাইব্রেরি'),('hero_image','https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=85'),('accent_color','#e50914');
+('site_name','FRAME'),('hero_eyebrow','EDITOR''S PICK'),('hero_title',''),('hero_description',''),('library_eyebrow','DISCOVER'),('library_title','ভিডিও লাইব্রেরি'),('footer_text','একটি ব্যক্তিগত ভিডিও লাইব্রেরি'),('hero_image','https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=85'),('accent_color','#e50914'),('show_hero','true'),('show_library','true');
