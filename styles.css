@@ -2100,3 +2100,11 @@ body.view-modern .video-card:hover,body.view-basic .video-card:hover{
 }
 .load-more-videos{display:block;margin:28px auto 0;min-width:190px;border:1px solid #58caff;cursor:pointer}
 body.view-modern .load-more-videos{background:#0b1b27;color:#eaf6ff}
+
+
+/* Unified single-view performance profile: retain the platinum design while reducing scroll-time paint work. */
+html,body{scroll-behavior:auto!important;background-attachment:scroll!important}
+.topbar,.menu-backdrop,.quick-upload-button,.video-row,.video-card,.metric-card,.admin-report,.admin-message,.admin-error,.account-drawer,.player-dialog,.logout-toast{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.hero-visual,.brand-mark,.pro-badge,.video-card,.video-row,.metric-card,.admin-report,.admin-message,.admin-error,.topbar,nav a,.quick-upload-button,.logout-toast{filter:none!important;text-shadow:none!important}
+#videoRows .video-card,#videoRows .video-row{box-shadow:none!important;transform:none!important;transition:none!important}
+#videoRows .video-card:hover{box-shadow:none!important;transform:none!important}
