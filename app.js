@@ -142,16 +142,35 @@ function sbSelectLiveElement(el){
 }
 function rgbToHex(value){const m=String(value).match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);return m?"#"+[m[1],m[2],m[3]].map(v=>Number(v).toString(16).padStart(2,"0")).join(""):"#ffffff";}
 function sbAttachLivePreview(frame){
- sbLiveFrame=frame;frame.addEventListener("load",()=>{
-  let doc;try{doc=frame.contentDocument;if(!doc||!doc.body)throw new Error();}catch{$("#sbMessage").textContent="Preview control requires same-origin access.";return;}
+ sbLiveFrame=frame;
+ const bind=()=>{
+  let doc;try{doc=frame.contentDocument;if(!doc||!doc.body)return;}catch{$("#sbMessage").textContent="Preview control requires same-origin access.";return;}
   if(doc.__drmBuilderBound)return;doc.__drmBuilderBound=true;
-  const style=doc.createElement("style");style.textContent="body *{cursor:crosshair!important}";doc.head.appendChild(style);
-  doc.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();const el=e.target.closest("body *");if(el)sbSelectLiveElement(el);},true);
-  doc.addEventListener("submit",e=>{e.preventDefault();e.stopImmediatePropagation();},true);
-  doc.addEventListener("pointerover",e=>{const el=e.target.closest("body *");if(!el||el===sbLiveSelected)return;if(sbLiveHover&&sbLiveHover!==sbLiveSelected)sbLiveHover.style.outline=sbLiveHover.dataset.sbHoverOutline||"";sbLiveHover=el;if(!el.dataset.sbHoverOutline)el.dataset.sbHoverOutline=el.style.outline||"";el.style.setProperty("outline","1px dashed #e11d48","important");},true);
-  doc.addEventListener("pointerout",e=>{const el=e.target.closest("body *");if(el&&el!==sbLiveSelected){el.style.outline=el.dataset.sbHoverOutline||"";if(sbLiveHover===el)sbLiveHover=null;}},true);
+  const style=doc.createElement("style");style.id="drm-builder-selection-style";style.textContent="body *{cursor:crosshair!important}";(doc.head||doc.documentElement).appendChild(style);
+  doc.addEventListener("click",e=>{
+   const el=e.target instanceof Element?e.target.closest("body *"):null;
+   if(!el)return;
+   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+   sbSelectLiveElement(el);
+  },true);
+  doc.addEventListener("auxclick",e=>{e.preventDefault();e.stopImmediatePropagation();},true);
+  doc.addEventListener("submit",e=>{e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();},true);
+  doc.addEventListener("pointerover",e=>{
+   const el=e.target instanceof Element?e.target.closest("body *"):null;if(!el||el===sbLiveSelected)return;
+   if(sbLiveHover&&sbLiveHover!==sbLiveSelected)sbLiveHover.style.outline=sbLiveHover.dataset.sbHoverOutline||"";
+   sbLiveHover=el;if(!el.dataset.sbHoverOutline)el.dataset.sbHoverOutline=el.style.outline||"";
+   el.style.setProperty("outline","1px dashed #e11d48","important");
+  },true);
+  doc.addEventListener("pointerout",e=>{
+   const el=e.target instanceof Element?e.target.closest("body *"):null;
+   if(el&&el!==sbLiveSelected){el.style.outline=el.dataset.sbHoverOutline||"";if(sbLiveHover===el)sbLiveHover=null;}
+  },true);
   $("#sbMessage").textContent="Editing mode active · click a website element to select it.";
- });
+ };
+ frame.addEventListener("load",bind);
+ // The iframe often finishes loading before the Builder attaches handlers.
+ // Bind immediately when its same-origin document is already available.
+ bind();
 }
 function sbApplyLiveChanges(save){
  const el=sbLiveSelected,host=$("#sbInspectorBody");if(!el)return;
@@ -199,7 +218,7 @@ function sbRender(){
  $("#sbLayers").innerHTML=(page.nodes||[]).map(n=>sbLayerHTML(n,0)).join("")||'<p class="sb-muted">No elements yet.</p>';
  const canvas=$("#sbCanvas");let preview=canvas.querySelector(".sb-live-preview");
  if(!preview){canvas.innerHTML='<div class="sb-live-preview-head"><strong>বর্তমান DRM PREMIUM ওয়েবসাইট</strong><span>Live reference preview · read-only</span></div><iframe class="sb-live-preview" title="বর্তমান DRM PREMIUM ওয়েবসাইটের প্রিভিউ" src="/?builderPreview=1#home" loading="eager"></iframe><div class="sb-draft-area"><div class="sb-draft-area-head"><strong>Builder Draft Elements</strong><span>এখানে নতুন draft elements তৈরি ও সাজানো যাবে</span></div><div id="sbDraftNodes"></div></div>';}
- if(preview&&!preview.dataset.sbBound){preview.dataset.sbBound="1";sbAttachLivePreview(preview);}
+ preview=canvas.querySelector(".sb-live-preview");if(preview&&!preview.dataset.sbBound){preview.dataset.sbBound="1";sbAttachLivePreview(preview);}
  $("#sbDraftNodes").innerHTML=(page.nodes||[]).map(n=>sbCanvasHTML(n)).join("")||'<div class="sb-empty">Draft এখনো খালি। বাম পাশের ＋ Section বা ＋ Element দিয়ে শুরু করুন।</div>';
  $("#sbSelectedType").textContent=sbSelected?(SB_LABELS[sbFind(sbSelected)?.node?.type]||"Selected"):"Nothing selected";
  canvas.querySelectorAll("[data-sb-node]").forEach(el=>{el.classList.toggle("sb-selected",el.dataset.sbNode===sbSelected);el.draggable=true;});sbRenderInspector();
