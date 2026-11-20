@@ -1969,3 +1969,44 @@ body::-webkit-scrollbar-corner,
 *::-webkit-scrollbar-corner{
   background:transparent!important;
 }
+
+
+/* ==========================================================
+   DRM PREMIUM — S2 CROSS-BROWSER CUSTOM PAGE SCROLLBAR
+   Visible thumb: 3px deep red, fully rounded caps.
+   Native scrolling remains the source of truth.
+   ========================================================== */
+html,body{scrollbar-width:thin!important;scrollbar-color:#b5122b transparent!important}
+*:not(html):not(body){scrollbar-color:auto;scrollbar-width:auto}
+html.drm-custom-scrollbar-ready,body.drm-custom-scrollbar-ready{
+  scrollbar-width:none!important;-ms-overflow-style:none!important;
+}
+html.drm-custom-scrollbar-ready::-webkit-scrollbar:vertical,
+body.drm-custom-scrollbar-ready::-webkit-scrollbar:vertical{
+  width:0!important;display:none!important;
+}
+#drmPageScrollbar{
+  position:fixed;z-index:2147483000;top:0;right:0;bottom:0;width:16px;
+  pointer-events:none;opacity:0;transition:opacity .18s ease;
+}
+#drmPageScrollbar.is-visible{opacity:1}
+#drmPageScrollbar[hidden]{display:none!important}
+#drmPageScrollbar .drm-scrollbar-thumb{
+  position:absolute;top:0;left:6.5px;width:3px;min-height:24px;
+  border:0;border-radius:999px;background:#b5122b;
+  box-shadow:0 0 5px rgba(181,18,43,.22);
+  pointer-events:auto;cursor:grab;touch-action:none;will-change:transform,height;
+  outline:none;
+}
+#drmPageScrollbar .drm-scrollbar-thumb::before{
+  content:"";position:absolute;top:0;bottom:0;left:-6.5px;width:16px;background:transparent;
+}
+#drmPageScrollbar .drm-scrollbar-thumb:hover,
+#drmPageScrollbar .drm-scrollbar-thumb:focus-visible{
+  background:#d21d3b;box-shadow:0 0 8px rgba(181,18,43,.42);
+}
+#drmPageScrollbar .drm-scrollbar-thumb:active{cursor:grabbing}
+#drmPageScrollbar .drm-scrollbar-thumb:focus-visible{
+  outline:2px solid rgba(181,18,43,.45);outline-offset:3px;
+}
+@media(prefers-reduced-motion:reduce){#drmPageScrollbar{transition:none}}
