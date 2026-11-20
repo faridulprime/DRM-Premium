@@ -120,7 +120,7 @@
     }
     if ("MutationObserver" in window) {
       const observer = new MutationObserver(schedule);
-      observer.observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     }
 
     schedule();
