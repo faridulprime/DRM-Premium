@@ -16,7 +16,7 @@ All current work is on `feature/full-admin-panel`. Production `main` has not bee
 - Owner-only website settings.
 - Owner-only user/role management. Owner can promote a verified user to Admin or revoke that Admin role.
 - Removing an Admin revokes their sessions and demotes the account to User. Their content is retained; Owner continues to control it.
-- Passwords use PBKDF2-HMAC-SHA-256 with a unique random salt per account and 210,000 iterations.
+- Passwords use PBKDF2-HMAC-SHA-256 with a unique random salt per account and 100,000 iterations.
 - Sessions use random opaque tokens stored as SHA-256 hashes in D1, with HttpOnly, Secure and SameSite=Strict cookies; session lifetime is seven days.
 - Login throttling: up to 8 failed attempts per IP hash in a 15-minute window.
 - Mutating API requests require a matching same-origin Origin header.
