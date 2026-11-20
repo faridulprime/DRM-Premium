@@ -2108,3 +2108,34 @@ html,body{scroll-behavior:auto!important;background-attachment:scroll!important}
 .hero-visual,.brand-mark,.pro-badge,.video-card,.video-row,.metric-card,.admin-report,.admin-message,.admin-error,.topbar,nav a,.quick-upload-button,.logout-toast{filter:none!important;text-shadow:none!important}
 #videoRows .video-card,#videoRows .video-row{box-shadow:none!important;transform:none!important;transition:none!important}
 #videoRows .video-card:hover{box-shadow:none!important;transform:none!important}
+
+
+/* 2026-11: unified opaque layout, normal document-flow navigation, no floating UI. */
+.topbar,body.view-modern .topbar,body.view-basic .topbar{
+  position:relative!important;top:auto!important;z-index:5!important;
+  background:#e7eef7!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+html{scroll-behavior:auto!important}
+.menu-backdrop{background:#26384b!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.account-drawer,body.view-modern .account-drawer,body.view-basic .account-drawer{
+  background:#e7eef7!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+.admin-section{background:#dce8f5!important}
+.hero,body.view-modern .hero,body.view-basic .hero{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.hero-copy{background:#f4f7fb!important}
+.video-row,.video-card,.metric-card,.admin-report,.admin-message,.admin-error,
+.header-field,.library-tools input,.player-dialog,footer,.account-drawer{
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+.video-row{background:#dce8f5!important}
+.video-card,.metric-card,.admin-report,.admin-message,.admin-error{background:#f4f7fb!important}
+.header-field{background:#f4f7fb!important}
+.library-tools input{background:#f4f7fb!important}
+footer{background:#e7eef7!important}
+.logout-toast,.mode-transition,.mode-notice,.site-intro,.view-mode-switcher,.quick-upload-button{display:none!important}
+.nav-upload{display:inline-flex!important;align-items:center;gap:6px;padding:8px 10px!important;border:1px solid #8da7c2!important;border-radius:6px;background:#d2e0ef!important;color:#183d5c!important;text-decoration:none!important;font-weight:700!important}
+.nav-upload[hidden]{display:none!important}
+.nav-upload svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.topbar>nav#mainNav{flex-wrap:wrap}
+@media(max-width:760px){.topbar{position:relative!important}.topbar>nav#mainNav{overflow:visible!important;flex-wrap:wrap}.nav-upload{flex:0 0 auto}}
