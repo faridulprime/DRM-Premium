@@ -28,9 +28,12 @@
 
     let frame = 0;
     let drag = null;
+    let metrics = null;
     let lastRange = 0;
 
-    const getMetrics = () => {
+    // Expensive document dimensions are measured only after layout changes,
+    // never on every scroll event.
+    const measure = () => {
       const viewport = window.innerHeight || root.clientHeight;
       const doc = document.scrollingElement || root;
       const total = Math.max(doc.scrollHeight, root.scrollHeight, document.body.scrollHeight);
@@ -39,23 +42,24 @@
         ? viewport
         : Math.min(viewport, Math.max(24, (viewport * viewport) / total));
       const travel = Math.max(0, viewport - thumbHeight);
-      const scrollTop = Math.min(maxScroll, Math.max(0, window.scrollY || doc.scrollTop || 0));
-      return { viewport, maxScroll, thumbHeight, travel, scrollTop };
+      metrics = { viewport, maxScroll, thumbHeight, travel };
+      lastRange = maxScroll;
+      rail.hidden = !(maxScroll > 1 && travel > 0);
+      if (!rail.hidden) {
+        thumb.style.height = thumbHeight + "px";
+      }
+      schedule();
     };
 
     const render = () => {
       frame = 0;
-      const m = getMetrics();
-      lastRange = m.maxScroll;
-      const hasScroll = m.maxScroll > 1 && m.travel > 0;
-      rail.hidden = !hasScroll;
-      if (!hasScroll) return;
-
-      const top = (m.scrollTop / m.maxScroll) * m.travel;
-      thumb.style.height = m.thumbHeight + "px";
+      if (!metrics || rail.hidden) return;
+      const doc = document.scrollingElement || root;
+      const scrollTop = Math.min(metrics.maxScroll, Math.max(0, window.scrollY || doc.scrollTop || 0));
+      const top = metrics.maxScroll ? (scrollTop / metrics.maxScroll) * metrics.travel : 0;
       thumb.style.transform = "translate3d(0," + top + "px,0)";
-      thumb.setAttribute("aria-valuenow", String(Math.round((m.scrollTop / m.maxScroll) * 100)));
       rail.classList.add("is-visible");
+      thumb.setAttribute("aria-valuenow", String(Math.round((scrollTop / metrics.maxScroll) * 100)));
     };
 
     const schedule = () => {
@@ -109,21 +113,20 @@
     });
 
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule, { passive: true });
-    window.addEventListener("orientationchange", schedule, { passive: true });
-    window.visualViewport?.addEventListener("resize", schedule, { passive: true });
+    window.addEventListener("resize", measure, { passive: true });
+    window.addEventListener("orientationchange", measure, { passive: true });
+    window.visualViewport?.addEventListener("resize", measure, { passive: true });
 
     if ("ResizeObserver" in window) {
-      const observer = new ResizeObserver(schedule);
+      const observer = new ResizeObserver(measure);
       observer.observe(root);
       if (document.body) observer.observe(document.body);
     }
     if ("MutationObserver" in window) {
-      const observer = new MutationObserver(schedule);
+      const observer = new MutationObserver(measure);
       observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     }
-
-    schedule();
+    measure();
   };
 
   if (document.readyState === "loading") {
