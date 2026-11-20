@@ -28,7 +28,7 @@ async function handle(req,env){
  if(p[0]==="auth"&&p[1]==="status"&&m==="GET")return json({configured:await adminsExist(env.DB)});
  if(p[0]==="auth"&&p[1]==="owner-otp"&&m==="POST"){
   if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
-  if(!env.OWNER_EMAIL||!env.RESEND_API_KEY||!env.RESEND_FROM||!env.SESSION_SECRET)return fail("Owner email verification is not configured. Set OWNER_EMAIL, RESEND_API_KEY, RESEND_FROM and SESSION_SECRET.",503);
+  if(!env.OWNER_EMAIL||!env.GOOGLE_APPS_SCRIPT_URL||!env.GOOGLE_APPS_SCRIPT_TOKEN||!env.SESSION_SECRET)return fail("Owner email verification is not configured. Set OWNER_EMAIL, GOOGLE_APPS_SCRIPT_URL, GOOGLE_APPS_SCRIPT_TOKEN and SESSION_SECRET.",503);
   const d=await readBody(req),email=String(d?.email||"").trim().toLowerCase();
   if(!emailOK(email)||email!==env.OWNER_EMAIL.toLowerCase())return fail("ইমেইলটি Owner-এর নির্ধারিত ইমেইলের সঙ্গে মিলছে না।",403);
   const now=Math.floor(Date.now()/1000),recent=await env.DB.prepare("SELECT created_at FROM owner_setup_otps ORDER BY created_at DESC LIMIT 1").first();
