@@ -1,1 +1,41 @@
-<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FRAME</title><link rel="stylesheet" href="styles.css"></head><body><header class="topbar"><a class="brand" href="/"><span class="brand-mark">F</span> <span id="brandName">FRAME</span></a><nav><a href="/">হোম</a><a href="#browse">ভিডিও</a><a href="#browse">ক্যাটাগরি</a></nav><div class="top-actions"><input id="search" type="search" placeholder="ভিডিও খুঁজুন…" aria-label="ভিডিও খুঁজুন"><a class="admin-link" href="/admin">Admin</a></div></header><main id="home"><section class="hero" id="hero"><div class="hero-content"><p class="eyebrow" id="heroEyebrow">EDITOR'S PICK</p><h1 id="heroTitle">আপনার পরবর্তী পছন্দের ভিডিও</h1><p id="heroDescription">বিভিন্ন ক্যাটাগরির ভিডিও এক জায়গায়।</p><div class="hero-buttons"><button id="heroPlay" class="primary" disabled>▶ এখনই দেখুন</button><a href="#browse" class="secondary">আরও দেখুন</a></div></div></section><section class="content" id="browse"><div class="section-head"><div><p class="eyebrow" id="libraryEyebrow">DISCOVER</p><h2 id="libraryTitle">ভিডিও লাইব্রেরি</h2></div><select id="categoryFilter"><option value="all">সব ক্যাটাগরি</option></select></div><div id="videoRows"></div><p id="emptyState" class="empty" hidden>কোনো ভিডিও পাওয়া যায়নি।</p></section></main><footer><span id="footerBrand">FRAME</span> <span id="footerText">একটি ব্যক্তিগত ভিডিও লাইব্রেরি</span></footer><dialog id="playerDialog" class="player-dialog"><button class="close" data-close="playerDialog">✕</button><div id="playerFrame" class="player-frame"></div><div class="player-info"><h2 id="playerTitle"></h2><p id="playerDescription"></p></div></dialog><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAME — Video / Story / Knowledge</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/" aria-label="FRAME home"><span class="brand-mark">F</span><span id="brandName">FRAME</span></a>
+  <nav aria-label="Main navigation"><a class="active" href="/">Home</a><a href="#browse">Videos</a><a href="#browse">Categories</a><a href="#about">About</a></nav>
+  <div class="top-actions" aria-label="Account access preview">
+    <label class="header-field"><span class="sr-only">Email</span><span class="field-icon">✉</span><input id="headerEmail" type="email" placeholder="Email" autocomplete="email"></label>
+    <label class="header-field"><span class="sr-only">Password</span><span class="field-icon">▣</span><input id="headerPassword" type="password" placeholder="Password" autocomplete="current-password"></label>
+    <button class="login-button" type="button" disabled aria-label="Login will be enabled in Task 2">Login</button>
+    <button class="signup-button" type="button" disabled aria-label="Sign up will be enabled in Task 2">Sign Up</button>
+  </div>
+</header>
+<main id="home">
+<section class="hero" id="hero">
+  <div class="hero-copy">
+    <h1>FRAME</h1>
+    <p class="hero-kicker">VIDEO <span>/</span> STORY <span>/</span> KNOWLEDGE</p>
+    <div class="red-rule"></div>
+    <p class="hero-description" id="heroDescription">A curated platform for insightful videos, compelling stories and meaningful ideas.</p>
+    <div class="hero-buttons"><button id="heroPlay" class="primary" disabled>▶ এখনই দেখুন</button><a href="#browse" class="secondary">আরও দেখুন</a></div>
+  </div>
+  <div class="hero-visual" role="img" aria-label="Minimal architectural composition with a tree"></div>
+  <div class="hero-corner"></div>
+</section>
+<section class="content" id="browse">
+  <div class="section-head"><div><p class="eyebrow" id="libraryEyebrow">DISCOVER</p><h2 id="libraryTitle">ভিডিও লাইব্রেরি</h2></div><select id="categoryFilter"><option value="all">সব ক্যাটাগরি</option></select></div>
+  <div id="videoRows"></div><p id="emptyState" class="empty" hidden>কোনো ভিডিও পাওয়া যায়নি।</p>
+</section>
+</main>
+<footer id="about"><span id="footerBrand">FRAME</span><span id="footerText">একটি ব্যক্তিগত ভিডিও লাইব্রেরি</span></footer>
+<dialog id="playerDialog" class="player-dialog"><button class="close" data-close="playerDialog">✕</button><div id="playerFrame" class="player-frame"></div><div class="player-info"><h2 id="playerTitle"></h2><p id="playerDescription"></p></div></dialog>
+<script src="app.js"></script>
+</body>
+</html>
