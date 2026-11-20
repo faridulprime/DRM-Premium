@@ -45,7 +45,7 @@ async function handle(req,env){
   if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
   if(!env.SESSION_SECRET)return fail("Cloudflare SESSION_SECRET is not configured.",503);
   const d=await readBody(req),email=String(d?.email||"").trim().toLowerCase(),otp=String(d?.code||"").trim();
-  if(!emailOK(email)||email!==String(env.OWNER_EMAIL||"").toLowerCase()||!passwordOK(d?.password)||!textOK(d?.username,30)||!/^[a-zA-Z0-9_]{3,30}$/.test(d.username)||!/^\\d{6}$/.test(otp))return fail("সঠিক Owner email, ৬ সংখ্যার কোড, username এবং অন্তত ৮ অক্ষরের password দিন।");
+  if(!emailOK(email)||email!==String(env.OWNER_EMAIL||"").toLowerCase()||!passwordOK(d?.password)||!textOK(d?.username,30)||!/^[a-zA-Z0-9_]{3,30}$/.test(d.username)||!/^\d{6}$/.test(otp))return fail("সঠিক Owner email, ৬ সংখ্যার কোড, username এবং অন্তত ৮ অক্ষরের password দিন।");
   const now=Math.floor(Date.now()/1000),record=await env.DB.prepare("SELECT * FROM owner_setup_otps WHERE email=?").bind(email).first();
   if(!record||Number(record.expires_at)<now||Number(record.attempts)>=5)return fail("কোডের মেয়াদ শেষ বা চেষ্টা সীমা অতিক্রম হয়েছে। নতুন কোড নিন।",403);
   const expected=await hash(email+":"+otp+":"+env.SESSION_SECRET);
