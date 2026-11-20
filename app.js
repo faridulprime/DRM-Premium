@@ -34,9 +34,10 @@ async function init(){
  $("#search").addEventListener("input",render);$("#categoryFilter").addEventListener("change",render);
  document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.close);d.close();$("#playerFrame").innerHTML="";});
  $("#playerDialog").addEventListener("close",()=>$("#playerFrame").innerHTML="");
- try{const [vr,cr,sr]=await Promise.all([fetch("/api/videos"),fetch("/api/categories"),fetch("/api/settings")]);if(vr.ok)videos=await vr.json();if(cr.ok)categories=await cr.json();if(sr.ok)settings=await sr.json();}
+ let apiReady=false;
+ try{const [vr,cr,sr]=await Promise.all([fetch("/api/videos"),fetch("/api/categories"),fetch("/api/settings")]);if(vr.ok){videos=await vr.json();apiReady=true;}if(cr.ok)categories=await cr.json();if(sr.ok)settings=await sr.json();}
  catch(e){console.warn("FRAME API is not available yet.",e);}
- if(!videos.length)videos=demoVideos;if(!categories.length)categories=[...new Set(videos.map(v=>v.category))].map(name=>({name}));
+ if(!apiReady)videos=demoVideos;if(!categories.length)categories=[...new Set(videos.map(v=>v.category))].map(name=>({name}));
  applySettings();render();
 }
 init();
