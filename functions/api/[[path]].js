@@ -37,8 +37,9 @@ async function handle(req,env){
   const codeHash=await hash(email+":"+code+":"+env.SESSION_SECRET);
   await env.DB.prepare("DELETE FROM owner_setup_otps").run();
   await env.DB.prepare("INSERT INTO owner_setup_otps(email,code_hash,expires_at,attempts,created_at) VALUES(?,?,?,0,?)").bind(email,codeHash,now+600,now).run();
-  const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json"},body:JSON.stringify({from:env.RESEND_FROM,to:[email],subject:"DRM Premium — Owner verification code",text:"Your DRM Premium Owner verification code is "+code+". It expires in 10 minutes. If you did not request this, ignore this email."})});
-  if(!sent.ok){await env.DB.prepare("DELETE FROM owner_setup_otps").run();console.error("Owner OTP email failed",sent.status,await sent.text());return fail("ইমেইল পাঠানো যায়নি। Resend sender configuration পরীক্ষা করুন।",502)}
+   let sent;try{sent=await fetch(env.GOOGLE_APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:env.GOOGLE_APPS_SCRIPT_TOKEN,to:email,code,expiresInMinutes:10})});}catch(e){await env.DB.prepare("DELETE FROM owner_setup_otps").run();console.error("Google Apps Script request failed",e);return fail("Gmail service-এ সংযোগ করা যায়নি। Apps Script deployment পরীক্ষা করুন।",502)}
+   let delivery={};try{delivery=await sent.json()}catch{}
+   if(!sent.ok||delivery.ok!==true){await env.DB.prepare("DELETE FROM owner_setup_otps").run();console.error("Owner OTP email failed",sent.status,delivery.error||"invalid response");return fail("Gmail দিয়ে verification code পাঠানো যায়নি। Apps Script configuration পরীক্ষা করুন।",502)}
   return json({ok:true,message:"ইমেইলে verification code পাঠানো হয়েছে।"});
  }
  if(p[0]==="auth"&&p[1]==="setup"&&m==="POST"){
