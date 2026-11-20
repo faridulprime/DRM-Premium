@@ -12,6 +12,8 @@ function applySettings(){
  const pairs={brandName:"site_name",footerBrand:"site_name",heroEyebrow:"hero_eyebrow",libraryEyebrow:"library_eyebrow",libraryTitle:"library_title",footerText:"footer_text"};
  for(const [id,key] of Object.entries(pairs))if(settings[key])$("#"+id).textContent=settings[key];
  if(settings.hero_image)$("#hero").style.backgroundImage=`linear-gradient(90deg,#080808 0%,rgba(8,8,8,.86) 32%,rgba(8,8,8,.12) 100%),url("${settings.hero_image}")`;
+ if(settings.show_hero==="false")$("#hero").hidden=true;
+ if(settings.show_library==="false")$("#browse").hidden=true;
  if(settings.accent_color&&/^#[0-9a-f]{6}$/i.test(settings.accent_color))document.documentElement.style.setProperty("--red",settings.accent_color);
  document.title=(settings.site_name||"FRAME")+" — Watch something great";
 }
