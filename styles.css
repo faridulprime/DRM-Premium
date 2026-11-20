@@ -2099,35 +2099,19 @@ body.view-basic .topbar{
 }
 
 
-/* LIGHTNING-FAST OVERRIDE — preserve layout, remove expensive paint effects. */
-body.view-modern *,
-body.view-modern *::before,
-body.view-modern *::after {
+
+
+/* Performance pass 2: cheap native scrolling and targeted flat surfaces. */
+html { scroll-behavior:auto!important; }
+body.view-modern :is(.topbar,.hero,.content,.video-row,.video-card,.metric-card,
+.admin-report,.admin-message,.admin-error,.account-drawer,footer,.player-dialog,
+.logout-toast,.menu-backdrop,.quick-upload-button) {
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
-}
-body.view-modern .video-card,
-body.view-modern .video-card:hover,
-body.view-modern .video-card img,
-body.view-modern .video-row,
-body.view-modern .metric-card,
-body.view-modern .admin-report {
   filter:none!important;
   box-shadow:none!important;
-  text-shadow:none!important;
 }
-body.view-modern .video-card,
-body.view-modern .metric-card,
-body.view-modern .admin-report,
-body.view-modern .topbar,
-body.view-modern nav a,
-body.view-modern .quick-upload-button {
+body.view-modern :is(.video-card,.metric-card,.admin-report,.topbar,nav a,.quick-upload-button) {
   transition:none!important;
 }
 body.view-modern .video-card:hover { transform:none!important; }
-body.view-modern .video-card img { transform:none!important; }
-@media (hover:none), (prefers-reduced-motion:reduce) {
-  body.view-modern *,body.view-modern *::before,body.view-modern *::after {
-    animation:none!important;transition:none!important;
-  }
-}
