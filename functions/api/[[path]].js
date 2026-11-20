@@ -1,4 +1,4 @@
-const COOKIE="frame_admin_session",SESSION_SECONDS=604800,ITERATIONS=210000;
+const COOKIE="frame_admin_session",SESSION_SECONDS=604800,ITERATIONS=100000;
 const DEFAULT_SETTINGS={site_name:"FRAME",hero_eyebrow:"EDITOR'S PICK",hero_title:"",hero_description:"",library_eyebrow:"DISCOVER",library_title:"ভিডিও লাইব্রেরি",footer_text:"একটি ব্যক্তিগত ভিডিও লাইব্রেরি",hero_image:"https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=85",accent_color:"#e50914"};
 const json=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff",...headers}});
 const fail=(message,status=400)=>json({error:message},status);
