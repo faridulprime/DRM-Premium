@@ -144,3 +144,16 @@ body.view-modern .thumb{background:#10202b}
 
 /* View switcher belongs to the homepage top corner and scrolls with the page */
 main#home{position:relative}
+
+/* Persistent upload action: visible only for authenticated accounts */
+.quick-upload-button{position:fixed;z-index:45;right:28px;bottom:28px;width:76px;height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border:1px solid rgba(113,220,255,.72);border-radius:50%;background:linear-gradient(145deg,#123b53 0%,#07131e 72%);color:#e9faff;box-shadow:0 0 0 5px rgba(67,185,235,.08),0 8px 30px rgba(0,0,0,.45),0 0 26px rgba(55,190,255,.28);cursor:pointer;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.quick-upload-button span{font:300 43px/40px Inter,Arial,sans-serif;text-shadow:0 0 14px rgba(83,207,255,.75)}
+.quick-upload-button small{font:800 8px/1 Inter,Arial,sans-serif;letter-spacing:2px;color:#91dfff}
+.quick-upload-button:hover{transform:translateY(-4px) scale(1.04);border-color:#b4efff;box-shadow:0 0 0 6px rgba(67,185,235,.12),0 12px 36px rgba(0,0,0,.5),0 0 34px rgba(55,190,255,.4)}
+.quick-upload-button:focus-visible{outline:3px solid #8ee2ff;outline-offset:5px}
+.member-upload-notice{width:min(420px,calc(100vw - 32px));padding:30px;border:1px solid #28617d;border-radius:16px;background:#08131d;color:#eaf8ff;text-align:center;box-shadow:0 24px 80px #0009}
+.member-upload-notice::backdrop{background:rgba(0,5,10,.78);backdrop-filter:blur(5px)}
+.member-upload-notice .close{float:right}.upload-notice-mark{clear:both;margin:18px auto 12px;width:58px;height:58px;border:1px solid #58caff;border-radius:50%;color:#8de0ff;font:300 40px/54px Inter,Arial,sans-serif;box-shadow:0 0 24px #58caff30}
+.member-upload-notice h2{margin:8px 0;font:800 18px Inter,Arial,sans-serif}.member-upload-notice p{color:#b4c9d6;font:400 14px/1.7 'Hind Siliguri',sans-serif}.notice-dismiss{margin-top:12px;padding:10px 22px;border:1px solid #397b9b;border-radius:8px;background:#123b53;color:#eaf8ff;font:600 13px 'Hind Siliguri',sans-serif}
+@media(max-width:600px){.quick-upload-button{right:18px;bottom:18px;width:66px;height:66px}.quick-upload-button span{font-size:38px;line-height:35px}}
+body.view-basic .quick-upload-button{box-shadow:0 5px 18px #0007;background:#10202b;border-color:#58caff}
