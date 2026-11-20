@@ -2062,3 +2062,39 @@ body,body.view-modern,body.view-basic{
   display:block;
   backface-visibility:hidden;
 }
+
+
+/* Scroll-performance refinement: avoid deferred section rendering jank
+   and override high-specificity theme glass filters on scrolling surfaces. */
+.resource-section,.admin-section,.video-row{
+  content-visibility:visible!important;
+  contain-intrinsic-size:auto!important;
+}
+body.view-modern .topbar,
+body.view-modern .hero,
+body.view-modern .video-row,
+body.view-modern .video-card,
+body.view-modern .metric-card,
+body.view-modern .admin-report,
+body.view-modern .admin-message,
+body.view-modern .admin-error,
+body.view-modern .account-drawer,
+body.view-modern footer,
+body.view-basic .topbar,
+body.view-basic .hero,
+body.view-basic .video-row,
+body.view-basic .video-card,
+body.view-basic .metric-card,
+body.view-basic .admin-report,
+body.view-basic .admin-message,
+body.view-basic .admin-error,
+body.view-basic .account-drawer,
+body.view-basic footer{
+  -webkit-backdrop-filter:blur(6px) saturate(115%)!important;
+  backdrop-filter:blur(6px) saturate(115%)!important;
+}
+body.view-modern .topbar,
+body.view-basic .topbar{
+  -webkit-backdrop-filter:blur(8px) saturate(118%)!important;
+  backdrop-filter:blur(8px) saturate(118%)!important;
+}
