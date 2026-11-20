@@ -31,7 +31,18 @@ async function handle(req,env){
   if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
   const supplied=req.headers.get("x-setup-secret")||"",a=new TextEncoder().encode(supplied),b=new TextEncoder().encode(env.BOOTSTRAP_SECRET);let diff=a.length^b.length;for(let i=0;i<Math.max(a.length,b.length);i++)diff|=(a[i]||0)^(b[i]||0);if(diff!==0)return fail("Bootstrap Secret সঠিক নয়।",403);
   const d=await readBody(req);if(!emailOK(d?.email)||!passwordOK(d?.password)||!textOK(d?.username,30)||!/^[a-zA-Z0-9_]{3,30}$/.test(d.username)||d.email.toLowerCase()!==(env.OWNER_EMAIL||"").toLowerCase())return fail("OWNER_EMAIL-এর সঙ্গে মিলে এমন email, ৩-৩০ অক্ষরের username (শুধু ইংরেজি অক্ষর/সংখ্যা/_) এবং অন্তত ১২ অক্ষরের password দিন।");
-  const id=crypto.randomUUID();await env.DB.prepare("INSERT INTO users(id,email,username,password_hash,role,email_verified,created_at) VALUES(?,?,?,?,'owner',1,?)").bind(id,d.email.toLowerCase(),String(d.username||"owner").toLowerCase(),await makePassword(d.password),Date.now()).run();await env.DB.batch([env.DB.prepare("UPDATE videos SET owner_id=? WHERE owner_id IS NULL").bind(id),env.DB.prepare("UPDATE categories SET owner_id=? WHERE owner_id IS NULL").bind(id)]);
+  const id=crypto.randomUUID();
+  try {
+   await env.DB.batch([
+    env.DB.prepare("INSERT INTO users(id,email,username,password_hash,role,email_verified,created_at) VALUES(?,?,?,?,'owner',1,?)").bind(id,d.email.toLowerCase(),String(d.username).toLowerCase(),await makePassword(d.password),Date.now()),
+    env.DB.prepare("UPDATE videos SET owner_id=? WHERE owner_id IS NULL").bind(id),
+    env.DB.prepare("UPDATE categories SET owner_id=? WHERE owner_id IS NULL").bind(id)
+   ]);
+  } catch(e) {
+   if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
+   console.error("Owner bootstrap failed",e);
+   return fail("Owner account তৈরি করা যায়নি। Email/username আগে ব্যবহৃত হয়েছে কি না পরীক্ষা করুন।",409);
+  }
   const token=await newSession(id,env);return json({ok:true},201,{"set-cookie":cookie(token)});
  }
  if(p[0]==="auth"&&p[1]==="login"&&m==="POST"){
