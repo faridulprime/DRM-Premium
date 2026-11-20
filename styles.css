@@ -64,3 +64,52 @@ body.drawer-open{overflow:hidden}
 @keyframes drmToastScan{to{transform:translateX(130%)}}
 @keyframes drmToastExit{0%{opacity:1;transform:translateX(0) scale(1);filter:blur(0);clip-path:inset(0 0 0 0)}45%{opacity:.85;filter:blur(1px)}100%{opacity:0;transform:translateX(24px) scale(.96);filter:blur(5px);clip-path:inset(0 0 0 100%)}}
 /* Account-toast motion is explicitly enabled as requested. */
+
+/* DRM GLOBAL VIEW MODES — phase 1 */
+:root{--drm-cyan:#58caff;--drm-dark:#070b10;--drm-text:#e9f5ff}
+.view-mode-switcher{position:fixed;z-index:25;right:18px;bottom:18px;display:flex;gap:4px;padding:5px;border:1px solid rgba(88,202,255,.28);border-radius:999px;background:rgba(5,10,15,.9);box-shadow:0 8px 28px #0005;backdrop-filter:blur(12px)}
+.view-mode-switcher button{position:relative;border:1px solid transparent;border-radius:999px;padding:8px 12px;background:transparent;color:#b8c9d6;font:600 11px 'Hind Siliguri',sans-serif;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.view-mode-switcher button:hover,.view-mode-switcher button.active{color:#eaf9ff;border-color:rgba(88,202,255,.42);background:rgba(37,160,220,.18);box-shadow:0 0 13px rgba(40,177,255,.13)}
+.view-mode-switcher button:focus-visible{outline:2px solid var(--drm-cyan);outline-offset:2px}
+.view-mode-switcher button[title]:hover:before{content:attr(title);position:absolute;right:0;bottom:calc(100% + 10px);width:max-content;max-width:210px;padding:7px 10px;border:1px solid #28536a;border-radius:7px;background:#08131d;color:#d9f4ff;font:500 11px 'Hind Siliguri',sans-serif;box-shadow:0 5px 18px #0005}
+.mode-transition{position:fixed;z-index:100;inset:0;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.94);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s ease}
+.mode-transition.show{opacity:1;visibility:visible;pointer-events:auto}
+.mode-notice{position:relative;display:flex;flex-direction:column;align-items:center;gap:9px;min-width:min(340px,88vw);padding:25px 28px;border:1px solid #164b69;border-radius:5px;background:#05090d;color:#65cfff;box-shadow:0 0 24px rgba(0,155,255,.16),0 18px 60px #0009;text-align:center;animation:drmToastEnter .42s cubic-bezier(.16,.9,.24,1) both}
+.mode-notice:before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:2px;background:#26baff;box-shadow:0 0 9px #26baff}
+.mode-notice:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(90,205,255,.2) 48%,transparent 64%);transform:translateX(-130%);animation:drmToastScan .62s .08s ease-out both}
+.mode-notice-icon{width:38px;height:38px;fill:none;stroke:#58caff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(39,183,255,.65))}
+.mode-notice strong{font:800 15px Inter,Arial,sans-serif;letter-spacing:.5px}
+.mode-notice span{font:500 13px 'Hind Siliguri',sans-serif;color:#a9dfff}
+.site-intro{position:fixed;z-index:110;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#05090d;color:#eaf9ff;transition:opacity .45s ease,visibility .45s ease}
+.site-intro.done{opacity:0;visibility:hidden;pointer-events:none}
+.intro-mark{font:900 clamp(38px,8vw,68px) Inter,Arial,sans-serif;letter-spacing:.12em;text-shadow:0 0 24px rgba(60,190,255,.25);animation:introPulse 1.2s ease-in-out both}
+.intro-mark span{color:#58caff}.site-intro p{margin:0;color:#69c9f4;font:700 10px Inter,Arial,sans-serif;letter-spacing:.38em}
+@keyframes introPulse{0%{opacity:0;transform:translateY(12px) scale(.96);filter:blur(8px)}55%{opacity:1;filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1)}}
+body.view-modern{background:#070b10;color:#e9f5ff;color-scheme:dark}
+body.view-modern .topbar,body.view-modern footer{background:rgba(7,12,18,.96);border-color:rgba(91,190,235,.2);color:#e9f5ff}
+body.view-modern .brand,body.view-modern nav a,body.view-modern .field-icon,body.view-modern .header-field input,body.view-modern .header-field input::placeholder{color:#e9f5ff}
+body.view-modern .brand-mark{color:#65cfff}body.view-modern .header-field{border-bottom-color:#4d829e}
+body.view-modern .menu-toggle{border-color:#39718d}body.view-modern .menu-toggle span{background:#d9f4ff}
+body.view-modern .pro-badge{color:#e8f8ff;text-shadow:0 0 10px rgba(73,190,255,.35);border-color:#58caff}
+body.view-modern .hero,body.view-modern .content,body.view-modern .admin-section{background:transparent;border-color:rgba(91,190,235,.16)}
+body.view-modern .hero-copy{color:#effaff}body.view-modern .hero-description,body.view-modern .hero h1,body.view-modern .hero-kicker,body.view-modern .section-head h2,body.view-modern .video-row h3{color:#effaff}
+body.view-modern .hero-visual{filter:none}
+body.view-modern .video-card,body.view-modern .metric-card,body.view-modern .admin-report,body.view-modern .admin-message,body.view-modern .admin-error{background:rgba(16,28,39,.76);border-color:rgba(104,194,235,.23);color:#eaf6ff;backdrop-filter:blur(14px);box-shadow:0 10px 28px rgba(0,0,0,.2)}
+body.view-modern .card-copy p,body.view-modern .metric-card span,body.view-modern .admin-empty,body.view-modern .admin-updated{color:#9cb0bf}
+body.view-modern .section-head select{color:#eaf6ff;border-color:#426b80}
+body.view-modern .section-head select option{background:#0b141d;color:#eaf6ff}
+body.view-modern .account-drawer{background:#09131d;border-color:#1c4054;color:#eaf6ff}
+body.view-modern .drawer-head,body.view-modern .drawer-bottom{border-color:#24465a}
+body.view-modern .drawer-account-label{color:#a9c1d0}body.view-modern .drawer-head button{color:#eaf6ff}
+body.view-modern .logout-button{border-color:#39718d;background:#0b1b27;color:#eaf6ff}
+body.view-modern .player-dialog{background:#0a131c;color:#eaf6ff;border-color:#31536a}
+body.view-modern .player-info p{color:#a9c1d0}body.view-modern .report-track{background:#1a2b38}body.view-modern .report-track i{background:#58caff}
+body.view-modern .admin-section{background:rgba(9,18,27,.4)}body.view-modern .admin-message{color:#eaf6ff}
+body.view-modern .header-login-status{background:#0b141d;color:#eaf6ff;border-color:#31536a}
+body.view-basic{scroll-behavior:auto}
+body.view-basic *,body.view-basic *:before,body.view-basic *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important;text-shadow:none!important;box-shadow:none!important;filter:none!important}
+body.view-basic .view-mode-switcher{backdrop-filter:none;background:#080d12}
+body.view-basic .video-card,body.view-basic .metric-card,body.view-basic .admin-report{backdrop-filter:none}
+body.view-basic .hero-visual{filter:grayscale(1)}
+@media(max-width:760px){.view-mode-switcher{right:10px;bottom:10px}.view-mode-switcher button{padding:7px 10px;font-size:10px}.mode-notice{min-width:min(300px,88vw);padding:22px 18px}}
+@media(prefers-reduced-motion:reduce){.view-mode-switcher,.mode-transition,.site-intro{transition:none}}
