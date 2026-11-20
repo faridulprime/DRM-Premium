@@ -2173,74 +2173,35 @@ body.visual-editor-active{cursor:crosshair}
 .sb-live-edit-overlay:active{cursor:crosshair}
 
 
-/* HOME NAV — larger 3D Hind Siliguri labels, transparent floating tabs */
+/* HOME NAV — premium embossed 3D Hind Siliguri typography */
 .topbar>nav#mainNav{
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-  padding:0!important;
-  gap:clamp(12px,1.15vw,20px)!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding:0!important;
+  gap:clamp(22px,2vw,34px)!important;
 }
 .topbar>nav#mainNav>a:not(.nav-upload){
-  background:transparent!important;
-  background-image:none!important;
-  border:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-  font-family:"Hind Siliguri",sans-serif!important;
-  font-size:18px!important;
-  font-weight:600!important;
-  line-height:1.3!important;
-  color:#34465a!important;
-  padding:8px 10px 11px!important;
-  text-shadow:
-    0 1px 0 rgba(255,255,255,.98),
-    0 2px 0 rgba(28,52,76,.24),
-    0 3px 1px rgba(28,52,76,.20),
-    0 5px 5px rgba(28,52,76,.16),
-    0 9px 12px rgba(28,52,76,.10)!important;
-  transform:translateY(0)!important;
+  background:transparent!important;background-image:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+  font-family:"Hind Siliguri",sans-serif!important;font-size:20px!important;font-weight:700!important;
+  line-height:1.3!important;letter-spacing:.015em!important;color:#243f59!important;padding:10px 13px 13px!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.98),0 2px 0 rgba(25,49,73,.36),0 3px 0 rgba(25,49,73,.30),0 4px 1px rgba(25,49,73,.25),0 6px 3px rgba(25,49,73,.21),0 9px 7px rgba(25,49,73,.17),0 14px 16px rgba(25,49,73,.12),0 20px 24px rgba(25,49,73,.07)!important;
+  -webkit-font-smoothing:antialiased;transform:translateY(0)!important;
   transition:transform .2s ease,text-shadow .2s ease,color .2s ease!important;
 }
 .topbar>nav#mainNav>a:not(.nav-upload):hover{
-  background:transparent!important;
-  background-image:none!important;
-  border:0!important;
-  box-shadow:none!important;
-  color:#173c60!important;
-  transform:translateY(-2px)!important;
-  text-shadow:
-    0 1px 0 #fff,
-    0 2px 0 rgba(20,48,76,.28),
-    0 4px 2px rgba(20,48,76,.24),
-    0 7px 8px rgba(20,48,76,.20),
-    0 12px 16px rgba(20,48,76,.14)!important;
+  background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;
+  color:#123758!important;transform:translateY(-2px)!important;
+  text-shadow:0 1px 0 #fff,0 2px 0 rgba(18,47,73,.40),0 4px 0 rgba(18,47,73,.34),0 6px 2px rgba(18,47,73,.29),0 9px 6px rgba(18,47,73,.24),0 14px 12px rgba(18,47,73,.19),0 20px 20px rgba(18,47,73,.14)!important;
 }
 .topbar>nav#mainNav>a:not(.nav-upload).active{
-  background:transparent!important;
-  background-image:none!important;
-  border:0!important;
-  box-shadow:none!important;
-  color:#173c60!important;
-  text-shadow:
-    0 1px 0 #fff,
-    0 2px 0 rgba(20,48,76,.25),
-    0 4px 2px rgba(20,48,76,.20),
-    0 7px 9px rgba(20,48,76,.14)!important;
+  background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;color:#123758!important;
+  text-shadow:0 1px 0 #fff,0 2px 0 rgba(18,47,73,.38),0 4px 0 rgba(18,47,73,.31),0 6px 2px rgba(18,47,73,.25),0 10px 8px rgba(18,47,73,.18),0 15px 17px rgba(18,47,73,.10)!important;
   position:relative!important;
 }
 .topbar>nav#mainNav>a:not(.nav-upload).active:after{
-  content:""!important;
-  display:block!important;
-  position:absolute!important;
-  left:22%!important;right:22%!important;bottom:1px!important;
-  height:2px!important;border-radius:2px!important;
-  background:linear-gradient(90deg,transparent,#c51b32,transparent)!important;
-  box-shadow:0 1px 6px rgba(197,27,50,.28)!important;
+  content:""!important;display:block!important;position:absolute!important;left:22%!important;right:22%!important;bottom:1px!important;
+  height:2px!important;border-radius:2px!important;background:linear-gradient(90deg,transparent,#c51b32,transparent)!important;box-shadow:0 1px 7px rgba(197,27,50,.30)!important;
 }
 @media(max-width:1100px){
- .topbar>nav#mainNav{gap:clamp(7px,1vw,13px)!important}
- .topbar>nav#mainNav>a:not(.nav-upload){font-size:18px!important;padding-left:6px!important;padding-right:6px!important}
+ .topbar>nav#mainNav{gap:clamp(12px,1.35vw,20px)!important}
+ .topbar>nav#mainNav>a:not(.nav-upload){font-size:20px!important;padding-left:8px!important;padding-right:8px!important}
 }
