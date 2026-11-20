@@ -1,41 +1,42 @@
-const KEY='frame-video-library-v1';
-const starter=[
- {id:'demo1',title:'The Art of Cinematic Storytelling',category:'Featured',youtube:'ysz5S6PUM-U',description:'একটি নমুনা ভিডিও। Admin Panel থেকে নিজের ভিডিও যোগ করুন।',featured:true},
- {id:'demo2',title:'Learn Something New Today',category:'Education',youtube:'ScMzIvxBSi4',description:'শিক্ষামূলক ভিডিওর নমুনা।',featured:false},
- {id:'demo3',title:'Creative Inspiration',category:'Entertainment',youtube:'aqz-KE-bpKQ',description:'বিনোদন বিভাগের নমুনা ভিডিও।',featured:false}
-];
-let videos=load();
 const $=s=>document.querySelector(s);
-function load(){try{return JSON.parse(localStorage.getItem(KEY))||starter.slice()}catch{return starter.slice()}}
-function save(){localStorage.setItem(KEY,JSON.stringify(videos));render()}
-function ytId(value){let s=value.trim();if(/^[\w-]{11}$/.test(s))return s;try{let u=new URL(s);if(u.hostname.includes('youtu.be'))return u.pathname.slice(1).split('/')[0];if(u.searchParams.get('v'))return u.searchParams.get('v');let m=u.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/);return m?m[1]:''}catch{return ''}}
-function thumb(v){return v.thumbnail||`https://img.youtube.com/vi/${v.youtube}/hqdefault.jpg`}
-function play(v){$('#playerTitle').textContent=v.title;$('#playerDescription').textContent=v.description||'';$('#playerFrame').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube)}?autoplay=1&rel=0" title="${escapeHtml(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;$('#playerDialog').showModal()}
-function escapeHtml(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function render(){
- const q=$('#search').value.toLowerCase().trim(),cat=$('#categoryFilter').value;
- const cats=[...new Set(videos.map(v=>v.category).filter(Boolean))].sort();
- $('#categoryFilter').innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
- $('#categoryFilter').value=cats.includes(cat)?cat:'all';
- const filtered=videos.filter(v=>(cat==='all'||v.category===cat)&&(`${v.title} ${v.category} ${v.description||''}`.toLowerCase().includes(q)));
- const featured=videos.find(v=>v.featured)||videos[0];
- $('#heroTitle').textContent=featured?featured.title:'আপনার পরবর্তী পছন্দের ভিডিও';
- $('#heroDescription').textContent=featured?(featured.description||featured.category):'Admin Panel থেকে প্রথম ভিডিও যোগ করুন।';
- $('#heroPlay').disabled=!featured;$('#heroPlay').onclick=()=>featured&&play(featured);
- const groups={};filtered.forEach(v=>(groups[v.category||'অন্যান্য']??=[]).push(v));
- $('#videoRows').innerHTML=Object.entries(groups).map(([name,items])=>`<section class="video-row"><h3>${escapeHtml(name)}</h3><div class="cards">${items.map(v=>`<article class="video-card" data-id="${escapeHtml(v.id)}"><img class="thumb" src="${escapeHtml(thumb(v))}" alt="" loading="lazy" onerror="this.src='https://placehold.co/640x360/202020/ffffff?text=FRAME'"><div class="card-copy"><h4>${escapeHtml(v.title)}</h4><p>${escapeHtml(v.description||'ভিডিও দেখুন')}</p></div></article>`).join('')}</div></section>`).join('');
- $('#emptyState').hidden=filtered.length>0;
- document.querySelectorAll('.video-card').forEach(el=>el.addEventListener('click',()=>{const v=videos.find(x=>x.id===el.dataset.id);if(v)play(v)}));
- renderAdmin();
+const demoVideos=[
+ {id:"demo1",title:"The Art of Cinematic Storytelling",category:"Featured",youtube_id:"ysz5S6PUM-U",description:"একটি নমুনা ভিডিও। Admin Panel থেকে নিজের ভিডিও যোগ করুন।",featured:1,thumbnail_url:""},
+ {id:"demo2",title:"Learn Something New Today",category:"Education",youtube_id:"ScMzIvxBSi4",description:"শিক্ষামূলক ভিডিওর নমুনা।",featured:0,thumbnail_url:""},
+ {id:"demo3",title:"Creative Inspiration",category:"Entertainment",youtube_id:"aqz-KE-bpKQ",description:"বিনোদন বিভাগের নমুনা ভিডিও।",featured:0,thumbnail_url:""}
+];
+let videos=[],categories=[],settings={};
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function thumb(v){return v.thumbnail_url||`https://img.youtube.com/vi/${encodeURIComponent(v.youtube_id)}/hqdefault.jpg`;}
+function play(v){$("#playerTitle").textContent=v.title;$("#playerDescription").textContent=v.description||"";$("#playerFrame").innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube_id)}?autoplay=1&rel=0" title="${esc(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;$("#playerDialog").showModal();}
+function applySettings(){
+ const pairs={brandName:"site_name",footerBrand:"site_name",heroEyebrow:"hero_eyebrow",libraryEyebrow:"library_eyebrow",libraryTitle:"library_title",footerText:"footer_text"};
+ for(const [id,key] of Object.entries(pairs))if(settings[key])$("#"+id).textContent=settings[key];
+ if(settings.hero_image)$("#hero").style.backgroundImage=`linear-gradient(90deg,#080808 0%,rgba(8,8,8,.86) 32%,rgba(8,8,8,.12) 100%),url("${settings.hero_image}")`;
+ if(settings.accent_color&&/^#[0-9a-f]{6}$/i.test(settings.accent_color))document.documentElement.style.setProperty("--red",settings.accent_color);
+ document.title=(settings.site_name||"FRAME")+" — Watch something great";
 }
-function renderAdmin(){$('#adminList').innerHTML=videos.map(v=>`<div class="admin-item"><span>${escapeHtml(v.title)} · ${escapeHtml(v.category)}</span><button data-delete="${escapeHtml(v.id)}">মুছুন</button></div>`).join('');document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{videos=videos.filter(v=>v.id!==b.dataset.delete);save()})}
-$('#search').addEventListener('input',render);$('#categoryFilter').addEventListener('change',render);
-$('#adminOpen').onclick=()=>$('#adminDialog').showModal();
-$('#enterAdmin').onclick=()=>{$('#adminLogin').hidden=true;$('#adminPanel').hidden=false};
-$('#videoForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),id=ytId(f.get('youtube'));if(!id){alert('সঠিক YouTube URL বা ১১ অক্ষরের Video ID দিন।');return}videos.unshift({id:crypto.randomUUID(),title:f.get('title').trim(),category:f.get('category').trim(),youtube:id,thumbnail:f.get('thumbnail').trim(),description:f.get('description').trim(),featured:f.get('featured')==='on'});save();e.target.reset();alert('ভিডিও যোগ হয়েছে।')};
-$('#exportData').onclick=()=>{const blob=new Blob([JSON.stringify(videos,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='frame-videos.json';a.click();URL.revokeObjectURL(a.href)};
-$('#importData').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!Array.isArray(data))throw Error();videos=data;save();alert('ডেটা Import হয়েছে।')}catch{alert('সঠিক JSON ফাইল নির্বাচন করুন।')}};
-$('#resetDemo').onclick=()=>{if(confirm('সব পরিবর্তন মুছে ডেমো ডেটা ফিরিয়ে আনবেন?')){videos=starter.slice();save()}};
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.close);d.close();if(d.id==='playerDialog')$('#playerFrame').innerHTML=''});
-$('#playerDialog').addEventListener('close',()=>$('#playerFrame').innerHTML='');
-render();
+function render(){
+ const q=$("#search").value.toLowerCase().trim(),cat=$("#categoryFilter").value;
+ const cats=[...new Set(categories.map(c=>c.name).filter(Boolean))].sort();
+ $("#categoryFilter").innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+ $("#categoryFilter").value=cats.includes(cat)?cat:"all";
+ const filtered=videos.filter(v=>(cat==="all"||v.category===cat)&&(`${v.title} ${v.category} ${v.description||""}`.toLowerCase().includes(q)));
+ const featured=videos.find(v=>Number(v.featured))||videos[0];
+ $("#heroTitle").textContent=settings.hero_title|| (featured?featured.title:"আপনার পরবর্তী পছন্দের ভিডিও");
+ $("#heroDescription").textContent=settings.hero_description|| (featured?(featured.description||featured.category):"নতুন ভিডিও শিগগিরই আসছে।");
+ $("#heroPlay").disabled=!featured;$("#heroPlay").onclick=()=>featured&&play(featured);
+ const groups={};filtered.forEach(v=>(groups[v.category||"অন্যান্য"]??=[]).push(v));
+ $("#videoRows").innerHTML=Object.entries(groups).map(([name,items])=>`<section class="video-row"><h3>${esc(name)}</h3><div class="cards">${items.map(v=>`<article class="video-card" data-id="${esc(v.id)}"><img class="thumb" src="${esc(thumb(v))}" alt="" loading="lazy" onerror="this.src='https://placehold.co/640x360/202020/ffffff?text=FRAME'"><div class="card-copy"><h4>${esc(v.title)}</h4><p>${esc(v.description||"ভিডিও দেখুন")}</p></div></article>`).join("")}</div></section>`).join("");
+ $("#emptyState").hidden=filtered.length>0;
+ document.querySelectorAll(".video-card").forEach(el=>el.addEventListener("click",()=>{const v=videos.find(x=>x.id===el.dataset.id);if(v)play(v);}));
+}
+async function init(){
+ $("#search").addEventListener("input",render);$("#categoryFilter").addEventListener("change",render);
+ document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.close);d.close();$("#playerFrame").innerHTML="";});
+ $("#playerDialog").addEventListener("close",()=>$("#playerFrame").innerHTML="");
+ try{const [vr,cr,sr]=await Promise.all([fetch("/api/videos"),fetch("/api/categories"),fetch("/api/settings")]);if(vr.ok)videos=await vr.json();if(cr.ok)categories=await cr.json();if(sr.ok)settings=await sr.json();}
+ catch(e){console.warn("FRAME API is not available yet.",e);}
+ if(!videos.length)videos=demoVideos;if(!categories.length)categories=[...new Set(videos.map(v=>v.category))].map(name=>({name}));
+ applySettings();render();
+}
+init();
