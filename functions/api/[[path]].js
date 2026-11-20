@@ -1,4 +1,35 @@
 const COOKIE="frame_admin_session",SESSION_SECONDS=604800,ITERATIONS=100000;
+
+const BUILDER_NODE_TYPES=new Set(["section","container","grid","column","text","heading","image","button","link","icon","card","list","divider","spacer","video","form","input","textarea","select","checkbox","navbar","footer","hero"]);
+const BUILDER_DEFAULT={schemaVersion:1,pages:[{id:"home",slug:"/",title:"Home",nodes:[]}],designTokens:{}};
+async function readBuilderBody(req){
+ const len=Number(req.headers.get("content-length")||0);if(len>250000)return null;
+ try{const raw=await req.text();if(new TextEncoder().encode(raw).length>250000)return null;return JSON.parse(raw)}catch{return null}
+}
+function plainObject(v){return !!v&&typeof v==="object"&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype}
+function safeBuilderValue(v,depth=0){
+ if(depth>6)return false;
+ if(v===null||typeof v==="boolean"||typeof v==="number")return Number.isFinite(v);
+ if(typeof v==="string")return v.length<=2000;
+ if(Array.isArray(v))return v.length<=100&&v.every(x=>safeBuilderValue(x,depth+1));
+ if(!plainObject(v)||Object.keys(v).length>100)return false;
+ return Object.entries(v).every(([k,x])=>k.length<=80&&!/^(?:__proto__|prototype|constructor|innerHTML|outerHTML|srcdoc)$/i.test(k)&&safeBuilderValue(x,depth+1));
+}
+function validateBuilderDocument(doc){
+ if(!plainObject(doc)||doc.schemaVersion!==1||!Array.isArray(doc.pages)||doc.pages.length<1||doc.pages.length>30||!plainObject(doc.designTokens)||!safeBuilderValue(doc.designTokens))return false;
+ const pageIds=new Set(),slugs=new Set();let nodeCount=0;
+ function validNode(node,depth=0){
+  if(depth>8||!plainObject(node)||typeof node.id!=="string"||node.id.length<1||node.id.length>80||typeof node.type!=="string"||!BUILDER_NODE_TYPES.has(node.type)||!plainObject(node.props||{})||!safeBuilderValue(node.props||{}))return false;
+  nodeCount++;if(nodeCount>1500)return false;
+  if(node.children!==undefined&&(!Array.isArray(node.children)||node.children.length>100||!node.children.every(n=>validNode(n,depth+1))))return false;
+  return true;
+ }
+ for(const page of doc.pages){
+  if(!plainObject(page)||typeof page.id!=="string"||page.id.length>80||typeof page.slug!=="string"||page.slug.length>180||!/^\/(?:[a-z0-9-]+\/?)*$/.test(page.slug)||typeof page.title!=="string"||page.title.length>120||!Array.isArray(page.nodes)||page.nodes.length>100||!page.nodes.every(n=>validNode(n)))return false;
+  if(pageIds.has(page.id)||slugs.has(page.slug))return false;pageIds.add(page.id);slugs.add(page.slug);
+ }
+ return true;
+}
 const DEFAULT_SETTINGS={site_name:"FRAME",hero_eyebrow:"EDITOR'S PICK",hero_title:"",hero_description:"",library_eyebrow:"DISCOVER",library_title:"ভিডিও লাইব্রেরি",footer_text:"একটি ব্যক্তিগত ভিডিও লাইব্রেরি",hero_image:"https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=85",accent_color:"#e50914"};
 const json=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff",...headers}});
 const fail=(message,status=400)=>json({error:message},status);
@@ -84,6 +115,41 @@ async function handle(req,env){
  if(p[0]==="settings"&&m==="GET")return json(await settings(env.DB));
  if(p[0]==="analytics"&&p[1]==="event"&&p.length===2&&m==="POST"){const d=await readBody(req),allowed=new Set(["home","browse","references","articles","books","admin"]);if(!allowed.has(d?.tab))return fail("Invalid analytics tab.",400);await env.DB.prepare("INSERT INTO analytics_events(tab,created_at) VALUES(?,?)").bind(d.tab,Math.floor(Date.now()/1000)).run();return json({ok:true},201)}
  const user=await getSession(req,env);if(!user||!["owner","admin"].includes(user.role))return fail("Admin login required.",401);
+
+ if(p[0]==="builder"){
+  if(!user||user.role!=="owner")return fail("শুধু Owner Website Builder ব্যবহার করতে পারবেন।",403);
+  if(p.length===2&&p[1]==="state"&&m==="GET"){
+   const row=await env.DB.prepare("SELECT draft_json,revision,updated_at,published_at FROM site_builder_documents WHERE id='primary'").first();
+   return json({document:row?JSON.parse(row.draft_json):BUILDER_DEFAULT,revision:Number(row?.revision||0),updatedAt:row?.updated_at||null,publishedAt:row?.published_at||null,publishEnabled:false});
+  }
+  if(p.length===2&&p[1]==="draft"&&m==="PUT"){
+   const d=await readBuilderBody(req);if(!d||!Number.isInteger(d.baseRevision)||d.baseRevision<0||!validateBuilderDocument(d.document))return fail("Draft document বা revision সঠিক নয়।",400);
+   const encoded=JSON.stringify(d.document),now=Math.floor(Date.now()/1000);
+   if(new TextEncoder().encode(encoded).length>200000)return fail("Draft 200 KB সীমা অতিক্রম করেছে।",413);
+   const current=await env.DB.prepare("SELECT revision FROM site_builder_documents WHERE id='primary'").first();
+   if(!current){
+    if(d.baseRevision!==0)return fail("Draft অন্য জায়গায় পরিবর্তিত হয়েছে। Reload করে আবার চেষ্টা করুন।",409);
+    try{await env.DB.batch([
+     env.DB.prepare("INSERT INTO site_builder_documents(id,draft_json,published_json,revision,updated_at,published_at) VALUES('primary',?,NULL,1,?,NULL)").bind(encoded,now),
+     env.DB.prepare("INSERT INTO site_builder_revisions(document_id,revision,snapshot_json,created_at,actor_id,summary) VALUES('primary',1,?,?,?,'Initial draft save')").bind(encoded,now,user.id)
+    ])}catch{return fail("Draft তৈরি করা যায়নি; আবার Load করে চেষ্টা করুন।",409)}
+    return json({ok:true,revision:1,updatedAt:now});
+   }
+   if(Number(current.revision)!==d.baseRevision)return fail("Draft অন্য জায়গায় পরিবর্তিত হয়েছে। Reload করে আবার চেষ্টা করুন।",409);
+   const result=await env.DB.batch([
+    env.DB.prepare("UPDATE site_builder_documents SET draft_json=?,revision=revision+1,updated_at=? WHERE id='primary' AND revision=?").bind(encoded,now,d.baseRevision),
+    env.DB.prepare("INSERT INTO site_builder_revisions(document_id,revision,snapshot_json,created_at,actor_id,summary) SELECT 'primary',revision,draft_json,?,?, 'Draft auto-save' FROM site_builder_documents WHERE id='primary' AND revision=?").bind(now,user.id,d.baseRevision+1),
+    env.DB.prepare("DELETE FROM site_builder_revisions WHERE document_id='primary' AND created_at<?").bind(now-2592000)
+   ]);
+   if(!result?.[0]?.meta?.changes)return fail("Draft conflict হয়েছে। সর্বশেষ সংস্করণ Reload করুন।",409);
+   return json({ok:true,revision:d.baseRevision+1,updatedAt:now});
+  }
+  if(p.length===2&&p[1]==="history"&&m==="GET"){
+   const rows=await env.DB.prepare("SELECT revision,created_at,summary FROM site_builder_revisions WHERE document_id='primary' AND created_at>=? ORDER BY revision DESC LIMIT 500").bind(Math.floor(Date.now()/1000)-2592000).all();
+   return json({revisions:rows.results||[],retentionDays:30});
+  }
+  return fail("Builder API route not found.",404);
+ }
  if(p[0]==="admin"&&p[1]==="presence"&&m==="POST"){const now=Math.floor(Date.now()/1000);await env.DB.prepare("INSERT INTO admin_presence(user_id,last_seen) VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET last_seen=excluded.last_seen").bind(user.id,now).run();await env.DB.prepare("DELETE FROM admin_presence WHERE last_seen<?").bind(now-120).run();return json({ok:true})}
  if(p[0]==="admin"&&p[1]==="analytics"&&m==="GET"){const now=Math.floor(Date.now()/1000);await env.DB.prepare("DELETE FROM admin_presence WHERE last_seen<?").bind(now-120).run();const [online,admins,posts,tabs]=await Promise.all([env.DB.prepare("SELECT COUNT(*) AS n FROM admin_presence p JOIN users u ON u.id=p.user_id WHERE u.role IN ('owner','admin') AND p.last_seen>=?").bind(now-90).first(),env.DB.prepare("SELECT COUNT(*) AS n FROM users WHERE role IN ('owner','admin')").first(),env.DB.prepare("SELECT u.id,u.email,u.role,u.created_at,COUNT(v.id) AS post_count FROM users u LEFT JOIN videos v ON v.owner_id=u.id WHERE u.role IN ('owner','admin') GROUP BY u.id ORDER BY post_count DESC,u.created_at ASC").all(),env.DB.prepare("SELECT tab,COUNT(*) AS view_count FROM analytics_events GROUP BY tab ORDER BY view_count DESC").all()]);const labels={home:"মূল পৃষ্ঠা",browse:"ভিডিও",references:"রেফারেন্স",articles:"আর্টিকেল",books:"বইপত্র",admin:"এডমিন"};const tabRows=(tabs.results||[]).map(x=>({label:labels[x.tab]||x.tab,view_count:Number(x.view_count)}));return json({online_count:Number(online.n),admin_count:Number(admins.n),total_posts:(posts.results||[]).reduce((n,x)=>n+Number(x.post_count),0),total_tab_views:tabRows.reduce((n,x)=>n+x.view_count,0),admins:(posts.results||[]).map(x=>({email:x.email,role:x.role,created_at:x.created_at,post_count:Number(x.post_count)})),tabs:tabRows})}
 
