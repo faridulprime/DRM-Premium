@@ -118,6 +118,21 @@ async function handle(req,env){
 
  if(p[0]==="builder"){
   if(!user||user.role!=="owner")return fail("শুধু Owner Website Builder ব্যবহার করতে পারবেন।",403);
+  if(p.length===2&&p[1]==="style"&&m==="PUT"){
+   const d=await readBody(req),cfg=d?.config;
+   if(!cfg||typeof cfg!=="object"||Array.isArray(cfg)||Object.keys(cfg).length>100)return fail("Style configuration অবৈধ অথবা ১০০টি element সীমা অতিক্রম করেছে।",400);
+   for(const item of Object.values(cfg)){
+    const s=item?.style,sh=s?.shadow;
+    if(typeof item?.selector!=="string"||!item.selector.length||item.selector.length>500||typeof item.text!=="string"||item.text.length>2000||typeof item.replaceText!=="boolean"||!s||!Number.isFinite(s.fontSize)||s.fontSize<8||s.fontSize>96||!/^#[0-9a-f]{6}$/i.test(s.color||"")||!/^#[0-9a-f]{6}$/i.test(s.background||"")||!sh||!/^#[0-9a-f]{6}$/i.test(sh.color||"")||![sh.x,sh.y,sh.blur].every(Number.isFinite)||Math.abs(sh.x)>20||Math.abs(sh.y)>20||sh.blur<0||sh.blur>30)return fail("এক বা একাধিক style value সঠিক নয়।",400);
+   }
+   const encoded=JSON.stringify(cfg);
+   if(new TextEncoder().encode(encoded).length>25000)return fail("Style configuration 25 KB সীমা অতিক্রম করেছে।",413);
+   await env.DB.prepare("INSERT INTO settings(key,value) VALUES('visual_editor_config',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(encoded).run();
+   const row=await env.DB.prepare("SELECT value FROM settings WHERE key='visual_editor_config'").first();
+   if(row?.value!==encoded)return fail("D1 read-back verification ব্যর্থ হয়েছে।",500);
+   return json({ok:true,saved:true,bytes:new TextEncoder().encode(encoded).length,config:JSON.parse(row.value)});
+  }
+
   if(p.length===2&&p[1]==="state"&&m==="GET"){
    const row=await env.DB.prepare("SELECT draft_json,revision,updated_at,published_at FROM site_builder_documents WHERE id='primary'").first();
    return json({document:row?JSON.parse(row.draft_json):BUILDER_DEFAULT,revision:Number(row?.revision||0),updatedAt:row?.updated_at||null,publishedAt:row?.published_at||null,publishEnabled:false});
