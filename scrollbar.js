@@ -118,16 +118,13 @@
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", measure, { passive: true });
     window.addEventListener("orientationchange", measure, { passive: true });
+    window.addEventListener("load", measure, { once: true });
     window.visualViewport?.addEventListener("resize", measure, { passive: true });
 
     if ("ResizeObserver" in window) {
       const observer = new ResizeObserver(measure);
       observer.observe(root);
       if (document.body) observer.observe(document.body);
-    }
-    if ("MutationObserver" in window) {
-      const observer = new MutationObserver(measure);
-      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     }
     measure();
   };
