@@ -63,4 +63,4 @@ body.drawer-open{overflow:hidden}
 @keyframes drmToastEnter{0%{opacity:0;transform:translate(22px,9px) scale(.94);filter:blur(5px);clip-path:inset(0 0 0 100%)}55%{opacity:1;filter:blur(0);clip-path:inset(0 0 0 0)}72%{transform:translate(-2px,0) scale(1.01)}100%{opacity:1;transform:translate(0,0) scale(1);filter:blur(0);clip-path:inset(0 0 0 0)}}
 @keyframes drmToastScan{to{transform:translateX(130%)}}
 @keyframes drmToastExit{0%{opacity:1;transform:translateX(0) scale(1);filter:blur(0);clip-path:inset(0 0 0 0)}45%{opacity:.85;filter:blur(1px)}100%{opacity:0;transform:translateX(24px) scale(.96);filter:blur(5px);clip-path:inset(0 0 0 100%)}}
-@media(prefers-reduced-motion:reduce){.logout-toast,.logout-toast.show,.logout-toast.closing,.logout-toast.show:after{animation:none!important;transition:none!important}}
+/* Account-toast motion is explicitly enabled as requested. */
