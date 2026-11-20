@@ -27,8 +27,8 @@ All current work is on `feature/full-admin-panel`. Production `main` has not bee
 The management API requires the D1 database binding and encrypted secrets.
 
 1. Cloudflare Pages project `drm-premium` → Settings → Bindings → D1 database.
-2. Add the D1 database `drmdatabase` using binding variable name `DB`. Configure both Production and Preview environments if testing the branch preview.
-3. In D1 Console, run `migrations/0001_admin.sql` once.
+2. Keep the existing Production database `drmdatabase` untouched for now. Create a separate D1 database named `drmdatabase-preview` and bind it as `DB` in the Preview environment only. Do not point Preview at the Production database.
+3. In the `drmdatabase-preview` Console, run `migrations/0001_admin.sql` once.
 4. Then run `migrations/0002_owner_roles_and_content_ownership.sql` once.
 5. Pages project → Settings → Variables and Secrets. Add encrypted secrets:
    - `OWNER_EMAIL`: the one email address allowed to create the single Owner account.
@@ -36,7 +36,7 @@ The management API requires the D1 database binding and encrypted secrets.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
 6. Deploy the `feature/full-admin-panel` branch to a Preview URL.
 7. Open the preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), desired username, a new password of at least 12 characters, and the Bootstrap Secret.
-8. After Owner setup succeeds, remove `BOOTSTRAP_SECRET` from the Preview environment. Keep `OWNER_EMAIL` and `SESSION_SECRET`.
+8. After Owner setup succeeds, remove `BOOTSTRAP_SECRET` from the Preview environment. Keep `OWNER_EMAIL` and `SESSION_SECRET`. Do not change Production secrets or bindings yet.
 9. Test Owner and Admin permissions using separate test accounts before merging.
 
 Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only. Do not use a password previously shared in chat.
