@@ -922,3 +922,130 @@ body.view-modern .topbar .menu-toggle span,body.view-basic .topbar .menu-toggle 
   .quick-upload-button small{font-size:9px!important;letter-spacing:1.1px!important}
 }
 @media(prefers-reduced-motion:reduce){.quick-upload-button{transition:none!important}}
+
+
+/* =========================================================
+   UI REFINEMENT — dark-red scrollbar, orange PRO, darker drawer
+   ========================================================= */
+
+/* Slim dark-red scrollbar with fully rounded caps. */
+html,body{
+  scrollbar-color:#7f1d2d transparent!important;
+  scrollbar-width:thin!important;
+}
+html::-webkit-scrollbar,body::-webkit-scrollbar{
+  width:8px!important;height:8px!important;
+}
+html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{
+  background:transparent!important;
+  border-radius:999px!important;
+}
+html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb{
+  min-height:36px!important;
+  background:linear-gradient(180deg,#a83243 0%,#7f1d2d 52%,#55111e 100%)!important;
+  border:2px solid transparent!important;
+  border-radius:999px!important;
+  background-clip:padding-box!important;
+  box-shadow:inset 0 1px 1px rgba(255,220,224,.22),0 1px 3px rgba(32,5,10,.22)!important;
+}
+html::-webkit-scrollbar-thumb:hover,body::-webkit-scrollbar-thumb:hover{
+  background:linear-gradient(180deg,#bd4051 0%,#922638 55%,#641625 100%)!important;
+  background-clip:padding-box!important;
+}
+html::-webkit-scrollbar-corner,body::-webkit-scrollbar-corner{
+  background:transparent!important;
+}
+
+/* PRO: orange premium lettering, no badge/pill/background. */
+.topbar .pro-badge,
+body.view-modern .topbar .pro-badge,
+body.view-basic .topbar .pro-badge{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:6px!important;min-height:0!important;height:auto!important;
+  padding:4px 2px!important;margin:0!important;
+  color:#e87924!important;
+  background:transparent!important;background-image:none!important;
+  border:0!important;border-radius:0!important;
+  box-shadow:none!important;
+  font:900 13px/1 Inter,Arial,sans-serif!important;
+  font-style:italic!important;letter-spacing:1.8px!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.7),0 2px 8px rgba(207,105,28,.16)!important;
+}
+.topbar .pro-badge .pro-crown{
+  width:16px!important;height:16px!important;flex:0 0 16px!important;
+  fill:rgba(232,121,36,.18)!important;stroke:#e87924!important;
+  stroke-width:1.9!important;
+  filter:drop-shadow(0 1px 2px rgba(207,105,28,.18))!important;
+}
+
+/* Drawer: a slightly deeper silver surface, with clear readable contrast. */
+.account-drawer,
+body.view-modern .account-drawer,
+body.view-basic .account-drawer{
+  background:rgba(226,233,241,.96)!important;
+  color:#263648!important;
+  border-left:0!important;
+  box-shadow:-22px 0 62px rgba(35,49,66,.20)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(145%)!important;
+  backdrop-filter:blur(28px) saturate(145%)!important;
+}
+.account-drawer .drawer-head{
+  color:#263648!important;
+  border-bottom-color:rgba(86,106,128,.22)!important;
+}
+.account-drawer .drawer-head button{
+  display:grid!important;place-items:center!important;
+  width:34px!important;height:34px!important;
+  padding:0!important;border:0!important;border-radius:50%!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(194,207,222,.72))!important;
+  color:#42566c!important;
+  box-shadow:0 4px 10px rgba(55,73,94,.13),inset 0 1px 0 rgba(255,255,255,.9)!important;
+  transition:transform .18s ease,box-shadow .18s ease!important;
+}
+.account-drawer .drawer-head button:hover{
+  transform:translateY(-1px)!important;
+  box-shadow:0 6px 13px rgba(55,73,94,.17),inset 0 1px 0 #fff!important;
+}
+.account-drawer .drawer-kicker{
+  color:#087eae!important;
+  font-weight:900!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.7)!important;
+}
+.account-drawer .drawer-account-label{
+  color:#087b4c!important;
+  font-weight:850!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.72)!important;
+}
+.account-drawer .drawer-bottom{
+  border-top-color:rgba(86,106,128,.22)!important;
+}
+
+/* Logout action: subtle raised silver 3D surface, deliberately borderless. */
+.account-drawer .logout-button,
+.account-drawer .logout-button:hover,
+body.view-modern .account-drawer .logout-button,
+body.view-basic .account-drawer .logout-button{
+  border:0!important;outline:0!important;
+  background:linear-gradient(145deg,#f7f9fc 0%,#e1e8f0 48%,#cbd6e2 100%)!important;
+  color:#c52d49!important;
+  box-shadow:0 6px 14px rgba(47,64,84,.16),0 2px 4px rgba(47,64,84,.08),
+    inset 0 1px 0 rgba(255,255,255,.98),inset 0 -1px 2px rgba(105,125,148,.16)!important;
+  transform:translateY(0)!important;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease!important;
+}
+.account-drawer .logout-button:hover{
+  background:linear-gradient(145deg,#fff 0%,#e8eef5 50%,#d2dce7 100%)!important;
+  box-shadow:0 9px 18px rgba(47,64,84,.19),inset 0 1px 0 #fff!important;
+  transform:translateY(-2px)!important;
+}
+.account-drawer .logout-button:active{
+  transform:translateY(0) scale(.985)!important;
+  box-shadow:0 3px 7px rgba(47,64,84,.13),inset 0 2px 4px rgba(105,125,148,.15)!important;
+}
+.account-drawer .logout-button svg,
+.account-drawer .logout-button span{
+  color:#c52d49!important;stroke:#c52d49!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .account-drawer .drawer-head button,.account-drawer .logout-button{transition:none!important}
+}
