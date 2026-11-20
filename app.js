@@ -5,6 +5,7 @@ const demoVideos=[
  {id:"demo3",title:"Creative Inspiration",category:"Entertainment",youtube_id:"aqz-KE-bpKQ",description:"বিনোদন বিভাগের নমুনা ভিডিও।",featured:0,thumbnail_url:""}
 ];
 let videos=[],categories=[],settings={};
+let categoryOptionsKey="";
 const bn=n=>Number(n||0).toLocaleString("bn-BD");
 let adminHeartbeat=null;
 function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -25,17 +26,21 @@ function applySettings(){
 function render(){
  const q=$("#search").value.toLowerCase().trim(),cat=$("#categoryFilter").value;
  const cats=[...new Set(categories.map(c=>c.name).filter(Boolean))].sort();
- $("#categoryFilter").innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
- $("#categoryFilter").value=cats.includes(cat)?cat:"all";
- const filtered=videos.filter(v=>(cat==="all"||v.category===cat)&&(`${v.title} ${v.category} ${v.description||""}`.toLowerCase().includes(q)));
+ const categoryKey=cats.join("\u0000");
+ if(categoryOptionsKey!==categoryKey){
+  $("#categoryFilter").innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+  categoryOptionsKey=categoryKey;
+  $("#categoryFilter").value=cats.includes(cat)?cat:"all";
+ }
+ const activeCategory=$("#categoryFilter").value;
+ const filtered=videos.filter(v=>(activeCategory==="all"||v.category===activeCategory)&&(`${v.title} ${v.category} ${v.description||""}`.toLowerCase().includes(q)));
  const featured=videos.find(v=>Number(v.featured))||videos[0];
- const heroTitle=$("#heroTitle");if(heroTitle)heroTitle.textContent=settings.hero_title|| (featured?featured.title:"আপনার পরবর্তী পছন্দের ভিডিও");
- $("#heroDescription").textContent=settings.hero_description|| (featured?(featured.description||featured.category):"নতুন ভিডিও শিগগিরই আসছে।");
+ const heroTitle=$("#heroTitle");if(heroTitle)heroTitle.textContent=settings.hero_title||(featured?featured.title:"আপনার পরবর্তী পছন্দের ভিডিও");
+ $("#heroDescription").textContent=settings.hero_description||(featured?(featured.description||featured.category):"নতুন ভিডিও শিগগিরই আসছে।");
  $("#heroPlay").disabled=!featured;$("#heroPlay").onclick=()=>featured&&play(featured);
  const groups={};filtered.forEach(v=>(groups[v.category||"অন্যান্য"]??=[]).push(v));
- $("#videoRows").innerHTML=Object.entries(groups).map(([name,items])=>`<section class="video-row"><h3>${esc(name)}</h3><div class="cards">${items.map(v=>`<article class="video-card" data-id="${esc(v.id)}"><img class="thumb" src="${esc(thumb(v))}" alt="" loading="lazy" onerror="this.src='https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM'"><div class="card-copy"><h4>${esc(v.title)}</h4><p>${esc(v.description||"ভিডিও দেখুন")}</p></div></article>`).join("")}</div></section>`).join("");
+ $("#videoRows").innerHTML=Object.entries(groups).map(([name,items])=>`<section class="video-row"><h3>${esc(name)}</h3><div class="cards">${items.map(v=>`<article class="video-card" data-id="${esc(v.id)}"><img class="thumb" src="${esc(thumb(v))}" alt="" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM'"><div class="card-copy"><h4>${esc(v.title)}</h4><p>${esc(v.description||"ভিডিও দেখুন")}</p></div></article>`).join("")}</div></section>`).join("");
  $("#emptyState").hidden=filtered.length>0;
- document.querySelectorAll(".video-card").forEach(el=>el.addEventListener("click",()=>{const v=videos.find(x=>x.id===el.dataset.id);if(v)play(v);}));
 }
 
 async function sendTabView(tab){try{await fetch("/api/analytics/event",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({tab})});}catch{}}
@@ -72,13 +77,13 @@ function initViewMode(){
  if(intro){if(initial==="modern"&&!seen){setTimeout(()=>{intro.classList.add("done");try{sessionStorage.setItem("drm-intro-seen","1");}catch{}},2000);}else intro.classList.add("done");}
 }
 async function init(){
- initViewMode();$("#headerLoginForm").addEventListener("submit",submitHeaderLogin);$("#menuToggle").addEventListener("click",()=>openAccountMenu(!$("#accountDrawer").classList.contains("open")));$("#menuClose").addEventListener("click",()=>openAccountMenu(false));$("#menuBackdrop").addEventListener("click",()=>openAccountMenu(false));$("#logoutButton").addEventListener("click",submitLogout);$("#accountDrawer").addEventListener("click",e=>{const action=e.target.closest("a,button,[role=menuitem]");if(action&&!action.matches("#logoutButton,#menuClose")&&!action.disabled)openAccountMenu(false);});$("#quickUploadButton").addEventListener("click",async()=>{const button=$("#quickUploadButton");button.disabled=true;try{const response=await fetch("/api/auth/me",{credentials:"same-origin"});const me=await response.json();if(me.authenticated&&["owner","admin"].includes(me.user?.role)){window.location.href="/upload-studio.html";return;}setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}finally{button.disabled=false;}});document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});document.addEventListener("pointerdown",e=>{const drawer=$("#accountDrawer"),toggle=$("#menuToggle");if(!drawer?.classList.contains("open"))return;if(drawer.contains(e.target)||toggle?.contains(e.target))return;openAccountMenu(false);},true);restoreAccount();$("#search").addEventListener("input",render);$("#categoryFilter").addEventListener("change",render);trackNavigation();
+ initViewMode();$("#headerLoginForm").addEventListener("submit",submitHeaderLogin);$("#menuToggle").addEventListener("click",()=>openAccountMenu(!$("#accountDrawer").classList.contains("open")));$("#menuClose").addEventListener("click",()=>openAccountMenu(false));$("#menuBackdrop").addEventListener("click",()=>openAccountMenu(false));$("#logoutButton").addEventListener("click",submitLogout);$("#accountDrawer").addEventListener("click",e=>{const action=e.target.closest("a,button,[role=menuitem]");if(action&&!action.matches("#logoutButton,#menuClose")&&!action.disabled)openAccountMenu(false);});$("#quickUploadButton").addEventListener("click",async()=>{const button=$("#quickUploadButton");button.disabled=true;try{const response=await fetch("/api/auth/me",{credentials:"same-origin"});const me=await response.json();if(me.authenticated&&["owner","admin"].includes(me.user?.role)){window.location.href="/upload-studio.html";return;}setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}finally{button.disabled=false;}});document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});document.addEventListener("pointerdown",e=>{const drawer=$("#accountDrawer"),toggle=$("#menuToggle");if(!drawer?.classList.contains("open"))return;if(drawer.contains(e.target)||toggle?.contains(e.target))return;openAccountMenu(false);},true);restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.target.closest(".video-card");if(!card)return;const video=videos.find(v=>v.id===card.dataset.id);if(video)play(video);});$("#search").addEventListener("input",render);$("#categoryFilter").addEventListener("change",render);trackNavigation();
  document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.close);d.close();$("#playerFrame").innerHTML="";});
  $("#playerDialog").addEventListener("close",()=>$("#playerFrame").innerHTML="");
  let apiReady=false;
  try{const [vr,cr,sr]=await Promise.all([fetch("/api/videos"),fetch("/api/categories"),fetch("/api/settings")]);if(vr.ok){videos=await vr.json();apiReady=true;}if(cr.ok)categories=await cr.json();if(sr.ok)settings=await sr.json();}
  catch(e){console.warn("DRM PREMIUM API is not available yet.",e);}
  if(!apiReady)videos=demoVideos;if(!categories.length)categories=[...new Set(videos.map(v=>v.category))].map(name=>({name}));
- applySettings();render();startAdminPresence();
+ applySettings();render();
 }
 init();
