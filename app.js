@@ -38,7 +38,7 @@ function applyVisualConfig(){
  for(const item of Object.values(visualConfig)){if(!item||typeof item.selector!=="string")continue;let el;try{el=document.querySelector(item.selector)}catch{}if(!el)continue;if(typeof item.text==="string")el.textContent=item.text;const s=item.style||{};if(Number.isFinite(s.fontSize))el.style.fontSize=s.fontSize+"px";if(/^#[0-9a-f]{6}$/i.test(s.color||""))el.style.color=s.color;if(/^#[0-9a-f]{6}$/i.test(s.background||""))el.style.backgroundColor=s.background;if(s.shadow&&/^#[0-9a-f]{6}$/i.test(s.shadow.color||""))el.style.textShadow=(s.shadow.x||0)+"px "+(s.shadow.y||0)+"px "+(s.shadow.blur||0)+"px "+s.shadow.color;}
 }
 function setVisualEditor(user){
- const toggle=$("#visualEditorToggle");if(!toggle)return;toggle.hidden=!(user&&user.role==="owner");
+ const toggle=$("#visualEditorToggle");if(!toggle)return;toggle.hidden=Boolean(new URLSearchParams(location.search).has("builderPreview"))||!(user&&user.role==="owner");
 }
 function selectVisualElement(el){
  visualSelected=el;const id=visualSelector(el),saved=visualConfig[id]||{};$("#veText").value=el.textContent;$("#veFontSize").value=parseFloat(getComputedStyle(el).fontSize)||16;$("#veColor").value=saved.style?.color||"#183d5c";$("#veBackground").value=saved.style?.background||"#ffffff";$("#veShadowColor").value=saved.style?.shadow?.color||"#000000";$("#veShadowX").value=saved.style?.shadow?.x||0;$("#veShadowY").value=saved.style?.shadow?.y||0;$("#veShadowBlur").value=saved.style?.shadow?.blur||0;$("#veHelp").textContent="নির্বাচিত: "+el.tagName.toLowerCase()+(el.id?"#"+el.id:"");
