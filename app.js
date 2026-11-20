@@ -15,9 +15,12 @@ function applySettings(){
  if(settings.show_hero==="false")$("#hero").hidden=true;
  if(settings.show_library==="false")$("#browse").hidden=true;
  if(settings.accent_color&&/^#[0-9a-f]{6}$/i.test(settings.accent_color))document.documentElement.style.setProperty("--red",settings.accent_color);
- document.title=(settings.site_name||"FRAME")+" — Watch something great";
+ document.title="হ্যালো মুমিনগণ🤣";
 }
 function render(){
+ const navCats=$("#navCategories");
+ if(navCats)navCats.innerHTML=categories.map(c=>`<a href="#browse" data-nav-category="${esc(c.name)}">${esc(c.name)}</a>`).join("");
+ navCats?.querySelectorAll("[data-nav-category]").forEach(a=>a.addEventListener("click",()=>{$("#categoryFilter").value=a.dataset.navCategory;render();}));
  const q=$("#search").value.toLowerCase().trim(),cat=$("#categoryFilter").value;
  const cats=[...new Set(categories.map(c=>c.name).filter(Boolean))].sort();
  $("#categoryFilter").innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
