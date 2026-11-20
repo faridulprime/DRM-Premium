@@ -2165,3 +2165,9 @@ body.visual-editor-active{cursor:crosshair}
 .sb-draft-area-head{margin:-16px -16px 14px}
 .sb-canvas .sb-node{cursor:pointer}
 @media(max-width:600px){.sb-live-preview{height:68vh;min-height:480px}.sb-live-preview-head,.sb-draft-area-head{align-items:flex-start;flex-direction:column;gap:4px}}
+
+/* Parent-document interaction layer: the iframe itself never receives user clicks */
+.sb-live-preview-wrap{position:relative;width:100%;isolation:isolate}
+.sb-live-preview-wrap .sb-live-preview{display:block;pointer-events:none}
+.sb-live-edit-overlay{position:absolute;inset:0;z-index:20;background:transparent;cursor:crosshair;touch-action:pan-y}
+.sb-live-edit-overlay:active{cursor:crosshair}
