@@ -2010,3 +2010,54 @@ body.drm-custom-scrollbar-ready::-webkit-scrollbar:vertical{
   outline:2px solid rgba(181,18,43,.45);outline-offset:3px;
 }
 @media(prefers-reduced-motion:reduce){#drmPageScrollbar{transition:none}}
+
+
+/* ==========================================================
+   PERFORMANCE PASS — retain Silver Glass visuals, reduce paint cost.
+   ========================================================== */
+
+/* Keep anchor navigation smooth, with room below the fixed header. */
+html{
+  scroll-behavior:smooth!important;
+  scroll-padding-top:104px;
+  -webkit-overflow-scrolling:touch;
+}
+body{overscroll-behavior-y:contain}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{
+    scroll-behavior:auto!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+
+/* Large translucent surfaces were using very expensive 24–32px blur.
+   A smaller blur keeps the frosted-glass appearance with less repaint work. */
+.topbar,.topbar>nav#mainNav,.hero,.content,.resource-section,.admin-section,
+.video-row,.video-card,.metric-card,.admin-report,.account-drawer,footer,
+.player-dialog,.logout-toast{
+  -webkit-backdrop-filter:blur(10px) saturate(125%)!important;
+  backdrop-filter:blur(10px) saturate(125%)!important;
+}
+
+/* Remove fixed-background repainting during page scroll. */
+body,body.view-modern,body.view-basic{
+  background-attachment:scroll!important;
+}
+
+/* Defer rendering of off-screen content blocks without removing their layout. */
+.resource-section,.admin-section,.video-row{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 360px;
+}
+
+/* Restrict card transitions to cheap properties; avoid animating filters. */
+.video-card,.metric-card,.admin-report,.quick-upload-button{
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+.video-card img{
+  display:block;
+  backface-visibility:hidden;
+}
