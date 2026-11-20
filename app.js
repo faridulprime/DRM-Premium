@@ -11,13 +11,13 @@ function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt
 function thumb(v){return v.thumbnail_url||`https://img.youtube.com/vi/${encodeURIComponent(v.youtube_id)}/hqdefault.jpg`;}
 function play(v){$("#playerTitle").textContent=v.title;$("#playerDescription").textContent=v.description||"";$("#playerFrame").innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube_id)}?autoplay=1&rel=0" title="${esc(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;$("#playerDialog").showModal();}
 function applySettings(){
- const pairs={brandName:"site_name",footerBrand:"site_name",heroEyebrow:"hero_eyebrow",libraryEyebrow:"library_eyebrow",libraryTitle:"library_title",footerText:"footer_text"};
- for(const [id,key] of Object.entries(pairs))if(settings[key])$("#"+id).textContent=settings[key];
+ const pairs={heroEyebrow:"hero_eyebrow",libraryEyebrow:"library_eyebrow",libraryTitle:"library_title",footerText:"footer_text"};
+ for(const [id,key] of Object.entries(pairs))if(settings[key])$("#"+id).textContent=settings[key];\n  // Keep the public brand canonical; legacy site_name settings must not overwrite it.\n  $("#brandName").textContent="DRM PREMIUM";\n  $("#footerBrand").textContent="DRM PREMIUM";
  if(settings.hero_image)$("#hero").style.backgroundImage=`linear-gradient(90deg,#080808 0%,rgba(8,8,8,.86) 32%,rgba(8,8,8,.12) 100%),url("${settings.hero_image}")`;
  if(settings.show_hero==="false")$("#hero").hidden=true;
  if(settings.show_library==="false")$("#browse").hidden=true;
  if(settings.accent_color&&/^#[0-9a-f]{6}$/i.test(settings.accent_color))document.documentElement.style.setProperty("--red",settings.accent_color);
- document.title="হ্যালো মুমিনগণ🤣";
+ document.title="DRM PREMIUM";
 }
 function render(){
  const q=$("#search").value.toLowerCase().trim(),cat=$("#categoryFilter").value;
