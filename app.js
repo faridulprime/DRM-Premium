@@ -5,7 +5,8 @@ const demoVideos=[
  {id:"demo3",title:"Creative Inspiration",category:"Entertainment",youtube_id:"aqz-KE-bpKQ",description:"বিনোদন বিভাগের নমুনা ভিডিও।",featured:0,thumbnail_url:""}
 ];
 let videos=[],categories=[],settings={};
-let categoryOptionsKey="";\nlet searchRenderTimer=null;
+let categoryOptionsKey="";
+let searchRenderTimer=null;
 const bn=n=>Number(n||0).toLocaleString("bn-BD");
 let adminHeartbeat=null;
 function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
