@@ -1,40 +1,64 @@
-# FRAME — Netflix-style YouTube video library
+# DRM- Premium
 
-## Secure Admin CMS
-- Public site: /
-- Admin panel: /admin (rewritten to admin.html)
-- API: /api/*
-- D1 migration: migrations/0001_admin.sql
-- Features: YouTube video add/edit/delete/publish, category create/rename/delete, homepage title/text/image/color and hero/library visibility, multiple admin accounts.
+Static Cloudflare Pages site with a D1-backed content API and a protected management panel.
+
+## Development branch
+
+All current work is on `feature/full-admin-panel`. Production `main` has not been changed by this work. Review and test the branch preview before merging.
+
+## Current management features
+
+- A single protected Owner role, established through first-time bootstrap.
+- Admin role is separate from Owner.
+- Admins can list, create, edit and delete only videos they own.
+- Admins can create, rename and delete only categories they own.
+- A video can only be assigned to a category owned by that Admin. Owner can manage all categories and videos.
+- Owner-only website settings.
+- Owner-only user/role management. Owner can promote a verified user to Admin or revoke that Admin role.
+- Removing an Admin revokes their sessions and demotes the account to User. Their content is retained; Owner continues to control it.
 - Passwords use PBKDF2-HMAC-SHA-256 with a unique random salt per account and 210,000 iterations.
 - Sessions use random opaque tokens stored as SHA-256 hashes in D1, with HttpOnly, Secure and SameSite=Strict cookies; session lifetime is seven days.
 - Login throttling: up to 8 failed attempts per IP hash in a 15-minute window.
 - Mutating API requests require a matching same-origin Origin header.
-- All new work is on branch `feature/full-admin-panel`; the live `main` branch has not been modified.
+- Authorization is enforced in the API/database queries, not only by hiding dashboard controls.
 
-## Required Cloudflare setup (the Admin Panel will not function until these steps are completed)
-1. Create a Cloudflare D1 database, for example `frame-db`.
-2. Open the existing Pages project `drm-premium` (your live site) → Settings → Bindings → Add → D1 database bindings (the current dashboard path).
-3. Add a binding with variable name `DB` and select the new D1 database. Bind it in both Production and Preview environments if you will test the feature branch preview before merging.
-4. Open the selected D1 database → Console. Run the complete SQL from `migrations/0001_admin.sql` once.
+## Cloudflare setup
+
+The management API requires the D1 database binding and encrypted secrets.
+
+1. Cloudflare Pages project `drm-premium` → Settings → Bindings → D1 database.
+2. Add the D1 database `drmdatabase` using binding variable name `DB`. Configure both Production and Preview environments if testing the branch preview.
+3. In D1 Console, run `migrations/0001_admin.sql` once.
+4. Then run `migrations/0002_owner_roles_and_content_ownership.sql` once.
 5. Pages project → Settings → Variables and Secrets. Add encrypted secrets:
-   - `BOOTSTRAP_SECRET`: one-time random secret, at least 32 random characters.
+   - `OWNER_EMAIL`: the one email address allowed to create the single Owner account.
+   - `BOOTSTRAP_SECRET`: a one-time random secret, at least 32 random characters.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
-   Do not use the same value for both.
-6. Redeploy the relevant Pages deployment after the binding and secrets are saved.
-7. Open `/admin`. On first setup, enter the Bootstrap Secret, your admin email, and a password of at least 12 characters.
-8. Once the first Admin account is created, remove `BOOTSTRAP_SECRET` from Pages secrets. Keep `SESSION_SECRET` configured.
-9. Log in again at `/admin`.
+6. Deploy the `feature/full-admin-panel` branch to a Preview URL.
+7. Open the preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), desired username, a new password of at least 12 characters, and the Bootstrap Secret.
+8. After Owner setup succeeds, remove `BOOTSTRAP_SECRET` from the Preview environment. Keep `OWNER_EMAIL` and `SESSION_SECRET`.
+9. Test Owner and Admin permissions using separate test accounts before merging.
 
-Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only.
+Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only. Do not use a password previously shared in chat.
 
-## D1 setup SQL
-The migration creates users, sessions, login-attempt throttling, videos, categories and website settings, and inserts three starter videos. Run it once in the D1 Console. If you run it again, the `CREATE TABLE IF NOT EXISTS` and `INSERT OR IGNORE` statements are safe, but it does not reset existing content.
+## D1 migrations
 
-## Important limitations and security notes
-- This first version accepts HTTPS image URLs; direct image binary upload/storage is not included.
-- Every account created in Admin Accounts is a full administrator. Only add trusted people.
-- Removing an Admin ends their active sessions; the current Admin and the last remaining Admin cannot remove themselves.
-- Password reset/email invitation flows are not included. A new Admin's temporary password must be shared securely outside the website and changed through a separate process (not yet implemented).
-- Arrange D1 exports/backups before relying on this for important content.
+The first migration creates the original users, sessions, login-attempt throttling, videos, categories and settings tables, plus sample content.
+
+The second migration adds usernames, email-verification state, Owner role and content ownership columns. It promotes the first existing account to Owner. If the Owner is created after migration, the bootstrap endpoint assigns any legacy unowned content to that Owner.
+
+Run each migration only once per database, in numerical order. Keep D1 backups/exports before applying schema changes to a database containing important data.
+
+## Important implementation status / limitations
+
+- Public account registration and email-verification delivery are not implemented yet. The Owner can only promote an existing verified User once registration/verification is added. Until then, the Owner role controls are not yet a complete public onboarding flow.
+- Google Authenticator (TOTP), SMS OTP, password reset and email-based account recovery are not implemented yet.
+- The initial Owner bootstrap is protected by Cloudflare secrets; no Owner password is stored in source code.
+- Direct binary image upload is not included; the current site accepts HTTPS image URLs.
+- Admin content ownership currently covers videos and categories. Article, reference and folder content types need their own owner_id schema/API before those features are enabled.
+- Dashboard activity/online indicators and upload-count analytics are not implemented yet.
 - Use YouTube videos you own or are authorized to embed. Unlisted links are not access-controlled.
+
+## Site identity
+
+The public-facing product name is DRM- Premium. The current UI still has a few legacy FRAME labels that will be updated in the public-site redesign.
