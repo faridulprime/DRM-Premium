@@ -3531,3 +3531,9 @@ body.drawer-open #home{
 .topbar>#headerLoginForm>.header-field:first-of-type{
   transform:translateX(-30px)!important;
 }
+
+
+/* === EMAIL FIELD RIGHT EDGE EXTENSION · USER REQUEST === */
+.topbar>#headerLoginForm>.header-field:first-of-type{
+  width:calc(clamp(108px,9.5vw,140px) + 10px)!important;
+}
