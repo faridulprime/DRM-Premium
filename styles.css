@@ -3519,3 +3519,9 @@ body.drawer-open #home{
 .topbar>#headerLoginForm>.header-field:first-of-type{
   transform:translateX(-15px)!important;
 }
+
+
+/* === HEADER INPUT ALIGNMENT · BOTH FIELDS === */
+.topbar>#headerLoginForm>.header-field{
+  transform:translateX(-15px)!important;
+}
