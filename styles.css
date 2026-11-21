@@ -3525,3 +3525,9 @@ body.drawer-open #home{
 .topbar>#headerLoginForm>.header-field{
   transform:translateX(-15px)!important;
 }
+
+
+/* === EMAIL FIELD EXTRA OFFSET · USER REQUEST === */
+.topbar>#headerLoginForm>.header-field:first-of-type{
+  transform:translateX(-30px)!important;
+}
