@@ -3509,3 +3509,13 @@ body.drawer-open #home{
   box-shadow:0 0 0 2px rgba(91,133,170,.10),0 4px 11px rgba(43,65,86,.09),inset 0 1px 0 #fff!important;
   outline:none!important;
 }
+
+
+/* === HEADER INPUT DIMENSIONS · USER REQUEST === */
+.topbar>#headerLoginForm>.header-field{
+  height:29px!important;
+  min-height:29px!important;
+}
+.topbar>#headerLoginForm>.header-field:first-of-type{
+  transform:translateX(-10px)!important;
+}
