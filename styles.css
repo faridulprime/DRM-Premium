@@ -3242,3 +3242,94 @@ body.drawer-open #home{
   #accountDrawer.glass-grid-drawer,
   .topbar,#home{transition:none!important}
 }
+
+
+/* === SEAMLESS HOMEPAGE EXTENSION · SLOWER PUSH ===
+   The drawer is styled as the homepage's hidden right-hand continuation,
+   not as a separate floating panel. Keep all changes scoped to this menu. */
+:root{--drm-push-sidebar-width:clamp(320px,25vw,440px)}
+#accountDrawer.glass-grid-drawer{
+  width:var(--drm-push-sidebar-width)!important;
+  height:100dvh!important;right:0!important;left:auto!important;top:0!important;
+  padding:24px 22px 22px!important;
+  transform:translate3d(100%,0,0)!important;
+  transition:transform .85s cubic-bezier(.18,.72,.18,1)!important;
+  background:
+    radial-gradient(ellipse at 12% 0%,rgba(255,255,255,.96),transparent 42%),
+    radial-gradient(ellipse at 88% 12%,rgba(207,218,230,.54),transparent 38%),
+    linear-gradient(145deg,#eef2f6 0%,#e5eaf0 48%,#f6f8fa 100%)!important;
+  color:#202833!important;
+  border:0!important;
+  border-left:1px solid rgba(126,143,161,.2)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  z-index:60!important;will-change:transform;
+}
+#accountDrawer.glass-grid-drawer.open{transform:translate3d(0,0,0)!important}
+.topbar,#home{
+  transition:transform .85s cubic-bezier(.18,.72,.18,1)!important;
+  will-change:transform;
+}
+body.drawer-open .topbar,
+body.drawer-open #home{
+  transform:translate3d(calc(-1 * var(--drm-push-sidebar-width)),0,0)!important;
+  filter:none!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-head{
+  background:transparent!important;border:0!important;border-bottom:1px solid rgba(126,143,161,.24)!important;
+  border-radius:0!important;box-shadow:none!important;padding:0 0 18px!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-brand-mark{
+  background:linear-gradient(145deg,#f9fbfd,#dce3ea)!important;color:#202833!important;
+  border:1px solid rgba(126,143,161,.28)!important;box-shadow:none!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-brand-copy strong{color:#202833!important;text-shadow:none!important}
+#accountDrawer.glass-grid-drawer .glass-grid-brand-copy small{color:#697583!important;text-shadow:none!important}
+#accountDrawer.glass-grid-drawer #menuClose{
+  background:transparent!important;color:#202833!important;border:1px solid rgba(126,143,161,.32)!important;
+  box-shadow:none!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-nav{
+  display:flex!important;flex-direction:column!important;gap:4px!important;
+  margin-top:22px!important;background:transparent!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-link,
+#accountDrawer.glass-grid-drawer .glass-grid-link-home,
+#accountDrawer.glass-grid-drawer .glass-grid-link[aria-current="page"]{
+  min-height:50px!important;padding:10px 12px!important;
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:13px!important;
+  color:#202833!important;background:transparent!important;border:1px solid transparent!important;
+  border-radius:10px!important;box-shadow:none!important;text-shadow:none!important;
+  font:600 16px/1.45 'Hind Siliguri',sans-serif!important;
+  transition:background .2s ease,border-color .2s ease!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-link:hover,
+#accountDrawer.glass-grid-drawer .glass-grid-link:focus-visible{
+  color:#202833!important;background:rgba(255,255,255,.58)!important;
+  border-color:rgba(126,143,161,.22)!important;box-shadow:none!important;outline:none!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-link-home{
+  color:#244d70!important;background:rgba(207,224,239,.48)!important;
+  border-color:rgba(111,148,179,.24)!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-link .glass-grid-icon{
+  color:#52677b!important;text-shadow:none!important;font-size:21px!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-bottom{
+  margin-top:auto!important;background:transparent!important;border-top:1px solid rgba(126,143,161,.22)!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-logout{
+  color:#202833!important;background:rgba(255,255,255,.55)!important;
+  border:1px solid rgba(126,143,161,.3)!important;box-shadow:none!important;text-shadow:none!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-logout svg{stroke:#34495e!important}
+#menuBackdrop{display:none!important}
+@media(max-width:760px){
+  :root{--drm-push-sidebar-width:min(82vw,380px)}
+  #accountDrawer.glass-grid-drawer{padding:20px 16px!important}
+  #accountDrawer.glass-grid-drawer .glass-grid-link{font-size:15px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #accountDrawer.glass-grid-drawer,.topbar,#home{transition:none!important}
+}
