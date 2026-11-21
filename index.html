@@ -31,45 +31,26 @@
   </div>
 </header>
   <div id="menuBackdrop" class="menu-backdrop" hidden></div>
-  <aside id="accountDrawer" class="account-drawer workspace-drawer" aria-hidden="true">
-    <div class="drawer-head">
-      <div class="drawer-brand"><span class="drawer-brand-mark">D</span><span><strong>DRM PREMIUM</strong><small>THE PRIVATE EXPERIENCE</small></span></div>
+  <aside id="accountDrawer" class="account-drawer glass-grid-drawer" aria-hidden="true">
+    <div class="glass-grid-head">
+      <div class="glass-grid-brand">
+        <span class="glass-grid-brand-mark">D</span>
+        <span class="glass-grid-brand-copy"><strong>DRM PREMIUM</strong><small>THE PRIVATE EXPERIENCE</small></span>
+      </div>
+      <span id="drawerAccountLabel" class="drawer-account-label" aria-hidden="true">অতিথি</span>
       <button id="menuClose" type="button" aria-label="মেনু বন্ধ করুন">×</button>
     </div>
-    <div class="drawer-content workspace-content">
-      <section class="workspace-identity" aria-label="Account overview">
-        <div class="workspace-identity-top">
-          <span class="workspace-avatar">D</span>
-          <div class="workspace-identity-copy">
-            <p class="drawer-kicker">WORKSPACE PROFILE</p>
-            <p id="drawerAccountLabel" class="drawer-account-label">অতিথি</p>
-            <span class="workspace-member-caption">DRM PREMIUM ACCOUNT</span>
-          </div>
-          <span class="workspace-access-mark" aria-hidden="true">◆</span>
-        </div>
-        <div class="workspace-meta">
-          <span><i></i> ACCOUNT SPACE</span>
-          <span>PERSONAL CONSOLE</span>
-        </div>
-      </section>
-      <div class="workspace-section-heading">
-        <div><p class="drawer-section-label">YOUR WORKSPACE</p><span>এক জায়গায় আপনার সব বিভাগ</span></div>
-        <span class="workspace-count">06 SECTIONS</span>
-      </div>
-      <nav class="drawer-nav workspace-nav" aria-label="মেনু নেভিগেশন">
-        <a class="workspace-link workspace-link-featured" href="#home"><span class="drawer-nav-icon">⌂</span><span class="workspace-link-copy"><strong>মূল পৃষ্ঠা</strong><small>HOME</small></span><span class="drawer-nav-arrow">↗</span></a>
-        <a class="workspace-link" href="#browse"><span class="drawer-nav-icon">▣</span><span class="workspace-link-copy"><strong>ভিডিও লাইব্রেরি</strong><small>VIDEO LIBRARY</small></span><span class="drawer-nav-arrow">↗</span></a>
-        <a class="workspace-link" href="#references"><span class="drawer-nav-icon">◇</span><span class="workspace-link-copy"><strong>রেফারেন্স</strong><small>REFERENCES</small></span><span class="drawer-nav-arrow">↗</span></a>
-        <a class="workspace-link" href="#articles"><span class="drawer-nav-icon">▤</span><span class="workspace-link-copy"><strong>আর্টিকেল</strong><small>ARTICLES</small></span><span class="drawer-nav-arrow">↗</span></a>
-        <a class="workspace-link" href="#books"><span class="drawer-nav-icon">▥</span><span class="workspace-link-copy"><strong>বইপত্র</strong><small>BOOKS</small></span><span class="drawer-nav-arrow">↗</span></a>
-        <a class="workspace-link workspace-link-admin" href="#admin"><span class="drawer-nav-icon">⌘</span><span class="workspace-link-copy"><strong>এডমিন ড্যাশবোর্ড</strong><small>ADMIN CONSOLE</small></span><span class="drawer-nav-arrow">↗</span></a>
-      </nav>
-      <section class="workspace-footer-card">
-        <span class="workspace-footer-icon">◈</span>
-        <div><strong>One space. Everything you need.</strong><small>VIDEO&nbsp;&nbsp;·&nbsp;&nbsp;STORY&nbsp;&nbsp;·&nbsp;&nbsp;KNOWLEDGE</small></div>
-      </section>
+    <nav class="glass-grid-nav" aria-label="মেনু নেভিগেশন">
+      <a class="glass-grid-link glass-grid-link-home" href="#home"><span class="glass-grid-icon" aria-hidden="true">⌂</span><span>মূল পৃষ্ঠা</span></a>
+      <a class="glass-grid-link" href="#browse"><span class="glass-grid-icon" aria-hidden="true">▷</span><span>ভিডিও লাইব্রেরি</span></a>
+      <a class="glass-grid-link" href="#references"><span class="glass-grid-icon" aria-hidden="true">▱</span><span>রেফারেন্স</span></a>
+      <a class="glass-grid-link" href="#articles"><span class="glass-grid-icon" aria-hidden="true">▤</span><span>আর্টিকেল</span></a>
+      <a class="glass-grid-link" href="#books"><span class="glass-grid-icon" aria-hidden="true">▣</span><span>বইপত্র</span></a>
+      <a class="glass-grid-link" href="#admin"><span class="glass-grid-icon" aria-hidden="true">▦</span><span>এডমিন ড্যাশবোর্ড</span></a>
+    </nav>
+    <div class="glass-grid-bottom">
+      <button id="logoutButton" class="logout-button glass-grid-logout" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9"/></svg><span>Log Out</span></button>
     </div>
-    <div class="drawer-bottom"><button id="logoutButton" class="logout-button" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M16 16l5-4-5-4M21 12H9"/></svg><span>Log Out</span></button></div>
   </aside>
 
 <main id="home">
