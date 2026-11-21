@@ -3116,3 +3116,82 @@ body.view-basic *,body.view-basic *:before,body.view-basic *:after{
 @media(prefers-reduced-motion:reduce){
   #accountDrawer .glass-grid-link{transition:none!important}
 }
+
+
+/* === GLASS CARD GRID · HIGH-READABILITY NAVIGATION PALETTE ===
+   Scoped exclusively to the side drawer. Preserve the chosen grid structure. */
+#accountDrawer.glass-grid-drawer{
+  background:
+    radial-gradient(ellipse at 18% 0%,rgba(74,132,177,.16),transparent 42%),
+    linear-gradient(155deg,#1b2936 0%,#17232e 58%,#111c27 100%)!important;
+  color:#f8fafc!important;
+  border:1px solid rgba(184,205,224,.58)!important;
+  box-shadow:-22px 0 58px rgba(4,12,20,.38),inset 1px 0 0 rgba(255,255,255,.16)!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-head{
+  background:linear-gradient(145deg,rgba(233,242,249,.96),rgba(181,199,214,.92))!important;
+  border:1px solid rgba(255,255,255,.78)!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-brand-copy strong{
+  color:#172536!important;text-shadow:none!important;font-weight:800!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-brand-copy small{
+  color:#42576a!important;text-shadow:none!important;font-weight:700!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-brand-mark{
+  color:#15283a!important;background:linear-gradient(145deg,#f7fbff,#9eb8cd)!important;
+  border:1px solid rgba(255,255,255,.92)!important;
+  box-shadow:0 3px 10px rgba(16,37,56,.24),inset 0 1px 0 #fff!important;
+}
+#accountDrawer.glass-grid-drawer #menuClose{
+  color:#182a3b!important;background:linear-gradient(145deg,#f7fbff,#c4d2de)!important;
+  border:1px solid rgba(255,255,255,.9)!important;box-shadow:0 3px 9px rgba(0,0,0,.18)!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-nav{
+  background:transparent!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-link{
+  color:#ffffff!important;
+  background:linear-gradient(145deg,#30485b 0%,#293b4b 100%)!important;
+  border:1px solid #526779!important;
+  box-shadow:0 7px 16px rgba(4,12,20,.22),inset 0 1px 0 rgba(255,255,255,.12)!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.45)!important;
+  font-family:'Hind Siliguri',sans-serif!important;
+  font-size:16px!important;font-weight:700!important;line-height:1.45!important;
+  -webkit-font-smoothing:antialiased!important;text-rendering:optimizeLegibility!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-link .glass-grid-icon{
+  color:#ffffff!important;text-shadow:0 1px 2px rgba(0,0,0,.45)!important;
+  font-size:25px!important;line-height:1!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-link-home,
+#accountDrawer.glass-grid-drawer .glass-grid-link[aria-current="page"]{
+  color:#ffffff!important;
+  background:linear-gradient(145deg,#2582c2 0%,#1769a8 100%)!important;
+  border:1px solid #78c5f4!important;
+  box-shadow:0 8px 20px rgba(0,74,132,.3),inset 0 1px 0 rgba(255,255,255,.28)!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-link:hover,
+#accountDrawer.glass-grid-drawer .glass-grid-link:focus-visible{
+  color:#ffffff!important;
+  background:linear-gradient(145deg,#3a5870,#30485b)!important;
+  border-color:#8aa9c2!important;
+  box-shadow:0 9px 22px rgba(4,12,20,.3),inset 0 1px 0 rgba(255,255,255,.2)!important;
+  outline:2px solid rgba(130,190,232,.28)!important;outline-offset:2px!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-bottom{
+  background:transparent!important;border-top:1px solid rgba(220,234,245,.18)!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-logout{
+  color:#ffffff!important;
+  background:linear-gradient(145deg,#40596d,#293d4e)!important;
+  border:1px solid #7892a8!important;
+  box-shadow:0 7px 17px rgba(4,12,20,.25),inset 0 1px 0 rgba(255,255,255,.17)!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.45)!important;
+  font-size:13px!important;font-weight:700!important;
+}
+#accountDrawer.glass-grid-drawer .glass-grid-logout svg{stroke:#fff!important}
+@media(max-width:760px){
+  #accountDrawer.glass-grid-drawer .glass-grid-link{font-size:15px!important}
+}
