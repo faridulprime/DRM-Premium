@@ -3473,3 +3473,39 @@ body.drawer-open #home{
 @media(max-width:760px){
   .topbar>.top-actions>.menu-toggle.menu-btn-11{flex-basis:38px!important;width:38px!important;height:38px!important}
 }
+
+
+/* === HEADER INPUT DESIGN 12 · SUBTLE SHADOW ===
+   Scoped to the existing Email and Password fields only.
+   Keeps form structure, dimensions, spacing and login behaviour intact. */
+.topbar>#headerLoginForm>.header-field{
+  min-height:39px!important;
+  height:39px!important;
+  background:linear-gradient(180deg,#fffdfa 0%,#f7f4ef 100%)!important;
+  border:1px solid rgba(166,158,146,.58)!important;
+  border-radius:999px!important;
+  box-shadow:
+    0 3px 9px rgba(43,49,57,.075),
+    inset 0 1px 0 rgba(255,255,255,.98)!important;
+  padding:0 11px!important;
+  transition:border-color .22s ease,box-shadow .22s ease,background .22s ease!important;
+}
+.topbar>#headerLoginForm>.header-field input,
+.topbar>#headerLoginForm>.header-field input::placeholder{
+  color:#394653!important;
+  text-shadow:none!important;
+}
+.topbar>#headerLoginForm>.header-field .field-icon{
+  color:#526477!important;
+  text-shadow:none!important;
+}
+.topbar>#headerLoginForm>.header-field:hover{
+  border-color:rgba(119,145,169,.68)!important;
+  box-shadow:0 4px 11px rgba(43,65,86,.10),inset 0 1px 0 #fff!important;
+}
+.topbar>#headerLoginForm>.header-field:focus-within{
+  background:#fff!important;
+  border-color:rgba(91,133,170,.82)!important;
+  box-shadow:0 0 0 2px rgba(91,133,170,.10),0 4px 11px rgba(43,65,86,.09),inset 0 1px 0 #fff!important;
+  outline:none!important;
+}
