@@ -3630,3 +3630,10 @@ body.drawer-open #home{
 .topbar>#headerLoginForm>.login-button.login-btn-23:active{
   transform:translateX(-10px) scale(.98)!important;
 }
+
+
+/* === LOGIN BUTTON 23 · ADDITIONAL 5PX RIGHT-SIDE REDUCTION === */
+.topbar>#headerLoginForm>.login-button.login-btn-23{
+  min-width:99px!important;
+  padding-right:0!important;
+}
