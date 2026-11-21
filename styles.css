@@ -3195,3 +3195,50 @@ body.view-basic *,body.view-basic *:before,body.view-basic *:after{
 @media(max-width:760px){
   #accountDrawer.glass-grid-drawer .glass-grid-link{font-size:15px!important}
 }
+
+
+/* === PUSH SIDEBAR INTERACTION · USER-APPROVED BEHAVIOUR ===
+   Only the site header, homepage canvas and existing account drawer participate.
+   Glass Card Grid internals and all other page sections remain untouched. */
+:root{--drm-push-sidebar-width:clamp(320px,25vw,440px)}
+#accountDrawer.glass-grid-drawer{
+  width:var(--drm-push-sidebar-width)!important;
+  right:0!important;left:auto!important;top:0!important;height:100dvh!important;
+  transform:translate3d(100%,0,0)!important;
+  transition:transform .4s cubic-bezier(.22,.75,.22,1)!important;
+  z-index:60!important;
+  will-change:transform;
+}
+#accountDrawer.glass-grid-drawer.open{
+  transform:translate3d(0,0,0)!important;
+}
+.topbar,#home{
+  transition:transform .4s cubic-bezier(.22,.75,.22,1),filter .4s ease!important;
+  will-change:transform;
+}
+body.drawer-open{
+  overflow-x:clip!important;
+}
+body.drawer-open .topbar,
+body.drawer-open #home{
+  transform:translate3d(calc(-1 * var(--drm-push-sidebar-width)),0,0)!important;
+  filter:blur(1px)!important;
+}
+#menuBackdrop{display:none!important}
+#menuBackdrop[hidden]{display:none!important}
+@media(max-width:760px){
+  :root{--drm-push-sidebar-width: min(82vw,380px)}
+  #accountDrawer.glass-grid-drawer{
+    width:var(--drm-push-sidebar-width)!important;
+    padding-left:16px!important;padding-right:16px!important;
+  }
+  body.drawer-open .topbar,
+  body.drawer-open #home{
+    transform:translate3d(calc(-1 * var(--drm-push-sidebar-width)),0,0)!important;
+    filter:blur(.7px)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #accountDrawer.glass-grid-drawer,
+  .topbar,#home{transition:none!important}
+}
