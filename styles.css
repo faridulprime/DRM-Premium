@@ -3663,3 +3663,16 @@ body.drawer-open #home{
   padding-right:0!important;
   box-sizing:border-box!important;
 }
+
+
+/* === LOGIN BUTTON 23 · EXACT SIZE 50PX × 30PX === */
+.topbar>#headerLoginForm>.login-button.login-btn-23{
+  width:50px!important;
+  min-width:50px!important;
+  max-width:50px!important;
+  height:30px!important;
+  min-height:30px!important;
+  box-sizing:border-box!important;
+  padding-left:3px!important;
+  padding-right:0!important;
+}
