@@ -672,7 +672,8 @@ footer,body.view-modern footer,body.view-basic footer{
   position:relative!important;z-index:3!important;
   display:flex!important;align-items:center!important;gap:8px!important;
   margin-left:auto!important;flex:0 1 auto!important;
-}
+transform:translateX(20px)!important;}
+
 .topbar .header-field{
   height:39px!important;width:clamp(100px,8.2vw,132px)!important;
   display:flex!important;align-items:center!important;gap:7px!important;
