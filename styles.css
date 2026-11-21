@@ -2870,3 +2870,117 @@ body.view-basic *,body.view-basic *:before,body.view-basic *:after{
   color:#ffffff!important;
   text-shadow:0 1px 2px rgba(35,112,190,.65)!important;
 }
+
+
+/* === MINIMAL CLASSIC · PLATINUM SILVER / GRAY / YELLOW SHADOW ===
+   Final user-approved palette. Scope: account side panel only. */
+#accountDrawer.workspace-drawer{
+  background:linear-gradient(145deg,#f4f5f6 0%,#d9dde1 48%,#c8cdd2 100%)!important;
+  color:#515861!important;
+  border-left:1px solid #aeb5bc!important;
+  box-shadow:-22px 0 58px rgba(13,20,28,.24),inset 1px 0 0 rgba(255,255,255,.9)!important;
+}
+#accountDrawer.workspace-drawer .drawer-head{
+  background:transparent!important;border-bottom:1px solid rgba(83,93,103,.24)!important;
+}
+#accountDrawer.workspace-drawer .drawer-brand-mark{
+  background:linear-gradient(145deg,#ffffff,#bfc6cd)!important;
+  color:#4d5660!important;border:1px solid #aeb6be!important;
+  box-shadow:0 3px 9px rgba(40,48,56,.12),inset 0 1px 0 #fff!important;
+}
+#accountDrawer.workspace-drawer .drawer-brand strong,
+#accountDrawer.workspace-drawer .drawer-brand small,
+#accountDrawer.workspace-drawer .drawer-kicker,
+#accountDrawer.workspace-drawer .drawer-account-label,
+#accountDrawer.workspace-drawer .workspace-member-caption,
+#accountDrawer.workspace-drawer .workspace-meta,
+#accountDrawer.workspace-drawer .drawer-section-label,
+#accountDrawer.workspace-drawer .workspace-section-heading>div>span,
+#accountDrawer.workspace-drawer .workspace-count,
+#accountDrawer.workspace-drawer .workspace-link-copy strong,
+#accountDrawer.workspace-drawer .workspace-link-copy small,
+#accountDrawer.workspace-drawer .drawer-nav-arrow,
+#accountDrawer.workspace-drawer .workspace-footer-card strong,
+#accountDrawer.workspace-drawer .workspace-footer-card small,
+#accountDrawer.workspace-drawer .workspace-access-mark{
+  color:#515861!important;
+  text-shadow:0 1px 1px rgba(255,218,92,.82),0 0 4px rgba(255,211,64,.38)!important;
+}
+#accountDrawer.workspace-drawer .drawer-brand strong{color:#343b43!important}
+#accountDrawer.workspace-drawer .drawer-brand small,
+#accountDrawer.workspace-drawer .workspace-member-caption,
+#accountDrawer.workspace-drawer .workspace-link-copy small,
+#accountDrawer.workspace-drawer .workspace-footer-card small{
+  color:#626b74!important;
+}
+#accountDrawer.workspace-drawer .drawer-head button{
+  background:linear-gradient(145deg,#f9fafb,#cbd1d7)!important;
+  color:#4c555e!important;border:1px solid #aeb6be!important;
+  box-shadow:0 3px 9px rgba(40,48,56,.12)!important;
+  text-shadow:0 1px 1px rgba(255,218,92,.8)!important;
+}
+#accountDrawer.workspace-drawer .workspace-identity{
+  background:transparent!important;border:0!important;border-bottom:1px solid rgba(83,93,103,.24)!important;
+  border-radius:0!important;box-shadow:none!important;padding:15px 2px 13px!important;
+}
+#accountDrawer.workspace-drawer .workspace-identity:after{display:none!important}
+#accountDrawer.workspace-drawer .workspace-avatar{
+  background:linear-gradient(145deg,#fff,#c5cbd1)!important;color:#48515a!important;
+  border:1px solid #aeb6be!important;box-shadow:0 3px 8px rgba(40,48,56,.12)!important;
+  text-shadow:0 1px 1px rgba(255,218,92,.8)!important;
+}
+#accountDrawer.workspace-drawer .workspace-meta{
+  border-top:1px solid rgba(83,93,103,.18)!important;border-bottom:0!important;
+}
+#accountDrawer.workspace-drawer .workspace-meta i{
+  background:#6c7781!important;box-shadow:0 0 0 2px rgba(108,119,129,.14)!important;
+}
+#accountDrawer.workspace-drawer .workspace-count{
+  background:transparent!important;border:1px solid rgba(83,93,103,.25)!important;
+}
+#accountDrawer.workspace-drawer .workspace-nav{
+  display:grid!important;grid-template-columns:1fr!important;gap:0!important;
+}
+#accountDrawer.workspace-drawer .workspace-nav .workspace-link,
+#accountDrawer.workspace-drawer .workspace-nav .workspace-link-featured{
+  display:flex!important;min-height:51px!important;padding:8px 3px!important;
+  background:transparent!important;border:0!important;border-bottom:1px solid rgba(83,93,103,.17)!important;
+  border-radius:0!important;box-shadow:none!important;transform:none!important;
+}
+#accountDrawer.workspace-drawer .workspace-nav .workspace-link:hover,
+#accountDrawer.workspace-drawer .workspace-nav .workspace-link:focus-visible{
+  background:rgba(255,255,255,.34)!important;border-color:rgba(83,93,103,.26)!important;
+  box-shadow:none!important;outline:none!important;
+}
+#accountDrawer.workspace-drawer .workspace-nav .drawer-nav-icon{
+  background:transparent!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;color:#555e67!important;
+  text-shadow:0 1px 1px rgba(255,218,92,.82),0 0 4px rgba(255,211,64,.35)!important;
+}
+#accountDrawer.workspace-drawer .workspace-link-copy strong{
+  color:#454d56!important;font-size:15px!important;text-shadow:0 1px 1px rgba(255,218,92,.82),0 0 4px rgba(255,211,64,.35)!important;
+}
+#accountDrawer.workspace-drawer .workspace-link-copy small{
+  color:#68717a!important;text-shadow:0 1px 1px rgba(255,218,92,.72)!important;
+}
+#accountDrawer.workspace-drawer .workspace-footer-card{
+  background:transparent!important;border:0!important;border-top:1px solid rgba(83,93,103,.2)!important;
+  border-radius:0!important;box-shadow:none!important;padding:12px 2px!important;
+}
+#accountDrawer.workspace-drawer .workspace-footer-icon{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  color:#555e67!important;text-shadow:0 1px 1px rgba(255,218,92,.82)!important;
+}
+#accountDrawer.workspace-drawer .drawer-bottom{
+  border-top:1px solid rgba(83,93,103,.24)!important;
+}
+#accountDrawer.workspace-drawer .logout-button{
+  background:linear-gradient(145deg,#59636d,#3d464f)!important;
+  color:#fff!important;border:1px solid #59636d!important;
+  box-shadow:0 4px 11px rgba(40,48,56,.16)!important;
+  text-shadow:0 1px 2px rgba(255,218,92,.6)!important;
+}
+#accountDrawer.workspace-drawer .logout-button svg{stroke:#fff!important}
+@media(max-width:760px){
+  #accountDrawer.workspace-drawer{background:linear-gradient(145deg,#f4f5f6,#d2d7dc)!important}
+}
