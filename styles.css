@@ -3637,3 +3637,10 @@ body.drawer-open #home{
   min-width:99px!important;
   padding-right:0!important;
 }
+
+
+/* === LOGIN BUTTON 23 · ADDITIONAL 5PX RIGHT-SIDE REDUCTION === */
+.topbar>#headerLoginForm>.login-button.login-btn-23{
+  min-width:94px!important;
+  padding-right:0!important;
+}
