@@ -3543,3 +3543,9 @@ body.drawer-open #home{
 .topbar>#headerLoginForm>.header-field:nth-of-type(2){
   width:calc(clamp(108px,9.5vw,140px) + 10px)!important;
 }
+
+
+/* === EMAIL FIELD POSITION ADJUSTMENT · USER REQUEST === */
+.topbar>#headerLoginForm>.header-field:first-of-type{
+  transform:translateX(-15px)!important;
+}
