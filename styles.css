@@ -3556,3 +3556,49 @@ body.drawer-open #home{
 .topbar>#headerLoginForm>.header-field input::placeholder{
   font-size:14px!important;
 }
+
+
+/* === LOGIN BUTTON 23 · CLEAN MODERN WHITE + BLUE SWEEP === */
+.topbar>#headerLoginForm>.login-button.login-btn-23{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  display:inline-flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:10px!important;padding:0 12px!important;
+  min-width:112px!important;height:36px!important;min-height:36px!important;
+  border:1px solid rgba(183,198,216,.72)!important;border-radius:10px!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f7faff 58%,#edf3fa 100%)!important;
+  color:#203b59!important;
+  box-shadow:0 4px 12px rgba(40,63,89,.10),inset 0 1px 0 rgba(255,255,255,.98)!important;
+  font:650 12px Inter,'Hind Siliguri',sans-serif!important;
+  letter-spacing:.01em!important;text-shadow:none!important;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease!important;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23:before{
+  content:"";position:absolute;z-index:-1;right:-1px;bottom:-1px;width:48%;height:100%;
+  background:linear-gradient(135deg,rgba(220,237,252,.12) 0%,rgba(151,205,244,.45) 100%);
+  clip-path:polygon(48% 100%,100% 22%,100% 100%);
+  pointer-events:none;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23 .login-user-icon{
+  flex:0 0 17px;width:17px;height:17px;fill:none;stroke:#294967;
+  stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23 .login-button-label{
+  position:relative;z-index:1;flex:1;text-align:left;white-space:nowrap;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23 .login-arrow-icon{
+  position:relative;z-index:1;flex:0 0 19px;width:19px;height:19px;
+  fill:none;stroke:#247bb8;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23:hover{
+  transform:translateY(-1px)!important;border-color:#9bbbd8!important;
+  box-shadow:0 7px 16px rgba(40,82,119,.15),inset 0 1px 0 #fff!important;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23:active{
+  transform:translateY(0) scale(.98)!important;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23:focus-visible{
+  outline:2px solid rgba(53,133,191,.42)!important;outline-offset:3px!important;
+}
+@media(max-width:760px){
+  .topbar>#headerLoginForm>.login-button.login-btn-23{min-width:0!important;width:100%!important}
+}
