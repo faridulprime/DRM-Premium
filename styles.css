@@ -2712,3 +2712,131 @@ body.view-basic *,body.view-basic *:before,body.view-basic *:after{
 @media(prefers-reduced-motion:reduce){
   #accountDrawer .workspace-nav .workspace-link{transition:none!important}
 }
+
+
+/* === WORKSPACE DASHBOARD READABILITY PASS · SIDE PANEL ONLY ===
+   Stronger contrast, larger type, and restrained surfaces.
+   Every selector is scoped to #accountDrawer; no page/header layout changes. */
+#accountDrawer.workspace-drawer,
+#accountDrawer.workspace-drawer *{
+  -webkit-font-smoothing:antialiased!important;
+  text-rendering:optimizeLegibility!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+#accountDrawer.workspace-drawer{
+  background:linear-gradient(155deg,#111820 0%,#0c1219 58%,#111a23 100%)!important;
+  color:#f3f6f9!important;
+}
+#accountDrawer .drawer-head{
+  border-bottom-color:rgba(208,220,232,.19)!important;
+}
+#accountDrawer .drawer-brand-mark{
+  background:linear-gradient(145deg,#d8e0e8,#aab7c4)!important;
+  color:#17212b!important;
+  box-shadow:0 5px 14px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.8)!important;
+}
+#accountDrawer .drawer-brand strong{
+  color:#f5f7fa!important;font-size:14px!important;letter-spacing:.11em!important;
+}
+#accountDrawer .drawer-brand small{
+  color:#aebdca!important;font-size:9px!important;letter-spacing:.16em!important;
+}
+#accountDrawer .drawer-head button{
+  background:#26323e!important;color:#f2f6fa!important;
+  border-color:#526170!important;box-shadow:0 4px 12px rgba(0,0,0,.28)!important;
+}
+#accountDrawer .workspace-identity{
+  background:linear-gradient(145deg,#202c38 0%,#18232e 100%)!important;
+  border:1px solid #435362!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.075)!important;
+}
+#accountDrawer .workspace-avatar{
+  background:linear-gradient(145deg,#dbe3ea,#9eacb9)!important;
+  color:#15202a!important;border-color:#edf2f6!important;
+}
+#accountDrawer .drawer-kicker{
+  color:#b9c7d3!important;font-size:10px!important;letter-spacing:.14em!important;
+}
+#accountDrawer .drawer-account-label{
+  color:#ffffff!important;font-size:18px!important;font-weight:700!important;
+  line-height:1.45!important;
+}
+#accountDrawer .workspace-member-caption{
+  color:#b2c0cc!important;font-size:9px!important;letter-spacing:.1em!important;
+}
+#accountDrawer .workspace-access-mark{color:#c8d4de!important}
+#accountDrawer .workspace-meta{
+  border-top-color:rgba(205,218,230,.2)!important;
+  color:#b8c6d2!important;font-size:9px!important;letter-spacing:.1em!important;
+}
+#accountDrawer .workspace-meta i{
+  background:#b8c6d2!important;box-shadow:0 0 0 3px rgba(184,198,210,.14)!important;
+}
+#accountDrawer .drawer-section-label{
+  color:#d2dce5!important;font-size:10px!important;letter-spacing:.16em!important;
+}
+#accountDrawer .workspace-section-heading>div>span{
+  color:#bdc9d4!important;font-size:13px!important;line-height:1.5!important;
+}
+#accountDrawer .workspace-count{
+  color:#d2dce5!important;background:#202c38!important;
+  border-color:#4a5a69!important;font-size:9px!important;
+}
+#accountDrawer .workspace-nav .workspace-link{
+  background:linear-gradient(145deg,#202b36,#17212b)!important;
+  border-color:#40505e!important;
+  box-shadow:0 6px 16px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.055)!important;
+}
+#accountDrawer .workspace-nav .workspace-link-featured{
+  background:linear-gradient(110deg,#293846,#1b2834)!important;
+  border-color:#5a6b7b!important;
+}
+#accountDrawer .workspace-nav .workspace-link:hover,
+#accountDrawer .workspace-nav .workspace-link:focus-visible{
+  background:linear-gradient(145deg,#304252,#202d39)!important;
+  border-color:#8193a4!important;
+  box-shadow:0 9px 22px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.1)!important;
+}
+#accountDrawer .workspace-nav .drawer-nav-icon{
+  background:linear-gradient(145deg,#3b4c5b,#263542)!important;
+  border-color:#657789!important;color:#f0f4f7!important;
+  font-size:19px!important;
+}
+#accountDrawer .workspace-link-copy strong{
+  color:#ffffff!important;font-size:15px!important;font-weight:650!important;
+  line-height:1.55!important;letter-spacing:0!important;
+}
+#accountDrawer .workspace-link-copy small{
+  color:#c0ccd6!important;font-size:9px!important;letter-spacing:.09em!important;
+  line-height:1.4!important;
+}
+#accountDrawer .drawer-nav-arrow{
+  color:#d7e0e8!important;font-size:14px!important;
+}
+#accountDrawer .workspace-footer-card{
+  background:linear-gradient(120deg,#202c37,#17222c)!important;
+  border-color:#435362!important;
+}
+#accountDrawer .workspace-footer-icon{
+  background:#344453!important;border-color:#617383!important;color:#f1f5f8!important;
+}
+#accountDrawer .workspace-footer-card strong{
+  color:#f1f5f8!important;font-size:11px!important;line-height:1.5!important;
+}
+#accountDrawer .workspace-footer-card small{
+  color:#c1ccd6!important;font-size:8px!important;letter-spacing:.08em!important;
+}
+#accountDrawer .drawer-bottom{
+  border-top-color:rgba(205,218,230,.2)!important;
+}
+#accountDrawer .logout-button{
+  color:#ffffff!important;background:linear-gradient(145deg,#354554,#202c38)!important;
+  border-color:#657687!important;font-size:12px!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.09)!important;
+}
+@media(max-width:760px){
+  #accountDrawer .workspace-link-copy strong{font-size:14px!important}
+  #accountDrawer .workspace-link-copy small{font-size:8px!important}
+  #accountDrawer .workspace-section-heading>div>span{font-size:12px!important}
+}
