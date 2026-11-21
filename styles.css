@@ -3549,3 +3549,10 @@ body.drawer-open #home{
 .topbar>#headerLoginForm>.header-field:first-of-type{
   transform:translateX(-15px)!important;
 }
+
+
+/* === HEADER EMAIL + PASSWORD TEXT SIZE · USER REQUEST === */
+.topbar>#headerLoginForm>.header-field input,
+.topbar>#headerLoginForm>.header-field input::placeholder{
+  font-size:14px!important;
+}
