@@ -3651,3 +3651,15 @@ body.drawer-open #home{
   min-width:84px!important;
   padding-right:0!important;
 }
+
+
+/* === LOGIN BUTTON 23 · HEIGHT +1PX, HORIZONTAL WIDTH -5PX === */
+.topbar>#headerLoginForm>.login-button.login-btn-23{
+  height:30px!important;
+  min-height:30px!important;
+  width:calc(100% - 10px)!important;
+  min-width:79px!important;
+  padding-left:3px!important;
+  padding-right:0!important;
+  box-sizing:border-box!important;
+}
