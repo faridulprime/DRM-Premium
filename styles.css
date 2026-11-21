@@ -3602,3 +3602,18 @@ body.drawer-open #home{
 @media(max-width:760px){
   .topbar>#headerLoginForm>.login-button.login-btn-23{min-width:0!important;width:100%!important}
 }
+
+
+/* === LOGIN BUTTON 23 · BOX REDUCTION 4PX EACH SIDE === */
+.topbar>#headerLoginForm>.login-button.login-btn-23{
+  min-width:104px!important;
+  height:28px!important;
+  min-height:28px!important;
+  padding:0 8px!important;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23 .login-user-icon{
+  width:17px;height:17px;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23 .login-arrow-icon{
+  width:19px;height:19px;
+}
