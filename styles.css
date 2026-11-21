@@ -3698,3 +3698,52 @@ body.drawer-open #home{
   min-height:30px!important;
   box-sizing:border-box!important;
 }
+
+
+/* === LOGIN BUTTON 07 · MODERN SHADOW (ICON-FREE BLACK) === */
+.topbar>#headerLoginForm>.login-button.login-btn-23{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:70px!important;
+  min-width:70px!important;
+  max-width:70px!important;
+  height:30px!important;
+  min-height:30px!important;
+  box-sizing:border-box!important;
+  padding:0!important;
+  border:1px solid rgba(112,91,139,.38)!important;
+  border-radius:999px!important;
+  background:linear-gradient(180deg,#111014 0%,#08080b 58%,#050507 100%)!important;
+  color:#f5f1fa!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.09),0 5px 13px -7px rgba(178,73,255,.78)!important;
+  font-family:Inter,"Segoe UI",sans-serif!important;
+  font-size:12px!important;
+  font-style:italic!important;
+  font-weight:600!important;
+  letter-spacing:.8px!important;
+  text-transform:none!important;
+  text-shadow:0 1px 5px rgba(222,194,255,.18)!important;
+  transform:translateX(-10px)!important;
+  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease!important;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23 .login-button-label{
+  display:block!important;
+  flex:none!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  line-height:1!important;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23:hover{
+  border-color:rgba(190,132,255,.72)!important;
+  background:linear-gradient(180deg,#17131d 0%,#09080d 100%)!important;
+  box-shadow:0 3px 12px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.12),0 0 14px rgba(177,83,255,.38)!important;
+  transform:translate(-10px,-1px)!important;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23:active{
+  transform:translateX(-10px) scale(.98)!important;
+}
+.topbar>#headerLoginForm>.login-button.login-btn-23:focus-visible{
+  outline:2px solid rgba(190,132,255,.48)!important;
+  outline-offset:2px!important;
+}
