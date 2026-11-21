@@ -3437,3 +3437,39 @@ body.drawer-open #home{
   #accountDrawer.glass-grid-drawer{padding:20px 16px!important}
   #accountDrawer.glass-grid-drawer .glass-grid-link{font-size:14px!important}
 }
+
+
+/* === MENU BUTTON 11 · WAVE MINIMAL === */
+.topbar>.top-actions>.menu-toggle.menu-btn-11{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  flex:0 0 42px!important;width:42px!important;height:42px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  margin:0 0 0 2px!important;padding:0!important;
+  border:1px solid rgba(194,207,221,.96)!important;border-radius:13px!important;
+  background:linear-gradient(150deg,#ffffff 0%,#f2f5f8 62%,#e6edf4 100%)!important;
+  box-shadow:0 5px 13px rgba(53,76,101,.14),inset 0 1px 0 rgba(255,255,255,.98)!important;
+  cursor:pointer!important;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease!important;
+}
+.topbar>.top-actions>.menu-toggle.menu-btn-11:after{
+  content:"";position:absolute;z-index:-1;left:-8%;right:-8%;bottom:-2px;height:11px;
+  background:linear-gradient(90deg,#8bc9ee 0%,#3e91d2 52%,#1769a8 100%);
+  border-radius:55% 45% 0 0/85% 100% 0 0;
+  clip-path:polygon(0 42%,18% 18%,38% 40%,58% 18%,78% 35%,100% 12%,100% 100%,0 100%);
+  opacity:.95;
+}
+.topbar>.top-actions>.menu-toggle.menu-btn-11 svg{
+  position:relative;z-index:1;width:22px!important;height:22px!important;
+  fill:none!important;stroke:#263c52!important;stroke-width:1.85!important;
+  stroke-linecap:round!important;transition:transform .22s ease!important;
+}
+.topbar>.top-actions>.menu-toggle.menu-btn-11:hover{
+  transform:translateY(-2px)!important;border-color:#8db9d8!important;
+  box-shadow:0 8px 17px rgba(53,96,132,.2),inset 0 1px 0 #fff!important;
+}
+.topbar>.top-actions>.menu-toggle.menu-btn-11:active{transform:translateY(0) scale(.97)!important}
+.topbar>.top-actions>.menu-toggle.menu-btn-11:focus-visible{
+  outline:2px solid rgba(54,133,191,.55)!important;outline-offset:3px!important;
+}
+@media(max-width:760px){
+  .topbar>.top-actions>.menu-toggle.menu-btn-11{flex-basis:38px!important;width:38px!important;height:38px!important}
+}
