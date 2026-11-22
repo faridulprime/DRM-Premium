@@ -1,5 +1,5 @@
 const $=s=>document.querySelector(s);
-let state={videos:[],categories:[],settings:{},users:[],user:null};
+let state={videos:[],categories:[],settings:{},users:[],analytics:null,user:null};
 let activeUsersTimer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 async function api(path,opts={}){const res=await fetch("/api/"+path,{...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})},credentials:"same-origin"});let data={};try{data=await res.json()}catch{}if(!res.ok)throw new Error(data.error||("Request failed ("+res.status+")"));return data}
@@ -20,8 +20,22 @@ function notice(msg,error=false){const el=$("#notice");if(!el)return;el.textCont
 function ytId(value){const s=value.trim();if(/^[\w-]{11}$/.test(s))return s;try{const u=new URL(s),host=u.hostname.toLowerCase();if(host==="youtu.be"){const id=u.pathname.split("/").filter(Boolean)[0]||"";return /^[\w-]{11}$/.test(id)?id:""}if(!["youtube.com","www.youtube.com","m.youtube.com","youtube-nocookie.com","www.youtube-nocookie.com"].includes(host))return"";const id=u.searchParams.get("v")||u.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/)?.[1]||"";return /^[\w-]{11}$/.test(id)?id:""}catch{return ""}}
 async function status(){try{applyAdminTheme();const s=await api("auth/status");if(!s.configured){show("setup");return}const me=await api("auth/me");if(me.authenticated){state.user=me.user;show("dashboard");startAdminPresence();$("#adminIdentity").textContent=me.user.email+" · "+(me.user.role==="owner"?"OWNER":me.user.role==="admin"?"ADMIN":"USER");await refresh();activateAdminTab(currentAdminTab())}else{state.user=null;show("login")}}catch(e){state.user=null;show("login");notice(e.message,true)}}
 async function applyAdminTheme(){try{const settings=await api("settings");if(/^#[0-9a-f]{6}$/i.test(settings.accent_color||"")){document.documentElement.style.setProperty("--accent",settings.accent_color);document.documentElement.style.setProperty("--red",settings.accent_color);}}catch{}}
-async function refresh(){const [videos,categories]=await Promise.all([api("admin/videos"),api("admin/categories")]);state={...state,videos,categories};renderVideos();renderCategories();if(state.user.role==="owner"){const [settings,users]=await Promise.all([api("settings"),api("admin/users")]);state.settings=settings;state.users=users;renderSettings();renderAdmins();applyAdminThemeFromSettings(settings);["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab"].forEach(id=>$("#"+id).hidden=false);await loadActiveUsers();}else{["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab"].forEach(id=>$("#"+id).hidden=true);}}
+async function refresh(){const [videos,categories]=await Promise.all([api("admin/videos"),api("admin/categories")]);state={...state,videos,categories};renderVideos();renderCategories();await loadOverviewAnalytics();renderOverview();if(state.user.role==="owner"){const [settings,users]=await Promise.all([api("settings"),api("admin/users")]);state.settings=settings;state.users=users;renderSettings();renderAdmins();applyAdminThemeFromSettings(settings);["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab"].forEach(id=>$("#"+id).hidden=false);await loadActiveUsers();}else{["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab"].forEach(id=>$("#"+id).hidden=true);}}
 function applyAdminThemeFromSettings(settings){if(/^#[0-9a-f]{6}$/i.test(settings?.accent_color||"")){document.documentElement.style.setProperty("--accent",settings.accent_color);document.documentElement.style.setProperty("--red",settings.accent_color);}}
+async function loadOverviewAnalytics(){try{state.analytics=await api("admin/analytics")}catch{state.analytics=null}}
+function renderOverview(){
+ const videos=state.videos||[],published=videos.filter(v=>!!v.published).length,unpublished=videos.length-published,featured=videos.filter(v=>!!v.featured).length;
+ const active=state.analytics?.online_count;
+ const metrics=[["Total Videos",videos.length,"সব ভিডিও"],["Published",published,"প্রকাশিত ভিডিও"],["Categories",(state.categories||[]).length,"সক্রিয় ক্যাটাগরি"],["Active Admins",Number.isFinite(active)?active:"—","গত ৯০ সেকেন্ডে"]];
+ $("#overviewMetrics").innerHTML=metrics.map(([label,value,sub])=>'<article class="overview-metric"><span>'+label+'</span><strong>'+value+'</strong><small>'+sub+'</small></article>').join("");
+ const pct=videos.length?Math.round(published/videos.length*100):0;
+ $("#overviewContentStatus").innerHTML='<div class="overview-status-top"><span>Published</span><strong>'+published+' / '+videos.length+'</strong></div><div class="overview-progress"><i style="width:'+pct+'%"></i></div><div class="overview-status-foot"><span>'+pct+'% প্রকাশিত</span><span>'+unpublished+' Unpublished · '+featured+' Featured</span></div>';
+ const recent=[...videos].sort((a,b)=>Number(b.created_at||0)-Number(a.created_at||0)).slice(0,4);
+ $("#overviewRecent").innerHTML=recent.length?recent.map(v=>'<div class="overview-recent-row"><span class="overview-recent-dot"></span><div><strong>'+esc(v.title)+'</strong><small>'+esc(v.category)+' · '+(v.published?"Published":"Unpublished")+'</small></div></div>').join(""):'<p class="muted overview-empty">এখনো কোনো ভিডিও যোগ করা হয়নি।</p>';
+ $("#overviewActivity").innerHTML='<span>Recorded tab views</span><strong>'+(state.analytics?Number(state.analytics.total_tab_views||0).toLocaleString():"—")+'</strong><small>সমস্ত রেকর্ডকৃত পৃষ্ঠা ভিজিট</small>';
+ $("#overviewUsersAction").hidden=state.user?.role!=="owner";
+}
+document.querySelectorAll("[data-go-tab]").forEach(b=>b.addEventListener("click",()=>{const tab=b.dataset.goTab;navigateAdminTab(tab);if(b.dataset.action==="new-video")setTimeout(()=>editVideo(""),0)}));
 function renderVideos(){$("#videoCategory").innerHTML=state.categories.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");$("#videoList").innerHTML=state.videos.map(v=>`<div class="data-row"><div><strong>${esc(v.title)}</strong><small>${esc(v.category)} · ${v.published?"Published":"Unpublished"} · ${v.featured?"Featured":"Standard"}</small></div><div class="row-actions"><button data-edit="${esc(v.id)}">Edit</button><button class="delete" data-remove-video="${esc(v.id)}">Delete</button></div></div>`).join("")||'<p class="muted">এখনো কোনো ভিডিও নেই।</p>';document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editVideo(b.dataset.edit));document.querySelectorAll("[data-remove-video]").forEach(b=>b.onclick=()=>removeVideo(b.dataset.removeVideo))}
 function editVideo(id){const v=state.videos.find(x=>x.id===id),f=$("#videoForm");f.hidden=false;f.elements.id.value=v?.id||"";f.elements.title.value=v?.title||"";f.elements.category.value=v?.category||state.categories[0]?.name||"";f.elements.youtube_id.value=v?.youtube_id||"";f.elements.thumbnail_url.value=v?.thumbnail_url||"";f.elements.description.value=v?.description||"";f.elements.featured.checked=!!v?.featured;f.elements.published.checked=v?!!v.published:true;f.scrollIntoView({behavior:"smooth",block:"center"})}
 async function removeVideo(id){if(!confirm("এই ভিডিওটি মুছে ফেলবেন?"))return;try{await api("admin/videos/"+encodeURIComponent(id),{method:"DELETE"});await refresh();notice("ভিডিও মুছে ফেলা হয়েছে।")}catch(e){notice(e.message,true)}}
@@ -45,7 +59,7 @@ $("#setupForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.tar
 $("#loginForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await api("auth/login",{method:"POST",body:JSON.stringify({email:f.get("email"),password:f.get("password")})});e.target.reset();await status()}catch(err){notice(err.message,true)}};
 $("#logout").onclick=async()=>{const button=$("#logout");button.disabled=true;try{await api("auth/logout",{method:"POST",body:"{}"});state.user=null;if(activeUsersTimer){clearInterval(activeUsersTimer);activeUsersTimer=null;}show("login");closeAdminMenu();notice("সফলভাবে Logout হয়েছে।")}catch(e){notice(e.message,true)}finally{button.disabled=false}};
 function validAdminTab(value){
- return ["videos","categories","site","admins"].includes(value)?value:"videos";
+ return ["overview","videos","categories","site","admins"].includes(value)?value:"overview";
 }
 function activateAdminTab(value){
  const target=validAdminTab(value);
@@ -58,8 +72,8 @@ function activateAdminTab(value){
  closeAdminMenu();
 }
 function currentAdminTab(){
- const match=location.hash.match(/^#tab=(videos|categories|site|admins)$/);
- return match?match[1]:"videos";
+ const match=location.hash.match(/^#tab=(overview|videos|categories|site|admins)$/);
+ return match?match[1]:"overview";
 }
 function navigateAdminTab(target){
  target=validAdminTab(target);
