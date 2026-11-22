@@ -536,3 +536,8 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
 .topbar .brand .brand-admin-suffix{
   color:#ff3b30!important;
 }
+
+/* Admin badge background: neutral black at 50% opacity; keep border and text unchanged. */
+.topbar .brand .brand-admin-suffix{
+  background:rgba(0,0,0,.5)!important;
+}
