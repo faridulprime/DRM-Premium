@@ -661,3 +661,27 @@ body.user-details-mobile-open .user-details-rail{box-shadow:18px 0 42px rgba(0,0
  #adminList{width:100%!important;max-width:none!important}
 }
 @media(prefers-reduced-motion:reduce){.user-details-rail{transition:none!important}}
+
+
+/* Selected-account origin marker and directional drawer timing. */
+.user-details-rail::after{
+ content:"›";position:fixed;right:-1px;top:82px;z-index:2;
+ display:grid;place-items:center;width:20px;height:32px;
+ border:1px solid #414348;border-right:0;border-radius:7px 0 0 7px;
+ background:linear-gradient(180deg,#292c30,#191b1e);
+ color:#dce2e8;font:500 22px/1 "Space Grotesk",sans-serif;
+ text-shadow:0 0 10px rgba(255,255,255,.12);
+ box-shadow:3px 2px 10px rgba(0,0,0,.25);
+ pointer-events:none;
+}
+.user-details-rail{
+ transition:transform 250ms cubic-bezier(.4,0,1,1),visibility 0s linear 250ms!important;
+}
+body.user-details-open .user-details-rail{
+ transition:transform 300ms cubic-bezier(0,0,.2,1),visibility 0s!important;
+}
+body.user-details-open:not(.user-details-mobile-open){transition:padding-left 300ms cubic-bezier(0,0,.2,1)}
+body:not(.user-details-open){transition:padding-left 250ms cubic-bezier(.4,0,1,1)}
+@media(prefers-reduced-motion:reduce){
+ .user-details-rail,body.user-details-open,body:not(.user-details-open){transition:none!important}
+}
