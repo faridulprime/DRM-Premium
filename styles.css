@@ -3851,3 +3851,32 @@ footer{border-color:#303030!important;color:#aaa!important}
  .video-row h3{font-size:16px!important}
 }
 @media(max-width:420px){.brand span:last-child{display:none}.cards{grid-template-columns:1fr!important}}
+
+/* YouTube-inspired sign-in controls */
+.topbar .yt-account-actions{display:flex!important;align-items:center;gap:8px!important;flex:0 0 auto;margin-left:0!important}
+.topbar .yt-auth-field{box-sizing:border-box!important;width:clamp(112px,9vw,148px)!important;height:38px!important;min-height:38px!important;display:flex!important;align-items:center!important;gap:9px!important;padding:0 12px!important;border:1px solid #3f3f3f!important;border-radius:22px!important;background:#121212!important;transition:border-color .18s,background .18s!important}
+.topbar .yt-auth-field:focus-within{border-color:#8ab4f8!important;background:#161616!important;box-shadow:inset 0 0 0 1px #8ab4f8!important}
+.topbar .yt-auth-field svg{width:16px!important;height:16px!important;flex:0 0 16px!important;fill:none!important;stroke:#aaa!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.topbar .yt-auth-field:focus-within svg{stroke:#8ab4f8!important}
+.topbar .yt-auth-field input{min-width:0!important;width:100%!important;height:100%!important;padding:0!important;border:0!important;outline:0!important;background:transparent!important;color:#f1f1f1!important;font:400 12px Arial,sans-serif!important}
+.topbar .yt-auth-field input::placeholder{color:#aaa!important;opacity:1!important}
+.topbar .yt-login-button{width:auto!important;min-width:66px!important;max-width:none!important;height:38px!important;min-height:38px!important;padding:0 16px!important;transform:none!important;border:1px solid #3f3f3f!important;border-radius:22px!important;background:#272727!important;color:#f1f1f1!important;box-shadow:none!important;font:600 13px Arial,sans-serif!important;font-style:normal!important;letter-spacing:0!important;text-shadow:none!important}
+.topbar .yt-login-button:hover,.topbar .yt-login-button:focus-visible{transform:none!important;background:#3f3f3f!important;border-color:#555!important}
+.topbar .yt-create-button{height:38px!important;min-height:38px!important;padding:0 15px!important;border:1px solid #3f3f3f!important;border-radius:22px!important;background:transparent!important;color:#3ea6ff!important;font:600 13px Arial,sans-serif!important;white-space:nowrap!important;transition:background .18s,border-color .18s!important}
+.topbar .yt-create-button:hover:not(:disabled){background:#263747!important;border-color:#263747!important}
+.topbar .yt-create-button:disabled{opacity:.75!important;cursor:not-allowed!important}
+.topbar .yt-account-actions .header-login-status{top:calc(100% + 8px);right:0;max-width:min(360px,80vw);white-space:normal;background:#272727;border:1px solid #444;color:#f1f1f1}
+@media(max-width:1240px){
+ .topbar .yt-auth-field{width:112px!important}
+ .topbar .yt-create-button{padding:0 11px!important}
+ .topbar .yt-search{margin-left:10px!important}
+}
+@media(max-width:980px){
+ .topbar .yt-account-actions{gap:5px!important}
+ .topbar .yt-auth-field{width:94px!important;padding:0 9px!important}
+ .topbar .yt-create-button{font-size:12px!important;padding:0 9px!important}
+ .topbar .yt-login-button{min-width:58px!important;padding:0 11px!important}
+}
+@media(max-width:760px){
+ .topbar .yt-account-actions{display:none!important}
+}
