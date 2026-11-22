@@ -2,11 +2,25 @@ const $=s=>document.querySelector(s);
 let state={videos:[],categories:[],settings:{},users:[],user:null};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 async function api(path,opts={}){const res=await fetch("/api/"+path,{...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})},credentials:"same-origin"});let data={};try{data=await res.json()}catch{}if(!res.ok)throw new Error(data.error||("Request failed ("+res.status+")"));return data}
-function show(id){["loading","setup","login","dashboard"].forEach(x=>$("#"+x).hidden=x!==id)}
+function show(id){
+ ["loading","setup","login","dashboard"].forEach(x=>$("#"+x).hidden=x!==id);
+ const dashboard=id==="dashboard";
+ $("#adminCategoryBar").hidden=!dashboard;
+ $("#adminHeaderAccount").hidden=!(dashboard&&state.user);
+ document.body.classList.toggle("admin-gate-state",!dashboard);
+ document.body.classList.toggle("admin-dashboard-state",dashboard);
+ if(dashboard&&state.user){
+  $("#adminHeaderIdentity").textContent=state.user.role==="owner"?"OWNER":state.user.role==="admin"?"ADMIN":"USER";
+  $("#dashRole").textContent=state.user.role.toUpperCase();
+  $("#adminSidebarLogoutArea").hidden=false;
+ }else $("#adminSidebarLogoutArea").hidden=true;
+}
 function notice(msg,error=false){const el=$("#notice");if(!el)return;el.textContent=msg;el.classList.toggle("error",error)}
 function ytId(value){const s=value.trim();if(/^[\w-]{11}$/.test(s))return s;try{const u=new URL(s),host=u.hostname.toLowerCase();if(host==="youtu.be"){const id=u.pathname.split("/").filter(Boolean)[0]||"";return /^[\w-]{11}$/.test(id)?id:""}if(!["youtube.com","www.youtube.com","m.youtube.com","youtube-nocookie.com","www.youtube-nocookie.com"].includes(host))return"";const id=u.searchParams.get("v")||u.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/)?.[1]||"";return /^[\w-]{11}$/.test(id)?id:""}catch{return ""}}
-async function status(){try{const s=await api("auth/status");if(!s.configured){show("setup");return}const me=await api("auth/me");if(me.authenticated){state.user=me.user;show("dashboard");$("#adminIdentity").textContent=me.user.email+" · "+(me.user.role==="owner"?"OWNER":"ADMIN");await refresh()}else show("login")}catch(e){show("login");notice(e.message,true)}}
-async function refresh(){const [videos,categories]=await Promise.all([api("admin/videos"),api("admin/categories")]);state={...state,videos,categories};renderVideos();renderCategories();if(state.user.role==="owner"){const [settings,users]=await Promise.all([api("settings"),api("admin/users")]);state.settings=settings;state.users=users;renderSettings();renderAdmins();document.querySelector('[data-tab="site"]').hidden=false;document.querySelector('[data-tab="admins"]').hidden=false;}else{document.querySelector('[data-tab="site"]').hidden=true;document.querySelector('[data-tab="admins"]').hidden=true;}}
+async function status(){try{applyAdminTheme();const s=await api("auth/status");if(!s.configured){show("setup");return}const me=await api("auth/me");if(me.authenticated){state.user=me.user;show("dashboard");$("#adminIdentity").textContent=me.user.email+" · "+(me.user.role==="owner"?"OWNER":me.user.role==="admin"?"ADMIN":"USER");await refresh()}else{state.user=null;show("login")}}catch(e){state.user=null;show("login");notice(e.message,true)}}
+async function applyAdminTheme(){try{const settings=await api("settings");if(/^#[0-9a-f]{6}$/i.test(settings.accent_color||"")){document.documentElement.style.setProperty("--accent",settings.accent_color);document.documentElement.style.setProperty("--red",settings.accent_color);}}catch{}}
+async function refresh(){const [videos,categories]=await Promise.all([api("admin/videos"),api("admin/categories")]);state={...state,videos,categories};renderVideos();renderCategories();if(state.user.role==="owner"){const [settings,users]=await Promise.all([api("settings"),api("admin/users")]);state.settings=settings;state.users=users;renderSettings();renderAdmins();applyAdminThemeFromSettings(settings);["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab"].forEach(id=>$("#"+id).hidden=false);}else{["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab"].forEach(id=>$("#"+id).hidden=true);}}
+function applyAdminThemeFromSettings(settings){if(/^#[0-9a-f]{6}$/i.test(settings?.accent_color||"")){document.documentElement.style.setProperty("--accent",settings.accent_color);document.documentElement.style.setProperty("--red",settings.accent_color);}}
 function renderVideos(){$("#videoCategory").innerHTML=state.categories.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");$("#videoList").innerHTML=state.videos.map(v=>`<div class="data-row"><div><strong>${esc(v.title)}</strong><small>${esc(v.category)} · ${v.published?"Published":"Unpublished"} · ${v.featured?"Featured":"Standard"}</small></div><div class="row-actions"><button data-edit="${esc(v.id)}">Edit</button><button class="delete" data-remove-video="${esc(v.id)}">Delete</button></div></div>`).join("")||'<p class="muted">এখনো কোনো ভিডিও নেই।</p>';document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editVideo(b.dataset.edit));document.querySelectorAll("[data-remove-video]").forEach(b=>b.onclick=()=>removeVideo(b.dataset.removeVideo))}
 function editVideo(id){const v=state.videos.find(x=>x.id===id),f=$("#videoForm");f.hidden=false;f.elements.id.value=v?.id||"";f.elements.title.value=v?.title||"";f.elements.category.value=v?.category||state.categories[0]?.name||"";f.elements.youtube_id.value=v?.youtube_id||"";f.elements.thumbnail_url.value=v?.thumbnail_url||"";f.elements.description.value=v?.description||"";f.elements.featured.checked=!!v?.featured;f.elements.published.checked=v?!!v.published:true;f.scrollIntoView({behavior:"smooth",block:"center"})}
 async function removeVideo(id){if(!confirm("এই ভিডিওটি মুছে ফেলবেন?"))return;try{await api("admin/videos/"+encodeURIComponent(id),{method:"DELETE"});await refresh();notice("ভিডিও মুছে ফেলা হয়েছে।")}catch(e){notice(e.message,true)}}
@@ -18,12 +32,28 @@ function renderAdmins(){$("#adminList").innerHTML=state.users.map(u=>`<div class
 $("#sendOwnerCode").onclick=async()=>{const f=$("#setupForm"),email=f.elements.email.value.trim();if(!email){notice("Owner email দিন।",true);return}try{await api("auth/owner-otp",{method:"POST",body:JSON.stringify({email})});notice("Verification code ইমেইলে পাঠানো হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#setupForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await api("auth/setup",{method:"POST",body:JSON.stringify({email:f.get("email"),username:f.get("username"),password:f.get("password"),code:f.get("code")})});notice("Owner account তৈরি হয়েছে।");await status()}catch(err){notice(err.message,true)}};
 $("#loginForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await api("auth/login",{method:"POST",body:JSON.stringify({email:f.get("email"),password:f.get("password")})});e.target.reset();await status()}catch(err){notice(err.message,true)}};
-$("#logout").onclick=async()=>{try{await api("auth/logout",{method:"POST",body:"{}"});state.user=null;show("login")}catch(e){notice(e.message,true)}};
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".tab-panel").forEach(x=>x.hidden=x.id!=="tab-"+b.dataset.tab)});
+$("#logout").onclick=async()=>{const button=$("#logout");button.disabled=true;try{await api("auth/logout",{method:"POST",body:"{}"});state.user=null;show("login");closeAdminMenu();notice("সফলভাবে Logout হয়েছে।")}catch(e){notice(e.message,true)}finally{button.disabled=false}};
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
+ const target=b.dataset.tab;
+ document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===target));
+ document.querySelectorAll(".tab-panel").forEach(x=>x.hidden=x.id!=="tab-"+target);
+ closeAdminMenu();
+});
 $("#newVideo").onclick=()=>editVideo("");$("#cancelVideo").onclick=()=>{$("#videoForm").hidden=true};
 $("#videoForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={title:f.elements.title.value.trim(),category:f.elements.category.value,youtube_id:ytId(f.elements.youtube_id.value),thumbnail_url:f.elements.thumbnail_url.value.trim(),description:f.elements.description.value.trim(),featured:f.elements.featured.checked,published:f.elements.published.checked};if(!body.youtube_id){notice("সঠিক YouTube URL বা Video ID দিন।",true);return}try{if(f.elements.id.value)await api("admin/videos/"+encodeURIComponent(f.elements.id.value),{method:"PUT",body:JSON.stringify(body)});else await api("admin/videos",{method:"POST",body:JSON.stringify(body)});f.reset();f.hidden=true;await refresh();notice("ভিডিও সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#categoryForm").onsubmit=async e=>{e.preventDefault();const name=new FormData(e.target).get("name").trim();try{await api("admin/categories",{method:"POST",body:JSON.stringify({name})});e.target.reset();await refresh();notice("ক্যাটাগরি যোগ হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#settingsForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={};for(const el of f.elements)if(el.name)body[el.name]=el.type==="checkbox"?(el.checked?"true":"false"):el.value;try{await api("admin/settings",{method:"PUT",body:JSON.stringify(body)});await refresh();notice("ওয়েবসাইটের সেটিংস সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
+function closeAdminMenu(){
+ document.body.classList.remove("sidebar-open");
+ const b=$("#adminMenuToggle");if(b){b.setAttribute("aria-expanded","false");b.setAttribute("aria-label","মেনু খুলুন");}
+ $("#adminSidebarBackdrop").hidden=true;
+}
+$("#adminMenuToggle").onclick=()=>{const open=!document.body.classList.contains("sidebar-open");document.body.classList.toggle("sidebar-open",open);$("#adminMenuToggle").setAttribute("aria-expanded",String(open));$("#adminMenuToggle").setAttribute("aria-label",open?"মেনু বন্ধ করুন":"মেনু খুলুন");$("#adminSidebarBackdrop").hidden=!open;};
+$("#adminSidebarBackdrop").onclick=closeAdminMenu;
+document.addEventListener("pointerdown",e=>{if(!document.body.classList.contains("sidebar-open"))return;if($("#adminSidebar").contains(e.target)||$("#adminMenuToggle").contains(e.target))return;closeAdminMenu();},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAdminMenu();});
+$("#adminSearch").addEventListener("input",e=>{const q=e.target.value.trim().toLocaleLowerCase();document.querySelectorAll(".tab-panel:not([hidden]) .data-row").forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase().includes(q));});
+$("#adminSearchClear").onclick=()=>{$("#adminSearch").value="";$("#adminSearch").dispatchEvent(new Event("input"));};
 const adminForm=$("#adminForm");if(adminForm)adminForm.hidden=true;
 async function changeRole(id,role){if(!confirm(role==="admin"?"এই ব্যবহারকারীকে Admin করবেন?":"এই ব্যক্তির Admin permission বাতিল করবেন?")){await refresh();return}try{await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({role})});await refresh();notice(role==="admin"?"Admin permission দেওয়া হয়েছে।":"Admin permission বাতিল হয়েছে।")}catch(e){notice(e.message,true);await refresh()}}
 async function removeUser(id){return changeRole(id,"user")}
