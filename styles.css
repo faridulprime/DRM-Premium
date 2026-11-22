@@ -364,3 +364,12 @@ footer span+span{margin-left:12px;font-size:13px;font-weight:400}
  body:not(.sidebar-open) .sidebar-logout-area{display:none!important}
  body.sidebar-open .sidebar-logout-button{height:44px!important;flex-direction:row!important;justify-content:flex-start!important;font-size:14px!important}
 }
+
+/* The login form is controlled by the HTML hidden state set by setSignedIn().
+   Override the header's flex layout so authenticated users never see login controls. */
+.topbar .yt-account-actions[hidden]{
+  display:none!important;
+}
+.topbar .yt-account-actions:not([hidden]){
+  display:flex!important;
+}
