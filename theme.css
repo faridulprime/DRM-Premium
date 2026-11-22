@@ -547,24 +547,6 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   border:1px solid rgba(131,239,165,.2)!important;
 }
 
-/* Doctor Glitch display font: shared DRM Premium brand title on homepage and Admin. */
-@font-face{
-  font-family:'Doctor Glitch';
-  src:url('./fonts/doctor-glitch.ttf') format('truetype');
-  font-style:normal;
-  font-weight:400 900;
-  font-display:swap;
-}
-.topbar .brand .brand-word,
-.topbar .brand #brandName.brand-word,
-.topbar .brand #adminBrandName.brand-word,
-.topbar .brand .brand-word-main,
-.topbar .brand .brand-word-accent{
-  font-family:'Doctor Glitch',Arial,sans-serif!important;
-  font-weight:400!important;
-  letter-spacing:0!important;
-}
-
 /* Brand title tracking; keep the Admin suffix in the original Space Grotesk font. */
 .topbar .brand .brand-word-main,
 .topbar .brand .brand-word-accent{
@@ -574,4 +556,18 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   font-family:'Space Grotesk',Arial,sans-serif!important;
   font-weight:600!important;
   letter-spacing:.015em!important;
+}
+
+/* Roboto Bold for the DRM Premium brand title only. */
+.topbar .brand .brand-word,
+.topbar .brand #brandName.brand-word,
+.topbar .brand #adminBrandName.brand-word,
+.topbar .brand .brand-word-main,
+.topbar .brand .brand-word-accent{
+  font-family:'Roboto',Arial,sans-serif!important;
+  font-weight:700!important;
+}
+.topbar .brand .brand-admin-suffix{
+  font-family:'Space Grotesk',Arial,sans-serif!important;
+  font-weight:600!important;
 }
