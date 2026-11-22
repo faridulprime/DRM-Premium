@@ -147,18 +147,32 @@ async function init(){
   if(!opened||sidebar.contains(e.target)||toggle.contains(e.target))return;
   openAccountMenu(false);
  },true);
- $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;$("#categoryFilter").value=chip.dataset.category;renderLimit=RENDER_BATCH;render();});
+ $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;$("#categoryFilter").value=chip.dataset.category;syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();});
  $("#searchSubmit")?.addEventListener("click",()=>$("#search").dispatchEvent(new Event("input",{bubbles:true})));
  document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});
  document.querySelectorAll("#ytSidebar a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll("#ytSidebar .side-link").forEach(x=>x.classList.toggle("active",x===a));if(window.matchMedia("(max-width: 760px)").matches)openAccountMenu(false);const tab=(a.getAttribute("href")||"").slice(1);if(tab)sendTabView(tab);if(tab==="admin")loadAdminDashboard();}));
-restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.target.closest(".video-card");if(!card)return;const video=videos.find(v=>v.id===card.dataset.id);if(video)play(video);});$("#search").addEventListener("input",()=>{clearTimeout(searchRenderTimer);renderLimit=RENDER_BATCH;searchRenderTimer=setTimeout(render,140);});$("#categoryFilter").addEventListener("change",()=>{renderLimit=RENDER_BATCH;render();});$("#loadMoreVideos").addEventListener("click",()=>{renderLimit+=RENDER_BATCH;render(true);});
+function restoreHomeFilters(){
+ const params=new URLSearchParams(location.search),cats=[...new Set(categories.map(c=>c.name).filter(Boolean))].sort();
+ $("#categoryFilter").innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ const requested=params.get("category")||"all";
+ $("#categoryFilter").value=cats.includes(requested)?requested:"all";
+ $("#search").value=params.get("q")||"";
+}
+function syncHomeFilterUrl(){
+ const params=new URLSearchParams(location.search),category=$("#categoryFilter").value,query=$("#search").value.trim();
+ if(category&&category!=="all")params.set("category",category);else params.delete("category");
+ if(query)params.set("q",query);else params.delete("q");
+ const next=location.pathname+(params.toString()?"?"+params.toString():"")+location.hash;
+ history.replaceState(null,"",next);
+}
+restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.target.closest(".video-card");if(!card)return;const video=videos.find(v=>v.id===card.dataset.id);if(video)play(video);});$("#search").addEventListener("input",()=>{syncHomeFilterUrl();clearTimeout(searchRenderTimer);renderLimit=RENDER_BATCH;searchRenderTimer=setTimeout(render,140);});$("#categoryFilter").addEventListener("change",()=>{syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();});$("#loadMoreVideos").addEventListener("click",()=>{renderLimit+=RENDER_BATCH;render(true);});
  document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.close);d.close();$("#playerFrame").innerHTML="";});
  $("#playerDialog").addEventListener("close",()=>$("#playerFrame").innerHTML="");
  let apiReady=false;
  try{const [vr,cr,sr]=await Promise.all([fetch("/api/videos"),fetch("/api/categories"),fetch("/api/settings")]);if(vr.ok){videos=await vr.json();apiReady=true;}if(cr.ok)categories=await cr.json();if(sr.ok)settings=await sr.json();}
  catch(e){console.warn("DRM PREMIUM API is not available yet.",e);}
  if(!apiReady)videos=demoVideos;if(!categories.length)categories=[...new Set(videos.map(v=>v.category))].map(name=>({name}));
- applySettings();visualConfig={};try{visualConfig=JSON.parse(settings.visual_editor_config||"{}");}catch{}applyVisualConfig();initVisualEditor();render();
+ applySettings();restoreHomeFilters();visualConfig={};try{visualConfig=JSON.parse(settings.visual_editor_config||"{}");}catch{}applyVisualConfig();initVisualEditor();render();syncHomeFilterUrl();
 }
 
 /* Full Website Builder — draft-only visual editor. */
