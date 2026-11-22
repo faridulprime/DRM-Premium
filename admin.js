@@ -43,7 +43,7 @@ function renderAdmins(){$("#adminList").innerHTML=state.users.map(u=>`<div class
 $("#sendOwnerCode").onclick=async()=>{const f=$("#setupForm"),email=f.elements.email.value.trim();if(!email){notice("Owner email দিন।",true);return}try{await api("auth/owner-otp",{method:"POST",body:JSON.stringify({email})});notice("Verification code ইমেইলে পাঠানো হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#setupForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await api("auth/setup",{method:"POST",body:JSON.stringify({email:f.get("email"),username:f.get("username"),password:f.get("password"),code:f.get("code")})});notice("Owner account তৈরি হয়েছে।");await status()}catch(err){notice(err.message,true)}};
 $("#loginForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await api("auth/login",{method:"POST",body:JSON.stringify({email:f.get("email"),password:f.get("password")})});e.target.reset();await status()}catch(err){notice(err.message,true)}};
-$("#logout").onclick=async()=>{const button=$("#logout");button.disabled=true;try{await api("auth/logout",{method:"POST",body:"{}"});state.user=null;show("login");closeAdminMenu();notice("সফলভাবে Logout হয়েছে।")}catch(e){notice(e.message,true)}finally{button.disabled=false}};
+$("#logout").onclick=async()=>{const button=$("#logout");button.disabled=true;try{await api("auth/logout",{method:"POST",body:"{}"});state.user=null;if(activeUsersTimer){clearInterval(activeUsersTimer);activeUsersTimer=null;}show("login");closeAdminMenu();notice("সফলভাবে Logout হয়েছে।")}catch(e){notice(e.message,true)}finally{button.disabled=false}};
 function validAdminTab(value){
  return ["videos","categories","site","admins"].includes(value)?value:"videos";
 }
