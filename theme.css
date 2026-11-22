@@ -524,8 +524,10 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   letter-spacing:.015em;
 }
 
-/* Shared brand lockup: identical spacing on every page; the Admin suffix keeps its own approved styling. */
-.topbar .brand .brand-word,
-.topbar .brand #brandName.brand-word{
+/* Shared brand lockup: explicitly set spacing on both text spans.
+   Homepage styles.css assigns its own letter-spacing to the final child span,
+   so inherited spacing on the wrapper alone is not sufficient. */
+.topbar .brand .brand-word-main,
+.topbar .brand .brand-word-accent{
   letter-spacing:.09em!important;
 }
