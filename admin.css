@@ -50,7 +50,7 @@ body.admin-gate-state{padding-top:64px!important}
 .active-user-group+.active-user-group{margin-top:20px}
 .active-user-group-heading{display:flex;align-items:center;gap:12px;margin-bottom:10px;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.035em}
 .active-user-group-heading i{height:1px;flex:1;background:var(--line)}
-.active-user-cards{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.active-user-cards{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.active-user-card{width:fit-content;max-width:100%}
 .active-user-card{display:inline-flex;align-items:center;gap:6px;max-width:100%;min-height:36px;padding:7px 10px;border:1px solid rgba(255,255,255,.075);border-radius:8px;background:rgba(255,255,255,.035);color:var(--ink)}
 .active-user-name{overflow-wrap:anywhere;font-size:12px;font-weight:550;line-height:1.35}
 .active-user-badge{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:3px 7px;border:1px solid;border-radius:5px;font-size:10px;font-weight:650;line-height:1.2}
