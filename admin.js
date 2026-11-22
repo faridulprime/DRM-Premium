@@ -66,29 +66,7 @@ function renderAdmins(){
   if(u.role!=="owner"){
    const roleAction=restricted?"":u.role==="user"?'<button type="button" data-user-action="promote"><span class="uam-icon" aria-hidden="true">♛</span><span>Promote to Admin</span><span class="uam-chevron" aria-hidden="true">›</span></button>':'<button type="button" data-user-action="demote"><span class="uam-icon" aria-hidden="true">♙</span><span>Remove Admin Access</span><span class="uam-chevron" aria-hidden="true">›</span></button>';
    const restrictionAction=restricted?'<button type="button" data-user-action="restore" class="uam-restore"><span class="uam-icon" aria-hidden="true">↻</span><span>Restore Account Access</span><span class="uam-chevron" aria-hidden="true">›</span></button>':'<button type="button" data-user-action="suspend" class="uam-warning"><span class="uam-icon" aria-hidden="true">Ⅱ</span><span>Suspend for 24 Hours</span><span class="uam-chevron" aria-hidden="true">›</span></button><button type="button" data-user-action="ban" class="uam-danger"><span class="uam-icon" aria-hidden="true">⊘</span><span>Permanently Ban</span><span class="uam-chevron" aria-hidden="true">›</span></button>';
-   actions=`<details class="user-action-menu">
-    <summary aria-label="Manage ${esc(u.email)}"><span class="manage-label">Manage account</span><span class="manage-icon" aria-hidden="true">⌄</span></summary>
-    <div class="user-action-popover" role="group" aria-label="Account actions">
-     <div class="uam-popover-head"><div><span>ACCOUNT CONTROLS</span><strong>${esc(u.email)}</strong></div><span class="uam-live-dot" aria-hidden="true"></span></div>
-     <div class="uam-action-stack">
-      <section class="uam-action-section uam-role-section" aria-label="Role and access">
-       <div class="uam-section-label">ROLE & ACCESS</div>
-       ${roleAction}
-      </section>
-      <section class="uam-action-section uam-account-section" aria-label="Account">
-       <div class="uam-section-label">ACCOUNT</div>
-       <button type="button" data-user-action="details"><span class="uam-icon" aria-hidden="true">▤</span><span>Account Details</span><span class="uam-chevron" aria-hidden="true">›</span></button>
-       <button type="button" data-user-action="activity"><span class="uam-icon" aria-hidden="true">◷</span><span>Most Active Hours</span><span class="uam-chevron" aria-hidden="true">›</span></button>
-       <button type="button" data-user-action="copy"><span class="uam-icon" aria-hidden="true">▢</span><span>Copy Email Address</span><span class="uam-chevron" aria-hidden="true">›</span></button>
-      </section>
-      <section class="uam-action-section uam-security-section" aria-label="Security and control">
-       <div class="uam-section-label">SECURITY & CONTROL</div>
-       <button type="button" data-user-action="revoke"><span class="uam-icon" aria-hidden="true">↪</span><span>Revoke All Sessions</span><span class="uam-chevron" aria-hidden="true">›</span></button>
-       ${restrictionAction}
-      </section>
-     </div>
-    </div>
-   </details>`;
+   actions=`<button type="button" class="user-details-trigger" data-user-details-open aria-label="Open details for ${esc(u.email)}">Details <span aria-hidden="true">›</span></button>`;
   }
   const status=restricted?'<span class="user-restriction-status '+(u.restriction_type==="ban"?"banned":"suspended")+'">'+restrictionLabel+'</span>':"";
   return `<article class="data-row user-management-row ${u.role==="owner"?"is-owner":""} ${restricted?"is-restricted":""}" data-user-row="${esc(u.id)}">
@@ -198,11 +176,40 @@ function showUserDetails(id){
 }
 $("#userDetailsClose").addEventListener("click",()=>$("#userDetailsDialog").close());
 $("#userDetailsDialog").addEventListener("click",e=>{if(e.target===$("#userDetailsDialog"))$("#userDetailsDialog").close()});
+
+function openUserDetailsPanel(id){
+ const user=state.users.find(x=>String(x.id)===String(id));if(!user)return;
+ const panel=$("#userDetailsRail");if(!panel)return;
+ const restricted=!!user.restriction_type&&(user.restriction_expires_at==null||Number(user.restriction_expires_at)>Math.floor(Date.now()/1000));
+ const role=user.role==="owner"?"Owner":user.role==="admin"?"Admin":"Member";
+ const created=new Date(Number(user.created_at)<1e12?Number(user.created_at)*1000:Number(user.created_at));
+ const date=Number.isNaN(created.getTime())?"Date unavailable":created.toLocaleDateString();
+ const action=(key,icon,label,cls="")=>'<button type="button" class="'+cls+'" data-user-action="'+key+'"><span class="udr-icon" aria-hidden="true">'+icon+'</span><span>'+label+'</span><span class="udr-arrow" aria-hidden="true">›</span></button>';
+ let roleActions="";
+ if(user.role!=="owner"&&!restricted)roleActions=user.role==="user"?action("promote","♛","Promote to Admin"):action("demote","♙","Remove Admin Access");
+ let securityActions=restricted?action("restore","↻","Restore Account Access","udr-restore"):(action("revoke","↪","Revoke All Sessions")+action("suspend","Ⅱ","Suspend for 24 Hours","udr-warning")+action("ban","⊘","Permanently Ban","udr-danger"));
+ panel.dataset.userId=String(user.id);
+ panel.innerHTML='<div class="udr-head"><div><span class="udr-eyebrow">USER DETAILS</span><strong>'+esc(user.email)+'</strong><span class="udr-status">'+(restricted?(user.restriction_type==="ban"?"BANNED":"SUSPENDED"):"ACCOUNT ACTIVE")+'</span></div><button type="button" class="udr-close" aria-label="Close details">×</button></div>'+
+ '<div class="udr-profile"><div class="udr-avatar">'+esc(String(user.username||user.email||"?").trim().charAt(0).toUpperCase())+'</div><div><strong>'+esc(user.email)+'</strong><span>'+role+' · '+(user.email_verified?"Verified":"Unverified")+'</span></div></div>'+
+ '<section class="udr-section"><div class="udr-section-title">ROLE & ACCESS</div>'+(roleActions||'<p class="udr-note">'+(user.role==="owner"?"Owner account is protected.":"Role changes are unavailable while restricted.")+'</p>')+'</section>'+
+ '<section class="udr-section"><div class="udr-section-title">ACCOUNT</div>'+action("details","▤","Account Details")+action("activity","◷","Most Active Hours")+action("copy","▢","Copy Email Address")+'</section>'+
+ '<section class="udr-section"><div class="udr-section-title">SECURITY & CONTROL</div>'+securityActions+'</section>'+
+ '<div class="udr-foot"><span>MEMBER SINCE</span><strong>'+esc(date)+'</strong></div>';
+ document.body.classList.add("user-details-open");
+ panel.setAttribute("aria-hidden","false");
+ document.querySelectorAll("[data-user-details-open]").forEach(btn=>btn.setAttribute("aria-expanded",String(btn.closest("[data-user-row]")?.dataset.userRow===String(user.id))));
+}
+function closeUserDetailsPanel(){
+ const panel=$("#userDetailsRail");if(!panel)return;
+ document.body.classList.remove("user-details-open");panel.setAttribute("aria-hidden","true");
+ document.querySelectorAll("[data-user-details-open]").forEach(btn=>btn.setAttribute("aria-expanded","false"));
+}
 $("#adminList").addEventListener("click",async e=>{
+ const trigger=e.target.closest("[data-user-details-open]");if(trigger){const row=trigger.closest("[data-user-row]");if(row)openUserDetailsPanel(row.dataset.userRow);return;}
  const button=e.target.closest("[data-user-action]");if(!button)return;
  const row=button.closest("[data-user-row]");if(!row)return;
  const id=row.dataset.userRow,action=button.dataset.userAction;
- row.querySelectorAll(".user-action-menu[open]").forEach(menu=>menu.open=false);
+ 
  if(action==="promote")return changeRole(id,"admin");
  if(action==="demote")return changeRole(id,"user");
  if(action==="details")return showUserDetails(id);
@@ -213,5 +220,6 @@ $("#adminList").addEventListener("click",async e=>{
  if(action==="revoke")return revokeUserSessions(id);
  if(action==="copy"){const u=state.users.find(x=>String(x.id)===String(id));try{await navigator.clipboard.writeText(u.email);notice("ইমেইল কপি হয়েছে।")}catch{notice("Clipboard access পাওয়া যায়নি।",true)}}
 });
-document.addEventListener("click",e=>{if(!e.target.closest(".user-action-menu"))document.querySelectorAll(".user-action-menu[open]").forEach(menu=>menu.open=false)});
+$("#userDetailsRail")?.addEventListener("click",e=>{if(e.target.closest(".udr-close"))closeUserDetailsPanel();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeUserDetailsPanel();});
 status();
