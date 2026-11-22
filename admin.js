@@ -150,12 +150,16 @@ $("#newVideo").onclick=()=>editVideo("");$("#cancelVideo").onclick=()=>{$("#vide
 $("#videoForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={title:f.elements.title.value.trim(),category:f.elements.category.value,youtube_id:ytId(f.elements.youtube_id.value),thumbnail_url:f.elements.thumbnail_url.value.trim(),description:f.elements.description.value.trim(),featured:f.elements.featured.checked,published:f.elements.published.checked};if(!body.youtube_id){notice("সঠিক YouTube URL বা Video ID দিন।",true);return}try{if(f.elements.id.value)await api("admin/videos/"+encodeURIComponent(f.elements.id.value),{method:"PUT",body:JSON.stringify(body)});else await api("admin/videos",{method:"POST",body:JSON.stringify(body)});f.reset();f.hidden=true;await refresh();notice("ভিডিও সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#categoryForm").onsubmit=async e=>{e.preventDefault();const name=new FormData(e.target).get("name").trim();try{await api("admin/categories",{method:"POST",body:JSON.stringify({name})});e.target.reset();await refresh();notice("ক্যাটাগরি যোগ হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#settingsForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={};for(const el of f.elements)if(el.name)body[el.name]=el.type==="checkbox"?(el.checked?"true":"false"):el.value;try{await api("admin/settings",{method:"PUT",body:JSON.stringify(body)});await refresh();notice("ওয়েবসাইটের সেটিংস সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
-function closeAdminMenu(){
- document.body.classList.remove("sidebar-open");
- const b=$("#adminMenuToggle");if(b){b.setAttribute("aria-expanded","false");b.setAttribute("aria-label","মেনু খুলুন");}
- $("#adminSidebarBackdrop").hidden=true;
+function openAdminMenu(open){
+ const isOpen=Boolean(open);
+ document.body.classList.toggle("sidebar-open",isOpen);
+ $("#adminMenuToggle").setAttribute("aria-expanded",String(isOpen));
+ $("#adminMenuToggle").setAttribute("aria-label",isOpen?"মেনু বন্ধ করুন":"মেনু খুলুন");
+ $("#adminSidebarBackdrop").hidden=!isOpen;
+ if(!isOpen){const selected=$("#adminSelectedUser");if(selected){selected.hidden=true;selected.innerHTML="";delete selected.dataset.userId;}}
 }
-$("#adminMenuToggle").onclick=()=>{const open=!document.body.classList.contains("sidebar-open");document.body.classList.toggle("sidebar-open",open);$("#adminMenuToggle").setAttribute("aria-expanded",String(open));$("#adminMenuToggle").setAttribute("aria-label",open?"মেনু বন্ধ করুন":"মেনু খুলুন");$("#adminSidebarBackdrop").hidden=!open;};
+function closeAdminMenu(){openAdminMenu(false);}
+$("#adminMenuToggle").onclick=()=>openAdminMenu(!document.body.classList.contains("sidebar-open"));
 $("#adminSidebarBackdrop").onclick=closeAdminMenu;
 document.addEventListener("pointerdown",e=>{if(!document.body.classList.contains("sidebar-open"))return;if($("#adminSidebar").contains(e.target)||$("#adminMenuToggle").contains(e.target))return;closeAdminMenu();},true);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAdminMenu();});
@@ -179,48 +183,28 @@ function showUserDetails(id){
 $("#userDetailsClose").addEventListener("click",()=>$("#userDetailsDialog").close());
 $("#userDetailsDialog").addEventListener("click",e=>{if(e.target===$("#userDetailsDialog"))$("#userDetailsDialog").close()});
 
-function openUserDetailsDrawer(){
- const panel=$("#userDetailsRail"),backdrop=$("#userDetailsBackdrop"),mobile=window.matchMedia("(max-width: 760px)").matches;
- document.body.classList.remove("user-details-mobile-open","drawer-open");
- if(backdrop)backdrop.hidden=true;
- document.body.classList.add("user-details-open");
- if(mobile){document.body.classList.add("user-details-mobile-open","drawer-open");if(backdrop)backdrop.hidden=false;}
- panel?.setAttribute("aria-hidden","false");
-}
-function closeUserDetailsDrawer(){
- const panel=$("#userDetailsRail"),backdrop=$("#userDetailsBackdrop");
- document.body.classList.remove("user-details-open","user-details-mobile-open","drawer-open");
- if(backdrop)backdrop.hidden=true;
- panel?.setAttribute("aria-hidden","true");
- document.querySelectorAll("[data-user-details-open]").forEach(btn=>btn.setAttribute("aria-expanded","false"));
-}
 function openUserDetailsPanel(id){
  const user=state.users.find(x=>String(x.id)===String(id));if(!user)return;
- const panel=$("#userDetailsRail");if(!panel)return;
+ const host=$("#adminSelectedUser");if(!host)return;
  const restricted=!!user.restriction_type&&(user.restriction_expires_at==null||Number(user.restriction_expires_at)>Math.floor(Date.now()/1000));
  const role=user.role==="owner"?"Owner":user.role==="admin"?"Admin":"Member";
  const created=new Date(Number(user.created_at)<1e12?Number(user.created_at)*1000:Number(user.created_at));
  const date=Number.isNaN(created.getTime())?"Date unavailable":created.toLocaleDateString();
- const action=(key,icon,label,cls="")=>'<button type="button" class="'+cls+'" data-user-action="'+key+'"><span class="udr-icon" aria-hidden="true">'+icon+'</span><span>'+label+'</span><span class="udr-arrow" aria-hidden="true">›</span></button>';
- let roleActions="";
- if(user.role!=="owner"&&!restricted)roleActions=user.role==="user"?action("promote","♛","Promote to Admin"):action("demote","♙","Remove Admin Access");
- let securityActions=restricted?action("restore","↻","Restore Account Access","udr-restore"):(action("revoke","↪","Revoke All Sessions")+action("suspend","Ⅱ","Suspend for 24 Hours","udr-warning")+action("ban","⊘","Permanently Ban","udr-danger"));
- panel.dataset.userId=String(user.id);
- panel.innerHTML='<div class="udr-head"><div><span class="udr-eyebrow">USER DETAILS</span><strong>'+esc(String(user.username||"").trim()||"Username not set")+'</strong><span class="udr-status">'+(restricted?(user.restriction_type==="ban"?"BANNED":"SUSPENDED"):"ACCOUNT ACTIVE")+'</span></div><button type="button" class="udr-close" aria-label="Close details">×</button></div>'+
- '<div class="udr-profile"><div class="udr-avatar">'+esc(String(user.username||"?").trim().charAt(0).toUpperCase())+'</div><div><strong>'+esc(String(user.username||"").trim()||"Username not set")+'</strong><span>'+role+' · '+(user.email_verified?"Verified":"Unverified")+'</span></div></div>'+
- '<section class="udr-section"><div class="udr-section-title">ROLE & ACCESS</div>'+(roleActions||'<p class="udr-note">'+(user.role==="owner"?"Owner account is protected.":"Role changes are unavailable while restricted.")+'</p>')+'</section>'+
- '<section class="udr-section"><div class="udr-section-title">ACCOUNT</div>'+action("details","▤","Account Details")+action("activity","◷","Most Active Hours")+action("copy","▢","Copy Email Address")+'<p class="udr-note">'+esc(user.email)+'</p></section>'+
- '<section class="udr-section"><div class="udr-section-title">SECURITY & CONTROL</div>'+securityActions+'</section>'+
- '<div class="udr-foot"><span>MEMBER SINCE</span><strong>'+esc(date)+'</strong></div>';
- openUserDetailsDrawer();
- panel.setAttribute("aria-hidden","false");
- document.querySelectorAll("[data-user-details-open]").forEach(btn=>btn.setAttribute("aria-expanded",String(btn.closest("[data-user-row]")?.dataset.userRow===String(user.id))));
+ const action=(key,icon,label,cls="")=>'<button type="button" class="side-link '+cls+'" data-user-action="'+key+'"><span class="side-icon" aria-hidden="true">'+icon+'</span><span>'+label+'</span></button>';
+ let roleAction=user.role==="owner"?"":(user.role==="user"?action("promote","♛","Promote to Admin"):action("demote","♙","Remove Admin Access"));
+ let securityActions=restricted?action("restore","↻","Restore Account Access","uam-restore"):(action("revoke","↪","Revoke All Sessions")+action("suspend","Ⅱ","Suspend for 24 Hours","uam-warning")+action("ban","⊘","Permanently Ban","uam-danger"));
+ host.dataset.userId=String(user.id);
+ host.innerHTML='<div class="sidebar-heading">Selected account</div>'+
+ '<div class="admin-selected-user-card"><div class="admin-selected-user-top"><span class="admin-selected-avatar">'+esc(String(user.username||"?").trim().charAt(0).toUpperCase())+'</span><div><strong>'+esc(String(user.username||"Username not set").trim())+'</strong><small>'+esc(user.email)+'</small></div></div>'+
+ '<div class="admin-selected-user-meta"><span>'+role.toUpperCase()+'</span><i></i><span>'+(user.email_verified?"Verified":"Unverified")+'</span><i></i><span>'+(restricted?(user.restriction_type==="ban"?"Banned":"Suspended"):"Active")+'</span></div>'+
+ '<div class="admin-selected-user-meta"><span>Member since '+esc(date)+'</span></div></div>'+
+ '<div class="sidebar-section"><div class="sidebar-heading">Role & Access</div>'+roleAction+'</div>'+
+ '<div class="sidebar-section"><div class="sidebar-heading">Account</div>'+action("details","▤","Account Details")+action("activity","◷","Most Active Hours")+action("copy","▢","Copy Email Address")+'</div>'+
+ '<div class="sidebar-section"><div class="sidebar-heading">Security & Control</div>'+securityActions+'</div>';
+ host.hidden=false;
+ openAdminMenu(true);
 }
-function closeUserDetailsPanel(){
- const panel=$("#userDetailsRail");if(!panel)return;
- closeUserDetailsDrawer();panel.setAttribute("aria-hidden","true");
- document.querySelectorAll("[data-user-details-open]").forEach(btn=>btn.setAttribute("aria-expanded","false"));
-}
+function closeUserDetailsPanel(){closeAdminMenu();}
 $("#adminList").addEventListener("click",async e=>{
  const trigger=e.target.closest("[data-user-details-open]");if(trigger){const row=trigger.closest("[data-user-row]");if(row)openUserDetailsPanel(row.dataset.userRow);return;}
  const button=e.target.closest("[data-user-action]");if(!button)return;
@@ -237,11 +221,10 @@ $("#adminList").addEventListener("click",async e=>{
  if(action==="revoke")return revokeUserSessions(id);
  if(action==="copy"){const u=state.users.find(x=>String(x.id)===String(id));try{await navigator.clipboard.writeText(u.email);notice("ইমেইল কপি হয়েছে।")}catch{notice("Clipboard access পাওয়া যায়নি।",true)}}
 });
-$("#userDetailsRail")?.addEventListener("click",async e=>{
- if(e.target.closest(".udr-close")){closeUserDetailsPanel();return;}
+$("#adminSelectedUser")?.addEventListener("click",async e=>{
  const button=e.target.closest("[data-user-action]");if(!button)return;
- const id=$("#userDetailsRail").dataset.userId,action=button.dataset.userAction;
- closeUserDetailsPanel();
+ const host=$("#adminSelectedUser"),id=host.dataset.userId,action=button.dataset.userAction;
+ closeAdminMenu();
  if(action==="promote")return changeRole(id,"admin");
  if(action==="demote")return changeRole(id,"user");
  if(action==="details")return showUserDetails(id);
@@ -252,7 +235,5 @@ $("#userDetailsRail")?.addEventListener("click",async e=>{
  if(action==="revoke")return revokeUserSessions(id);
  if(action==="copy"){const u=state.users.find(x=>String(x.id)===String(id));try{await navigator.clipboard.writeText(u.email);notice("ইমেইল কপি হয়েছে।")}catch{notice("Clipboard access পাওয়া যায়নি।",true)}}
 });
-$("#userDetailsBackdrop")?.addEventListener("click",closeUserDetailsPanel);
-window.matchMedia("(max-width: 760px)").addEventListener?.("change",()=>{if(document.body.classList.contains("user-details-open"))closeUserDetailsPanel();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeUserDetailsPanel();});
 status();
