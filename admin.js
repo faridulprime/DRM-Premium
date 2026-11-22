@@ -93,7 +93,7 @@ async function restrictUser(id,action){
  let reason="";
  if(action==="suspend"||action==="ban"){const entered=prompt("কারণ লিখুন (ঐচ্ছিক):","");if(entered===null)return;reason=entered.trim().slice(0,500);}
  const payload={action:action==="suspend"?"suspend_24h":action==="ban"?"ban_permanent":"restore_access",reason};
- try{await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify(payload)});await refresh();notice(action==="suspend"?"অ্যাকাউন্ট ২৪ ঘণ্টার জন্য স্থগিত হয়েছে।":action==="ban"?"অ্যাকাউন্ট স্থায়ীভাবে নিষিদ্ধ হয়েছে।":"অ্যাকাউন্টের Access পুনরুদ্ধার হয়েছে।");}
+ try{const result=await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify(payload)});await refresh();if(action==="suspend"&&result.emailNotification==="failed")notice("অ্যাকাউন্ট Suspend হয়েছে, কিন্তু ইমেইল পাঠানো যায়নি। Apps Script deploy ও mailer log পরীক্ষা করুন।",true);else notice(action==="suspend"?"অ্যাকাউন্ট ২৪ ঘণ্টার জন্য স্থগিত হয়েছে এবং নোটিশ ইমেইল পাঠানো হয়েছে।":action==="ban"?"অ্যাকাউন্ট স্থায়ীভাবে নিষিদ্ধ হয়েছে।":"অ্যাকাউন্টের Access পুনরুদ্ধার হয়েছে।");}
  catch(e){notice(e.message,true);await refresh();}
 }
 async function showUserActivity(id){
