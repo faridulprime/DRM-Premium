@@ -68,3 +68,6 @@ body.visual-editor-active{cursor:crosshair}
 .register-status.error{color:#ff9b9b}
 .register-footnote{padding-top:10px;border-top:1px solid #292929;font-size:10px}
 @media(max-width:760px){.register-form{padding:25px 20px}.register-form h2{font-size:21px}}
+
+/* Public signup OTP delivery guidance */
+.register-delivery-hint{margin:0;padding:9px 10px;border:1px solid rgba(140,184,242,.22);border-radius:7px;background:rgba(140,184,242,.07);color:#b9d4f5;font-size:11px;line-height:1.6}
