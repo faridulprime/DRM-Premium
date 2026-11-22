@@ -604,6 +604,7 @@ body.user-details-open #adminList{width:min(calc(100% - 322px),1120px);max-width
  display:grid!important;
  grid-template-columns:auto 42px minmax(0,1fr)!important;
  align-items:center!important;
+ background:#181818!important;
  column-gap:13px!important;
  width:100%;
  min-width:0;
@@ -611,11 +612,11 @@ body.user-details-open #adminList{width:min(calc(100% - 322px),1120px);max-width
  background:#0F0F0F!important;
  border-color:#303236!important;
 }
-#adminList .user-management-row:hover{background:#0F0F0F!important;border-color:#484b50!important}
+#adminList .user-management-row:hover{background:#181818!important;border-color:#484b50!important}
 #adminList .user-management-row:not(.is-owner) .row-actions{grid-column:1;grid-row:1;justify-content:flex-start;width:auto}
 #adminList .user-management-row:not(.is-owner) .user-avatar{grid-column:2;grid-row:1}
 #adminList .user-management-row:not(.is-owner) .user-row-identity{grid-column:3;grid-row:1;min-width:0}
-#adminList .user-management-row.is-owner{grid-template-columns:42px minmax(0,1fr) auto!important}
+#adminList .user-management-row.is-owner{grid-template-columns:42px minmax(0,1fr) auto!important;background:#181818!important}
 #adminList .user-management-row.is-owner .user-avatar{grid-column:1;grid-row:1}
 #adminList .user-management-row.is-owner .user-row-identity{grid-column:2;grid-row:1}
 #adminList .user-management-row.is-owner .row-actions{grid-column:3;grid-row:1}
