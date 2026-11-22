@@ -55,23 +55,9 @@ async function newSession(id,env){const token=b64(crypto.getRandomValues(new Uin
 async function settings(DB){const rows=await DB.prepare("SELECT key,value FROM settings").all(),out={...DEFAULT_SETTINGS};for(const r of rows.results||[])out[r.key]=r.value;return out}
 function originOK(req){const origin=req.headers.get("Origin");return !!origin&&origin===new URL(req.url).origin}
 async function sendVerificationEmail(env,{to,code,type="user-registration",expiresInMinutes=10}){
- const isOwner=type==="owner-verification",minutes=Math.min(10,Math.max(1,Number(expiresInMinutes)||10));
- const purpose=isOwner?"Owner account verification":"Email address verification";
- const subject=isOwner?"Your DRM– Premium Owner verification code":"Your DRM– Premium verification code";
- const textBody="DRM– Premium\\n\\n"+purpose+"\\n\\nYour verification code is: "+code+"\\n\\nThis code expires in "+minutes+" minutes.\\n\\nIf you did not request this code, you can safely ignore this email. Do not share this code with anyone.\\n\\n— DRM– Premium";
- const htmlBody='<!doctype html><html><body style="margin:0;padding:32px 16px;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#17202a;"><div style="max-width:520px;margin:0 auto;background:#fff;border:1px solid #e5e9ef;border-radius:12px;padding:32px;"><div style="font-size:20px;font-weight:700;color:#17202a;">DRM– <span style="color:#3978c6;">Premium</span></div><div style="margin-top:28px;font-size:18px;font-weight:700;">'+purpose+'</div><p style="margin:12px 0 20px;color:#52606d;line-height:1.6;">Use the verification code below to continue. It is valid for '+minutes+' minutes.</p><div style="padding:18px 12px;border:1px solid #dce5ef;border-radius:8px;background:#f7f9fc;text-align:center;font-size:30px;font-weight:700;letter-spacing:8px;color:#17202a;">'+code+'</div><p style="margin:20px 0 0;color:#52606d;font-size:13px;line-height:1.6;">If you did not request this code, you can safely ignore this email. For your security, never share this code with anyone.</p><div style="margin-top:28px;padding-top:18px;border-top:1px solid #edf0f3;color:#87919c;font-size:12px;">This is an automated security message from DRM– Premium.</div></div></body></html>';
- const hasResend=!!(env.RESEND_API_KEY&&env.RESEND_FROM_EMAIL);
- if(!!env.RESEND_API_KEY!==!!env.RESEND_FROM_EMAIL)throw new Error("Resend configuration incomplete.");
- if(hasResend){
-  const response=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"Authorization":"Bearer "+env.RESEND_API_KEY,"Content-Type":"application/json"},body:JSON.stringify({from:env.RESEND_FROM_EMAIL,to:[to],subject,text:textBody,html:htmlBody})});
-  let result={};try{result=await response.json()}catch{}
-  if(!response.ok||!result.id)throw new Error("Resend delivery failed with status "+response.status);
-  return {provider:"resend",id:result.id};
- }
- if(!env.GOOGLE_APPS_SCRIPT_URL||!env.GOOGLE_APPS_SCRIPT_TOKEN)throw new Error("No email provider is configured.");
- const response=await fetch(env.GOOGLE_APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:env.GOOGLE_APPS_SCRIPT_TOKEN,type,to,code,expiresInMinutes:minutes})});
+ const response=await fetch(env.GOOGLE_APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:env.GOOGLE_APPS_SCRIPT_TOKEN,type,to,code,expiresInMinutes})});
  let result={};try{result=await response.json()}catch{}
- if(!response.ok||result.ok!==true)throw new Error("Legacy mailer delivery failed with status "+response.status);
+ if(!response.ok||result.ok!==true)throw new Error("Google Apps Script mailer failed with status "+response.status);
  return {provider:"google-apps-script"};
 }
 async function handle(req,env){
@@ -87,7 +73,7 @@ async function handle(req,env){
   return json({ok:true},200,isNew?{"set-cookie":VISITOR_COOKIE+"="+token+"; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000"}:{});
  }
  if(p[0]==="auth"&&p[1]==="register-otp"&&m==="POST"){
-  if(!env.SESSION_SECRET||!env.OWNER_EMAIL||(!(env.RESEND_API_KEY&&env.RESEND_FROM_EMAIL)&&(!env.GOOGLE_APPS_SCRIPT_URL||!env.GOOGLE_APPS_SCRIPT_TOKEN)))return fail("Account registration email service is not configured. Configure Resend or the temporary legacy mailer.",503);
+  if(!env.SESSION_SECRET||!env.OWNER_EMAIL||(!env.GOOGLE_APPS_SCRIPT_URL||!env.GOOGLE_APPS_SCRIPT_TOKEN))return fail("Account registration email service is not configured. Configure the Google Apps Script mailer.",503);
   const d=await readBody(req),email=String(d?.email||"").trim().toLowerCase(),username=String(d?.username||"").trim(),password=d?.password;
   if(!emailOK(email)||!/^[a-zA-Z0-9_]{3,30}$/.test(username)||!passwordOK(password))return fail("সঠিক ইমেইল, ৩–৩০ অক্ষরের username এবং অন্তত ৮ অক্ষরের password দিন।",400);
   if(email===String(env.OWNER_EMAIL).trim().toLowerCase())return fail("এই ইমেইলটি সংরক্ষিত Owner অ্যাকাউন্টের জন্য নির্ধারিত।",409);
@@ -126,7 +112,7 @@ async function handle(req,env){
  if(p[0]==="auth"&&p[1]==="status"&&m==="GET")return json({configured:await adminsExist(env.DB)});
  if(p[0]==="auth"&&p[1]==="owner-otp"&&m==="POST"){
   if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
-  if(!env.OWNER_EMAIL||!env.SESSION_SECRET||(!(env.RESEND_API_KEY&&env.RESEND_FROM_EMAIL)&&(!env.GOOGLE_APPS_SCRIPT_URL||!env.GOOGLE_APPS_SCRIPT_TOKEN)))return fail("Owner email verification is not configured. Set OWNER_EMAIL, SESSION_SECRET and either Resend or the temporary legacy mailer.",503);
+  if(!env.OWNER_EMAIL||!env.SESSION_SECRET||(!env.GOOGLE_APPS_SCRIPT_URL||!env.GOOGLE_APPS_SCRIPT_TOKEN))return fail("Owner email verification is not configured. Set OWNER_EMAIL, SESSION_SECRET and the Google Apps Script mailer.",503);
   const d=await readBody(req),email=String(d?.email||"").trim().toLowerCase();
   if(!emailOK(email)||email!==env.OWNER_EMAIL.toLowerCase())return fail("ইমেইলটি Owner-এর নির্ধারিত ইমেইলের সঙ্গে মিলছে না।",403);
   const now=Math.floor(Date.now()/1000),recent=await env.DB.prepare("SELECT created_at FROM owner_setup_otps ORDER BY created_at DESC LIMIT 1").first();
