@@ -14,7 +14,38 @@ let adminHeartbeat=null;
 let visualConfig={},visualSelected=null,visualMode=false;
 function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function thumb(v){return v.thumbnail_url||`https://img.youtube.com/vi/${encodeURIComponent(v.youtube_id)}/hqdefault.jpg`;}
-function play(v){$("#playerTitle").textContent=v.title;$("#playerDescription").textContent=v.description||"";$("#playerFrame").innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube_id)}?autoplay=1&rel=0" title="${esc(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;$("#playerDialog").showModal();}
+let playerClosing=false;
+function play(v){
+ const dialog=$("#playerDialog");
+ if(playerClosing)return;
+ $("#playerTitle").textContent=v.title;
+ $("#playerDescription").textContent=v.description||"";
+ $("#playerFrame").innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube_id)}?autoplay=1&rel=0" title="${esc(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+ if(dialog.open)return;
+ dialog.showModal();
+ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches&&dialog.animate){
+  dialog.animate(
+   [{opacity:0,transform:"translateY(22px) scale(.965)"},{opacity:1,transform:"translateY(0) scale(1)"}],
+   {duration:560,easing:"cubic-bezier(.16,1,.3,1)",fill:"both"}
+  );
+ }
+}
+function closePlayer(){
+ const dialog=$("#playerDialog");
+ if(!dialog?.open||playerClosing)return;
+ playerClosing=true;
+ const finish=()=>{
+  if(dialog.open)dialog.close();
+  $("#playerFrame").innerHTML="";
+  playerClosing=false;
+ };
+ if(window.matchMedia("(prefers-reduced-motion: reduce)").matches||!dialog.animate){finish();return;}
+ const animation=dialog.animate(
+  [{opacity:1,transform:"translateY(0) scale(1)"},{opacity:0,transform:"translateY(14px) scale(.975)"}],
+  {duration:300,easing:"cubic-bezier(.4,0,1,1)",fill:"forwards"}
+ );
+ animation.onfinish=finish;
+}
 function applySettings(){
  const pairs={heroEyebrow:"hero_eyebrow",libraryEyebrow:"library_eyebrow",libraryTitle:"library_title",footerText:"footer_text"};
  for(const [id,key] of Object.entries(pairs)){const el=$("#"+id);if(el&&settings[key])el.textContent=settings[key];}
@@ -173,8 +204,10 @@ function syncHomeFilterUrl(){
  history.replaceState(null,"",next);
 }
 restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.target.closest(".video-card");if(!card)return;const video=videos.find(v=>v.id===card.dataset.id);if(video)play(video);});$("#search").addEventListener("input",()=>{syncHomeFilterUrl();clearTimeout(searchRenderTimer);renderLimit=RENDER_BATCH;searchRenderTimer=setTimeout(render,140);});$("#categoryFilter").addEventListener("change",()=>{syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();});$("#loadMoreVideos").addEventListener("click",()=>{renderLimit+=RENDER_BATCH;render(true);});
- document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.close);d.close();$("#playerFrame").innerHTML="";});
- $("#playerDialog").addEventListener("close",()=>$("#playerFrame").innerHTML="");
+ document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>{if(b.dataset.close==="playerDialog")closePlayer();else document.getElementById(b.dataset.close)?.close();});
+ $("#playerDialog").addEventListener("cancel",e=>{e.preventDefault();closePlayer();});
+ $("#playerDialog").addEventListener("click",e=>{if(e.target===$("#playerDialog"))closePlayer();});
+ $("#playerDialog").addEventListener("close",()=>{$("#playerFrame").innerHTML="";playerClosing=false;});
  let apiReady=false;
  try{const [vr,cr,sr]=await Promise.all([fetch("/api/videos"),fetch("/api/categories"),fetch("/api/settings")]);if(vr.ok){videos=await vr.json();apiReady=true;}if(cr.ok)categories=await cr.json();if(sr.ok)settings=await sr.json();}
  catch(e){console.warn("DRM PREMIUM API is not available yet.",e);}
