@@ -38,6 +38,7 @@ const un64=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.c
 async function hash(s){return b64(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))}
 async function passwordHash(password,salt){const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveBits"]);return b64(await crypto.subtle.deriveBits({name:"PBKDF2",salt:un64(salt),iterations:ITERATIONS,hash:"SHA-256"},key,256))}
 async function makePassword(password){const salt=b64(crypto.getRandomValues(new Uint8Array(16)));return salt+"."+await passwordHash(password,salt)}
+async function makePasswordForRegistrationCheck(password,stored){const salt=String(stored||"").split(".")[0];if(!salt)return "";return salt+"."+await passwordHash(password,salt)}
 async function verifyPassword(password,stored){const [salt,want]=String(stored).split(".");if(!salt||!want)return false;const got=await passwordHash(password,salt);let d=got.length^want.length;for(let i=0;i<Math.max(got.length,want.length);i++)d|=(got.charCodeAt(i)||0)^(want.charCodeAt(i)||0);return d===0}
 const cookie=v=>`${COOKIE}=${v}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}`;
 const clearCookie=()=>`${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
@@ -64,6 +65,45 @@ async function handle(req,env){
   const visitorHash=await hash(token),key="g:"+visitorHash,label="Guest "+visitorHash.slice(0,5).toUpperCase();
   await env.DB.prepare("INSERT INTO visitor_presence(presence_key,user_id,guest_label,last_seen) VALUES(?,NULL,?,?) ON CONFLICT(presence_key) DO UPDATE SET last_seen=excluded.last_seen").bind(key,label,now).run();await env.DB.prepare("DELETE FROM visitor_presence WHERE last_seen<?").bind(now-120).run();
   return json({ok:true},200,isNew?{"set-cookie":VISITOR_COOKIE+"="+token+"; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000"}:{});
+ }
+ if(p[0]==="auth"&&p[1]==="register-otp"&&m==="POST"){
+  if(!env.SESSION_SECRET||!env.GOOGLE_APPS_SCRIPT_URL||!env.GOOGLE_APPS_SCRIPT_TOKEN||!env.OWNER_EMAIL)return fail("Account registration email service is not configured. Owner must configure the registration mailer secrets.",503);
+  const d=await readBody(req),email=String(d?.email||"").trim().toLowerCase(),username=String(d?.username||"").trim(),password=d?.password;
+  if(!emailOK(email)||!/^[a-zA-Z0-9_]{3,30}$/.test(username)||!passwordOK(password))return fail("সঠিক ইমেইল, ৩–৩০ অক্ষরের username এবং অন্তত ৮ অক্ষরের password দিন।",400);
+  if(email===String(env.OWNER_EMAIL).trim().toLowerCase())return fail("এই ইমেইলটি সংরক্ষিত Owner অ্যাকাউন্টের জন্য নির্ধারিত।",409);
+  const existing=await env.DB.prepare("SELECT id FROM users WHERE email=? COLLATE NOCASE OR username=? COLLATE NOCASE").bind(email,username).first();
+  if(existing)return fail("এই ইমেইল অথবা Username দিয়ে ইতিমধ্যে অ্যাকাউন্ট রয়েছে।",409);
+  const now=Math.floor(Date.now()/1000),ip=req.headers.get("CF-Connecting-IP")||"unknown",ipHash=await hash(ip+env.SESSION_SECRET);
+  await env.DB.prepare("DELETE FROM user_registration_otps WHERE expires_at<?").bind(now).run();
+  const recent=await env.DB.prepare("SELECT created_at FROM user_registration_otps WHERE email=?").bind(email).first();
+  if(recent&&now-Number(recent.created_at)<60)return fail("নতুন কোড পাঠানোর আগে ১ মিনিট অপেক্ষা করুন।",429);
+  const tries=await env.DB.prepare("SELECT COUNT(*) AS n FROM user_registration_otps WHERE ip_hash=? AND created_at>?").bind(ipHash,now-900).first();
+  if(Number(tries?.n||0)>=5)return fail("এই নেটওয়ার্ক থেকে অনেকবার কোড চাওয়া হয়েছে। ১৫ মিনিট পরে চেষ্টা করুন।",429);
+  const random=new Uint32Array(1);crypto.getRandomValues(random);const code=String(100000+(random[0]%900000));
+  const codeHash=await hash(email+":"+code+":"+env.SESSION_SECRET),passwordHashValue=await makePassword(password);
+  await env.DB.prepare("INSERT INTO user_registration_otps(email,username,password_hash,code_hash,ip_hash,expires_at,attempts,created_at) VALUES(?,?,?,?,?,?,0,?) ON CONFLICT(email) DO UPDATE SET username=excluded.username,password_hash=excluded.password_hash,code_hash=excluded.code_hash,ip_hash=excluded.ip_hash,expires_at=excluded.expires_at,attempts=0,created_at=excluded.created_at").bind(email,username,passwordHashValue,codeHash,ipHash,now+600,now).run();
+  let sent;try{sent=await fetch(env.GOOGLE_APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:env.GOOGLE_APPS_SCRIPT_TOKEN,type:"user-registration",to:email,code,expiresInMinutes:10})});}catch(e){await env.DB.prepare("DELETE FROM user_registration_otps WHERE email=?").bind(email).run();console.error("Registration email request failed",e);return fail("ইমেইল সার্ভিসে সংযোগ করা যায়নি।",502)}
+  let delivery={};try{delivery=await sent.json()}catch{}
+  if(!sent.ok||delivery.ok!==true){await env.DB.prepare("DELETE FROM user_registration_otps WHERE email=?").bind(email).run();console.error("Registration email failed",sent.status,delivery.error||"invalid response");return fail("Verification email পাঠানো যায়নি। Mailer configuration পরীক্ষা করুন।",502)}
+  return json({ok:true,message:"ইমেইলে ৬ সংখ্যার verification code পাঠানো হয়েছে। ১০ মিনিটের মধ্যে কোডটি দিন।"});
+ }
+ if(p[0]==="auth"&&p[1]==="register-verify"&&m==="POST"){
+  if(!env.SESSION_SECRET)return fail("Session service is not configured.",503);
+  const d=await readBody(req),email=String(d?.email||"").trim().toLowerCase(),username=String(d?.username||"").trim(),password=d?.password,code=String(d?.code||"").trim();
+  if(!emailOK(email)||!/^[a-zA-Z0-9_]{3,30}$/.test(username)||!passwordOK(password)||!/^[0-9]{6}$/.test(code))return fail("ইমেইল, username, password অথবা verification code সঠিক নয়।",400);
+  const now=Math.floor(Date.now()/1000),pending=await env.DB.prepare("SELECT * FROM user_registration_otps WHERE email=?").bind(email).first();
+  if(!pending||Number(pending.expires_at)<now)return fail("কোডের মেয়াদ শেষ হয়েছে। নতুন কোড নিন।",403);
+  if(Number(pending.attempts)>=5)return fail("ভুল কোড দেওয়ার সর্বোচ্চ চেষ্টা শেষ। নতুন কোড নিন।",403);
+  if(pending.username!==username||pending.password_hash!==await makePasswordForRegistrationCheck(password,pending.password_hash))return fail("Registration তথ্য পরিবর্তিত হয়েছে। নতুন verification code নিন।",400);
+  const expected=await hash(email+":"+code+":"+env.SESSION_SECRET);
+  if(expected!==pending.code_hash){await env.DB.prepare("UPDATE user_registration_otps SET attempts=attempts+1 WHERE email=?").bind(email).run();return fail("Verification code সঠিক নয়।",403)}
+  const duplicate=await env.DB.prepare("SELECT id FROM users WHERE email=? COLLATE NOCASE OR username=? COLLATE NOCASE").bind(email,username).first();
+  if(duplicate){await env.DB.prepare("DELETE FROM user_registration_otps WHERE email=?").bind(email).run();return fail("এই ইমেইল অথবা Username ইতিমধ্যে ব্যবহৃত হয়েছে।",409)}
+  const id=crypto.randomUUID();
+  try{await env.DB.prepare("INSERT INTO users(id,email,username,password_hash,role,email_verified,created_at) VALUES(?,?,?,?,'user',1,?)").bind(id,email,username.toLowerCase(),pending.password_hash,now).run();}
+  catch(e){console.error("Public user registration failed",e);return fail("অ্যাকাউন্ট তৈরি করা যায়নি। ইমেইল বা Username আগে থেকেই ব্যবহৃত হতে পারে।",409)}
+  await env.DB.prepare("DELETE FROM user_registration_otps WHERE email=?").bind(email).run();
+  const token=await newSession(id,env);return json({ok:true,user:{id,email,username,role:"user"},message:"অ্যাকাউন্ট তৈরি হয়েছে।"},201,{"set-cookie":cookie(token)});
  }
  if(p[0]==="auth"&&p[1]==="status"&&m==="GET")return json({configured:await adminsExist(env.DB)});
  if(p[0]==="auth"&&p[1]==="owner-otp"&&m==="POST"){
