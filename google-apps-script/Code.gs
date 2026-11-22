@@ -17,7 +17,7 @@ function doPost(e) {
     if (!expectedToken || suppliedToken !== expectedToken) {
       return output({ ok: false, error: "Unauthorized request." });
     }
-    if (!ownerEmail || !recipient || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(recipient)) {
+    if (!ownerEmail || !recipient || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) {
       return output({ ok: false, error: "Invalid recipient." });
     }
     if (type === "owner-verification" && recipient !== ownerEmail) {
