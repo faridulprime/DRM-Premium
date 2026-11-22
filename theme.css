@@ -383,7 +383,6 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
 }
 
 /* Player and Builder history dialogs enter with the same soft, deliberate motion. */
-.player-dialog[open],
 .sb-dialog[open]{
   animation:premiumDialogIn 420ms cubic-bezier(.16,1,.3,1) both;
 }
@@ -436,7 +435,6 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   .close{
     transition-duration:0.01ms !important;
   }
-  .player-dialog[open],
   .sb-dialog[open],
   .player-dialog[open]::backdrop,
   .sb-dialog[open]::backdrop,
