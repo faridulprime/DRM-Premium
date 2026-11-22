@@ -16,25 +16,32 @@
 <button id="visualEditorToggle" class="visual-editor-toggle" type="button" hidden aria-label="ওয়েবসাইট সম্পাদনা">✎</button>
 <aside id="visualEditorPanel" class="visual-editor-panel" hidden aria-label="Visual Editor"><div class="ve-head"><strong>Website Editor</strong><button id="veClose" type="button" aria-label="বন্ধ করুন">×</button></div><p id="veHelp">সম্পাদনার জন্য পেজের কোনো লেখা নির্বাচন করুন।</p><label for="veText">Text</label><textarea id="veText" rows="3"></textarea><label for="veFontSize">Font size (px)</label><input id="veFontSize" type="number" min="8" max="96" value="16"><label for="veColor">Text color</label><input id="veColor" type="color" value="#183d5c"><label for="veBackground">Text background</label><input id="veBackground" type="color" value="#ffffff"><label for="veShadowColor">Text shadow color</label><input id="veShadowColor" type="color" value="#000000"><div class="ve-grid"><div><label for="veShadowX">Shadow X</label><input id="veShadowX" type="number" min="-20" max="20" value="0"></div><div><label for="veShadowY">Shadow Y</label><input id="veShadowY" type="number" min="-20" max="20" value="0"></div><div><label for="veShadowBlur">Blur</label><input id="veShadowBlur" type="number" min="0" max="30" value="0"></div></div><div class="ve-actions"><button id="veApply" type="button">Apply Preview</button><button id="veSave" type="button">Save Changes</button><button id="veReset" type="button">Reset Selected</button></div><p id="veStatus" role="status" aria-live="polite"></p></aside>
 <header class="topbar">
-  <a class="brand" href="/" aria-label="DRM Premium home"><img class="brand-mark" src="/assets/testosterone-molecule.svg" alt="" aria-hidden="true" decoding="async"><span id="brandName">DRM PREMIUM</span></a>
-  <nav id="mainNav" aria-label="প্রধান নেভিগেশন"><a class="active" href="#home">মূল পৃষ্ঠা</a><a href="#browse">ভিডিও</a><a href="#references">রেফারেন্স</a><a href="#articles">আর্টিকেল</a><a href="#books">বইপত্র</a><a href="#admin">এডমিন</a><a id="quickUploadButton" class="nav-upload" href="/upload-studio.html" hidden aria-label="আপলোড"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg><span>আপলোড</span></a></nav>
+  <button class="menu-toggle" id="menuToggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="#home" aria-label="DRM Premium home"><img class="brand-mark" src="/assets/testosterone-molecule.svg" alt="" aria-hidden="true" decoding="async"><span id="brandName">DRM PREMIUM</span></a>
+  <form class="yt-search" role="search" onsubmit="return false"><input id="search" type="search" placeholder="Search" aria-label="কনটেন্ট খুঁজুন"><button type="button" id="searchSubmit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></button></form>
   <form id="headerLoginForm" class="top-actions" aria-label="Account login">
-    <label class="header-field"><span class="sr-only">Email</span><span class="field-icon">✉</span><input id="headerEmail" name="email" type="email" placeholder="Email" autocomplete="username" required></label>
-    <label class="header-field"><span class="sr-only">Password</span><span class="field-icon">▣</span><input id="headerPassword" name="password" type="password" placeholder="Password" autocomplete="current-password" required></label>
-    <button class="login-button login-btn-23" id="headerLoginButton" type="submit" aria-label="Login">
-      <span class="login-button-label">Login</span>
-    </button>
-    <button class="signup-button" type="button" disabled aria-label="Sign up will be enabled in Task 2">Sign Up</button>
-    <button class="menu-toggle menu-btn-11" id="menuToggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 7.5h14M5 12h14M5 16.5h14"/></svg>
-    </button>
+    <label class="header-field"><span class="sr-only">Email</span><input id="headerEmail" name="email" type="email" placeholder="Email" autocomplete="username" required></label>
+    <label class="header-field"><span class="sr-only">Password</span><input id="headerPassword" name="password" type="password" placeholder="Password" autocomplete="current-password" required></label>
+    <button class="login-button login-btn-23" id="headerLoginButton" type="submit"><span class="login-button-label">Login</span></button>
     <span id="headerLoginStatus" class="header-login-status" role="status" aria-live="polite"></span>
   </form>
-  <div class="account-controls">
-    <span id="proBadge" class="pro-badge" hidden><svg class="pro-crown" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 18.5h18l-1.6-10-5.1 4.1L12 5l-2.3 7.6L4.6 8.5 3 18.5Z"/><path d="M4.5 21h15"/></svg><span>PRO ELITE</span></span>
-    
+  <div class="account-controls"><span id="proBadge" class="pro-badge" hidden><span>PRO ELITE</span></span><a id="quickUploadButton" class="nav-upload" href="/upload-studio.html" hidden aria-label="আপলোড">＋</a></div>
+</header><div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+<aside class="yt-sidebar" id="ytSidebar" aria-label="প্রধান মেনু">
+  <div class="sidebar-primary">
+    <a class="side-link active" href="#home"><span class="side-icon">⌂</span><span>Home</span></a>
+    <a class="side-link" href="#browse"><span class="side-icon">▶</span><span>Videos</span></a>
+    <a class="side-link" href="#references"><span class="side-icon">▤</span><span>References</span></a>
+    <a class="side-link" href="#articles"><span class="side-icon">▧</span><span>Articles</span></a>
+    <a class="side-link" href="#books"><span class="side-icon">▣</span><span>Books</span></a>
   </div>
-</header> 
+  <div class="sidebar-section"><div class="sidebar-heading">You</div>
+    <a class="side-link" href="#admin"><span class="side-icon">◉</span><span>Admin dashboard</span></a>
+    <a class="side-link" href="#about"><span class="side-icon">ⓘ</span><span>About</span></a>
+    <a class="side-link" id="sidebarUpload" href="/upload-studio.html" hidden><span class="side-icon">＋</span><span>Upload</span></a>
+  </div>
+</aside>
+<nav class="category-bar" aria-label="ভিডিও ক্যাটাগরি"><div id="categoryTabs" class="category-tabs"><button class="category-chip active" type="button" data-category="all">All</button></div></nav> 
 <main id="home">
 <section class="hero" id="hero">
   <div class="hero-copy">
@@ -48,7 +55,7 @@
   <div class="hero-corner"></div>
 </section>
 <section class="content" id="browse">
-  <div class="section-head"><div><p class="eyebrow" id="libraryEyebrow">DISCOVER</p><h2 id="libraryTitle">ভিডিও লাইব্রেরি</h2></div></div><div class="library-tools"><input id="search" type="search" placeholder="শিরোনাম, বর্ণনা বা ক্যাটাগরি খুঁজুন..." aria-label="কনটেন্ট খুঁজুন"><select id="categoryFilter"><option value="all">সব ক্যাটাগরি</option></select></div>
+  <div class="section-head"><div><p class="eyebrow" id="libraryEyebrow">DISCOVER</p><h2 id="libraryTitle">ভিডিও লাইব্রেরি</h2></div></div><div class="library-tools"><select id="categoryFilter" aria-label="ক্যাটাগরি"><option value="all">সব ক্যাটাগরি</option></select></div>
   <div id="videoRows"></div><button id="loadMoreVideos" class="secondary load-more-videos" type="button" hidden>আরও ভিডিও দেখুন</button><p id="emptyState" class="empty" hidden>কোনো ভিডিও পাওয়া যায়নি।</p>
 </section>
 <section class="content resource-section" id="references"><div class="section-head"><div><p class="eyebrow">REFERENCE</p><h2>রেফারেন্স</h2></div></div><p class="empty">রেফারেন্স বিভাগে শিগগিরই কনটেন্ট যোগ করা হবে।</p></section>
