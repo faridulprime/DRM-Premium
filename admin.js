@@ -61,13 +61,19 @@ $("#logout").onclick=async()=>{const button=$("#logout");button.disabled=true;tr
 function validAdminTab(value){
  return ["overview","videos","categories","site","admins"].includes(value)?value:"overview";
 }
+async function recordAdminTabView(tab){
+ try{
+  await api("analytics/event",{method:"POST",body:JSON.stringify({tab})});
+  if(tab==="overview"){await loadOverviewAnalytics();renderOverview();}
+ }catch(error){console.error("Admin analytics event failed:",error);}
+}
 function activateAdminTab(value){
  const target=validAdminTab(value);
  const allowedButton=document.querySelector('[data-tab="'+target+'"]:not([hidden])');
  const allowedPanel=$("#tab-"+target);
  if(!allowedButton||!allowedPanel)return;
  if(target==="admins"&&state.user?.role==="owner")loadActiveUsers();
- api("analytics/event",{method:"POST",body:JSON.stringify({tab:"admin"})}).catch(()=>{});
+ recordAdminTabView(target);
  document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===target));
  document.querySelectorAll(".tab-panel").forEach(x=>x.hidden=x.id!=="tab-"+target);
  closeAdminMenu();
