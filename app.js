@@ -151,7 +151,47 @@ function openAccountMenu(open){
  }
  toggle.setAttribute("aria-expanded",String(state));toggle.setAttribute("aria-label",state?"মেনু বন্ধ করুন":"মেনু খুলুন");
 }
-async function restoreAccount(){try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}}
+let suspensionPoll=null,suspensionClock=null,suspensionExpiry=0,suspensionStarted=0;
+function renderSuspensionClock(){
+ const screen=$("#accountSuspensionScreen");if(!screen||screen.hidden||!suspensionExpiry)return;
+ const remaining=Math.max(0,Math.ceil(suspensionExpiry-Date.now()/1000));
+ const h=Math.floor(remaining/3600),m=Math.floor((remaining%3600)/60),s=remaining%60;
+ $("#suspensionHours").textContent=String(h).padStart(2,"0");
+ $("#suspensionMinutes").textContent=String(m).padStart(2,"0");
+ $("#suspensionSeconds").textContent=String(s).padStart(2,"0");
+ const total=Math.max(1,suspensionExpiry-suspensionStarted);
+ $("#suspensionProgress").style.width=Math.max(0,Math.min(100,(remaining/total)*100))+"%";
+ if(remaining===0)checkAccountAccess();
+}
+function showSuspensionScreen(restriction){
+ const screen=$("#accountSuspensionScreen");if(!screen||!restriction)return;
+ if(restriction.type!=="suspend"||!restriction.expiresAt)return;
+ suspensionExpiry=Number(restriction.expiresAt);suspensionStarted=Number(restriction.createdAt||Math.floor(Date.now()/1000));
+ $("#suspensionRestoreAt").textContent=new Date(suspensionExpiry*1000).toLocaleString([], {dateStyle:"medium",timeStyle:"short"});
+ const reason=String(restriction.reason||"").trim();
+ $("#suspensionReasonWrap").hidden=!reason;$("#suspensionReason").textContent=reason;
+ screen.hidden=false;document.body.classList.add("account-suspended");
+ renderSuspensionClock();
+ if(!suspensionClock)suspensionClock=setInterval(renderSuspensionClock,1000);
+ if(!suspensionPoll)suspensionPoll=setInterval(checkAccountAccess,5000);
+}
+function hideSuspensionScreen(){
+ const screen=$("#accountSuspensionScreen");if(screen)screen.hidden=true;
+ document.body.classList.remove("account-suspended");suspensionExpiry=0;
+ if(suspensionClock){clearInterval(suspensionClock);suspensionClock=null;}
+ if(suspensionPoll){clearInterval(suspensionPoll);suspensionPoll=null;}
+}
+async function checkAccountAccess(){
+ try{
+  const response=await fetch("/api/auth/access-state",{credentials:"same-origin",cache:"no-store"});
+  const data=await response.json();
+  if(data.restricted&&data.restriction?.type==="suspend"){showSuspensionScreen(data.restriction);return true;}
+  if(!data.restricted&&$("#accountSuspensionScreen")&&!$("#accountSuspensionScreen").hidden){hideSuspensionScreen();const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());setSignedIn(me.authenticated?me.user:null);return false;}
+  return false;
+ }catch{return false;}
+}
+$("#suspensionCheckButton")?.addEventListener("click",checkAccountAccess);
+async function restoreAccount(){try{const access=await fetch("/api/auth/access-state",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json());if(access.restricted&&access.restriction?.type==="suspend"){showSuspensionScreen(access.restriction);return;}const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}}
 async function requestRegistrationCode(){
  const button=$("#registerSendCode"),status=$("#registerStatus"),email=$("#registerEmail").value.trim(),username=$("#registerUsername").value.trim(),password=$("#registerPassword").value;
  status.classList.remove("error");status.textContent="";$("#registerDeliveryHint").hidden=true;
