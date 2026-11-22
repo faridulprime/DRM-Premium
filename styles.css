@@ -48,3 +48,23 @@ body.visual-editor-active{cursor:crosshair}
 .sb-live-preview-wrap .sb-live-preview{display:block;pointer-events:none}
 .sb-live-edit-overlay{position:absolute;inset:0;z-index:20;background:transparent;cursor:crosshair;touch-action:pan-y}
 .sb-live-edit-overlay:active{cursor:crosshair}
+
+/* Public account registration — verified email onboarding. */
+.register-dialog{width:min(440px,calc(100vw - 28px));max-width:none;max-height:min(90vh,780px);padding:0;border:1px solid #343434;border-radius:16px;background:#141414;color:#f4f4f4;box-shadow:0 24px 90px #000b}
+.register-dialog::backdrop{background:rgba(0,0,0,.76);backdrop-filter:blur(5px)}
+.register-form{position:relative;display:grid;gap:13px;padding:28px}
+.register-close{position:absolute;top:12px;right:14px;width:32px;height:32px;border:1px solid #393939;border-radius:50%;background:#202020;color:#ddd;font-size:21px;cursor:pointer}
+.register-form .eyebrow{margin:0;color:#8cb8f2;font-size:10px;letter-spacing:.16em}
+.register-form h2{margin:-5px 0 0;font:600 24px/1.2 'Space Grotesk',sans-serif;letter-spacing:-.04em}
+.register-intro,.register-footnote,.register-hint{margin:0;color:#aaa;font-size:12px;line-height:1.6}
+.register-form label{display:grid;gap:6px;color:#d8d8d8;font-size:12px;font-weight:600}
+.register-form input{width:100%;height:42px;padding:0 12px;border:1px solid #383838;border-radius:8px;outline:none;background:#0e0e0e;color:#f5f5f5;font:400 13px 'Space Grotesk',sans-serif}
+.register-form input:focus{border-color:#8cb8f2;box-shadow:0 0 0 3px rgba(140,184,242,.12)}
+.register-form input::placeholder{color:#666}
+.register-actions{display:flex;gap:8px}
+.register-primary{min-height:42px;flex:1;padding:0 14px;border:1px solid #8cb8f2;border-radius:8px;background:#8cb8f2;color:#0c1420;font:600 12px 'Space Grotesk',sans-serif;cursor:pointer}
+.register-primary:disabled{opacity:.55;cursor:wait}
+.register-status{min-height:18px;margin:0;color:#a8d9b3;font-size:12px;line-height:1.5}
+.register-status.error{color:#ff9b9b}
+.register-footnote{padding-top:10px;border-top:1px solid #292929;font-size:10px}
+@media(max-width:760px){.register-form{padding:25px 20px}.register-form h2{font-size:21px}}
