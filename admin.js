@@ -54,36 +54,46 @@ function renderActiveUsers(data){
 async function loadActiveUsers(){if(state.user?.role!=="owner")return;try{renderActiveUsers(await api("admin/active-users"));}catch(e){$("#activeUsersList").innerHTML='<p class="active-user-empty">তালিকা লোড করা যায়নি: '+esc(e.message)+'</p>';}}
 function startAdminPresence(){const beat=()=>{api("presence",{method:"POST",body:"{}"}).catch(()=>{});api("admin/presence",{method:"POST",body:"{}"}).catch(()=>{});};beat();if(activeUsersTimer)clearInterval(activeUsersTimer);activeUsersTimer=setInterval(()=>{beat();if(state.user?.role==="owner"&&currentAdminTab()==="admins")loadActiveUsers();if(state.user?.role==="owner")loadOverviewAnalytics().then(renderOverview);},30000);}
 function renderAdmins(){
- $("#adminList").innerHTML=state.users.map(u=>{
+ const users=state.users||[];
+ $("#adminList").innerHTML=users.map(u=>{
   const created=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at));
   const date=Number.isNaN(created.getTime())?"Date unavailable":created.toLocaleDateString();
   const restricted=!!u.restriction_type&&(u.restriction_expires_at==null||Number(u.restriction_expires_at)>Math.floor(Date.now()/1000));
   const restrictionLabel=restricted?(u.restriction_type==="ban"?"BANNED":"SUSPENDED"):"";
-  const roleLabel=u.role==="owner"?"OWNER · Protected":u.role==="admin"?"ADMIN":"USER";
-  let actions="<span class=\"user-protected-label\">OWNER · Protected</span>";
+  const roleLabel=u.role==="owner"?"Owner":u.role==="admin"?"Admin":"Member";
+  const initial=String(u.username||u.email||"?").trim().charAt(0).toUpperCase();
+  let actions='<span class="user-protected-label"><span aria-hidden="true">◆</span> Protected account</span>';
   if(u.role!=="owner"){
    const roleAction=restricted?"":u.role==="user"?'<button type="button" data-user-action="promote"><span class="uam-icon">↗</span><span>Promote to Admin</span></button>':'<button type="button" data-user-action="demote"><span class="uam-icon">↙</span><span>Remove Admin Access</span></button>';
-   const restrictionAction=restricted?'<button type="button" data-user-action="restore"><span class="uam-icon">↺</span><span>Restore Account Access</span></button>':'<button type="button" data-user-action="suspend" class="uam-warning"><span class="uam-icon">Ⅱ</span><span>Suspend for 24 Hours</span></button><button type="button" data-user-action="ban" class="uam-danger"><span class="uam-icon">⊘</span><span>Permanently Ban</span></button>';
+   const restrictionAction=restricted?'<button type="button" data-user-action="restore" class="uam-restore"><span class="uam-icon">↺</span><span>Restore Account Access</span></button>':'<button type="button" data-user-action="suspend" class="uam-warning"><span class="uam-icon">Ⅱ</span><span>Suspend for 24 Hours</span></button><button type="button" data-user-action="ban" class="uam-danger"><span class="uam-icon">⊘</span><span>Permanently Ban</span></button>';
    actions=`<details class="user-action-menu">
-    <summary aria-label="Manage ${esc(u.email)}"><span>Manage account</span><span class="uam-chevron" aria-hidden="true">⌄</span></summary>
+    <summary aria-label="Manage ${esc(u.email)}"><span class="manage-label">Manage</span><span class="manage-icon" aria-hidden="true">⌄</span></summary>
     <div class="user-action-popover" role="group" aria-label="Account actions">
-     <div class="uam-section-label">ROLE & ACCOUNT</div>
-     ${roleAction}
-     <button type="button" data-user-action="details"><span class="uam-icon">◎</span><span>Account details</span></button>
-     <button type="button" data-user-action="activity"><span class="uam-icon">◷</span><span>Most active hours</span></button>
-     <button type="button" data-user-action="copy"><span class="uam-icon">▢</span><span>Copy email address</span></button>
-     <div class="uam-divider"></div>
-     <div class="uam-section-label">SECURITY</div>
-     <button type="button" data-user-action="revoke"><span class="uam-icon">⇥</span><span>Revoke all sessions</span></button>
-     ${restrictionAction}
+     <div class="uam-popover-head"><div><span>ACCOUNT CONTROLS</span><strong>${esc(u.email)}</strong></div><span class="uam-live-dot"></span></div>
+     <div class="uam-action-grid">
+      <div class="uam-action-section"><div class="uam-section-label">ROLE & PROFILE</div>
+       ${roleAction}
+       <button type="button" data-user-action="details"><span class="uam-icon">◎</span><span>Account details</span></button>
+       <button type="button" data-user-action="activity"><span class="uam-icon">◷</span><span>Most active hours</span></button>
+       <button type="button" data-user-action="copy"><span class="uam-icon">▢</span><span>Copy email address</span></button>
+      </div>
+      <div class="uam-action-section uam-security-section"><div class="uam-section-label">SECURITY</div>
+       <button type="button" data-user-action="revoke"><span class="uam-icon">⇥</span><span>Revoke all sessions</span></button>
+       ${restrictionAction}
+      </div>
+     </div>
     </div>
    </details>`;
   }
   const status=restricted?'<span class="user-restriction-status '+(u.restriction_type==="ban"?"banned":"suspended")+'">'+restrictionLabel+'</span>':"";
-  return `<div class="data-row user-management-row" data-user-row="${esc(u.id)}">
-   <div class="user-row-identity"><strong>${esc(u.email)}</strong><small>${esc(roleLabel)} · ${esc(date)} · ${u.email_verified?"Verified":"Unverified"} ${status}</small></div>
+  return `<article class="data-row user-management-row ${u.role==="owner"?"is-owner":""} ${restricted?"is-restricted":""}" data-user-row="${esc(u.id)}">
+   <div class="user-avatar" aria-hidden="true">${esc(initial)}</div>
+   <div class="user-row-identity">
+    <div class="user-identity-top"><strong>${esc(u.email)}</strong>${status}</div>
+    <div class="user-meta-line"><span class="user-role-chip ${u.role}">${roleLabel}</span><span>${esc(date)}</span><i></i><span class="user-verified ${u.email_verified?"verified":"unverified"}">${u.email_verified?"Verified":"Unverified"}</span></div>
+   </div>
    <div class="row-actions">${actions}</div>
-  </div>`;
+  </article>`;
  }).join("")||'<p class="muted">এখনো কোনো ব্যবহারকারী নেই।</p>';
 }
 async function restrictUser(id,action){
