@@ -150,9 +150,10 @@ $("#newVideo").onclick=()=>editVideo("");$("#cancelVideo").onclick=()=>{$("#vide
 $("#videoForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={title:f.elements.title.value.trim(),category:f.elements.category.value,youtube_id:ytId(f.elements.youtube_id.value),thumbnail_url:f.elements.thumbnail_url.value.trim(),description:f.elements.description.value.trim(),featured:f.elements.featured.checked,published:f.elements.published.checked};if(!body.youtube_id){notice("সঠিক YouTube URL বা Video ID দিন।",true);return}try{if(f.elements.id.value)await api("admin/videos/"+encodeURIComponent(f.elements.id.value),{method:"PUT",body:JSON.stringify(body)});else await api("admin/videos",{method:"POST",body:JSON.stringify(body)});f.reset();f.hidden=true;await refresh();notice("ভিডিও সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#categoryForm").onsubmit=async e=>{e.preventDefault();const name=new FormData(e.target).get("name").trim();try{await api("admin/categories",{method:"POST",body:JSON.stringify({name})});e.target.reset();await refresh();notice("ক্যাটাগরি যোগ হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#settingsForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={};for(const el of f.elements)if(el.name)body[el.name]=el.type==="checkbox"?(el.checked?"true":"false"):el.value;try{await api("admin/settings",{method:"PUT",body:JSON.stringify(body)});await refresh();notice("ওয়েবসাইটের সেটিংস সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
-function openAdminMenu(open){
+function openAdminMenu(open,userContext=false){
  const isOpen=Boolean(open);
  document.body.classList.toggle("sidebar-open",isOpen);
+ document.body.classList.toggle("user-context-menu-open",isOpen&&Boolean(userContext));
  $("#adminMenuToggle").setAttribute("aria-expanded",String(isOpen));
  $("#adminMenuToggle").setAttribute("aria-label",isOpen?"মেনু বন্ধ করুন":"মেনু খুলুন");
  $("#adminSidebarBackdrop").hidden=!isOpen;
@@ -202,7 +203,7 @@ function openUserDetailsPanel(id){
  '<div class="sidebar-section"><div class="sidebar-heading">Account</div>'+action("details","▤","Account Details")+action("activity","◷","Most Active Hours")+action("copy","▢","Copy Email Address")+'</div>'+
  '<div class="sidebar-section"><div class="sidebar-heading">Security & Control</div>'+securityActions+'</div>';
  host.hidden=false;
- openAdminMenu(true);
+ openAdminMenu(true,true);
 }
 function closeUserDetailsPanel(){closeAdminMenu();}
 $("#adminList").addEventListener("click",async e=>{
