@@ -59,10 +59,6 @@ function doPost(e) {
       '<div style="margin-top:28px;padding-top:18px;border-top:1px solid #edf0f3;color:#87919c;font-size:12px;">This is an automated security message from DRM– Premium.</div>' +
       '</div></body></html>';
 
-    // Add a short, intentional pause before handing the OTP email to Gmail.
-    // This improves pacing only; it does not guarantee inbox placement.
-    Utilities.sleep(3000);
-
     GmailApp.sendEmail(recipient, subject, plainBody, {
       htmlBody: htmlBody,
       name: "DRM– Premium"
@@ -70,7 +66,7 @@ function doPost(e) {
     console.info("OTP email accepted by Gmail for " + recipient + " (" + type + ").");
     return output({ ok: true });
   } catch (err) {
-    console.error(err);
+    console.error("OTP email send failed: " + String(err && err.message ? err.message : err));
     return output({ ok: false, error: "Email delivery failed." });
   }
 }
