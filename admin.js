@@ -64,23 +64,28 @@ function renderAdmins(){
   const initial=String(u.username||u.email||"?").trim().charAt(0).toUpperCase();
   let actions='<span class="user-protected-label"><span aria-hidden="true">◆</span> Protected account</span>';
   if(u.role!=="owner"){
-   const roleAction=restricted?"":u.role==="user"?'<button type="button" data-user-action="promote"><span class="uam-icon">↗</span><span>Promote to Admin</span></button>':'<button type="button" data-user-action="demote"><span class="uam-icon">↙</span><span>Remove Admin Access</span></button>';
-   const restrictionAction=restricted?'<button type="button" data-user-action="restore" class="uam-restore"><span class="uam-icon">↺</span><span>Restore Account Access</span></button>':'<button type="button" data-user-action="suspend" class="uam-warning"><span class="uam-icon">Ⅱ</span><span>Suspend for 24 Hours</span></button><button type="button" data-user-action="ban" class="uam-danger"><span class="uam-icon">⊘</span><span>Permanently Ban</span></button>';
+   const roleAction=restricted?"":u.role==="user"?'<button type="button" data-user-action="promote"><span class="uam-icon" aria-hidden="true">♛</span><span>Promote to Admin</span><span class="uam-chevron" aria-hidden="true">›</span></button>':'<button type="button" data-user-action="demote"><span class="uam-icon" aria-hidden="true">♙</span><span>Remove Admin Access</span><span class="uam-chevron" aria-hidden="true">›</span></button>';
+   const restrictionAction=restricted?'<button type="button" data-user-action="restore" class="uam-restore"><span class="uam-icon" aria-hidden="true">↻</span><span>Restore Account Access</span><span class="uam-chevron" aria-hidden="true">›</span></button>':'<button type="button" data-user-action="suspend" class="uam-warning"><span class="uam-icon" aria-hidden="true">Ⅱ</span><span>Suspend for 24 Hours</span><span class="uam-chevron" aria-hidden="true">›</span></button><button type="button" data-user-action="ban" class="uam-danger"><span class="uam-icon" aria-hidden="true">⊘</span><span>Permanently Ban</span><span class="uam-chevron" aria-hidden="true">›</span></button>';
    actions=`<details class="user-action-menu">
-    <summary aria-label="Manage ${esc(u.email)}"><span class="manage-label">Manage</span><span class="manage-icon" aria-hidden="true">⌄</span></summary>
+    <summary aria-label="Manage ${esc(u.email)}"><span class="manage-label">Manage account</span><span class="manage-icon" aria-hidden="true">⌄</span></summary>
     <div class="user-action-popover" role="group" aria-label="Account actions">
-     <div class="uam-popover-head"><div><span>ACCOUNT CONTROLS</span><strong>${esc(u.email)}</strong></div><span class="uam-live-dot"></span></div>
-     <div class="uam-action-grid">
-      <div class="uam-action-section"><div class="uam-section-label">ROLE & PROFILE</div>
+     <div class="uam-popover-head"><div><span>ACCOUNT CONTROLS</span><strong>${esc(u.email)}</strong></div><span class="uam-live-dot" aria-hidden="true"></span></div>
+     <div class="uam-action-stack">
+      <section class="uam-action-section uam-role-section" aria-label="Role and access">
+       <div class="uam-section-label">ROLE & ACCESS</div>
        ${roleAction}
-       <button type="button" data-user-action="details"><span class="uam-icon">◎</span><span>Account details</span></button>
-       <button type="button" data-user-action="activity"><span class="uam-icon">◷</span><span>Most active hours</span></button>
-       <button type="button" data-user-action="copy"><span class="uam-icon">▢</span><span>Copy email address</span></button>
-      </div>
-      <div class="uam-action-section uam-security-section"><div class="uam-section-label">SECURITY</div>
-       <button type="button" data-user-action="revoke"><span class="uam-icon">⇥</span><span>Revoke all sessions</span></button>
+      </section>
+      <section class="uam-action-section uam-account-section" aria-label="Account">
+       <div class="uam-section-label">ACCOUNT</div>
+       <button type="button" data-user-action="details"><span class="uam-icon" aria-hidden="true">▤</span><span>Account Details</span><span class="uam-chevron" aria-hidden="true">›</span></button>
+       <button type="button" data-user-action="activity"><span class="uam-icon" aria-hidden="true">◷</span><span>Most Active Hours</span><span class="uam-chevron" aria-hidden="true">›</span></button>
+       <button type="button" data-user-action="copy"><span class="uam-icon" aria-hidden="true">▢</span><span>Copy Email Address</span><span class="uam-chevron" aria-hidden="true">›</span></button>
+      </section>
+      <section class="uam-action-section uam-security-section" aria-label="Security and control">
+       <div class="uam-section-label">SECURITY & CONTROL</div>
+       <button type="button" data-user-action="revoke"><span class="uam-icon" aria-hidden="true">↪</span><span>Revoke All Sessions</span><span class="uam-chevron" aria-hidden="true">›</span></button>
        ${restrictionAction}
-      </div>
+      </section>
      </div>
     </div>
    </details>`;
