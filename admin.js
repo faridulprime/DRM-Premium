@@ -62,7 +62,7 @@ function renderAdmins(){
   const roleLabel=u.role==="owner"?"OWNER · Protected":u.role==="admin"?"ADMIN":"USER";
   let actions="<span class=\"user-protected-label\">OWNER · Protected</span>";
   if(u.role!=="owner"){
-   const roleAction=u.role==="user"?'<button type="button" data-user-action="promote"><span class="uam-icon">↗</span><span>Promote to Admin</span></button>':'<button type="button" data-user-action="demote"><span class="uam-icon">↙</span><span>Remove Admin Access</span></button>';
+   const roleAction=restricted?"":u.role==="user"?'<button type="button" data-user-action="promote"><span class="uam-icon">↗</span><span>Promote to Admin</span></button>':'<button type="button" data-user-action="demote"><span class="uam-icon">↙</span><span>Remove Admin Access</span></button>';
    const restrictionAction=restricted?'<button type="button" data-user-action="restore"><span class="uam-icon">↺</span><span>Restore Account Access</span></button>':'<button type="button" data-user-action="suspend" class="uam-warning"><span class="uam-icon">Ⅱ</span><span>Suspend for 24 Hours</span></button><button type="button" data-user-action="ban" class="uam-danger"><span class="uam-icon">⊘</span><span>Permanently Ban</span></button>';
    actions=`<details class="user-action-menu">
     <summary aria-label="Manage ${esc(u.email)}"><span>Manage account</span><span class="uam-chevron" aria-hidden="true">⌄</span></summary>
