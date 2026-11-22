@@ -219,7 +219,7 @@ async function init(){
  $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;$("#categoryFilter").value=chip.dataset.category;syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();});
  $("#searchSubmit")?.addEventListener("click",()=>$("#search").dispatchEvent(new Event("input",{bubbles:true})));
  document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});
- document.querySelectorAll("#ytSidebar a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll("#ytSidebar .side-link").forEach(x=>x.classList.toggle("active",x===a));openAccountMenu(false);const tab=(a.getAttribute("href")||"").slice(1);if(tab)sendTabView(tab);if(tab==="admin")loadAdminDashboard();}));
+ document.querySelectorAll("#ytSidebar a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll("#ytSidebar .side-link").forEach(x=>x.classList.toggle("active",x===a));openAccountMenu(false);const href=a.getAttribute("href")||"";if(href.startsWith("/"))return;const tab=href.slice(1);if(tab)sendTabView(tab);}));
 function restoreHomeFilters(){
  const params=new URLSearchParams(location.search),cats=[...new Set(categories.map(c=>c.name).filter(Boolean))].sort();
  $("#categoryFilter").innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
