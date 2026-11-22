@@ -26,7 +26,7 @@ function play(v){
  if(dialog.animate){
   dialog.animate(
    [{opacity:0,transform:"translateY(22px) scale(.965)"},{opacity:1,transform:"translateY(0) scale(1)"}],
-   {duration:850,easing:"cubic-bezier(.16,1,.3,1)",fill:"both"}
+   {duration:700,easing:"cubic-bezier(.16,1,.3,1)",fill:"both"}
   );
  }
 }
@@ -42,7 +42,7 @@ function closePlayer(){
  if(!dialog.animate){finish();return;}
  const animation=dialog.animate(
   [{opacity:1,transform:"translateY(0) scale(1)"},{opacity:0,transform:"translateY(14px) scale(.975)"}],
-  {duration:420,easing:"cubic-bezier(.4,0,1,1)",fill:"forwards"}
+  {duration:350,easing:"cubic-bezier(.4,0,1,1)",fill:"forwards"}
  );
  animation.onfinish=finish;
 }
