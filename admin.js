@@ -40,7 +40,7 @@ function activateAdminTab(value){
  const target=validAdminTab(value);
  const allowedButton=document.querySelector('[data-tab="'+target+'"]:not([hidden])');
  const allowedPanel=$("#tab-"+target);
- if(!allowedButton||!allowedPanel||allowedPanel.hidden===true&&target==="site"&&$("#headerSiteTab").hidden)return;
+ if(!allowedButton||!allowedPanel)return;
  document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===target));
  document.querySelectorAll(".tab-panel").forEach(x=>x.hidden=x.id!=="tab-"+target);
  closeAdminMenu();
