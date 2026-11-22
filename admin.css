@@ -416,3 +416,79 @@ body.admin-gate-state{padding-top:64px!important}
  #adminList .uam-action-grid{grid-template-columns:1fr}
  #adminList .uam-security-section{border-left:0;border-top:1px solid #37393d;padding:11px 8px 3px}
 }
+
+
+/* Concept 04 — editorial, single-column account command panel */
+#adminList .user-action-popover{
+ width:min(354px,calc(100vw - 34px));
+ max-height:min(610px,calc(100vh - 132px));
+ padding:0;
+ overflow-y:auto;
+ border:1px solid #414246;
+ border-radius:10px;
+ background:linear-gradient(155deg,#1b1c1e 0%,#151618 58%,#111214 100%);
+ box-shadow:0 26px 68px rgba(0,0,0,.78),0 6px 18px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.055);
+ backdrop-filter:blur(18px) saturate(65%);
+}
+#adminList .uam-popover-head{
+ padding:13px 17px 12px;
+ background:linear-gradient(100deg,rgba(255,255,255,.045),rgba(255,255,255,.008));
+ border-bottom:1px solid #343639;
+}
+#adminList .uam-popover-head>div>span{
+ color:#85878b;font-size:8px;letter-spacing:.2em;font-weight:750;
+}
+#adminList .uam-popover-head strong{color:#ededee;font-size:10px;font-weight:650}
+#adminList .uam-live-dot{background:#aeb4ae;box-shadow:0 0 0 3px rgba(174,180,174,.09)}
+#adminList .uam-action-stack{display:flex;flex-direction:column;padding:5px 15px 10px}
+#adminList .uam-action-section{display:flex;flex-direction:column;gap:1px;padding:8px 0 9px}
+#adminList .uam-action-section+.uam-action-section{border-top:1px solid #343639}
+#adminList .uam-section-label{
+ padding:5px 7px 7px;margin:0;color:#85878b;
+ font-size:8px;font-weight:750;letter-spacing:.19em;line-height:1.4;
+}
+#adminList .user-action-popover button{
+ width:100%;min-height:37px;display:grid;grid-template-columns:25px minmax(0,1fr) 12px;
+ align-items:center;gap:10px;margin:1px 0;padding:6px 8px;
+ border:1px solid transparent;border-radius:5px;
+ background:transparent;color:#d6d7d9;
+ font-size:10.5px;font-weight:560;line-height:1.35;text-align:left;
+ box-shadow:none;transform:none;
+ transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+#adminList .user-action-popover button:hover{
+ transform:none;border-color:#3d3f43;background:#252629;color:#f5f5f6;
+ box-shadow:inset 0 1px rgba(255,255,255,.035);
+}
+#adminList .uam-icon{
+ width:23px;height:23px;display:grid;place-items:center;flex:0 0 23px;
+ border:1px solid #424449;border-radius:5px;
+ background:linear-gradient(145deg,#292b2e,#202124);
+ color:#c3c5c8;font-size:12px;line-height:1;
+ box-shadow:inset 0 1px rgba(255,255,255,.045);
+}
+#adminList .uam-chevron{justify-self:end;color:#777a7f;font-size:16px;line-height:1}
+#adminList .user-action-popover .uam-warning,
+#adminList .user-action-popover .uam-danger,
+#adminList .user-action-popover .uam-restore{background:transparent;box-shadow:none}
+#adminList .user-action-popover .uam-warning{color:#d0c0a3}
+#adminList .user-action-popover .uam-warning .uam-icon{border-color:#554b3c;color:#d0c0a3}
+#adminList .user-action-popover .uam-warning:hover{background:#29251f;border-color:#4b4235}
+#adminList .user-action-popover .uam-danger{color:#d0b1b1}
+#adminList .user-action-popover .uam-danger .uam-icon{border-color:#554142;color:#d0b1b1}
+#adminList .user-action-popover .uam-danger:hover{background:#292122;border-color:#4a393a}
+#adminList .user-action-popover .uam-restore{color:#c1cbc3}
+#adminList .user-action-popover .uam-restore .uam-icon{border-color:#465048;color:#c1cbc3}
+#adminList .user-action-popover .uam-restore:hover{background:#222823;border-color:#3c4940}
+#adminList .user-action-menu>summary{min-width:122px}
+#adminList .user-action-menu>summary:focus-visible,
+#adminList .user-action-popover button:focus-visible{
+ outline:2px solid #aeb1b6;outline-offset:2px;box-shadow:0 0 0 3px rgba(190,193,198,.08);
+}
+#adminList .user-management-row:has(.user-action-menu[open]){
+ border-color:#55575b;box-shadow:inset 0 1px rgba(255,255,255,.045),0 0 0 1px rgba(190,193,198,.035),0 8px 26px rgba(0,0,0,.2);
+}
+@media(max-width:680px){
+ #adminList .user-action-popover{width:min(354px,calc(100vw - 28px));max-height:calc(100vh - 125px)}
+ #adminList .uam-action-stack{padding-left:11px;padding-right:11px}
+}
