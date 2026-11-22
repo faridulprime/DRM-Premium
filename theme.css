@@ -496,3 +496,16 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   .topbar .brand{gap:6px}
   .topbar .brand-admin-suffix{font-size:11px;padding:3px 5px}
 }
+
+
+/* Higher-specificity correction: homepage #brandName has an ID rule earlier in theme.css. */
+.topbar .brand #brandName.brand-word{
+  font-size:var(--brand-title-size)!important;
+  font-family:'Space Grotesk',Arial,sans-serif!important;
+  letter-spacing:-.045em!important;
+}
+.topbar .brand .brand-mark{
+  width:var(--brand-icon-size)!important;
+  height:var(--brand-icon-size)!important;
+  flex-basis:var(--brand-icon-size)!important;
+}
