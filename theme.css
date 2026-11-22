@@ -509,3 +509,17 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   height:var(--brand-icon-size)!important;
   flex-basis:var(--brand-icon-size)!important;
 }
+
+
+/* Refined word spacing for a more premium, consistent brand lockup. */
+.topbar .brand .brand-word{
+  gap:7px;
+  letter-spacing:-.025em!important;
+}
+.topbar .brand #brandName.brand-word{
+  letter-spacing:-.025em!important;
+}
+.topbar .brand .brand-admin-suffix{
+  margin-left:5px;
+  letter-spacing:.015em;
+}
