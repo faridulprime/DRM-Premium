@@ -524,8 +524,8 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   letter-spacing:.015em;
 }
 
-/* Homepage-only: noticeably more open letter spacing; Admin brand is intentionally untouched. */
-.topbar:not(.admin-topbar) .brand,
-.topbar:not(.admin-topbar) .brand #brandName.brand-word{
-  letter-spacing:.055em!important;
+/* Shared brand lockup: identical spacing on every page; the Admin suffix keeps its own approved styling. */
+.topbar .brand .brand-word,
+.topbar .brand #brandName.brand-word{
+  letter-spacing:.09em!important;
 }
