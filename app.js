@@ -111,7 +111,7 @@ function openAccountMenu(open){
  const sidebar=$("#ytSidebar"),backdrop=$("#sidebarBackdrop"),toggle=$("#menuToggle");if(!sidebar||!toggle)return;
  const mobile=window.matchMedia("(max-width: 760px)").matches,state=Boolean(open);
  if(mobile){sidebar.classList.toggle("mobile-open",state);if(backdrop)backdrop.hidden=!state;document.body.classList.toggle("drawer-open",state);}
- else{document.body.classList.toggle("sidebar-collapsed",!state);}
+ else{document.body.classList.toggle("sidebar-open",state);}
  toggle.setAttribute("aria-expanded",String(state));toggle.setAttribute("aria-label",state?"মেনু বন্ধ করুন":"মেনু খুলুন");
 }
 async function restoreAccount(){try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}}
@@ -122,7 +122,7 @@ async function submitLogout(){const button=$("#logoutButton");button.disabled=tr
 
 async function init(){
  $("#headerLoginForm").addEventListener("submit",submitHeaderLogin);
- $("#menuToggle")?.addEventListener("click",()=>{const sidebar=$("#ytSidebar"),mobile=window.matchMedia("(max-width: 760px)").matches;openAccountMenu(mobile?!sidebar?.classList.contains("mobile-open"):document.body.classList.contains("sidebar-collapsed"));});
+ $("#menuToggle")?.addEventListener("click",()=>{const sidebar=$("#ytSidebar"),mobile=window.matchMedia("(max-width: 760px)").matches;openAccountMenu(mobile?!sidebar?.classList.contains("mobile-open"):!document.body.classList.contains("sidebar-open"));});
  $("#sidebarBackdrop")?.addEventListener("click",()=>openAccountMenu(false));
  $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;$("#categoryFilter").value=chip.dataset.category;renderLimit=RENDER_BATCH;render();});
  $("#searchSubmit")?.addEventListener("click",()=>$("#search").dispatchEvent(new Event("input",{bubbles:true})));
