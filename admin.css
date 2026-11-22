@@ -43,6 +43,21 @@ body.admin-gate-state{padding-top:64px!important}
 .inline-form{align-items:end;justify-content:flex-start;flex-wrap:wrap;margin:18px 0}
 .inline-form label{min-width:220px;flex:1}
 .data-list{display:grid;gap:10px;margin-top:18px}
+.active-users{margin:24px 0 30px;padding:18px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.018)}
+.active-users-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
+.active-users-head h3{margin:0 0 4px;font-size:15px;font-weight:650}.active-users-head p{margin:0;font-size:12px}
+.active-users-total{flex-shrink:0;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.04em}
+.active-user-group+.active-user-group{margin-top:20px}
+.active-user-group-heading{display:flex;align-items:center;gap:12px;margin-bottom:10px;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.035em}
+.active-user-group-heading i{height:1px;flex:1;background:var(--line)}
+.active-user-cards{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.active-user-card{display:inline-flex;align-items:center;gap:6px;max-width:100%;min-height:36px;padding:7px 10px;border:1px solid rgba(255,255,255,.075);border-radius:8px;background:rgba(255,255,255,.035);color:var(--ink)}
+.active-user-name{overflow-wrap:anywhere;font-size:12px;font-weight:550;line-height:1.35}
+.active-user-badge{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:3px 7px;border:1px solid;border-radius:5px;font-size:10px;font-weight:650;line-height:1.2}
+.active-user-badge.admin{color:#83efa5;background:rgba(131,239,165,.10);border-color:rgba(131,239,165,.2)}
+.active-user-badge.member{color:#fff;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22)}
+.active-user-badge.owner{color:#c4a5ff;background:rgba(168,125,255,.13);border-color:rgba(168,125,255,.3)}
+.active-user-empty{margin:0;color:var(--muted);font-size:12px}
 .data-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:#141414;color:var(--ink)}
 .data-row strong{display:block;font-size:14px;font-weight:600}
 .data-row small{display:block;margin-top:5px;color:var(--muted);font-size:12px}
@@ -68,6 +83,7 @@ body.admin-gate-state{padding-top:64px!important}
  .row-actions button{flex:1}
  .admin-main .row-actions select{flex:1}
  .admin-search{max-width:420px}
+ .active-users{padding:14px}.active-users-head{align-items:flex-start}.active-user-cards{gap:7px}
 }
 
 /* Gate panels are intentionally centered; this rule outranks the generic dashboard panel spacing. */
