@@ -34,7 +34,6 @@ function doPost(e) {
     }
 
     const isOwner = type === "owner-verification";
-    const productName = "DRM– Premium";
     const purpose = isOwner ? "Owner account verification" : "Email address verification";
     const subject = isOwner
       ? "Your DRM– Premium Owner verification code"
