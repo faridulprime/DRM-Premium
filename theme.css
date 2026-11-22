@@ -564,3 +564,14 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   font-weight:400!important;
   letter-spacing:0!important;
 }
+
+/* Brand title tracking; keep the Admin suffix in the original Space Grotesk font. */
+.topbar .brand .brand-word-main,
+.topbar .brand .brand-word-accent{
+  letter-spacing:.075em!important;
+}
+.topbar .brand .brand-admin-suffix{
+  font-family:'Space Grotesk',Arial,sans-serif!important;
+  font-weight:600!important;
+  letter-spacing:.015em!important;
+}
