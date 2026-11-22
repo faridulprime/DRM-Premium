@@ -67,3 +67,9 @@ body.admin-gate-state{padding-top:64px!important}
  .admin-main .row-actions select{flex:1}
  .admin-search{max-width:420px}
 }
+
+/* Gate panels are intentionally centered; this rule outranks the generic dashboard panel spacing. */
+.admin-main .panel.gate-panel{width:min(100%,620px);margin:36px auto;padding:28px}
+@media(max-width:760px){
+ .admin-main .panel.gate-panel{margin:24px auto;padding:20px}
+}
