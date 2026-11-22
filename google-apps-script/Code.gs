@@ -34,12 +34,35 @@ function doPost(e) {
     }
 
     const isOwner = type === "owner-verification";
-    GmailApp.sendEmail(
-      recipient,
-      isOwner ? "DRM Premium — Owner verification code" : "DRM Premium — Verify your email",
-      (isOwner ? "Your DRM Premium Owner verification code is " : "Your DRM Premium account verification code is ") + code +
-        ". It expires in " + Math.min(10, Math.max(1, Number(body.expiresInMinutes) || 10)) + " minutes. If you did not request this, ignore this email."
-    );
+    const productName = "DRM– Premium";
+    const purpose = isOwner ? "Owner account verification" : "Email address verification";
+    const subject = isOwner
+      ? "Your DRM– Premium Owner verification code"
+      : "Your DRM– Premium verification code";
+    const expiryMinutes = Math.min(10, Math.max(1, Number(body.expiresInMinutes) || 10));
+    const plainBody =
+      "DRM– Premium\n\n" +
+      purpose + "\n\n" +
+      "Your verification code is: " + code + "\n\n" +
+      "This code expires in " + expiryMinutes + " minutes.\n\n" +
+      "If you did not request this code, you can safely ignore this email. Do not share this code with anyone.\n\n" +
+      "— DRM– Premium";
+
+    const htmlBody =
+      '<!doctype html><html><body style="margin:0;padding:32px 16px;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#17202a;">' +
+      '<div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #e5e9ef;border-radius:12px;padding:32px;">' +
+      '<div style="font-size:20px;font-weight:700;letter-spacing:.2px;color:#17202a;">DRM– <span style="color:#3978c6;">Premium</span></div>' +
+      '<div style="margin-top:28px;font-size:18px;font-weight:700;">' + purpose + '</div>' +
+      '<p style="margin:12px 0 20px;color:#52606d;line-height:1.6;">Use the verification code below to continue. It is valid for ' + expiryMinutes + ' minutes.</p>' +
+      '<div style="padding:18px 12px;border:1px solid #dce5ef;border-radius:8px;background:#f7f9fc;text-align:center;font-size:30px;font-weight:700;letter-spacing:8px;color:#17202a;">' + code + '</div>' +
+      '<p style="margin:20px 0 0;color:#52606d;font-size:13px;line-height:1.6;">If you did not request this code, you can safely ignore this email. For your security, never share this code with anyone.</p>' +
+      '<div style="margin-top:28px;padding-top:18px;border-top:1px solid #edf0f3;color:#87919c;font-size:12px;">This is an automated security message from DRM– Premium.</div>' +
+      '</div></body></html>';
+
+    GmailApp.sendEmail(recipient, subject, plainBody, {
+      htmlBody: htmlBody,
+      name: "DRM– Premium"
+    });
     return output({ ok: true });
   } catch (err) {
     console.error(err);
