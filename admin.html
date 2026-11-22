@@ -9,8 +9,8 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Sora:wght@600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=c0e9ce2">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css?v=ov2-01">
 <link rel="stylesheet" href="theme.css?v=f697cc9">
 </head>
 <body class="admin-gate-state">
@@ -40,7 +40,8 @@
   </div>
   <div class="sidebar-section">
     <div class="sidebar-heading">Dashboard</div>
-    <button class="side-link active" type="button" data-tab="videos"><span class="side-icon">▶</span><span>ভিডিও</span></button>
+    <button class="side-link active" type="button" data-tab="overview"><span class="side-icon">▦</span><span>Overview</span></button>
+    <button class="side-link" type="button" data-tab="videos"><span class="side-icon">▶</span><span>ভিডিও</span></button>
     <button class="side-link" type="button" data-tab="categories"><span class="side-icon">▤</span><span>ক্যাটাগরি</span></button>
     <button class="side-link" type="button" data-tab="site" id="sidebarSiteTab" hidden><span class="side-icon">⚙</span><span>ওয়েবসাইট</span></button>
     <button class="side-link" type="button" data-tab="admins" id="sidebarAdminsTab" hidden><span class="side-icon">♙</span><span>Users & Admins</span></button>
@@ -54,7 +55,8 @@
 </aside>
 <nav class="category-bar admin-category-bar" id="adminCategoryBar" aria-label="Dashboard sections" hidden>
   <div class="category-tabs">
-    <button class="category-chip active" type="button" data-tab="videos">ভিডিও</button>
+    <button class="category-chip active" type="button" data-tab="overview">Overview</button>
+    <button class="category-chip" type="button" data-tab="videos">ভিডিও</button>
     <button class="category-chip" type="button" data-tab="categories">ক্যাটাগরি</button>
     <button class="category-chip" type="button" data-tab="site" id="headerSiteTab" hidden>ওয়েবসাইট</button>
     <button class="category-chip" type="button" data-tab="admins" id="headerAdminsTab" hidden>Users & Admins</button>
@@ -87,7 +89,19 @@
    <div><p class="eyebrow">DRM PREMIUM MANAGEMENT</p><h1>Dashboard</h1><p class="muted" id="adminIdentity"></p></div>
    <div class="dash-meta"><span class="dash-role" id="dashRole">ADMIN</span></div>
   </div>
-  <section id="tab-videos" class="panel tab-panel">
+  <section id="tab-overview" class="tab-panel overview-panel">
+  <div class="overview-heading"><div><p class="eyebrow">WORKSPACE SUMMARY</p><h2>Overview</h2><p class="muted">আপনার DRM– Premium কনটেন্ট ও কার্যক্রমের সংক্ষিপ্ত চিত্র।</p></div><span class="overview-live"><i></i> Live workspace</span></div>
+  <div class="overview-metrics" id="overviewMetrics" aria-live="polite">
+   <article class="overview-metric"><span>Total Videos</span><strong>—</strong><small>লোড হচ্ছে</small></article><article class="overview-metric"><span>Published</span><strong>—</strong><small>লোড হচ্ছে</small></article><article class="overview-metric"><span>Categories</span><strong>—</strong><small>লোড হচ্ছে</small></article><article class="overview-metric"><span>Active Admins</span><strong>—</strong><small>লোড হচ্ছে</small></article>
+  </div>
+  <div class="overview-grid">
+   <section class="overview-card"><div class="overview-card-head"><div><h3>Content status</h3><p class="muted">ভিডিও প্রকাশনার বর্তমান অবস্থা</p></div></div><div id="overviewContentStatus" class="overview-status"></div></section>
+   <section class="overview-card"><div class="overview-card-head"><div><h3>Quick actions</h3><p class="muted">প্রয়োজনীয় কাজ দ্রুত শুরু করুন</p></div></div><div class="overview-actions"><button type="button" data-go-tab="videos" data-action="new-video">＋ নতুন ভিডিও যোগ করুন</button><button type="button" data-go-tab="categories">▤ ক্যাটাগরি পরিচালনা</button><button type="button" data-go-tab="admins" id="overviewUsersAction" hidden>♙ Users & Admins</button></div></section>
+   <section class="overview-card overview-recent"><div class="overview-card-head"><div><h3>Recently added</h3><p class="muted">সর্বশেষ যুক্ত ভিডিও</p></div><button type="button" class="overview-text-action" data-go-tab="videos">সব ভিডিও দেখুন →</button></div><div id="overviewRecent"></div></section>
+   <section class="overview-card"><div class="overview-card-head"><div><h3>Workspace activity</h3><p class="muted">সিস্টেমে রেকর্ড হওয়া ভিজিট</p></div></div><div id="overviewActivity" class="overview-activity"><span>Tab views</span><strong>—</strong></div></section>
+  </div>
+ </section>
+ <section id="tab-videos" class="panel tab-panel" hidden>
    <div class="panel-head"><div><h2>ভিডিও পরিচালনা</h2><p class="muted">YouTube URL/ID, Thumbnail, category ও প্রকাশের অবস্থা।</p></div><button id="newVideo" class="primary small">＋ নতুন ভিডিও</button></div>
    <form id="videoForm" class="editor" hidden>
     <input name="id" type="hidden">
@@ -135,5 +149,5 @@
  </section>
  <p id="notice" class="notice" role="status" aria-live="polite"></p>
 </main>
-<script src="admin.js?v=3aee9f7"></script>
+<script src="admin.js?v=ov2-01"></script>
 </body></html>
