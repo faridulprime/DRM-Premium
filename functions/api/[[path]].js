@@ -74,7 +74,7 @@ async function handle(req,env){
   const existing=await env.DB.prepare("SELECT id FROM users WHERE email=? COLLATE NOCASE OR username=? COLLATE NOCASE").bind(email,username).first();
   if(existing)return fail("এই ইমেইল অথবা Username দিয়ে ইতিমধ্যে অ্যাকাউন্ট রয়েছে।",409);
   const now=Math.floor(Date.now()/1000),ip=req.headers.get("CF-Connecting-IP")||"unknown",ipHash=await hash(ip+env.SESSION_SECRET);
-  await env.DB.prepare("DELETE FROM user_registration_otps WHERE expires_at<?").bind(now).run();
+  await env.DB.prepare("DELETE FROM user_registration_otps WHERE created_at<?").bind(now-900).run();
   const recent=await env.DB.prepare("SELECT created_at FROM user_registration_otps WHERE email=?").bind(email).first();
   if(recent&&now-Number(recent.created_at)<60)return fail("নতুন কোড পাঠানোর আগে ১ মিনিট অপেক্ষা করুন।",429);
   const tries=await env.DB.prepare("SELECT COUNT(*) AS n FROM user_registration_otps WHERE ip_hash=? AND created_at>?").bind(ipHash,now-900).first();
