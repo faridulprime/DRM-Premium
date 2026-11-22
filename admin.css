@@ -566,3 +566,11 @@ body.user-details-open #adminList{
 @media(prefers-reduced-motion:reduce){
  .user-details-rail,#adminList,.user-details-trigger{transition:none!important}
 }
+
+/* User list compact rail-to-center transition */
+#adminList{width:min(56.25%,760px);max-width:760px;margin-left:0;margin-right:auto}
+body.user-details-open #adminList{width:calc(100% - 322px);max-width:1120px;margin-left:auto;margin-right:auto}
+@media(max-width:760px){
+ #adminList{width:100%;max-width:none}
+ body.user-details-open #adminList{width:100%;max-width:none;margin:0;transform:translateX(min(72vw,250px));opacity:.48;pointer-events:none}
+}
