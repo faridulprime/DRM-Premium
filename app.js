@@ -1,4 +1,25 @@
 const $=s=>document.querySelector(s);
+const REGISTER_DIALOG_STATE="__drmRegisterDialog";
+function openRegisterDialog(){
+ const dialog=$("#registerDialog");
+ if(!dialog||dialog.open)return;
+ history.pushState({...history.state,[REGISTER_DIALOG_STATE]:true},"",location.href);
+ dialog.showModal();
+}
+function closeRegisterDialog(){
+ const dialog=$("#registerDialog");
+ if(dialog?.open)dialog.close();
+ if(history.state?.[REGISTER_DIALOG_STATE])history.back();
+}
+function syncRegisterDialogWithHistory(){
+ const dialog=$("#registerDialog");
+ if(!dialog)return;
+ if(history.state?.[REGISTER_DIALOG_STATE]){
+  if(!dialog.open)dialog.showModal();
+ }else if(dialog.open){
+  dialog.close();
+ }
+}
 const demoVideos=[
  {id:"demo1",title:"The Art of Cinematic Storytelling",category:"Featured",youtube_id:"ysz5S6PUM-U",description:"একটি নমুনা ভিডিও। Admin Panel থেকে নিজের ভিডিও যোগ করুন।",featured:1,thumbnail_url:""},
  {id:"demo2",title:"Learn Something New Today",category:"Education",youtube_id:"ScMzIvxBSi4",description:"শিক্ষামূলক ভিডিওর নমুনা।",featured:0,thumbnail_url:""},
@@ -168,16 +189,18 @@ async function submitRegistration(e){
  status.classList.remove("error");status.textContent="";
  if(!/^\d{6}$/.test(code)){status.textContent="ইমেইলে পাওয়া ৬ সংখ্যার কোড দিন।";status.classList.add("error");return;}
  button.disabled=true;button.textContent="Verifying…";
- try{const res=await fetch("/api/auth/register-verify",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,username,password,code})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"অ্যাকাউন্ট তৈরি করা যায়নি।");const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated)throw new Error("অ্যাকাউন্ট তৈরি হয়েছে, কিন্তু Login session শুরু হয়নি। Login করুন।");$("#registerDialog").close();$("#registerForm").reset();$("#registerOtpGroup").hidden=true;$("#registerVerify").hidden=true;$("#registerCode").required=false;$("#registerSendCode").textContent="Send verification code";$("#headerLoginForm").reset();setSignedIn(me.user);$("#headerLoginStatus").textContent="Account created successfully.";}
+ try{const res=await fetch("/api/auth/register-verify",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,username,password,code})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"অ্যাকাউন্ট তৈরি করা যায়নি।");const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated)throw new Error("অ্যাকাউন্ট তৈরি হয়েছে, কিন্তু Login session শুরু হয়নি। Login করুন।");closeRegisterDialog();$("#registerForm").reset();$("#registerOtpGroup").hidden=true;$("#registerVerify").hidden=true;$("#registerCode").required=false;$("#registerSendCode").textContent="Send verification code";$("#headerLoginForm").reset();setSignedIn(me.user);$("#headerLoginStatus").textContent="Account created successfully.";}
  catch(error){status.textContent=error.message;status.classList.add("error");}
  finally{button.disabled=false;button.textContent="Verify & create account";}
 }
 async function submitHeaderLogin(e){e.preventDefault();const form=e.currentTarget,button=$("#headerLoginButton"),status=$("#headerLoginStatus"),email=$("#headerEmail").value.trim(),password=$("#headerPassword").value;status.classList.remove("error");status.textContent="";button.disabled=true;button.textContent="...";try{const res=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,password})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"লগইন করা যায়নি।");const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated)throw new Error("লগইন সেশন তৈরি হয়নি। আবার চেষ্টা করুন।");form.reset();setSignedIn(me.user);status.textContent="";}catch(err){status.textContent=err.message;status.classList.add("error");}finally{button.disabled=false;button.textContent="Login";}}
 async function init(){
  $("#headerLoginForm").addEventListener("submit",submitHeaderLogin);
- $("#createAccountButton")?.addEventListener("click",()=>{const d=$("#registerDialog");if(d&&!d.open)d.showModal();});
- $("#registerClose")?.addEventListener("click",()=>$("#registerDialog").close());
- $("#registerDialog")?.addEventListener("click",e=>{if(e.target===$("#registerDialog"))$("#registerDialog").close();});
+ $("#createAccountButton")?.addEventListener("click",openRegisterDialog);
+ $("#registerClose")?.addEventListener("click",closeRegisterDialog);
+ $("#registerDialog")?.addEventListener("click",e=>{if(e.target===$("#registerDialog"))closeRegisterDialog();});
+ $("#registerDialog")?.addEventListener("cancel",e=>{e.preventDefault();closeRegisterDialog();});
+ window.addEventListener("popstate",syncRegisterDialogWithHistory);
  $("#registerSendCode")?.addEventListener("click",requestRegistrationCode);
  $("#registerForm")?.addEventListener("submit",submitRegistration);
  $("#menuToggle")?.addEventListener("click",()=>{const sidebar=$("#ytSidebar"),mobile=window.matchMedia("(max-width: 760px)").matches;openAccountMenu(mobile?!sidebar?.classList.contains("mobile-open"):!document.body.classList.contains("sidebar-open"));});
