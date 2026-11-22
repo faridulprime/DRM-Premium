@@ -18,9 +18,9 @@ function show(id){
 }
 function notice(msg,error=false){const el=$("#notice");if(!el)return;el.textContent=msg;el.classList.toggle("error",error)}
 function ytId(value){const s=value.trim();if(/^[\w-]{11}$/.test(s))return s;try{const u=new URL(s),host=u.hostname.toLowerCase();if(host==="youtu.be"){const id=u.pathname.split("/").filter(Boolean)[0]||"";return /^[\w-]{11}$/.test(id)?id:""}if(!["youtube.com","www.youtube.com","m.youtube.com","youtube-nocookie.com","www.youtube-nocookie.com"].includes(host))return"";const id=u.searchParams.get("v")||u.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/)?.[1]||"";return /^[\w-]{11}$/.test(id)?id:""}catch{return ""}}
-async function status(){try{applyAdminTheme();const s=await api("auth/status");if(!s.configured){show("setup");return}const me=await api("auth/me");if(me.authenticated){state.user=me.user;show("dashboard");startAdminPresence();$("#adminIdentity").textContent=me.user.email+" · "+(me.user.role==="owner"?"OWNER":me.user.role==="admin"?"ADMIN":"USER");await refresh();activateAdminTab(currentAdminTab())}else{state.user=null;show("login")}}catch(e){state.user=null;show("login");notice(e.message,true)}}
+async function status(){try{applyAdminTheme();const s=await api("auth/status");if(!s.configured){show("setup");return}const me=await api("auth/me");if(me.authenticated){state.user=me.user;show("dashboard");startAdminPresence();$("#adminIdentity").textContent=me.user.email+" · "+(me.user.role==="owner"?"OWNER":me.user.role==="admin"?"ADMIN":"USER");await refresh();activateAdminTab(currentAdminTab());openHashSelectedUser()}else{state.user=null;show("login")}}catch(e){state.user=null;show("login");notice(e.message,true)}}
 async function applyAdminTheme(){try{const settings=await api("settings");if(/^#[0-9a-f]{6}$/i.test(settings.accent_color||"")){document.documentElement.style.setProperty("--accent",settings.accent_color);document.documentElement.style.setProperty("--red",settings.accent_color);}}catch{}}
-async function refresh(){const [videos,categories]=await Promise.all([api("admin/videos"),api("admin/categories")]);state={...state,videos,categories};renderVideos();renderCategories();await loadOverviewAnalytics();renderOverview();if(state.user.role==="owner"){const [settings,users]=await Promise.all([api("settings"),api("admin/users")]);state.settings=settings;state.users=users;renderSettings();renderAdmins();applyAdminThemeFromSettings(settings);["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab"].forEach(id=>$("#"+id).hidden=false);await loadActiveUsers();}else{["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab"].forEach(id=>$("#"+id).hidden=true);}}
+async function refresh(){const [videos,categories]=await Promise.all([api("admin/videos"),api("admin/categories")]);state={...state,videos,categories};renderVideos();renderCategories();await loadOverviewAnalytics();renderOverview();if(state.user.role==="owner"){const [settings,users]=await Promise.all([api("settings"),api("admin/users")]);state.settings=settings;state.users=users;renderSettings();renderAdmins();applyAdminThemeFromSettings(settings);["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab","liveUsersSidebarTab","headerLiveUsersTab"].forEach(id=>$("#"+id).hidden=false);await loadActiveUsers();}else{["headerSiteTab","headerAdminsTab","sidebarSiteTab","sidebarAdminsTab","liveUsersSidebarTab","headerLiveUsersTab"].forEach(id=>$("#"+id).hidden=true);}}
 function applyAdminThemeFromSettings(settings){if(/^#[0-9a-f]{6}$/i.test(settings?.accent_color||"")){document.documentElement.style.setProperty("--accent",settings.accent_color);document.documentElement.style.setProperty("--red",settings.accent_color);}}
 async function loadOverviewAnalytics(){try{state.analytics=await api("admin/analytics")}catch{state.analytics=null}}
 function renderOverview(){
@@ -133,8 +133,14 @@ function activateAdminTab(value){
  closeAdminMenu();
 }
 function currentAdminTab(){
- const match=location.hash.match(/^#tab=(overview|videos|categories|site|admins)$/);
+ const match=location.hash.match(/^#tab=(overview|videos|categories|site|admins)(?:&|$)/);
  return match?match[1]:"overview";
+}
+function openHashSelectedUser(){
+ const match=location.hash.match(/[?&]user=([^&]+)/);
+ if(!match||state.user?.role!=="owner")return;
+ const id=decodeURIComponent(match[1]);
+ if(state.users?.some(user=>String(user.id)===id))openUserDetailsPanel(id);
 }
 function navigateAdminTab(target){
  target=validAdminTab(target);
@@ -144,7 +150,7 @@ function navigateAdminTab(target){
 }
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>navigateAdminTab(b.dataset.tab));
 window.addEventListener("hashchange",()=>{
- if(!$("#dashboard").hidden)activateAdminTab(currentAdminTab());
+ if(!$("#dashboard").hidden){activateAdminTab(currentAdminTab());openHashSelectedUser();}
 });
 $("#newVideo").onclick=()=>editVideo("");$("#cancelVideo").onclick=()=>{$("#videoForm").hidden=true};
 $("#videoForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={title:f.elements.title.value.trim(),category:f.elements.category.value,youtube_id:ytId(f.elements.youtube_id.value),thumbnail_url:f.elements.thumbnail_url.value.trim(),description:f.elements.description.value.trim(),featured:f.elements.featured.checked,published:f.elements.published.checked};if(!body.youtube_id){notice("সঠিক YouTube URL বা Video ID দিন।",true);return}try{if(f.elements.id.value)await api("admin/videos/"+encodeURIComponent(f.elements.id.value),{method:"PUT",body:JSON.stringify(body)});else await api("admin/videos",{method:"POST",body:JSON.stringify(body)});f.reset();f.hidden=true;await refresh();notice("ভিডিও সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
