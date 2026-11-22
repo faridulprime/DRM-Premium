@@ -244,3 +244,73 @@ body.admin-gate-state{padding-top:64px!important}
  .user-action-popover{right:0;width:min(370px,calc(100vw - 36px))}
 }
 @media(max-width:390px){.uam-action-grid{grid-template-columns:1fr}.uam-security-section{border-left:0;border-top:1px solid rgba(173,190,208,.1);padding:8px 3px 3px}.user-meta-line{gap:6px}}
+
+
+/* Account menu: open upward into its own top stacking layer, never behind sibling rows. */
+#adminList .user-management-row{isolation:auto;z-index:0}
+#adminList .user-management-row:has(.user-action-menu[open]){z-index:120;position:relative}
+#adminList .user-action-menu{z-index:121}
+#adminList .user-action-menu[open]{z-index:121}
+#adminList .user-action-popover{
+ top:auto;
+ bottom:calc(100% + 11px);
+ right:0;
+ width:min(410px,calc(100vw - 40px));
+ max-height:min(540px,calc(100vh - 150px));
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ border:1px solid rgba(173,194,219,.27);
+ border-radius:14px;
+ background:linear-gradient(145deg,rgba(34,43,54,.985),rgba(16,21,28,.99) 72%);
+ box-shadow:0 30px 80px rgba(0,0,0,.76),0 7px 20px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.075);
+ backdrop-filter:blur(22px) saturate(125%);
+ animation:userMenuEnterUp .16s cubic-bezier(.2,.75,.25,1);
+}
+@keyframes userMenuEnterUp{from{opacity:0;transform:translateY(7px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+#adminList .uam-popover-head{padding:16px 17px 14px;background:linear-gradient(100deg,rgba(126,157,190,.09),rgba(255,255,255,.012))}
+#adminList .uam-popover-head>div>span{font-size:8px;letter-spacing:.19em;color:#9aacc0}
+#adminList .uam-popover-head strong{font-size:11px;letter-spacing:.01em}
+#adminList .uam-action-grid{grid-template-columns:1.08fr .92fr;gap:0;padding:12px}
+#adminList .uam-action-section{padding:3px 6px}
+#adminList .uam-security-section{padding-left:13px}
+#adminList .uam-section-label{padding:9px 8px 10px;font-size:8px;letter-spacing:.17em;color:#91a1b4}
+#adminList .user-action-popover button{
+ min-height:42px;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ margin:2px 0;
+ padding:9px 10px;
+ border:1px solid transparent;
+ border-radius:8px;
+ background:rgba(255,255,255,.018);
+ color:#dce5ef;
+ font-size:10.5px;
+ font-weight:570;
+ line-height:1.35;
+ transition:background .15s ease,border-color .15s ease,transform .15s ease;
+}
+#adminList .user-action-popover button:hover{
+ transform:translateX(2px);
+ border-color:rgba(161,188,218,.16);
+ background:rgba(139,169,201,.105);
+ color:#fff;
+}
+#adminList .uam-icon{
+ width:24px;height:24px;flex-basis:24px;
+ border-radius:7px;
+ background:rgba(155,181,210,.07);
+ border-color:rgba(164,190,220,.17);
+}
+#adminList .user-action-popover .uam-warning{background:rgba(178,139,76,.055);color:#e8c994}
+#adminList .user-action-popover .uam-danger{background:rgba(176,91,91,.055);color:#e6aaaa}
+#adminList .user-action-popover .uam-restore{background:rgba(92,157,112,.055);color:#a8d8b5}
+#adminList .uam-security-section{border-left-color:rgba(173,190,208,.14)}
+#adminList .user-action-menu>summary{position:relative;z-index:1}
+#adminList .user-management-row:has(.user-action-menu[open]) .user-avatar,
+#adminList .user-management-row:has(.user-action-menu[open]) .user-row-identity{filter:brightness(.82)}
+@media(max-width:680px){
+ #adminList .user-action-popover{width:min(410px,calc(100vw - 32px));right:0}
+ #adminList .uam-action-grid{grid-template-columns:1fr}
+ #adminList .uam-security-section{border-left:0;border-top:1px solid rgba(173,190,208,.14);padding:10px 6px 3px}
+}
