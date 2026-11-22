@@ -3942,3 +3942,19 @@ body.sidebar-open .category-bar{left:240px!important}
   .sidebar-backdrop:not([hidden]){display:block!important}
   .category-bar,body.sidebar-open .category-bar{left:0!important}
 }
+
+/* New standalone YouTube-style hamburger control; legacy menu-toggle styles are not used */
+.topbar>.yt-menu-trigger{
+  appearance:none!important;-webkit-appearance:none!important;
+  display:grid!important;place-items:center!important;
+  flex:0 0 40px!important;width:40px!important;height:40px!important;
+  min-width:40px!important;min-height:40px!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:50%!important;background:transparent!important;
+  color:#f1f1f1!important;box-shadow:none!important;transform:none!important;
+  cursor:pointer!important;transition:background .16s ease!important;
+}
+.topbar>.yt-menu-trigger:hover{background:#272727!important;transform:none!important;box-shadow:none!important}
+.topbar>.yt-menu-trigger:active{background:#3a3a3a!important;transform:scale(.96)!important}
+.topbar>.yt-menu-trigger:focus-visible{outline:2px solid #8ab4f8!important;outline-offset:2px!important}
+.topbar>.yt-menu-trigger svg{display:block!important;width:24px!important;height:24px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important}
+@media(max-width:760px){.topbar>.yt-menu-trigger{flex-basis:38px!important;width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important}}
