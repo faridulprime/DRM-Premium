@@ -350,3 +350,104 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
 .yt-sidebar .side-link{transition:background-color 220ms ease,color 220ms ease,transform 260ms ease}
 .yt-sidebar .side-link:hover{transform:translateX(3px)}
 @keyframes drawerBackdropFade{from{opacity:0}to{opacity:1}}
+
+
+/* Premium micro-interactions — restrained motion across shared UI. */
+.category-chip,
+.yt-search button,
+.topbar>.yt-menu-trigger,
+.topbar>#headerLoginForm>.yt-login-action,
+.admin-main button,
+.close{
+  transition:
+    background-color 260ms ease,
+    border-color 260ms ease,
+    color 260ms ease,
+    transform 260ms cubic-bezier(.2,.8,.2,1),
+    opacity 260ms ease !important;
+}
+.category-chip:active,
+.admin-main button:active,
+.yt-search button:active{
+  transform:scale(.97);
+}
+
+/* Video thumbnails get a subtle focus/hover lift without moving the card grid. */
+.thumb{
+  transition:transform 420ms cubic-bezier(.2,.8,.2,1),filter 420ms ease;
+}
+.video-card:hover .thumb,
+.video-card:focus-within .thumb{
+  transform:scale(1.025);
+  filter:brightness(1.06);
+}
+
+/* Player and Builder history dialogs enter with the same soft, deliberate motion. */
+.player-dialog[open],
+.sb-dialog[open]{
+  animation:premiumDialogIn 420ms cubic-bezier(.16,1,.3,1) both;
+}
+.player-dialog[open]::backdrop,
+.sb-dialog[open]::backdrop{
+  animation:premiumBackdropIn 360ms ease both;
+}
+@keyframes premiumDialogIn{
+  from{opacity:0;transform:translateY(14px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes premiumBackdropIn{
+  from{background:rgba(0,0,0,0)}
+  to{background:rgba(0,0,0,.62)}
+}
+
+/* Admin screen changes and revealed forms get a quiet entrance. */
+#setup:not([hidden]),
+#login:not([hidden]),
+#dashboard:not([hidden]),
+.tab-panel:not([hidden]){
+  animation:premiumContentIn 380ms cubic-bezier(.16,1,.3,1) both;
+}
+.editor:not([hidden]){
+  animation:premiumContentIn 360ms cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes premiumContentIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Status messages appear smoothly without changing their layout. */
+.notice:not(:empty),
+.admin-message,
+.admin-error{
+  animation:premiumStatusIn 300ms ease both;
+}
+@keyframes premiumStatusIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .thumb,
+  .category-chip,
+  .yt-search button,
+  .topbar>.yt-menu-trigger,
+  .topbar>#headerLoginForm>.yt-login-action,
+  .admin-main button,
+  .close{
+    transition-duration:0.01ms !important;
+  }
+  .player-dialog[open],
+  .sb-dialog[open],
+  .player-dialog[open]::backdrop,
+  .sb-dialog[open]::backdrop,
+  #setup:not([hidden]),
+  #login:not([hidden]),
+  #dashboard:not([hidden]),
+  .tab-panel:not([hidden]),
+  .editor:not([hidden]),
+  .notice:not(:empty),
+  .admin-message,
+  .admin-error{
+    animation:none !important;
+  }
+}
