@@ -53,11 +53,11 @@ The first migration creates the original users, sessions, login-attempt throttli
 
 The second migration adds usernames, email-verification state, Owner role and content ownership columns. It promotes the first existing account to Owner. If the Owner is created after migration, the bootstrap endpoint assigns any legacy unowned content to that Owner.
 
-Run all six migration files once per database in the documented order: `0001`, `0002`, `0003`, both `0004` files, then `0005_site_builder_foundation.sql`. Keep D1 backups/exports before applying schema changes to a database containing important data.
+Run the migrations once per database in the documented order: `0001`, `0002`, `0003`, both `0004` files, then `0005_site_builder_foundation.sql`, `0006_active_user_presence.sql`, and `0007_user_registration.sql`. Keep D1 backups/exports before applying schema changes to a database containing important data.
 
 ## Important implementation status / limitations
 
-- Public account registration and email-verification delivery are not implemented yet. The Owner can only promote an existing verified User once registration/verification is added. Until then, the Owner role controls are not yet a complete public onboarding flow.
+- Public account registration is implemented as a two-step email-verified flow. Apply `migrations/0007_user_registration.sql` to the Preview D1 database before enabling it. New public accounts are created with the `user` role only; Owner/Admin privileges remain Owner-controlled.
 - Google Authenticator (TOTP), SMS OTP, password reset and email-based account recovery are not implemented yet.
 - The initial Owner setup verifies the configured Owner email with a one-time code sent through Gmail using the Google Apps Script mailer; no Owner password, OTP, or mailer token is stored in source code.
 - Direct binary image upload is not included; the current site accepts HTTPS image URLs.
