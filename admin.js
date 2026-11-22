@@ -85,7 +85,7 @@ function currentAdminTab(){
 function navigateAdminTab(target){
  target=validAdminTab(target);
  if(target==="site"&&$("#headerSiteTab").hidden||target==="admins"&&$("#headerAdminsTab").hidden)return;
- if(location.hash!=="#tab="+target)location.hash="tab="+target;
+ if(location.hash!=="#tab="+target){location.hash="tab="+target;return;}
  activateAdminTab(target);
 }
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>navigateAdminTab(b.dataset.tab));
