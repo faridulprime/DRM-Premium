@@ -55,25 +55,63 @@ async function loadActiveUsers(){if(state.user?.role!=="owner")return;try{render
 function startAdminPresence(){const beat=()=>{api("presence",{method:"POST",body:"{}"}).catch(()=>{});api("admin/presence",{method:"POST",body:"{}"}).catch(()=>{});};beat();if(activeUsersTimer)clearInterval(activeUsersTimer);activeUsersTimer=setInterval(()=>{beat();if(state.user?.role==="owner"&&currentAdminTab()==="admins")loadActiveUsers();if(state.user?.role==="owner")loadOverviewAnalytics().then(renderOverview);},30000);}
 function renderAdmins(){
  $("#adminList").innerHTML=state.users.map(u=>{
-  const date=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at));
+  const created=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at));
+  const date=Number.isNaN(created.getTime())?"Date unavailable":created.toLocaleDateString();
+  const restricted=!!u.restriction_type&&(u.restriction_expires_at==null||Number(u.restriction_expires_at)>Math.floor(Date.now()/1000));
+  const restrictionLabel=restricted?(u.restriction_type==="ban"?"BANNED":"SUSPENDED"):"";
   const roleLabel=u.role==="owner"?"OWNER · Protected":u.role==="admin"?"ADMIN":"USER";
-  const actions=u.role==="owner"?"<span class=\"user-protected-label\">OWNER · Protected</span>":`
-   <details class="user-action-menu">
-    <summary aria-label="Manage ${esc(u.email)}">Manage <span aria-hidden="true">⌄</span></summary>
-    <div class="user-action-popover" role="group" aria-label="User actions">
-     ${u.role==="user"?'<button type="button" data-user-action="promote">Promote to Admin</button>':'<button type="button" data-user-action="demote">Remove Admin Access</button>'}
-     <button type="button" data-user-action="details">View Account Details</button>
-     <button type="button" data-user-action="copy">Copy Email</button>
-     <div class="user-menu-divider"></div>
-     <button type="button" class="user-menu-danger" data-user-action="revoke">Revoke All Sessions</button>
+  let actions="<span class=\"user-protected-label\">OWNER · Protected</span>";
+  if(u.role!=="owner"){
+   const roleAction=u.role==="user"?'<button type="button" data-user-action="promote"><span class="uam-icon">↗</span><span>Promote to Admin</span></button>':'<button type="button" data-user-action="demote"><span class="uam-icon">↙</span><span>Remove Admin Access</span></button>';
+   const restrictionAction=restricted?'<button type="button" data-user-action="restore"><span class="uam-icon">↺</span><span>Restore Account Access</span></button>':'<button type="button" data-user-action="suspend" class="uam-warning"><span class="uam-icon">Ⅱ</span><span>Suspend for 24 Hours</span></button><button type="button" data-user-action="ban" class="uam-danger"><span class="uam-icon">⊘</span><span>Permanently Ban</span></button>';
+   actions=`<details class="user-action-menu">
+    <summary aria-label="Manage ${esc(u.email)}"><span>Manage account</span><span class="uam-chevron" aria-hidden="true">⌄</span></summary>
+    <div class="user-action-popover" role="group" aria-label="Account actions">
+     <div class="uam-section-label">ROLE & ACCOUNT</div>
+     ${roleAction}
+     <button type="button" data-user-action="details"><span class="uam-icon">◎</span><span>Account details</span></button>
+     <button type="button" data-user-action="activity"><span class="uam-icon">◷</span><span>Most active hours</span></button>
+     <button type="button" data-user-action="copy"><span class="uam-icon">▢</span><span>Copy email address</span></button>
+     <div class="uam-divider"></div>
+     <div class="uam-section-label">SECURITY</div>
+     <button type="button" data-user-action="revoke"><span class="uam-icon">⇥</span><span>Revoke all sessions</span></button>
+     ${restrictionAction}
     </div>
    </details>`;
+  }
+  const status=restricted?'<span class="user-restriction-status '+(u.restriction_type==="ban"?"banned":"suspended")+'">'+restrictionLabel+'</span>':"";
   return `<div class="data-row user-management-row" data-user-row="${esc(u.id)}">
-   <div class="user-row-identity"><strong>${esc(u.email)}</strong><small>${esc(roleLabel)} · ${Number.isNaN(date.getTime())?"Date unavailable":date.toLocaleDateString()} · ${u.email_verified?"Verified":"Unverified"}</small></div>
+   <div class="user-row-identity"><strong>${esc(u.email)}</strong><small>${esc(roleLabel)} · ${esc(date)} · ${u.email_verified?"Verified":"Unverified"} ${status}</small></div>
    <div class="row-actions">${actions}</div>
   </div>`;
  }).join("")||'<p class="muted">এখনো কোনো ব্যবহারকারী নেই।</p>';
 }
+async function restrictUser(id,action){
+ const labels={suspend:"এই অ্যাকাউন্ট ২৪ ঘণ্টার জন্য স্থগিত হবে এবং সব সক্রিয় Session বাতিল হবে।",ban:"এই অ্যাকাউন্ট স্থায়ীভাবে নিষিদ্ধ হবে। ব্যবহারকারী আর Login করতে পারবেন না; তার কনটেন্ট/ডেটা মুছে ফেলা হবে না।",restore:"এই অ্যাকাউন্টের স্থগিতাদেশ/নিষেধাজ্ঞা তুলে নেওয়া হবে।"};
+ if(!confirm(labels[action]||"চালিয়ে যাবেন?"))return;
+ if(action==="ban"&&!confirm("এটি স্থায়ী নিষেধাজ্ঞা। নিশ্চিতভাবে এই অ্যাকাউন্ট Ban করবেন?"))return;
+ let reason="";
+ if(action==="suspend"||action==="ban"){reason=prompt("কারণ লিখুন (ঐচ্ছিক):","")||"";reason=reason.trim().slice(0,500);}
+ const payload={action:action==="suspend"?"suspend_24h":action==="ban"?"ban_permanent":"restore_access",reason};
+ try{await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify(payload)});await refresh();notice(action==="suspend"?"অ্যাকাউন্ট ২৪ ঘণ্টার জন্য স্থগিত হয়েছে।":action==="ban"?"অ্যাকাউন্ট স্থায়ীভাবে নিষিদ্ধ হয়েছে।":"অ্যাকাউন্টের Access পুনরুদ্ধার হয়েছে।");}
+ catch(e){notice(e.message,true);await refresh();}
+}
+async function showUserActivity(id){
+ const u=state.users.find(x=>String(x.id)===String(id));if(!u)return;
+ $("#userDetailsTitle").textContent="Most Active Hours";
+ $("#userDetailsContent").innerHTML='<p class="muted">গত ৯০ দিনের Activity লোড হচ্ছে…</p>';
+ $("#userDetailsDialog").showModal();
+ try{
+  const data=await api("admin/users/"+encodeURIComponent(id)+"/activity");
+  const counts=Array(24).fill(0);
+  for(const item of data.hours||[]){const hour=new Date(Number(item.hour_start)*1000).getHours();counts[hour]++;}
+  const max=Math.max(0,...counts),peak=counts.indexOf(max);
+  if(!max){$("#userDetailsContent").innerHTML='<p class="muted">এই অ্যাকাউন্টের ঘণ্টাভিত্তিক Activity History এখনো নেই। Tracking চালুর পর থেকে তথ্য জমা হবে।</p>';return;}
+  const label=h=>{const d=new Date();d.setHours(h,0,0,0);return d.toLocaleTimeString([], {hour:"numeric",hour12:true});};
+  $("#userDetailsContent").innerHTML='<div class="activity-summary"><span>Most observed hour</span><strong>'+label(peak)+'</strong><small>গত ৯০ দিনের '+max+'টি সক্রিয় ঘণ্টার রেকর্ড</small></div><div class="activity-hour-list">'+counts.map((n,h)=>'<div class="activity-hour-row"><span>'+label(h)+'</span><div class="activity-hour-track"><i style="width:'+(max?Math.round(n/max*100):0)+'%"></i></div><b>'+n+'</b></div>').join("")+'</div><p class="activity-disclaimer">প্রতিটি রেকর্ড মানে ওই ঘণ্টায় অন্তত একবার Activity শনাক্ত হয়েছে; এটি স্ক্রিন-টাইম বা ধারাবাহিক ব্যবহারের সময় নয়।</p>';
+ }catch(e){$("#userDetailsContent").innerHTML='<p class="notice error">'+esc(e.message)+'</p>';}
+}
+
 
 $("#sendOwnerCode").onclick=async()=>{const f=$("#setupForm"),email=f.elements.email.value.trim();if(!email){notice("Owner email দিন।",true);return}try{await api("auth/owner-otp",{method:"POST",body:JSON.stringify({email})});notice("Verification code ইমেইলে পাঠানো হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#setupForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await api("auth/setup",{method:"POST",body:JSON.stringify({email:f.get("email"),username:f.get("username"),password:f.get("password"),code:f.get("code")})});notice("Owner account তৈরি হয়েছে।");await status()}catch(err){notice(err.message,true)}};
@@ -134,12 +172,12 @@ const adminForm=$("#adminForm");if(adminForm)adminForm.hidden=true;
 async function changeRole(id,role){if(!confirm(role==="admin"?"এই ব্যবহারকারীকে Admin করবেন?":"এই ব্যক্তির Admin permission বাতিল করবেন?"))return;try{await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({role})});await refresh();notice(role==="admin"?"Admin permission দেওয়া হয়েছে।":"Admin permission বাতিল হয়েছে।")}catch(e){notice(e.message,true);await refresh()}}
 async function revokeUserSessions(id){if(!confirm("এই ব্যবহারকারীর সব সক্রিয় Login session বাতিল করবেন? পরবর্তীবার তাকে আবার Login করতে হবে।"))return;try{const r=await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({action:"revoke_sessions"})});notice("সক্রিয় Session বাতিল হয়েছে ("+Number(r.revokedSessions||0)+")।")}catch(e){notice(e.message,true)}}
 function showUserDetails(id){
- const u=state.users.find(x=>String(x.id)===String(id));if(!u)return;
+ const u=state.users.find(x=>String(x.id)===String(id));if(!u)return;$("#userDetailsTitle").textContent="Account Details";
  const d=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at));
  $("#userDetailsContent").innerHTML=[
   ["Email",u.email],["Username",u.username||"—"],["Role",String(u.role||"").toUpperCase()],
   ["Account created",Number.isNaN(d.getTime())?"Unavailable":d.toLocaleString()],
-  ["Email status",u.email_verified?"Verified":"Unverified"]
+  ["Email status",u.email_verified?"Verified":"Unverified"],["Account restriction",u.restriction_type?(u.restriction_type==="ban"?"Permanently banned":(u.restriction_expires_at?new Date(Number(u.restriction_expires_at)*1000).toLocaleString():"Suspended")):"None"],["Restriction reason",u.restriction_reason||"—"]
  ].map(([k,v])=>'<div class="user-detail-item"><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>').join("");
  $("#userDetailsDialog").showModal();
 }
@@ -153,6 +191,10 @@ $("#adminList").addEventListener("click",async e=>{
  if(action==="promote")return changeRole(id,"admin");
  if(action==="demote")return changeRole(id,"user");
  if(action==="details")return showUserDetails(id);
+ if(action==="activity")return showUserActivity(id);
+ if(action==="suspend")return restrictUser(id,"suspend");
+ if(action==="ban")return restrictUser(id,"ban");
+ if(action==="restore")return restrictUser(id,"restore");
  if(action==="revoke")return revokeUserSessions(id);
  if(action==="copy"){const u=state.users.find(x=>String(x.id)===String(id));try{await navigator.clipboard.writeText(u.email);notice("ইমেইল কপি হয়েছে।")}catch{notice("Clipboard access পাওয়া যায়নি।",true)}}
 });
