@@ -91,7 +91,7 @@ async function restrictUser(id,action){
  if(!confirm(labels[action]||"চালিয়ে যাবেন?"))return;
  if(action==="ban"&&!confirm("এটি স্থায়ী নিষেধাজ্ঞা। নিশ্চিতভাবে এই অ্যাকাউন্ট Ban করবেন?"))return;
  let reason="";
- if(action==="suspend"||action==="ban"){reason=prompt("কারণ লিখুন (ঐচ্ছিক):","")||"";reason=reason.trim().slice(0,500);}
+ if(action==="suspend"||action==="ban"){const entered=prompt("কারণ লিখুন (ঐচ্ছিক):","");if(entered===null)return;reason=entered.trim().slice(0,500);}
  const payload={action:action==="suspend"?"suspend_24h":action==="ban"?"ban_permanent":"restore_access",reason};
  try{await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify(payload)});await refresh();notice(action==="suspend"?"অ্যাকাউন্ট ২৪ ঘণ্টার জন্য স্থগিত হয়েছে।":action==="ban"?"অ্যাকাউন্ট স্থায়ীভাবে নিষিদ্ধ হয়েছে।":"অ্যাকাউন্টের Access পুনরুদ্ধার হয়েছে।");}
  catch(e){notice(e.message,true);await refresh();}
@@ -177,7 +177,7 @@ function showUserDetails(id){
  $("#userDetailsContent").innerHTML=[
   ["Email",u.email],["Username",u.username||"—"],["Role",String(u.role||"").toUpperCase()],
   ["Account created",Number.isNaN(d.getTime())?"Unavailable":d.toLocaleString()],
-  ["Email status",u.email_verified?"Verified":"Unverified"],["Account restriction",u.restriction_type?(u.restriction_type==="ban"?"Permanently banned":(u.restriction_expires_at?new Date(Number(u.restriction_expires_at)*1000).toLocaleString():"Suspended")):"None"],["Restriction reason",u.restriction_reason||"—"]
+  ["Email status",u.email_verified?"Verified":"Unverified"],["Account restriction",u.restriction_type&&(u.restriction_expires_at==null||Number(u.restriction_expires_at)>Math.floor(Date.now()/1000))?(u.restriction_type==="ban"?"Permanently banned":(u.restriction_expires_at?new Date(Number(u.restriction_expires_at)*1000).toLocaleString():"Suspended")):"None"],["Restriction reason",u.restriction_reason||"—"]
  ].map(([k,v])=>'<div class="user-detail-item"><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>').join("");
  $("#userDetailsDialog").showModal();
 }
