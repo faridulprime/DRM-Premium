@@ -109,8 +109,14 @@ function setSignedIn(user){setVisualEditor(user);const form=$("#headerLoginForm"
 function openAccountMenu(open){
  const sidebar=$("#ytSidebar"),backdrop=$("#sidebarBackdrop"),toggle=$("#menuToggle");if(!sidebar||!toggle)return;
  const mobile=window.matchMedia("(max-width: 760px)").matches,state=Boolean(open);
- if(mobile){sidebar.classList.toggle("mobile-open",state);if(backdrop)backdrop.hidden=!state;document.body.classList.toggle("drawer-open",state);}
- else{document.body.classList.toggle("sidebar-open",state);}
+ // Clear both layout modes first so resizing never leaves a stale open drawer.
+ sidebar.classList.remove("mobile-open");
+ document.body.classList.remove("drawer-open","sidebar-open");
+ if(backdrop)backdrop.hidden=true;
+ if(state){
+  if(mobile){sidebar.classList.add("mobile-open");document.body.classList.add("drawer-open");if(backdrop)backdrop.hidden=false;}
+  else document.body.classList.add("sidebar-open");
+ }
  toggle.setAttribute("aria-expanded",String(state));toggle.setAttribute("aria-label",state?"মেনু বন্ধ করুন":"মেনু খুলুন");
 }
 async function restoreAccount(){try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}}
@@ -150,7 +156,7 @@ async function init(){
  $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;$("#categoryFilter").value=chip.dataset.category;syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();});
  $("#searchSubmit")?.addEventListener("click",()=>$("#search").dispatchEvent(new Event("input",{bubbles:true})));
  document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});
- document.querySelectorAll("#ytSidebar a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll("#ytSidebar .side-link").forEach(x=>x.classList.toggle("active",x===a));if(window.matchMedia("(max-width: 760px)").matches)openAccountMenu(false);const tab=(a.getAttribute("href")||"").slice(1);if(tab)sendTabView(tab);if(tab==="admin")loadAdminDashboard();}));
+ document.querySelectorAll("#ytSidebar a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll("#ytSidebar .side-link").forEach(x=>x.classList.toggle("active",x===a));openAccountMenu(false);const tab=(a.getAttribute("href")||"").slice(1);if(tab)sendTabView(tab);if(tab==="admin")loadAdminDashboard();}));
 function restoreHomeFilters(){
  const params=new URLSearchParams(location.search),cats=[...new Set(categories.map(c=>c.name).filter(Boolean))].sort();
  $("#categoryFilter").innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
