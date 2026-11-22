@@ -126,6 +126,10 @@
   <section id="tab-admins" class="panel tab-panel" hidden>
    <h2>ব্যবহারকারী ও Admin নিয়ন্ত্রণ</h2>
    <p class="muted">কেবল Owner এখানে কোনো যাচাইকৃত User-কে Admin করতে বা Admin permission বাতিল করতে পারবেন। Owner role পরিবর্তনযোগ্য নয়।</p>
+   <section class="active-users" aria-labelledby="activeUsersTitle">
+    <div class="active-users-head"><div><h3 id="activeUsersTitle">Currently Active Users</h3><p class="muted">গত ৯০ সেকেন্ডে সক্রিয় Admin, Member ও Guest</p></div><span id="activeUsersTotal" class="active-users-total">0 Active</span></div>
+    <div id="activeUsersList" class="active-users-list" aria-live="polite"><p class="muted">তালিকা লোড হচ্ছে…</p></div>
+   </section>
    <div id="adminList" class="data-list"></div>
   </section>
  </section>
