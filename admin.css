@@ -633,3 +633,31 @@ body.user-details-open #adminList{width:min(calc(100% - 322px),1120px);max-width
  #adminList .user-details-trigger{min-width:76px;padding:8px 9px;gap:8px}
 }
 @media(prefers-reduced-motion:reduce){#adminList{transition:none!important}}
+
+
+/* User directory — fixed editorial width and homepage drawer motion. */
+#adminList{width:min(100%,440px)!important;max-width:440px!important;margin-left:0!important;margin-right:auto!important}
+#adminList .user-management-row{width:100%!important}
+.user-details-rail{
+ position:fixed!important;z-index:150!important;top:64px!important;bottom:0!important;left:0!important;
+ width:240px!important;max-width:min(240px,86vw)!important;padding:8px 12px 24px!important;
+ border:0!important;border-right:1px solid #303030!important;border-radius:0!important;
+ background:#0f0f0f!important;box-shadow:none!important;
+ transform:translateX(-105%)!important;visibility:hidden!important;pointer-events:none!important;
+ transition:transform .22s ease,visibility .22s ease!important;
+}
+body.user-details-open .user-details-rail{transform:translateX(0)!important;visibility:visible!important;pointer-events:auto!important}
+body.user-details-open:not(.user-details-mobile-open){padding-left:240px!important}
+body.user-details-open:not(.user-details-mobile-open) .admin-category-bar{left:240px!important}
+body.user-details-mobile-open .user-details-rail{box-shadow:18px 0 42px rgba(0,0,0,.32)!important}
+#userDetailsBackdrop{display:none;position:fixed;z-index:140;inset:64px 0 0;background:rgba(0,0,0,.58);backdrop-filter:blur(2px)}
+#userDetailsBackdrop:not([hidden]){display:block}
+.user-details-rail .udr-head{padding:8px 0 14px!important}
+.user-details-rail .udr-profile{padding:14px 0!important}
+.user-details-rail .udr-section{padding:11px 0!important}
+@media(max-width:760px){
+ body.user-details-open{padding-left:0!important}
+ body.user-details-open .admin-category-bar{left:0!important}
+ #adminList{width:100%!important;max-width:none!important}
+}
+@media(prefers-reduced-motion:reduce){.user-details-rail{transition:none!important}}
