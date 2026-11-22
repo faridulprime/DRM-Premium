@@ -34,7 +34,7 @@ function doPost(e) {
     }
 
     const isOwner = type === "owner-verification";
-    const purpose = isOwner ? "Owner account verification" : "Email address verification";
+    const purpose = isOwner ? "Owner account verification" : "DEEPly Researched Method";
     const subject = isOwner
       ? "Your DRM– Premium Owner verification code"
       : "Your DRM– Premium verification code";
@@ -43,7 +43,7 @@ function doPost(e) {
       "DRM– Premium\n\n" +
       purpose + "\n\n" +
       "Your verification code is: " + code + "\n\n" +
-      "This code expires in " + expiryMinutes + " minutes.\n\n" +
+      "Use it Within " + expiryMinutes + " Minutes\n\n" +
       "Your journey forward starts with DRM– Premium.\n\n" +
       "— DRM– Premium";
 
@@ -52,7 +52,7 @@ function doPost(e) {
       '<div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #e5e9ef;border-radius:12px;padding:32px;">' +
       '<div style="font-size:20px;font-weight:700;letter-spacing:.2px;color:#17202a;">DRM– <span style="color:#3978c6;">Premium</span></div>' +
       '<div style="margin-top:28px;font-size:18px;font-weight:700;">' + purpose + '</div>' +
-      '<p style="margin:12px 0 20px;color:#52606d;line-height:1.6;">Use the verification code below to continue. It is valid for ' + expiryMinutes + ' minutes.</p>' +
+      '<p style="margin:12px 0 20px;color:#52606d;line-height:1.6;">Use it Within ' + expiryMinutes + ' Minutes</p>' +
       '<div style="padding:18px 12px;border:1px solid #dce5ef;border-radius:8px;background:#f7f9fc;text-align:center;font-size:30px;font-weight:700;letter-spacing:8px;color:#17202a;">' + code + '</div>' +
       '<p style="margin:20px 0 0;color:#52606d;font-size:13px;line-height:1.6;">Your journey forward starts with DRM– Premium.</p>' +
       '</div></body></html>';
