@@ -75,8 +75,8 @@ function render(append=false){
   $("#categoryFilter").innerHTML='<option value="all">সব ক্যাটাগরি</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
   categoryOptionsKey=categoryKey;
   $("#categoryFilter").value=cats.includes(cat)?cat:"all";
-  renderCategoryTabs();
  }
+ renderCategoryTabs();
  const activeCategory=$("#categoryFilter").value;
  const filteredAll=videos.filter(v=>(activeCategory==="all"||v.category===activeCategory)&&(`${v.title} ${v.category} ${v.description||""}`.toLowerCase().includes(q)));
  const from=append?Math.max(0,renderLimit-RENDER_BATCH):0;
