@@ -72,6 +72,8 @@ $("#adminMenuToggle").onclick=()=>{const open=!document.body.classList.contains(
 $("#adminSidebarBackdrop").onclick=closeAdminMenu;
 document.addEventListener("pointerdown",e=>{if(!document.body.classList.contains("sidebar-open"))return;if($("#adminSidebar").contains(e.target)||$("#adminMenuToggle").contains(e.target))return;closeAdminMenu();},true);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAdminMenu();});
+const adminMenuBreakpoint=window.matchMedia("(max-width: 760px)");adminMenuBreakpoint.addEventListener?.("change",closeAdminMenu);
+
 $("#adminSearch").addEventListener("input",e=>{const q=e.target.value.trim().toLocaleLowerCase();document.querySelectorAll(".tab-panel:not([hidden]) .data-row").forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase().includes(q));});
 $("#adminSearchClear").onclick=()=>{$("#adminSearch").value="";$("#adminSearch").dispatchEvent(new Event("input"));};
 const adminForm=$("#adminForm");if(adminForm)adminForm.hidden=true;
