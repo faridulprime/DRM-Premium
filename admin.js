@@ -70,12 +70,12 @@ function renderAdmins(){
   }
   const status=restricted?'<span class="user-restriction-status '+(u.restriction_type==="ban"?"banned":"suspended")+'">'+restrictionLabel+'</span>':"";
   return `<article class="data-row user-management-row ${u.role==="owner"?"is-owner":""} ${restricted?"is-restricted":""}" data-user-row="${esc(u.id)}">
+   <div class="row-actions">${actions}</div>
    <div class="user-avatar" aria-hidden="true">${esc(initial)}</div>
    <div class="user-row-identity">
     <div class="user-identity-top"><strong>${esc(u.email)}</strong>${status}</div>
     <div class="user-meta-line"><span class="user-role-chip ${u.role}">${roleLabel}</span><span>${esc(date)}</span><i></i><span class="user-verified ${u.email_verified?"verified":"unverified"}">${u.email_verified?"Verified":"Unverified"}</span></div>
    </div>
-   <div class="row-actions">${actions}</div>
   </article>`;
  }).join("")||'<p class="muted">এখনো কোনো ব্যবহারকারী নেই।</p>';
 }
