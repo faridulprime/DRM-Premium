@@ -547,10 +547,13 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   border:1px solid rgba(131,239,165,.2)!important;
 }
 
-/* Bassy script font: apply only to the public-site brand title. */
-.topbar .brand #brandName .brand-word-main,
-.topbar .brand #brandName .brand-word-accent{
-  font-family:'Bassy',cursive!important;
-  font-weight:400!important;
-  letter-spacing:0!important;
+/* Sora bold font: shared DRM Premium brand title on homepage and Admin. */
+.topbar .brand .brand-word,
+.topbar .brand #brandName.brand-word,
+.topbar .brand #adminBrandName.brand-word,
+.topbar .brand .brand-word-main,
+.topbar .brand .brand-word-accent{
+  font-family:'Sora',Arial,sans-serif!important;
+  font-weight:700!important;
+  letter-spacing:-.035em!important;
 }
