@@ -152,9 +152,34 @@ function openAccountMenu(open){
  toggle.setAttribute("aria-expanded",String(state));toggle.setAttribute("aria-label",state?"মেনু বন্ধ করুন":"মেনু খুলুন");
 }
 async function restoreAccount(){try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}}
+async function requestRegistrationCode(){
+ const button=$("#registerSendCode"),status=$("#registerStatus"),email=$("#registerEmail").value.trim(),username=$("#registerUsername").value.trim(),password=$("#registerPassword").value;
+ status.classList.remove("error");status.textContent="";
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent="সঠিক ইমেইল ঠিকানা দিন।";status.classList.add("error");return;}
+ if(!/^[A-Za-z0-9_]{3,30}$/.test(username)){status.textContent="Username ৩–৩০ অক্ষরের হতে হবে; শুধু English letter, number ও underscore ব্যবহার করুন।";status.classList.add("error");return;}
+ if(password.length<8||password.length>200){status.textContent="Password কমপক্ষে ৮ এবং সর্বোচ্চ ২০০ অক্ষরের হতে হবে।";status.classList.add("error");return;}
+ button.disabled=true;button.textContent="Sending…";
+ try{const res=await fetch("/api/auth/register-otp",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,username,password})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"Verification code পাঠানো যায়নি।");$("#registerOtpGroup").hidden=false;$("#registerVerify").hidden=false;$("#registerCode").required=true;status.textContent=data.message||"ইমেইলে verification code পাঠানো হয়েছে।";$("#registerCode").focus();}
+ catch(error){status.textContent=error.message;status.classList.add("error");}
+ finally{button.disabled=false;button.textContent="Resend code";}
+}
+async function submitRegistration(e){
+ e.preventDefault();const button=$("#registerVerify"),status=$("#registerStatus"),email=$("#registerEmail").value.trim(),username=$("#registerUsername").value.trim(),password=$("#registerPassword").value,code=$("#registerCode").value.trim();
+ status.classList.remove("error");status.textContent="";
+ if(!/^\d{6}$/.test(code)){status.textContent="ইমেইলে পাওয়া ৬ সংখ্যার কোড দিন।";status.classList.add("error");return;}
+ button.disabled=true;button.textContent="Verifying…";
+ try{const res=await fetch("/api/auth/register-verify",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,username,password,code})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"অ্যাকাউন্ট তৈরি করা যায়নি।");const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated)throw new Error("অ্যাকাউন্ট তৈরি হয়েছে, কিন্তু Login session শুরু হয়নি। Login করুন।");$("#registerDialog").close();$("#registerForm").reset();$("#registerOtpGroup").hidden=true;$("#registerVerify").hidden=true;$("#registerCode").required=false;$("#registerSendCode").textContent="Send verification code";$("#headerLoginForm").reset();setSignedIn(me.user);$("#headerLoginStatus").textContent="Account created successfully.";}
+ catch(error){status.textContent=error.message;status.classList.add("error");}
+ finally{button.disabled=false;button.textContent="Verify & create account";}
+}
 async function submitHeaderLogin(e){e.preventDefault();const form=e.currentTarget,button=$("#headerLoginButton"),status=$("#headerLoginStatus"),email=$("#headerEmail").value.trim(),password=$("#headerPassword").value;status.classList.remove("error");status.textContent="";button.disabled=true;button.textContent="...";try{const res=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,password})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"লগইন করা যায়নি।");const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated)throw new Error("লগইন সেশন তৈরি হয়নি। আবার চেষ্টা করুন।");form.reset();setSignedIn(me.user);status.textContent="";}catch(err){status.textContent=err.message;status.classList.add("error");}finally{button.disabled=false;button.textContent="Login";}}
 async function init(){
  $("#headerLoginForm").addEventListener("submit",submitHeaderLogin);
+ $("#createAccountButton")?.addEventListener("click",()=>{const d=$("#registerDialog");if(d&&!d.open)d.showModal();});
+ $("#registerClose")?.addEventListener("click",()=>$("#registerDialog").close());
+ $("#registerDialog")?.addEventListener("click",e=>{if(e.target===$("#registerDialog"))$("#registerDialog").close();});
+ $("#registerSendCode")?.addEventListener("click",requestRegistrationCode);
+ $("#registerForm")?.addEventListener("submit",submitRegistration);
  $("#menuToggle")?.addEventListener("click",()=>{const sidebar=$("#ytSidebar"),mobile=window.matchMedia("(max-width: 760px)").matches;openAccountMenu(mobile?!sidebar?.classList.contains("mobile-open"):!document.body.classList.contains("sidebar-open"));});
  $("#sidebarLogoutButton")?.addEventListener("click",async()=>{
   const button=$("#sidebarLogoutButton"),status=$("#sidebarLogoutStatus");
