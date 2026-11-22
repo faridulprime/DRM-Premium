@@ -709,3 +709,9 @@ body:not(.user-details-open){transition:padding-left 250ms cubic-bezier(.4,0,1,1
 
 /* Retired account-specific drawer is no longer part of the interface. */
 #userDetailsRail,#userDetailsBackdrop{display:none!important}
+
+/* In selected-user mode, the shared drawer becomes a focused account-only panel. */
+body.user-context-menu-open #adminSidebar>.sidebar-primary,
+body.user-context-menu-open #adminSidebar>.sidebar-section,
+body.user-context-menu-open #adminSidebar>#adminSidebarLogoutArea{display:none!important}
+body.user-context-menu-open #adminSidebar>#adminSelectedUser{display:block!important;margin-top:0;border-top:0;padding-top:18px}
