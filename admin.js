@@ -54,26 +54,28 @@ function renderActiveUsers(data){
 async function loadActiveUsers(){if(state.user?.role!=="owner")return;try{renderActiveUsers(await api("admin/active-users"));}catch(e){$("#activeUsersList").innerHTML='<p class="active-user-empty">তালিকা লোড করা যায়নি: '+esc(e.message)+'</p>';}}
 function startAdminPresence(){const beat=()=>{api("presence",{method:"POST",body:"{}"}).catch(()=>{});api("admin/presence",{method:"POST",body:"{}"}).catch(()=>{});};beat();if(activeUsersTimer)clearInterval(activeUsersTimer);activeUsersTimer=setInterval(()=>{beat();if(state.user?.role==="owner"&&currentAdminTab()==="admins")loadActiveUsers();if(state.user?.role==="owner")loadOverviewAnalytics().then(renderOverview);},30000);}
 function renderAdmins(){
- const users=state.users||[];
+ const roleOrder={owner:0,admin:1,user:2};
+ const users=[...(state.users||[])].sort((a,b)=>(roleOrder[a.role]??3)-(roleOrder[b.role]??3)||Number(a.created_at||0)-Number(b.created_at||0));
  $("#adminList").innerHTML=users.map(u=>{
   const created=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at));
   const date=Number.isNaN(created.getTime())?"Date unavailable":created.toLocaleDateString();
   const restricted=!!u.restriction_type&&(u.restriction_expires_at==null||Number(u.restriction_expires_at)>Math.floor(Date.now()/1000));
   const restrictionLabel=restricted?(u.restriction_type==="ban"?"BANNED":"SUSPENDED"):"";
   const roleLabel=u.role==="owner"?"Owner":u.role==="admin"?"Admin":"Member";
+  const displayName=String(u.username||"").trim()||"Username not set";
   const initial=String(u.username||u.email||"?").trim().charAt(0).toUpperCase();
   let actions='<span class="user-protected-label"><span aria-hidden="true">◆</span> Protected account</span>';
   if(u.role!=="owner"){
    const roleAction=restricted?"":u.role==="user"?'<button type="button" data-user-action="promote"><span class="uam-icon" aria-hidden="true">♛</span><span>Promote to Admin</span><span class="uam-chevron" aria-hidden="true">›</span></button>':'<button type="button" data-user-action="demote"><span class="uam-icon" aria-hidden="true">♙</span><span>Remove Admin Access</span><span class="uam-chevron" aria-hidden="true">›</span></button>';
    const restrictionAction=restricted?'<button type="button" data-user-action="restore" class="uam-restore"><span class="uam-icon" aria-hidden="true">↻</span><span>Restore Account Access</span><span class="uam-chevron" aria-hidden="true">›</span></button>':'<button type="button" data-user-action="suspend" class="uam-warning"><span class="uam-icon" aria-hidden="true">Ⅱ</span><span>Suspend for 24 Hours</span><span class="uam-chevron" aria-hidden="true">›</span></button><button type="button" data-user-action="ban" class="uam-danger"><span class="uam-icon" aria-hidden="true">⊘</span><span>Permanently Ban</span><span class="uam-chevron" aria-hidden="true">›</span></button>';
-   actions=`<button type="button" class="user-details-trigger" data-user-details-open aria-label="Open details for ${esc(u.email)}">Details <span aria-hidden="true">›</span></button>`;
+   actions=`<button type="button" class="user-details-trigger" data-user-details-open aria-label="Open details for ${esc(displayName)}">Details <span aria-hidden="true">›</span></button>`;
   }
   const status=restricted?'<span class="user-restriction-status '+(u.restriction_type==="ban"?"banned":"suspended")+'">'+restrictionLabel+'</span>':"";
   return `<article class="data-row user-management-row ${u.role==="owner"?"is-owner":""} ${restricted?"is-restricted":""}" data-user-row="${esc(u.id)}">
    <div class="row-actions">${actions}</div>
    <div class="user-avatar" aria-hidden="true">${esc(initial)}</div>
    <div class="user-row-identity">
-    <div class="user-identity-top"><strong>${esc(u.email)}</strong>${status}</div>
+    <div class="user-identity-top"><strong>${esc(displayName)}</strong>${status}</div>
     <div class="user-meta-line"><span class="user-role-chip ${u.role}">${roleLabel}</span><span>${esc(date)}</span><i></i><span class="user-verified ${u.email_verified?"verified":"unverified"}">${u.email_verified?"Verified":"Unverified"}</span></div>
    </div>
   </article>`;
@@ -177,6 +179,21 @@ function showUserDetails(id){
 $("#userDetailsClose").addEventListener("click",()=>$("#userDetailsDialog").close());
 $("#userDetailsDialog").addEventListener("click",e=>{if(e.target===$("#userDetailsDialog"))$("#userDetailsDialog").close()});
 
+function openUserDetailsDrawer(){
+ const panel=$("#userDetailsRail"),backdrop=$("#userDetailsBackdrop"),mobile=window.matchMedia("(max-width: 760px)").matches;
+ document.body.classList.remove("user-details-mobile-open","drawer-open");
+ if(backdrop)backdrop.hidden=true;
+ document.body.classList.add("user-details-open");
+ if(mobile){document.body.classList.add("user-details-mobile-open","drawer-open");if(backdrop)backdrop.hidden=false;}
+ panel?.setAttribute("aria-hidden","false");
+}
+function closeUserDetailsDrawer(){
+ const panel=$("#userDetailsRail"),backdrop=$("#userDetailsBackdrop");
+ document.body.classList.remove("user-details-open","user-details-mobile-open","drawer-open");
+ if(backdrop)backdrop.hidden=true;
+ panel?.setAttribute("aria-hidden","true");
+ document.querySelectorAll("[data-user-details-open]").forEach(btn=>btn.setAttribute("aria-expanded","false"));
+}
 function openUserDetailsPanel(id){
  const user=state.users.find(x=>String(x.id)===String(id));if(!user)return;
  const panel=$("#userDetailsRail");if(!panel)return;
@@ -189,19 +206,19 @@ function openUserDetailsPanel(id){
  if(user.role!=="owner"&&!restricted)roleActions=user.role==="user"?action("promote","♛","Promote to Admin"):action("demote","♙","Remove Admin Access");
  let securityActions=restricted?action("restore","↻","Restore Account Access","udr-restore"):(action("revoke","↪","Revoke All Sessions")+action("suspend","Ⅱ","Suspend for 24 Hours","udr-warning")+action("ban","⊘","Permanently Ban","udr-danger"));
  panel.dataset.userId=String(user.id);
- panel.innerHTML='<div class="udr-head"><div><span class="udr-eyebrow">USER DETAILS</span><strong>'+esc(user.email)+'</strong><span class="udr-status">'+(restricted?(user.restriction_type==="ban"?"BANNED":"SUSPENDED"):"ACCOUNT ACTIVE")+'</span></div><button type="button" class="udr-close" aria-label="Close details">×</button></div>'+
- '<div class="udr-profile"><div class="udr-avatar">'+esc(String(user.username||user.email||"?").trim().charAt(0).toUpperCase())+'</div><div><strong>'+esc(user.email)+'</strong><span>'+role+' · '+(user.email_verified?"Verified":"Unverified")+'</span></div></div>'+
+ panel.innerHTML='<div class="udr-head"><div><span class="udr-eyebrow">USER DETAILS</span><strong>'+esc(String(user.username||"").trim()||"Username not set")+'</strong><span class="udr-status">'+(restricted?(user.restriction_type==="ban"?"BANNED":"SUSPENDED"):"ACCOUNT ACTIVE")+'</span></div><button type="button" class="udr-close" aria-label="Close details">×</button></div>'+
+ '<div class="udr-profile"><div class="udr-avatar">'+esc(String(user.username||"?").trim().charAt(0).toUpperCase())+'</div><div><strong>'+esc(String(user.username||"").trim()||"Username not set")+'</strong><span>'+role+' · '+(user.email_verified?"Verified":"Unverified")+'</span></div></div>'+
  '<section class="udr-section"><div class="udr-section-title">ROLE & ACCESS</div>'+(roleActions||'<p class="udr-note">'+(user.role==="owner"?"Owner account is protected.":"Role changes are unavailable while restricted.")+'</p>')+'</section>'+
- '<section class="udr-section"><div class="udr-section-title">ACCOUNT</div>'+action("details","▤","Account Details")+action("activity","◷","Most Active Hours")+action("copy","▢","Copy Email Address")+'</section>'+
+ '<section class="udr-section"><div class="udr-section-title">ACCOUNT</div>'+action("details","▤","Account Details")+action("activity","◷","Most Active Hours")+action("copy","▢","Copy Email Address")+'<p class="udr-note">'+esc(user.email)+'</p></section>'+
  '<section class="udr-section"><div class="udr-section-title">SECURITY & CONTROL</div>'+securityActions+'</section>'+
  '<div class="udr-foot"><span>MEMBER SINCE</span><strong>'+esc(date)+'</strong></div>';
- document.body.classList.add("user-details-open");
+ openUserDetailsDrawer();
  panel.setAttribute("aria-hidden","false");
  document.querySelectorAll("[data-user-details-open]").forEach(btn=>btn.setAttribute("aria-expanded",String(btn.closest("[data-user-row]")?.dataset.userRow===String(user.id))));
 }
 function closeUserDetailsPanel(){
  const panel=$("#userDetailsRail");if(!panel)return;
- document.body.classList.remove("user-details-open");panel.setAttribute("aria-hidden","true");
+ closeUserDetailsDrawer();panel.setAttribute("aria-hidden","true");
  document.querySelectorAll("[data-user-details-open]").forEach(btn=>btn.setAttribute("aria-expanded","false"));
 }
 $("#adminList").addEventListener("click",async e=>{
@@ -235,5 +252,7 @@ $("#userDetailsRail")?.addEventListener("click",async e=>{
  if(action==="revoke")return revokeUserSessions(id);
  if(action==="copy"){const u=state.users.find(x=>String(x.id)===String(id));try{await navigator.clipboard.writeText(u.email);notice("ইমেইল কপি হয়েছে।")}catch{notice("Clipboard access পাওয়া যায়নি।",true)}}
 });
+$("#userDetailsBackdrop")?.addEventListener("click",closeUserDetailsPanel);
+window.matchMedia("(max-width: 760px)").addEventListener?.("change",()=>{if(document.body.classList.contains("user-details-open"))closeUserDetailsPanel();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeUserDetailsPanel();});
 status();
