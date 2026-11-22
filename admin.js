@@ -220,6 +220,20 @@ $("#adminList").addEventListener("click",async e=>{
  if(action==="revoke")return revokeUserSessions(id);
  if(action==="copy"){const u=state.users.find(x=>String(x.id)===String(id));try{await navigator.clipboard.writeText(u.email);notice("ইমেইল কপি হয়েছে।")}catch{notice("Clipboard access পাওয়া যায়নি।",true)}}
 });
-$("#userDetailsRail")?.addEventListener("click",e=>{if(e.target.closest(".udr-close"))closeUserDetailsPanel();});
+$("#userDetailsRail")?.addEventListener("click",async e=>{
+ if(e.target.closest(".udr-close")){closeUserDetailsPanel();return;}
+ const button=e.target.closest("[data-user-action]");if(!button)return;
+ const id=$("#userDetailsRail").dataset.userId,action=button.dataset.userAction;
+ closeUserDetailsPanel();
+ if(action==="promote")return changeRole(id,"admin");
+ if(action==="demote")return changeRole(id,"user");
+ if(action==="details")return showUserDetails(id);
+ if(action==="activity")return showUserActivity(id);
+ if(action==="suspend")return restrictUser(id,"suspend");
+ if(action==="ban")return restrictUser(id,"ban");
+ if(action==="restore")return restrictUser(id,"restore");
+ if(action==="revoke")return revokeUserSessions(id);
+ if(action==="copy"){const u=state.users.find(x=>String(x.id)===String(id));try{await navigator.clipboard.writeText(u.email);notice("ইমেইল কপি হয়েছে।")}catch{notice("Clipboard access পাওয়া যায়নি।",true)}}
+});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeUserDetailsPanel();});
 status();
