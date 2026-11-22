@@ -320,3 +320,49 @@ footer span+span{margin-left:12px;font-size:13px;font-weight:400}
 .topbar .yt-account-actions:not([hidden]){
   display:flex!important;
 }
+
+/* Premium navigation drawer motion: subtle movement, soft opacity and accessible motion preferences. */
+.yt-sidebar{
+  opacity:0;
+  will-change:transform,opacity;
+  transition:
+    transform 360ms cubic-bezier(.22,1,.36,1),
+    opacity 240ms ease,
+    visibility 360ms;
+}
+body.sidebar-open .yt-sidebar,
+.yt-sidebar.mobile-open{
+  opacity:1;
+}
+body.sidebar-open{
+  transition:padding-left 360ms cubic-bezier(.22,1,.36,1);
+}
+body.sidebar-open .category-bar{
+  transition:left 360ms cubic-bezier(.22,1,.36,1);
+}
+.sidebar-backdrop:not([hidden]){
+  animation:sidebarBackdropIn 260ms ease both;
+}
+.yt-sidebar .side-link{
+  transition:background-color 180ms ease,color 180ms ease,transform 220ms cubic-bezier(.22,1,.36,1);
+}
+.yt-sidebar .side-link:hover{
+  transform:translateX(2px);
+}
+@keyframes sidebarBackdropIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+  .yt-sidebar,
+  body.sidebar-open,
+  body.sidebar-open .category-bar,
+  .yt-sidebar .side-link{
+    transition:none!important;
+    animation:none!important;
+    transform:none!important;
+  }
+  .sidebar-backdrop:not([hidden]){
+    animation:none!important;
+  }
+}
