@@ -37,7 +37,7 @@ function doPost(e) {
     const purpose = isOwner ? "Owner account verification" : "DEEPly Researched Method";
     const subject = isOwner
       ? "Your DRM– Premium Owner verification code"
-      : "Your DRM– Premium verification code";
+      : "Hello. DRM– Premium is faster than light.";
     const expiryMinutes = Math.min(10, Math.max(1, Number(body.expiresInMinutes) || 10));
     const plainBody =
       "DRM– Premium\n\n" +
