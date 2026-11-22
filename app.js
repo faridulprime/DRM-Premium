@@ -178,6 +178,12 @@ async function init(){
  $("#createAccountButton")?.addEventListener("click",()=>{const d=$("#registerDialog");if(d&&!d.open)d.showModal();});
  $("#registerClose")?.addEventListener("click",()=>$("#registerDialog").close());
  $("#registerDialog")?.addEventListener("click",e=>{if(e.target===$("#registerDialog"))$("#registerDialog").close();});
+ $("#registerDialog")?.addEventListener("keydown",e=>{
+  if(e.key!=="Backspace")return;
+  const target=e.target;
+  const editable=target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement||target?.isContentEditable;
+  if(!editable)e.preventDefault();
+ });
  $("#registerSendCode")?.addEventListener("click",requestRegistrationCode);
  $("#registerForm")?.addEventListener("submit",submitRegistration);
  $("#menuToggle")?.addEventListener("click",()=>{const sidebar=$("#ytSidebar"),mobile=window.matchMedia("(max-width: 760px)").matches;openAccountMenu(mobile?!sidebar?.classList.contains("mobile-open"):!document.body.classList.contains("sidebar-open"));});
