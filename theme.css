@@ -481,7 +481,7 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
   white-space:nowrap;
 }
 .topbar .brand-word-main{color:#f1f1f1;font-weight:700}
-.topbar .brand-word-accent{color:#83efa5;font-weight:600}
+.topbar .brand-word-accent{color:#60a5fa;font-weight:600}
 .topbar .brand-admin-suffix{
   display:inline-flex;align-items:center;margin-left:3px;padding:4px 7px;
   border:1px solid rgba(131,239,165,.2);border-radius:7px;
