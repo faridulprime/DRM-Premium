@@ -1,3 +1,5 @@
+/* Admin-only box model reset: keep 100%-width header and main within the viewport despite horizontal padding. */
+*,*::before,*::after{box-sizing:border-box}
 /* Page-specific Admin layout. Shared colors, header, category bar and sidebar live in theme.css. */
 body.admin-gate-state{padding-top:64px!important}
 .gate-actions{grid-column:1/-1}
