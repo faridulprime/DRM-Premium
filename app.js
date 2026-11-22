@@ -105,7 +105,7 @@ function renderBars(el,items,labelKey,valueKey){if(!items.length){el.innerHTML='
 async function startAdminPresence(){try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated||!["owner","admin"].includes(me.user?.role))return;const beat=()=>fetch("/api/admin/presence",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:"{}"}).catch(()=>{});beat();if(adminHeartbeat)clearInterval(adminHeartbeat);adminHeartbeat=setInterval(beat,30000);}catch{}}
 async function loadAdminDashboard(){const guest=$("#adminGuest"),stats=$("#adminStats"),error=$("#adminError");if(!guest||!stats)return;guest.hidden=false;stats.hidden=true;error.hidden=true;try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated||!["owner","admin"].includes(me.user?.role))return;guest.hidden=true;stats.hidden=false;const data=await fetch("/api/admin/analytics",{credentials:"same-origin"}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||"ড্যাশবোর্ড লোড করা যায়নি।");return d;});$("#onlineAdminCount").textContent=bn(data.online_count);$("#totalAdminCount").textContent=bn(data.admin_count);$("#totalPostCount").textContent=bn(data.total_posts);$("#totalTabViews").textContent=bn(data.total_tab_views);renderAdminActivity(data.admins);renderBars($("#tabActivity"),data.tabs,"label","view_count");$("#adminUpdated").textContent="সর্বশেষ আপডেট: "+new Date().toLocaleTimeString("bn-BD");}catch(e){error.hidden=false;error.textContent=e.message;}}
 
-function setSignedIn(user){setVisualEditor(user);const form=$("#headerLoginForm"),badge=$("#proBadge"),badgeText=badge?.querySelector("span"),upload=$("#quickUploadButton"),sideUpload=$("#sidebarUpload");if(form)form.hidden=!!user;if(badge)badge.hidden=!user;if(badgeText)badgeText.textContent=!user?"":user.role==="owner"?"OWNER":user.role==="admin"?"ADMIN PRO":"PRO ELITE";if(upload)upload.hidden=!(user&&["owner","admin"].includes(user.role));if(sideUpload)sideUpload.hidden=!(user&&["owner","admin"].includes(user.role));if(user)startAdminPresence();}
+function setSignedIn(user){setVisualEditor(user);const form=$("#headerLoginForm"),badge=$("#proBadge"),badgeText=badge?.querySelector("span"),upload=$("#quickUploadButton"),sideUpload=$("#sidebarUpload"),logoutArea=$("#sidebarLogoutArea");if(form)form.hidden=!!user;if(badge)badge.hidden=!user;if(badgeText)badgeText.textContent=!user?"":user.role==="owner"?"OWNER":user.role==="admin"?"ADMIN PRO":"PRO ELITE";if(upload)upload.hidden=!(user&&["owner","admin"].includes(user.role));if(sideUpload)sideUpload.hidden=!(user&&["owner","admin"].includes(user.role));if(logoutArea)logoutArea.hidden=!user;if(user)startAdminPresence();else if(adminHeartbeat){clearInterval(adminHeartbeat);adminHeartbeat=null;}}
 function openAccountMenu(open){
  const sidebar=$("#ytSidebar"),backdrop=$("#sidebarBackdrop"),toggle=$("#menuToggle");if(!sidebar||!toggle)return;
  const mobile=window.matchMedia("(max-width: 760px)").matches,state=Boolean(open);
@@ -118,6 +118,26 @@ async function submitHeaderLogin(e){e.preventDefault();const form=e.currentTarge
 async function init(){
  $("#headerLoginForm").addEventListener("submit",submitHeaderLogin);
  $("#menuToggle")?.addEventListener("click",()=>{const sidebar=$("#ytSidebar"),mobile=window.matchMedia("(max-width: 760px)").matches;openAccountMenu(mobile?!sidebar?.classList.contains("mobile-open"):!document.body.classList.contains("sidebar-open"));});
+ $("#sidebarLogoutButton")?.addEventListener("click",async()=>{
+  const button=$("#sidebarLogoutButton"),status=$("#sidebarLogoutStatus");
+  if(!button||button.disabled)return;
+  button.disabled=true;button.classList.add("is-loading");status.textContent="";
+  const label=button.querySelector("span");if(label)label.textContent="Logging out…";
+  try{
+   const response=await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin"});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||data.ok===false)throw new Error(data.error||"Logout করা যায়নি। আবার চেষ্টা করুন।");
+   $("#headerLoginForm")?.reset();
+   setSignedIn(null);
+   openAccountMenu(false);
+   status.textContent="";
+  }catch(error){
+   status.textContent=error.message||"Logout করা যায়নি। আবার চেষ্টা করুন।";
+  }finally{
+   button.disabled=false;button.classList.remove("is-loading");
+   if(label)label.textContent="Logout";
+  }
+ });
  $("#sidebarBackdrop")?.addEventListener("click",()=>openAccountMenu(false));
  document.addEventListener("pointerdown",e=>{
   const sidebar=$("#ytSidebar"),toggle=$("#menuToggle");
