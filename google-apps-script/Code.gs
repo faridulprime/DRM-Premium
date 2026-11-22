@@ -44,7 +44,8 @@ function doPost(e) {
       purpose + "\n\n" +
       "Your verification code is: " + code + "\n\n" +
       "This code expires in " + expiryMinutes + " minutes.\n\n" +
-      "If you did not request this code, you can safely ignore this email. Do not share this code with anyone.\n\n" +
+      "Your journey forward starts with DRM– Premium.\n\n" +
+      "Keep your verification code private.\n\n" +
       "— DRM– Premium";
 
     const htmlBody =
@@ -54,7 +55,7 @@ function doPost(e) {
       '<div style="margin-top:28px;font-size:18px;font-weight:700;">' + purpose + '</div>' +
       '<p style="margin:12px 0 20px;color:#52606d;line-height:1.6;">Use the verification code below to continue. It is valid for ' + expiryMinutes + ' minutes.</p>' +
       '<div style="padding:18px 12px;border:1px solid #dce5ef;border-radius:8px;background:#f7f9fc;text-align:center;font-size:30px;font-weight:700;letter-spacing:8px;color:#17202a;">' + code + '</div>' +
-      '<p style="margin:20px 0 0;color:#52606d;font-size:13px;line-height:1.6;">If you did not request this code, you can safely ignore this email. For your security, never share this code with anyone.</p>' +
+      '<p style="margin:20px 0 0;color:#52606d;font-size:13px;line-height:1.6;">Your journey forward starts with DRM– Premium.<br><span style="color:#87919c;">Keep your verification code private.</span></p>' +
       '</div></body></html>';
 
     GmailApp.sendEmail(recipient, subject, plainBody, {
