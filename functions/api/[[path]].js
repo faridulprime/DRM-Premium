@@ -165,6 +165,7 @@ async function handle(req,env){
  if(p[0]==="auth"&&p[1]==="me"&&m==="GET"){const u=await getSession(req,env);return json(u?{authenticated:true,user:u}:{authenticated:false})}
  if(p[0]==="auth"&&p[1]==="logout"&&m==="POST"){const t=cookieToken(req);if(t)await env.DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await hash(t)).run();return json({ok:true},200,{"set-cookie":clearCookie()})}
  const sessionUser=await getSession(req,env);if(sessionUser){const now=Math.floor(Date.now()/1000),restriction=await env.DB.prepare("SELECT restriction_type,expires_at,reason,created_at FROM user_restrictions WHERE user_id=? AND (expires_at IS NULL OR expires_at>?)").bind(sessionUser.id,now).first();if(restriction&&!(p[0]==="auth"&&p[1]==="access-state"))return json({error:"Account access is restricted.",restricted:true,restriction:{type:restriction.restriction_type,expiresAt:restriction.expires_at,reason:restriction.reason,createdAt:restriction.created_at}},423)}
+
  if(p[0]==="videos"&&m==="GET"){const r=await env.DB.prepare("SELECT id,title,category,youtube_id,thumbnail_url,description,featured,published,created_at FROM videos WHERE published=1 ORDER BY featured DESC,sort_order ASC,created_at DESC").all();return json(r.results||[])}
  if(p[0]==="categories"&&m==="GET"){const r=await env.DB.prepare("SELECT id,name,sort_order FROM categories ORDER BY sort_order,name").all();return json(r.results||[])}
  if(p[0]==="settings"&&m==="GET")return json(await settings(env.DB));
