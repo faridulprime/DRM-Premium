@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=user-directory-drawer-05">
+<link rel="stylesheet" href="admin.css?v=shared-admin-menu-user-context-06">
 <link rel="stylesheet" href="theme.css?v=f697cc9">
 </head>
 <body class="admin-gate-state">
@@ -46,6 +46,7 @@
     <button class="side-link" type="button" data-tab="site" id="sidebarSiteTab" hidden><span class="side-icon">⚙</span><span>ওয়েবসাইট</span></button>
     <button class="side-link" type="button" data-tab="admins" id="sidebarAdminsTab" hidden><span class="side-icon">♙</span><span>Users & Admins</span></button>
   </div>
+  <section id="adminSelectedUser" class="admin-selected-user" aria-label="Selected account details" hidden></section>
   <div class="sidebar-logout-area" id="adminSidebarLogoutArea" hidden>
     <button id="logout" class="sidebar-logout-button" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
@@ -140,7 +141,7 @@
   <section id="tab-admins" class="panel tab-panel" hidden>
    <h2>ব্যবহারকারী ও Admin নিয়ন্ত্রণ</h2>
    <p class="muted">শুধু Owner যাচাইকৃত User-এর Role পরিচালনা, ২৪ ঘণ্টার জন্য Suspend, Permanent Ban, Access Restore এবং Session বাতিল করতে পারবেন। Owner account সুরক্ষিত।</p>
-   <div class="user-management-shell"><div id="adminList" class="data-list"></div><aside id="userDetailsRail" class="user-details-rail" aria-label="User details and actions" aria-hidden="true"></aside></div>
+   <div class="user-management-shell"><div id="adminList" class="data-list"></div></div>
    <section class="active-users" aria-labelledby="activeUsersTitle">
     <div class="active-users-head"><div><h3 id="activeUsersTitle">Currently Active Users</h3><p class="muted">গত ৯০ সেকেন্ডে সক্রিয় Admin, Member ও Guest</p></div><span id="activeUsersTotal" class="active-users-total">0 Active</span></div>
     <div id="activeUsersList" class="active-users-list" aria-live="polite"><p class="muted">তালিকা লোড হচ্ছে…</p></div>
@@ -148,12 +149,11 @@
   </section>
  </section>
  
-<div id="userDetailsBackdrop" hidden aria-hidden="true"></div>
 <dialog id="userDetailsDialog" class="user-details-dialog" aria-labelledby="userDetailsTitle">
  <div class="user-details-head"><h3 id="userDetailsTitle">Account Details</h3><button type="button" id="userDetailsClose" aria-label="Close">×</button></div>
  <div id="userDetailsContent" class="user-details-content"></div>
 </dialog>
 <p id="notice" class="notice" role="status" aria-live="polite"></p>
 </main>
-<script src="admin.js?v=user-directory-drawer-05"></script>
+<script src="admin.js?v=shared-admin-menu-user-context-06"></script>
 </body></html>
