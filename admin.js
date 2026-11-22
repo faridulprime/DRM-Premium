@@ -53,7 +53,28 @@ function renderActiveUsers(data){
 }
 async function loadActiveUsers(){if(state.user?.role!=="owner")return;try{renderActiveUsers(await api("admin/active-users"));}catch(e){$("#activeUsersList").innerHTML='<p class="active-user-empty">তালিকা লোড করা যায়নি: '+esc(e.message)+'</p>';}}
 function startAdminPresence(){const beat=()=>{api("presence",{method:"POST",body:"{}"}).catch(()=>{});api("admin/presence",{method:"POST",body:"{}"}).catch(()=>{});};beat();if(activeUsersTimer)clearInterval(activeUsersTimer);activeUsersTimer=setInterval(()=>{beat();if(state.user?.role==="owner"&&currentAdminTab()==="admins")loadActiveUsers();if(state.user?.role==="owner")loadOverviewAnalytics().then(renderOverview);},30000);}
-function renderAdmins(){$("#adminList").innerHTML=state.users.map(u=>`<div class="data-row"><div><strong>${esc(u.email)}</strong><small>${esc(u.role)} · ${new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at)).toLocaleDateString()} · ${u.email_verified?"Verified":"Unverified"}</small></div><div class="row-actions">${u.role==="owner"?"<small>OWNER · Protected</small>":`<select data-role-user="${esc(u.id)}"><option value="user" ${u.role==="user"?"selected":""}>User</option><option value="admin" ${u.role==="admin"?"selected":""}>Admin</option></select>`}</div></div>`).join("")||'<p class="muted">এখনো কোনো ব্যবহারকারী নেই।</p>';document.querySelectorAll("[data-role-user]").forEach(el=>el.onchange=()=>changeRole(el.dataset.roleUser,el.value));}
+function renderAdmins(){
+ $("#adminList").innerHTML=state.users.map(u=>{
+  const date=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at));
+  const roleLabel=u.role==="owner"?"OWNER · Protected":u.role==="admin"?"ADMIN":"USER";
+  const actions=u.role==="owner"?"<span class=\"user-protected-label\">OWNER · Protected</span>":`
+   <details class="user-action-menu">
+    <summary aria-label="Manage ${esc(u.email)}">Manage <span aria-hidden="true">⌄</span></summary>
+    <div class="user-action-popover" role="group" aria-label="User actions">
+     ${u.role==="user"?'<button type="button" data-user-action="promote">Promote to Admin</button>':'<button type="button" data-user-action="demote">Remove Admin Access</button>'}
+     <button type="button" data-user-action="details">View Account Details</button>
+     <button type="button" data-user-action="copy">Copy Email</button>
+     <div class="user-menu-divider"></div>
+     <button type="button" class="user-menu-danger" data-user-action="revoke">Revoke All Sessions</button>
+    </div>
+   </details>`;
+  return `<div class="data-row user-management-row" data-user-row="${esc(u.id)}">
+   <div class="user-row-identity"><strong>${esc(u.email)}</strong><small>${esc(roleLabel)} · ${Number.isNaN(date.getTime())?"Date unavailable":date.toLocaleDateString()} · ${u.email_verified?"Verified":"Unverified"}</small></div>
+   <div class="row-actions">${actions}</div>
+  </div>`;
+ }).join("")||'<p class="muted">এখনো কোনো ব্যবহারকারী নেই।</p>';
+}
+
 $("#sendOwnerCode").onclick=async()=>{const f=$("#setupForm"),email=f.elements.email.value.trim();if(!email){notice("Owner email দিন।",true);return}try{await api("auth/owner-otp",{method:"POST",body:JSON.stringify({email})});notice("Verification code ইমেইলে পাঠানো হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#setupForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await api("auth/setup",{method:"POST",body:JSON.stringify({email:f.get("email"),username:f.get("username"),password:f.get("password"),code:f.get("code")})});notice("Owner account তৈরি হয়েছে।");await status()}catch(err){notice(err.message,true)}};
 $("#loginForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await api("auth/login",{method:"POST",body:JSON.stringify({email:f.get("email"),password:f.get("password")})});e.target.reset();await status()}catch(err){notice(err.message,true)}};
@@ -110,6 +131,30 @@ const adminMenuBreakpoint=window.matchMedia("(max-width: 760px)");adminMenuBreak
 $("#adminSearch").addEventListener("input",e=>{const q=e.target.value.trim().toLocaleLowerCase();document.querySelectorAll(".tab-panel:not([hidden]) .data-row").forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase().includes(q));});
 $("#adminSearchClear").onclick=()=>{$("#adminSearch").value="";$("#adminSearch").dispatchEvent(new Event("input"));};
 const adminForm=$("#adminForm");if(adminForm)adminForm.hidden=true;
-async function changeRole(id,role){if(!confirm(role==="admin"?"এই ব্যবহারকারীকে Admin করবেন?":"এই ব্যক্তির Admin permission বাতিল করবেন?")){await refresh();return}try{await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({role})});await refresh();notice(role==="admin"?"Admin permission দেওয়া হয়েছে।":"Admin permission বাতিল হয়েছে।")}catch(e){notice(e.message,true);await refresh()}}
-async function removeUser(id){return changeRole(id,"user")}
+async function changeRole(id,role){if(!confirm(role==="admin"?"এই ব্যবহারকারীকে Admin করবেন?":"এই ব্যক্তির Admin permission বাতিল করবেন?"))return;try{await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({role})});await refresh();notice(role==="admin"?"Admin permission দেওয়া হয়েছে।":"Admin permission বাতিল হয়েছে।")}catch(e){notice(e.message,true);await refresh()}}
+async function revokeUserSessions(id){if(!confirm("এই ব্যবহারকারীর সব সক্রিয় Login session বাতিল করবেন? পরবর্তীবার তাকে আবার Login করতে হবে।"))return;try{const r=await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({action:"revoke_sessions"})});notice("সক্রিয় Session বাতিল হয়েছে ("+Number(r.revokedSessions||0)+")।")}catch(e){notice(e.message,true)}}
+function showUserDetails(id){
+ const u=state.users.find(x=>String(x.id)===String(id));if(!u)return;
+ const d=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at));
+ $("#userDetailsContent").innerHTML=[
+  ["Email",u.email],["Username",u.username||"—"],["Role",String(u.role||"").toUpperCase()],
+  ["Account created",Number.isNaN(d.getTime())?"Unavailable":d.toLocaleString()],
+  ["Email status",u.email_verified?"Verified":"Unverified"]
+ ].map(([k,v])=>'<div class="user-detail-item"><span>'+esc(k)+'</span><strong>'+esc(v)+'</strong></div>').join("");
+ $("#userDetailsDialog").showModal();
+}
+$("#userDetailsClose").addEventListener("click",()=>$("#userDetailsDialog").close());
+$("#userDetailsDialog").addEventListener("click",e=>{if(e.target===$("#userDetailsDialog"))$("#userDetailsDialog").close()});
+$("#adminList").addEventListener("click",async e=>{
+ const button=e.target.closest("[data-user-action]");if(!button)return;
+ const row=button.closest("[data-user-row]");if(!row)return;
+ const id=row.dataset.userRow,action=button.dataset.userAction;
+ row.querySelectorAll(".user-action-menu[open]").forEach(menu=>menu.open=false);
+ if(action==="promote")return changeRole(id,"admin");
+ if(action==="demote")return changeRole(id,"user");
+ if(action==="details")return showUserDetails(id);
+ if(action==="revoke")return revokeUserSessions(id);
+ if(action==="copy"){const u=state.users.find(x=>String(x.id)===String(id));try{await navigator.clipboard.writeText(u.email);notice("ইমেইল কপি হয়েছে।")}catch{notice("Clipboard access পাওয়া যায়নি।",true)}}
+});
+document.addEventListener("click",e=>{if(!e.target.closest(".user-action-menu"))document.querySelectorAll(".user-action-menu[open]").forEach(menu=>menu.open=false)});
 status();
