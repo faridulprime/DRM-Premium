@@ -1,4 +1,4 @@
-const COOKIE="frame_admin_session",SESSION_SECONDS=604800,ITERATIONS=100000;
+const COOKIE="frame_admin_session",VISITOR_COOKIE="frame_visitor_id",SESSION_SECONDS=604800,ITERATIONS=100000;
 
 const BUILDER_NODE_TYPES=new Set(["section","container","grid","column","text","heading","image","button","link","icon","card","list","divider","spacer","video","form","input","textarea","select","checkbox","navbar","footer","hero"]);
 const BUILDER_DEFAULT={schemaVersion:1,pages:[{id:"home",slug:"/",title:"Home",nodes:[]}],designTokens:{}};
@@ -42,6 +42,7 @@ async function verifyPassword(password,stored){const [salt,want]=String(stored).
 const cookie=v=>`${COOKIE}=${v}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}`;
 const clearCookie=()=>`${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
 function cookieToken(req){return (req.headers.get("Cookie")||"").split(";").map(v=>v.trim()).find(v=>v.startsWith(COOKIE+"="))?.slice(COOKIE.length+1)||""}
+function visitorToken(req){return (req.headers.get("Cookie")||"").split(";").map(v=>v.trim()).find(v=>v.startsWith(VISITOR_COOKIE+"="))?.slice(VISITOR_COOKIE.length+1)||""}
 async function readBody(req){const len=Number(req.headers.get("content-length")||0);if(len>20000)return null;try{return await req.json()}catch{return null}}
 const emailOK=v=>typeof v==="string"&&v.length<255&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const passwordOK=v=>typeof v==="string"&&v.length>=8&&v.length<=200;
@@ -56,6 +57,14 @@ async function handle(req,env){
  if(!env.DB)return fail("D1 database binding DB is not configured. Follow the setup guide.",503);
  const u=new URL(req.url),p=u.pathname.replace(/^\/api\/?/,"").split("/").filter(Boolean),m=req.method;
  if(m!=="GET"){if(!originOK(req))return fail("Cross-origin request blocked.",403);if(!(req.headers.get("content-type")||"").toLowerCase().includes("application/json"))return fail("JSON content type required.",415)}
+ if(p[0]==="presence"&&m==="POST"){
+  const now=Math.floor(Date.now()/1000),visitor=await getSession(req,env);
+  if(visitor){const key="u:"+visitor.id;await env.DB.prepare("INSERT INTO visitor_presence(presence_key,user_id,guest_label,last_seen) VALUES(?,?,NULL,?) ON CONFLICT(presence_key) DO UPDATE SET user_id=excluded.user_id,guest_label=NULL,last_seen=excluded.last_seen").bind(key,visitor.id,now).run();await env.DB.prepare("DELETE FROM visitor_presence WHERE last_seen<?").bind(now-120).run();return json({ok:true});}
+  let token=visitorToken(req),isNew=!/^[A-Za-z0-9_-]{30,80}$/.test(token);if(isNew)token=b64(crypto.getRandomValues(new Uint8Array(32)));
+  const visitorHash=await hash(token),key="g:"+visitorHash,label="Guest "+visitorHash.slice(0,5).toUpperCase();
+  await env.DB.prepare("INSERT INTO visitor_presence(presence_key,user_id,guest_label,last_seen) VALUES(?,NULL,?,?) ON CONFLICT(presence_key) DO UPDATE SET last_seen=excluded.last_seen").bind(key,label,now).run();await env.DB.prepare("DELETE FROM visitor_presence WHERE last_seen<?").bind(now-120).run();
+  return json({ok:true},200,isNew?{"set-cookie":VISITOR_COOKIE+"="+token+"; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000"}:{});
+ }
  if(p[0]==="auth"&&p[1]==="status"&&m==="GET")return json({configured:await adminsExist(env.DB)});
  if(p[0]==="auth"&&p[1]==="owner-otp"&&m==="POST"){
   if(await adminsExist(env.DB))return fail("Initial setup is already complete.",409);
@@ -164,6 +173,13 @@ async function handle(req,env){
    return json({revisions:rows.results||[],retentionDays:30});
   }
   return fail("Builder API route not found.",404);
+ }
+ if(p[0]==="admin"&&p[1]==="active-users"&&m==="GET"){
+  if(user.role!=="owner")return fail("শুধু Owner সক্রিয় ব্যবহারকারীদের তালিকা দেখতে পারবেন।",403);
+  const now=Math.floor(Date.now()/1000);await env.DB.prepare("DELETE FROM visitor_presence WHERE last_seen<?").bind(now-120).run();
+  const rows=await env.DB.prepare("SELECT u.id,u.username,u.email,u.role,p.guest_label,p.last_seen FROM visitor_presence p LEFT JOIN users u ON u.id=p.user_id WHERE p.last_seen>=? ORDER BY CASE WHEN u.role IN ('owner','admin') THEN 0 WHEN u.id IS NOT NULL THEN 1 ELSE 2 END,p.last_seen DESC").bind(now-90).all();
+  const result={admins:[],members:[],guests:[]};for(const row of rows.results||[]){if(row.role==="owner"||row.role==="admin")result.admins.push({id:row.id,name:row.username||row.email,email:row.email,role:row.role,last_seen:Number(row.last_seen)});else if(row.id)result.members.push({id:row.id,name:row.username||row.email,email:row.email,role:"user",last_seen:Number(row.last_seen)});else result.guests.push({name:row.guest_label||"Guest",role:"guest",last_seen:Number(row.last_seen)});}
+  return json({updated_at:now,active_window_seconds:90,total:result.admins.length+result.members.length+result.guests.length,...result});
  }
  if(p[0]==="admin"&&p[1]==="presence"&&m==="POST"){const now=Math.floor(Date.now()/1000);await env.DB.prepare("INSERT INTO admin_presence(user_id,last_seen) VALUES(?,?) ON CONFLICT(user_id) DO UPDATE SET last_seen=excluded.last_seen").bind(user.id,now).run();await env.DB.prepare("DELETE FROM admin_presence WHERE last_seen<?").bind(now-120).run();return json({ok:true})}
  if(p[0]==="admin"&&p[1]==="analytics"&&m==="GET"){const now=Math.floor(Date.now()/1000);await env.DB.prepare("DELETE FROM admin_presence WHERE last_seen<?").bind(now-120).run();const [online,admins,posts,tabs]=await Promise.all([env.DB.prepare("SELECT COUNT(*) AS n FROM admin_presence p JOIN users u ON u.id=p.user_id WHERE u.role IN ('owner','admin') AND p.last_seen>=?").bind(now-90).first(),env.DB.prepare("SELECT COUNT(*) AS n FROM users WHERE role IN ('owner','admin')").first(),env.DB.prepare("SELECT u.id,u.email,u.role,u.created_at,COUNT(v.id) AS post_count FROM users u LEFT JOIN videos v ON v.owner_id=u.id WHERE u.role IN ('owner','admin') GROUP BY u.id ORDER BY post_count DESC,u.created_at ASC").all(),env.DB.prepare("SELECT tab,COUNT(*) AS view_count FROM analytics_events GROUP BY tab ORDER BY view_count DESC").all()]);const labels={home:"মূল পৃষ্ঠা",browse:"ভিডিও",references:"রেফারেন্স",articles:"আর্টিকেল",books:"বইপত্র",admin:"এডমিন"};const tabRows=(tabs.results||[]).map(x=>({label:labels[x.tab]||x.tab,view_count:Number(x.view_count)}));return json({online_count:Number(online.n),admin_count:Number(admins.n),total_posts:(posts.results||[]).reduce((n,x)=>n+Number(x.post_count),0),total_tab_views:tabRows.reduce((n,x)=>n+x.view_count,0),admins:(posts.results||[]).map(x=>({email:x.email,role:x.role,created_at:x.created_at,post_count:Number(x.post_count)})),tabs:tabRows})}
