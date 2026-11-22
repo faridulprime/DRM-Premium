@@ -124,6 +124,14 @@ async function init(){
  $("#headerLoginForm").addEventListener("submit",submitHeaderLogin);
  $("#menuToggle")?.addEventListener("click",()=>{const sidebar=$("#ytSidebar"),mobile=window.matchMedia("(max-width: 760px)").matches;openAccountMenu(mobile?!sidebar?.classList.contains("mobile-open"):!document.body.classList.contains("sidebar-open"));});
  $("#sidebarBackdrop")?.addEventListener("click",()=>openAccountMenu(false));
+ document.addEventListener("pointerdown",e=>{
+  const sidebar=$("#ytSidebar"),toggle=$("#menuToggle");
+  if(!sidebar||!toggle)return;
+  const mobile=window.matchMedia("(max-width: 760px)").matches;
+  const opened=mobile?sidebar.classList.contains("mobile-open"):document.body.classList.contains("sidebar-open");
+  if(!opened||sidebar.contains(e.target)||toggle.contains(e.target))return;
+  openAccountMenu(false);
+ },true);
  $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;$("#categoryFilter").value=chip.dataset.category;renderLimit=RENDER_BATCH;render();});
  $("#searchSubmit")?.addEventListener("click",()=>$("#search").dispatchEvent(new Event("input",{bubbles:true})));
  document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});
