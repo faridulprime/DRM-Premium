@@ -541,3 +541,8 @@ body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!i
 .topbar .brand .brand-admin-suffix{
   background:rgba(0,0,0,.5)!important;
 }
+
+/* Remove only the Admin badge border. */
+.topbar .brand .brand-admin-suffix{
+  border:0!important;
+}
