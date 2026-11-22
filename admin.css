@@ -685,3 +685,27 @@ body:not(.user-details-open){transition:padding-left 250ms cubic-bezier(.4,0,1,1
 @media(prefers-reduced-motion:reduce){
  .user-details-rail,body.user-details-open,body:not(.user-details-open){transition:none!important}
 }
+
+
+/* Selected account context inside the existing Admin navigation drawer. */
+.admin-selected-user{padding:16px 12px 12px;border-top:1px solid var(--line);margin-top:12px}
+.admin-selected-user[hidden]{display:none!important}
+.admin-selected-user-card{padding:12px;border:1px solid #343639;border-radius:10px;background:#151515;margin:8px 0 12px}
+.admin-selected-user-top{display:flex;align-items:center;gap:10px;min-width:0}
+.admin-selected-avatar{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border:1px solid #44484d;border-radius:9px;background:linear-gradient(145deg,#303338,#1c1e21);color:#f0f0f0;font:600 13px "Space Grotesk",sans-serif}
+.admin-selected-user-top>div{display:grid;gap:4px;min-width:0}
+.admin-selected-user-top strong{font:600 11px "Space Grotesk",sans-serif;color:var(--ink);overflow-wrap:anywhere}
+.admin-selected-user-top small{font-size:9px;color:var(--muted);overflow-wrap:anywhere}
+.admin-selected-user-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:9px;color:var(--muted);font-size:9px}
+.admin-selected-user-meta i{width:3px;height:3px;border-radius:50%;background:#777}
+#adminSelectedUser .sidebar-section{margin:12px 0 0;padding:0}
+#adminSelectedUser .sidebar-heading{margin:0 0 6px}
+#adminSelectedUser .side-link{display:flex;align-items:center;gap:10px;min-height:36px;padding:7px 9px;border-radius:7px}
+#adminSelectedUser .side-link .side-icon{width:22px;height:22px;display:grid;place-items:center}
+#adminSelectedUser .side-link.uam-warning{color:#e7aaaa}
+#adminSelectedUser .side-link.uam-danger{color:#ff7777}
+#adminSelectedUser .side-link.uam-danger:hover{background:rgba(180,35,35,.14)}
+#adminSelectedUser .side-link.uam-warning:hover{background:rgba(180,75,75,.10)}
+
+/* Retired account-specific drawer is no longer part of the interface. */
+#userDetailsRail,#userDetailsBackdrop{display:none!important}
