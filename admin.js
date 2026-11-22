@@ -45,11 +45,12 @@ async function removeCategory(id){if(!confirm("ক্যাটাগরিটি
 function renderSettings(){const f=$("#settingsForm");for(const el of f.elements){if(!el.name||state.settings[el.name]===undefined)continue;if(el.type==="checkbox")el.checked=state.settings[el.name]!=="false";else el.value=state.settings[el.name]}}
 function renderActiveUsers(data){
  const groups=[{key:"admins",title:"Admin"},{key:"members",title:"Members"},{key:"guests",title:"Guest"}];
- const total=groups.reduce((n,g)=>n+(data[g.key]||[]).length,0);$("#activeUsersTotal").textContent=total+" Active";
+ const total=groups.reduce((n,g)=>n+(data[g.key]||[]).length,0);$("#activeUsersTotal").textContent=total.toLocaleString();
  $("#activeUsersList").innerHTML=groups.map(group=>{const users=data[group.key]||[],cards=users.map(u=>{
   const badge=group.key==="admins"?(u.role==="owner"?'<span class="active-user-badge owner">Owner</span>':'<span class="active-user-badge admin">Admin</span>'):group.key==="members"?'<span class="active-user-badge member">Member</span>':"";
   return '<div class="active-user-card"><span class="active-user-name">'+esc(u.name||u.email||"Guest")+'</span>'+badge+'</div>';
  }).join("");return '<section class="active-user-group"><div class="active-user-group-heading"><span>'+group.title+'</span><i aria-hidden="true"></i></div><div class="active-user-cards">'+(cards||'<p class="active-user-empty">কেউ বর্তমানে সক্রিয় নেই।</p>')+'</div></section>';}).join("");
+ filterAdminDirectory();
 }
 async function loadActiveUsers(){if(state.user?.role!=="owner")return;try{renderActiveUsers(await api("admin/active-users"));}catch(e){$("#activeUsersList").innerHTML='<p class="active-user-empty">তালিকা লোড করা যায়নি: '+esc(e.message)+'</p>';}}
 function startAdminPresence(){const beat=()=>{api("presence",{method:"POST",body:"{}"}).catch(()=>{});api("admin/presence",{method:"POST",body:"{}"}).catch(()=>{});};beat();if(activeUsersTimer)clearInterval(activeUsersTimer);activeUsersTimer=setInterval(()=>{beat();if(state.user?.role==="owner"&&currentAdminTab()==="admins")loadActiveUsers();if(state.user?.role==="owner")loadOverviewAnalytics().then(renderOverview);},30000);}
@@ -80,6 +81,7 @@ function renderAdmins(){
    </div>
   </article>`;
  }).join("")||'<p class="muted">এখনো কোনো ব্যবহারকারী নেই।</p>';
+ filterAdminDirectory();
 }
 async function restrictUser(id,action){
  const labels={suspend:"এই অ্যাকাউন্ট ২৪ ঘণ্টার জন্য স্থগিত হবে এবং সব সক্রিয় Session বাতিল হবে।",ban:"এই অ্যাকাউন্ট স্থায়ীভাবে নিষিদ্ধ হবে। ব্যবহারকারী আর Login করতে পারবেন না; তার কনটেন্ট/ডেটা মুছে ফেলা হবে না।",restore:"এই অ্যাকাউন্টের স্থগিতাদেশ/নিষেধাজ্ঞা তুলে নেওয়া হবে।"};
@@ -174,6 +176,18 @@ const adminMenuBreakpoint=window.matchMedia("(max-width: 760px)");adminMenuBreak
 
 $("#adminSearch").addEventListener("input",e=>{const q=e.target.value.trim().toLocaleLowerCase();document.querySelectorAll(".tab-panel:not([hidden]) .data-row").forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase().includes(q));});
 $("#adminSearchClear").onclick=()=>{$("#adminSearch").value="";$("#adminSearch").dispatchEvent(new Event("input"));};
+function filterAdminDirectory(){
+ const input=$("#adminDirectorySearch");if(!input)return;
+ const query=input.value.trim().toLocaleLowerCase();
+ const rows=[...document.querySelectorAll("#adminList .user-management-row, #activeUsersList .active-user-card")];
+ let visible=0;
+ rows.forEach(row=>{const match=!query||row.textContent.toLocaleLowerCase().includes(query);row.hidden=!match;if(match)visible++;});
+ const status=$("#adminDirectoryStatus");
+ if(status)status.textContent=query?(visible+" MATCHING"):"ALL ACCOUNTS";
+ const clear=$("#adminDirectorySearchClear");if(clear)clear.hidden=!query;
+}
+$("#adminDirectorySearch")?.addEventListener("input",filterAdminDirectory);
+$("#adminDirectorySearchClear")?.addEventListener("click",()=>{$("#adminDirectorySearch").value="";filterAdminDirectory();$("#adminDirectorySearch").focus();});
 const adminForm=$("#adminForm");if(adminForm)adminForm.hidden=true;
 async function changeRole(id,role){if(!confirm(role==="admin"?"এই ব্যবহারকারীকে Admin করবেন?":"এই ব্যক্তির Admin permission বাতিল করবেন?"))return;try{await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({role})});await refresh();notice(role==="admin"?"Admin permission দেওয়া হয়েছে।":"Admin permission বাতিল হয়েছে।")}catch(e){notice(e.message,true);await refresh()}}
 async function revokeUserSessions(id){if(!confirm("এই ব্যবহারকারীর সব সক্রিয় Login session বাতিল করবেন? পরবর্তীবার তাকে আবার Login করতে হবে।"))return;try{const r=await api("admin/users/"+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({action:"revoke_sessions"})});notice("সক্রিয় Session বাতিল হয়েছে ("+Number(r.revokedSessions||0)+")।")}catch(e){notice(e.message,true)}}
