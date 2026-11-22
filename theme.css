@@ -321,27 +321,37 @@ footer span+span{margin-left:12px;font-size:13px;font-weight:400}
   display:flex!important;
 }
 
-/* Premium navigation drawer motion: subtle movement, soft opacity and accessible motion preferences. */
+/* Premium navigation drawer motion: animate both directions and keep the drawer visible until its closing motion ends. */
 .yt-sidebar{
   opacity:0;
+  transform:translate3d(-105%,0,0);
+  visibility:hidden;
+  pointer-events:none;
   will-change:transform,opacity;
   transition:
-    transform 360ms cubic-bezier(.22,1,.36,1),
-    opacity 240ms ease,
-    visibility 360ms;
+    transform 420ms cubic-bezier(.22,1,.36,1),
+    opacity 280ms ease,
+    visibility 0s linear 420ms;
 }
 body.sidebar-open .yt-sidebar,
 .yt-sidebar.mobile-open{
   opacity:1;
+  transform:translate3d(0,0,0);
+  visibility:visible;
+  pointer-events:auto;
+  transition:
+    transform 420ms cubic-bezier(.22,1,.36,1),
+    opacity 280ms ease,
+    visibility 0s linear 0s;
 }
 body.sidebar-open{
-  transition:padding-left 360ms cubic-bezier(.22,1,.36,1);
+  transition:padding-left 420ms cubic-bezier(.22,1,.36,1);
 }
 body.sidebar-open .category-bar{
-  transition:left 360ms cubic-bezier(.22,1,.36,1);
+  transition:left 420ms cubic-bezier(.22,1,.36,1);
 }
 .sidebar-backdrop:not([hidden]){
-  animation:sidebarBackdropIn 260ms ease both;
+  animation:sidebarBackdropIn 280ms ease both;
 }
 .yt-sidebar .side-link{
   transition:background-color 180ms ease,color 180ms ease,transform 220ms cubic-bezier(.22,1,.36,1);
