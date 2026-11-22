@@ -154,13 +154,13 @@ function openAccountMenu(open){
 async function restoreAccount(){try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());setSignedIn(me.authenticated?me.user:null);}catch{setSignedIn(null);}}
 async function requestRegistrationCode(){
  const button=$("#registerSendCode"),status=$("#registerStatus"),email=$("#registerEmail").value.trim(),username=$("#registerUsername").value.trim(),password=$("#registerPassword").value;
- status.classList.remove("error");status.textContent="";
+ status.classList.remove("error");status.textContent="";$("#registerDeliveryHint").hidden=true;
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent="সঠিক ইমেইল ঠিকানা দিন।";status.classList.add("error");return;}
  if(!/^[A-Za-z0-9_]{3,30}$/.test(username)){status.textContent="Username ৩–৩০ অক্ষরের হতে হবে; শুধু English letter, number ও underscore ব্যবহার করুন।";status.classList.add("error");return;}
  if(password.length<8||password.length>200){status.textContent="Password কমপক্ষে ৮ এবং সর্বোচ্চ ২০০ অক্ষরের হতে হবে।";status.classList.add("error");return;}
  button.disabled=true;button.textContent="Sending…";
- try{const res=await fetch("/api/auth/register-otp",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,username,password})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"Verification code পাঠানো যায়নি।");$("#registerOtpGroup").hidden=false;$("#registerVerify").hidden=false;$("#registerCode").required=true;status.textContent=data.message||"ইমেইলে verification code পাঠানো হয়েছে।";$("#registerCode").focus();}
- catch(error){status.textContent=error.message;status.classList.add("error");}
+ try{const res=await fetch("/api/auth/register-otp",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({email,username,password})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||"Verification code পাঠানো যায়নি।");$("#registerOtpGroup").hidden=false;$("#registerVerify").hidden=false;$("#registerCode").required=true;status.textContent=data.message||"ইমেইলে verification code পাঠানো হয়েছে।";$("#registerDeliveryHint").hidden=false;$("#registerCode").focus();}
+ catch(error){$("#registerDeliveryHint").hidden=true;status.textContent=error.message;status.classList.add("error");}
  finally{button.disabled=false;button.textContent="Resend code";}
 }
 async function submitRegistration(e){
