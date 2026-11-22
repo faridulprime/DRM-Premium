@@ -50,7 +50,7 @@ function applySettings(){
  const pairs={heroEyebrow:"hero_eyebrow",libraryEyebrow:"library_eyebrow",libraryTitle:"library_title",footerText:"footer_text"};
  for(const [id,key] of Object.entries(pairs)){const el=$("#"+id);if(el&&settings[key])el.textContent=settings[key];}
   // Keep the public brand canonical; legacy site_name settings must not overwrite it.
-  $("#brandName").textContent="DRM PREMIUM";
+  $("#brandName").innerHTML='<span class="brand-word-main">DRM–</span><span class="brand-word-accent">Premium</span>';
   $("#footerBrand").textContent="DRM PREMIUM";
  if(settings.hero_image)$("#hero").style.backgroundImage=`linear-gradient(90deg,#080808 0%,rgba(8,8,8,.86) 32%,rgba(8,8,8,.12) 100%),url("${settings.hero_image}")`;
  if(settings.show_hero==="false")$("#hero").hidden=true;
