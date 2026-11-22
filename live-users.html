@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0d0d0d">
+<title>DRM PREMIUM — Live Users</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css?v=f697cc9">
+<link rel="stylesheet" href="live-users.css?v=live-users-cinematic-01">
+</head>
+<body class="live-users-page">
+<header class="live-topbar">
+  <a class="live-brand" href="/admin" aria-label="Back to Admin Dashboard"><span class="live-brand-mark">D</span><span>DRM– <b>Premium</b></span></a>
+  <a class="live-back-link" href="/admin"><span aria-hidden="true">←</span> Admin Dashboard</a>
+</header>
+<main class="live-layout">
+  <section class="live-panel" aria-labelledby="liveTitle">
+    <header class="live-heading">
+      <div class="live-kicker">DRM– PREMIUM / ADMINISTRATION</div>
+      <div class="live-title-line"><h1 id="liveTitle">Live Users</h1><span class="live-pill"><i></i> LIVE</span></div>
+      <div class="live-count-line"><strong id="liveCount">—</strong><span>ACTIVE NOW</span></div>
+      <p class="live-subtitle">Currently active accounts</p>
+    </header>
+    <label class="live-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+      <input id="liveSearch" type="search" placeholder="Search username or email..." autocomplete="off" aria-label="Search username or email">
+      <button id="liveSearchClear" type="button" aria-label="Clear search" hidden>×</button>
+    </label>
+    <div class="live-list-meta"><span>ONLINE USERS</span><span id="liveUpdated">CONNECTING…</span></div>
+    <div id="liveList" class="live-list" aria-live="polite"><div class="live-state">Checking secure access…</div></div>
+    <footer class="live-footnote">Presence refreshes automatically · Online window 90 seconds</footer>
+  </section>
+  <aside class="live-empty-space" aria-hidden="true"></aside>
+</main>
+<p id="liveNotice" class="live-notice" role="status" aria-live="polite"></p>
+<script src="live-users.js?v=live-users-cinematic-01"></script>
+</body>
+</html>
