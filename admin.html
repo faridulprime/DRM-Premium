@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="admin.css?v=shared-admin-menu-user-context-06">
 <link rel="stylesheet" href="theme.css?v=f697cc9">
+<link rel="stylesheet" href="live-users.css?v=admin-directory-cinematic-01">
 </head>
 <body class="admin-gate-state">
 <header class="topbar admin-topbar">
@@ -140,14 +141,32 @@
    </form>
    <p class="hint">এখানে ছবি URL হিসেবে যুক্ত হবে; এই সংস্করণে সরাসরি ছবি ফাইল আপলোড নেই।</p>
   </section>
-  <section id="tab-admins" class="panel tab-panel" hidden>
-   <h2>ব্যবহারকারী ও Admin নিয়ন্ত্রণ</h2>
-   <p class="muted">শুধু Owner যাচাইকৃত User-এর Role পরিচালনা, ২৪ ঘণ্টার জন্য Suspend, Permanent Ban, Access Restore এবং Session বাতিল করতে পারবেন। Owner account সুরক্ষিত।</p>
-   <div class="user-management-shell"><div id="adminList" class="data-list"></div></div>
-   <section class="active-users" aria-labelledby="activeUsersTitle">
-    <div class="active-users-head"><div><h3 id="activeUsersTitle">Currently Active Users</h3><p class="muted">গত ৯০ সেকেন্ডে সক্রিয় Admin, Member ও Guest</p></div><span id="activeUsersTotal" class="active-users-total">0 Active</span></div>
-    <div id="activeUsersList" class="active-users-list" aria-live="polite"><p class="muted">তালিকা লোড হচ্ছে…</p></div>
-   </section>
+  <section id="tab-admins" class="panel tab-panel live-admin-tab" hidden>
+   <div class="live-layout live-admin-layout">
+    <section class="live-panel live-admin-panel" aria-labelledby="adminDirectoryTitle">
+     <header class="live-heading">
+      <div class="live-kicker">DRM– PREMIUM / ADMINISTRATION</div>
+      <div class="live-title-line"><h1 id="adminDirectoryTitle">Users &amp; Admins</h1><span class="live-pill live-admin-pill"><i></i> OWNER ACCESS</span></div>
+      <div class="live-count-line"><strong id="activeUsersTotal">—</strong><span>ACTIVE NOW</span></div>
+      <p class="live-subtitle">Verified accounts and current presence</p>
+     </header>
+     <label class="live-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+      <input id="adminDirectorySearch" type="search" placeholder="Search username or email..." autocomplete="off" aria-label="Search username or email">
+      <button id="adminDirectorySearchClear" type="button" aria-label="Clear search" hidden>×</button>
+     </label>
+     <div class="live-list-meta"><span>ACCOUNT DIRECTORY</span><span id="adminDirectoryStatus">ALL ACCOUNTS</span></div>
+     <div class="live-admin-content">
+      <div class="user-management-shell"><div id="adminList" class="data-list"></div></div>
+      <section class="active-users" aria-labelledby="activeUsersTitle">
+       <div class="active-users-head"><div><h3 id="activeUsersTitle">Currently Active Users</h3><p class="muted">গত ৯০ সেকেন্ডে সক্রিয় Admin, Member ও Guest</p></div></div>
+       <div id="activeUsersList" class="active-users-list" aria-live="polite"><p class="muted">তালিকা লোড হচ্ছে…</p></div>
+      </section>
+     </div>
+     <footer class="live-footnote">Presence refreshes automatically · Online window 90 seconds</footer>
+    </section>
+    <aside class="live-empty-space" aria-hidden="true"></aside>
+   </div>
   </section>
  </section>
  
