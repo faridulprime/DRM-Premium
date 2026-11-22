@@ -24,7 +24,7 @@ function applySettings(){
  if(settings.hero_image)$("#hero").style.backgroundImage=`linear-gradient(90deg,#080808 0%,rgba(8,8,8,.86) 32%,rgba(8,8,8,.12) 100%),url("${settings.hero_image}")`;
  if(settings.show_hero==="false")$("#hero").hidden=true;
  if(settings.show_library==="false")$("#browse").hidden=true;
- if(settings.accent_color&&/^#[0-9a-f]{6}$/i.test(settings.accent_color))document.documentElement.style.setProperty("--red",settings.accent_color);
+ if(settings.accent_color&&/^#[0-9a-f]{6}$/i.test(settings.accent_color))document.documentElement.style.setProperty("--red",settings.accent_color);document.documentElement.style.setProperty("--accent",settings.accent_color);
  document.title="DRM PREMIUM";
 }
 
