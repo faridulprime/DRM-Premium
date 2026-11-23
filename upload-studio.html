@@ -3,11 +3,31 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#111027">
-<title>Upload Studio · DRM Premium</title><link rel="stylesheet" href="upload-studio.css?v=typography-audit-02">
+<title>Upload Studio · DRM Premium</title><link rel="stylesheet" href="theme.css?v=typography-audit-02">
+<link rel="stylesheet" href="upload-studio.css?v=live-users-theme-01">
 </head>
-<body>
+<body class="upload-studio-page">
+<header class="topbar studio-global-topbar">
+ <button class="yt-menu-trigger" id="studioMenuToggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6h17M3.5 12h17M3.5 18h17"/></svg></button>
+ <a class="brand" href="/" aria-label="DRM Premium"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2.8 27 7v8.1c0 7.1-4.7 11.8-11 14.1C9.7 26.9 5 22.2 5 15.1V7l11-4.2Z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="m10.8 15.8 3.4 3.4 7.2-7.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="brand-word"><span class="brand-word-main">DRM–</span><span class="brand-word-accent">Premium</span><span class="brand-admin-suffix">Creator</span></span></a>
+ <span class="studio-header-identity" id="identity">Checking access…</span>
+</header>
+<div class="sidebar-backdrop" id="liveSidebarBackdrop" hidden></div>
+<aside class="yt-sidebar admin-sidebar" id="liveSidebar" aria-label="Main navigation">
+  <div class="sidebar-primary">
+    <a class="side-link" href="/"><span class="side-icon">⌂</span><span>Home</span></a>
+    <a class="side-link" href="/upload-studio.html"><span class="side-icon">＋</span><span>Upload Studio</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Dashboard</div>
+    <a class="side-link" href="/admin"><span class="side-icon">▦</span><span>Overview</span></a>
+    <a class="side-link" href="/admin#tab-videos"><span class="side-icon">▶</span><span>ভিডিও</span></a>
+    <a class="side-link" href="/admin#tab-categories"><span class="side-icon">▤</span><span>ক্যাটাগরি</span></a>
+    <a class="side-link" href="/admin#tab-admins"><span class="side-icon">♙</span><span>Users & Admins</span></a>
+    <a class="side-link" href="/live-users.html"><span class="side-icon">●</span><span>Live Users</span></a>
+  </div>
+</aside>
 <div class="studio-shell">
-<aside class="sidebar">
  <a class="brand" href="/" aria-label="DRM Premium"><span class="brand-mark">D</span><span>DRM<span class="brand-muted"> PREMIUM</span><small>CREATOR STUDIO</small></span></a>
  <div class="side-label">WORKSPACE</div>
  <nav class="side-nav" aria-label="Studio navigation">
@@ -19,10 +39,9 @@
   <a href="#view=folders" data-local-tab="folders"><span>▰</span> Folders</a>
   <a href="#view=media" data-local-tab="media"><span>▧</span> Media Library</a>
  </nav>
- <div class="sidebar-bottom"><div class="secure-mark">● <span>Secure workspace</span></div><a href="/admin.html">Legacy Admin Panel ↗</a><a href="/">← Back to website</a></div>
 </aside>
 <main class="main-area">
- <header class="topbar"><div><p class="eyebrow">DRM PREMIUM / CREATOR WORKSPACE</p><h1>Upload Studio</h1><p class="subhead">Create, organize and publish your content.</p></div><div class="top-actions"><span class="status-pill"><i></i> Preview workspace</span><span id="identity" class="identity">Checking access…</span></div></header>
+ <header class="studio-heading"><div><p class="eyebrow">DRM PREMIUM / CREATOR WORKSPACE</p><h1>Upload Studio</h1><p class="subhead">Create, organize and publish your content.</p></div><div class="top-actions"><span class="status-pill"><i></i> Preview workspace</span></div></header>
  <div id="accessError" class="notice error" hidden></div>
  <section id="studioContent" hidden>
  <div class="page-tabs"><button class="tab active" data-tab="create">Create Post</button><button class="tab" data-tab="drafts">Drafts <span id="tabDraftCount">0</span></button><button class="tab" data-tab="manage">Manage Posts</button><button class="tab" data-tab="categories">Categories</button><button class="tab" data-tab="folders">Folders</button><button class="tab" data-tab="media">Media Library</button></div>
@@ -56,5 +75,6 @@
 </main>
 </div>
 <dialog id="confirmDialog"><form method="dialog"><h3 id="confirmTitle">Confirm action</h3><p id="confirmText">Are you sure?</p><div class="dialog-actions"><button value="cancel" class="secondary-button">Cancel</button><button id="confirmAccept" value="confirm" class="publish-button">Confirm</button></div></form></dialog>
-<script src="upload-studio.js"></script>
+<script src="upload-studio.js?v=live-users-theme-01"></script>
+</div>
 </body></html>
