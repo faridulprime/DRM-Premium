@@ -137,17 +137,21 @@ async function startAdminPresence(){const beat=()=>fetch("/api/presence",{method
 async function loadAdminDashboard(){const guest=$("#adminGuest"),stats=$("#adminStats"),error=$("#adminError");if(!guest||!stats)return;guest.hidden=false;stats.hidden=true;error.hidden=true;try{const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json());if(!me.authenticated||!["owner","admin"].includes(me.user?.role))return;guest.hidden=true;stats.hidden=false;const data=await fetch("/api/admin/analytics",{credentials:"same-origin"}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||"ড্যাশবোর্ড লোড করা যায়নি।");return d;});$("#onlineAdminCount").textContent=bn(data.online_count);$("#totalAdminCount").textContent=bn(data.admin_count);$("#totalPostCount").textContent=bn(data.total_posts);$("#totalTabViews").textContent=bn(data.total_tab_views);renderAdminActivity(data.admins);renderBars($("#tabActivity"),data.tabs,"label","view_count");$("#adminUpdated").textContent="সর্বশেষ আপডেট: "+new Date().toLocaleTimeString("bn-BD");}catch(e){error.hidden=false;error.textContent=e.message;}}
 
 function setSignedIn(user){setVisualEditor(user);const form=$("#headerLoginForm"),badge=$("#proBadge"),badgeText=badge?.querySelector("span"),upload=$("#quickUploadButton"),sideUpload=$("#sidebarUpload"),logoutArea=$("#sidebarLogoutArea");if(form)form.hidden=!!user;if(badge)badge.hidden=!user;if(badgeText)badgeText.textContent=!user?"":user.role==="owner"?"OWNER":user.role==="admin"?"ADMIN PRO":"PRO ELITE";if(upload)upload.hidden=!(user&&["owner","admin"].includes(user.role));if(sideUpload)sideUpload.hidden=!(user&&["owner","admin"].includes(user.role));if(logoutArea)logoutArea.hidden=!user;startAdminPresence();if(user&&!suspensionPoll)suspensionPoll=setInterval(checkAccountAccess,5000);else if(!user&&suspensionPoll){clearInterval(suspensionPoll);suspensionPoll=null;}}
+let accountMenuCloseTimer=null;
 const accountMenuBreakpoint=window.matchMedia("(max-width: 760px)");accountMenuBreakpoint.addEventListener?.("change",()=>openAccountMenu(false));
 function openAccountMenu(open){
  const sidebar=$("#ytSidebar"),backdrop=$("#sidebarBackdrop"),toggle=$("#menuToggle");if(!sidebar||!toggle)return;
  const mobile=window.matchMedia("(max-width: 760px)").matches,state=Boolean(open);
- // Clear both layout modes first so resizing never leaves a stale open drawer.
+ clearTimeout(accountMenuCloseTimer);
  sidebar.classList.remove("mobile-open");
  document.body.classList.remove("drawer-open","sidebar-open");
- if(backdrop)backdrop.hidden=true;
+ if(backdrop){backdrop.classList.remove("is-closing");if(state&&mobile)backdrop.hidden=false;}
  if(state){
-  if(mobile){sidebar.classList.add("mobile-open");document.body.classList.add("drawer-open");if(backdrop)backdrop.hidden=false;}
+  if(mobile){sidebar.classList.add("mobile-open");document.body.classList.add("drawer-open");}
   else document.body.classList.add("sidebar-open");
+ }else if(backdrop&&!backdrop.hidden){
+  backdrop.classList.add("is-closing");
+  accountMenuCloseTimer=setTimeout(()=>{backdrop.hidden=true;backdrop.classList.remove("is-closing");},720);
  }
  toggle.setAttribute("aria-expanded",String(state));toggle.setAttribute("aria-label",state?"মেনু বন্ধ করুন":"মেনু খুলুন");
 }
