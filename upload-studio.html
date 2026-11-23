@@ -9,7 +9,10 @@
 <body class="upload-studio-page">
 <header class="topbar studio-global-topbar">
  <button class="yt-menu-trigger" id="studioMenuToggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6h17M3.5 12h17M3.5 18h17"/></svg></button>
- <a class="brand" href="/" aria-label="DRM Premium"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2.8 27 7v8.1c0 7.1-4.7 11.8-11 14.1C9.7 26.9 5 22.2 5 15.1V7l11-4.2Z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="m10.8 15.8 3.4 3.4 7.2-7.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="brand-word"><span class="brand-word-main">DRM–</span><span class="brand-word-accent">Premium</span><span class="brand-admin-suffix">Creator</span></span></a>
+ <a class="brand" href="/" aria-label="DRM– Premium Creator" data-environment-link="admin">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2.8 27 7v8.1c0 7.1-4.7 11.8-11 14.1C9.7 26.9 5 22.2 5 15.1V7l11-4.2Z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="m10.8 15.8 3.4 3.4 7.2-7.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span id="adminBrandName" class="brand-word"><span class="brand-word-main">DRM–</span><span class="brand-word-accent">Premium</span><span class="brand-admin-suffix">Creator</span></span>
+  </a>
  <span class="studio-header-identity" id="identity">Checking access…</span>
 </header>
 <div class="sidebar-backdrop" id="liveSidebarBackdrop" hidden></div>
@@ -28,7 +31,7 @@
 </aside>
 <div class="studio-shell">
 <main class="main-area">
- <header class="studio-heading"><div><div class="studio-title-line"><h1>Upload Studio</h1><div class="dash-meta"><span class="dash-role">Creator</span></div></div><p class="subhead">Create, organize and publish your content.</p></div><div class="top-actions"><span class="status-pill"><i></i> Preview workspace</span></div></header>
+ <header class="studio-heading"><div><h1>Upload Studio</h1><p class="subhead">Create, organize and publish your content.</p></div><div class="top-actions"><span class="status-pill"><i></i> Preview workspace</span></div></header>
  <div id="accessError" class="notice error" hidden></div>
  <section id="studioContent" hidden>
  <div class="page-tabs"><button class="tab active" data-tab="create">Create Post</button><button class="tab" data-tab="drafts">Drafts <span id="draftCount">0</span><span id="tabDraftCount" hidden>0</span></button><button class="tab" data-tab="manage">Manage Posts</button><button class="tab" data-tab="categories">Categories</button><button class="tab" data-tab="folders">Folders</button><button class="tab" data-tab="media">Media Library</button></div>
