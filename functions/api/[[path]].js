@@ -184,7 +184,6 @@ async function handle(req,env){
    return new Response(object.body,{headers:{"content-type":object.httpMetadata?.contentType||"image/webp","cache-control":"private, max-age=300","x-content-type-options":"nosniff"}});
   }
   if(p.length===1&&m==="PUT"){
-   if(!env.PROFILE_ASSETS)return fail("Profile image storage is not configured. Configure the PROFILE_ASSETS R2 binding.",503);
    const length=Number(req.headers.get("content-length")||0);if(length>2900000)return fail("Profile payload is too large.",413);
    let d;try{const raw=await req.text();if(new TextEncoder().encode(raw).length>2900000)return fail("Profile payload is too large.",413);d=JSON.parse(raw)}catch{return fail("Invalid profile data.",400)}
    const fullName=String(d?.full_name||"").trim(),bio=String(d?.bio||"").trim(),dob=String(d?.date_of_birth||""),gender=String(d?.gender||""),location=String(d?.location||"").trim();
@@ -194,6 +193,7 @@ async function handle(req,env){
    if(gender&&!["female","male","non_binary","prefer_not_to_say"].includes(gender))return fail("Gender option সঠিক নয়।",400);
    const now=Math.floor(Date.now()/1000),existing=await env.DB.prepare("SELECT avatar_key,created_at FROM user_profiles WHERE user_id=?").bind(session.id).first();
    let avatarKey=existing?.avatar_key||null;
+   if((d?.remove_avatar===true||d?.avatar_data_url)&&!env.PROFILE_ASSETS)return fail("Profile image storage is not configured. Configure the PROFILE_ASSETS R2 binding.",503);
    if(d?.remove_avatar===true)avatarKey=null;
    if(d?.avatar_data_url){
     const match=String(d.avatar_data_url).match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
