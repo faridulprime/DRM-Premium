@@ -180,8 +180,10 @@ async function handle(req,env){
    if(!env.PROFILE_ASSETS)return fail("Profile image storage is not configured.",503);
    const profile=await env.DB.prepare("SELECT avatar_key FROM user_profiles WHERE user_id=?").bind(session.id).first();
    if(!profile?.avatar_key)return fail("Profile image not found.",404);
-   const object=await env.PROFILE_ASSETS.get(profile.avatar_key);if(!object)return fail("Profile image not found.",404);
-   return new Response(object.body,{headers:{"content-type":object.httpMetadata?.contentType||"image/webp","cache-control":"private, max-age=300","x-content-type-options":"nosniff"}});
+   const object=await env.PROFILE_ASSETS.getWithMetadata(profile.avatar_key,"text");if(!object?.value)return fail("Profile image not found.",404);
+   let binary;try{binary=atob(object.value)}catch{return fail("Stored profile image is invalid.",500)}
+   const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
+   return new Response(bytes,{headers:{"content-type":object.metadata?.contentType||"image/webp","cache-control":"private, max-age=300","x-content-type-options":"nosniff"}});
   }
   if(p.length===1&&m==="PUT"){
    const length=Number(req.headers.get("content-length")||0);if(length>2900000)return fail("Profile payload is too large.",413);
@@ -201,9 +203,8 @@ async function handle(req,env){
     let binary;try{binary=atob(match[2])}catch{return fail("Profile picture data invalid.",400)}
     if(binary.length>2*1024*1024)return fail("Profile picture সর্বোচ্চ 2 MB হতে পারবে।",413);
     if(binary.length===0)return fail("Profile picture খালি।",400);
-    const ext=match[1]==="image/jpeg"?"jpg":match[1].split("/")[1],key="profiles/"+session.id+"/avatar-"+now+"."+ext;
-    const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
-    await env.PROFILE_ASSETS.put(key,bytes,{httpMetadata:{contentType:match[1],cacheControl:"private, max-age=300"}});
+    const key="profiles/"+session.id+"/avatar";
+    await env.PROFILE_ASSETS.put(key,match[2],{metadata:{contentType:match[1]}});
     avatarKey=key;
    }
    await env.DB.prepare("INSERT INTO user_profiles(user_id,full_name,bio,date_of_birth,gender,location,avatar_key,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET full_name=excluded.full_name,bio=excluded.bio,date_of_birth=excluded.date_of_birth,gender=excluded.gender,location=excluded.location,avatar_key=excluded.avatar_key,updated_at=excluded.updated_at").bind(session.id,fullName,bio,dob,gender,location,avatarKey,existing?.created_at||now,now).run();
