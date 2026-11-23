@@ -857,6 +857,8 @@ body.user-context-menu-open #adminSidebar>#adminSelectedUser{display:block!impor
 
 /* Admin login intentionally reuses the Live Users panel design and dimensions. */
 body.admin-gate-state .admin-main{padding:0!important}
+body.admin-gate-state .live-layout.admin-login-layout{display:grid!important;grid-template-columns:minmax(300px,440px)!important;justify-content:center!important;justify-items:center!important;width:100%!important;max-width:none!important;margin-left:auto!important;margin-right:auto!important}
+body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-column:1!important;width:100%!important;max-width:440px!important}
 .admin-login-layout{grid-template-columns:minmax(300px,440px);justify-content:center;max-width:1440px;margin:0 auto;padding:42px 30px 48px;min-height:calc(100vh - 148px)}
 .admin-login-panel{width:100%;min-height:calc(100vh - 210px);max-height:calc(100vh - 128px)}
 .admin-login-panel[hidden]{display:none!important}
