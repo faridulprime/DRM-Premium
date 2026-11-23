@@ -80,13 +80,15 @@ body.live-users-page{margin:0;min-height:100vh;background:#0d0d0d;color:#ededed;
 }
 
 
-/* Owner account drawer — part of the Live Users page */
-.live-user-drawer{position:fixed;z-index:120;top:50%;left:50%;width:min(460px,calc(100vw - 28px));max-height:min(86dvh,760px);display:flex;flex-direction:column;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-48%) scale(.97);visibility:hidden;opacity:0;transition:transform .32s cubic-bezier(.2,.82,.2,1),opacity .24s ease,visibility .32s;will-change:transform}
-.live-user-drawer.is-open{transform:translate(-50%,-50%) scale(1);visibility:visible;opacity:1}
-.live-user-drawer.is-closing{animation:liveDrawerGlitch .34s steps(2,end) both}
-@keyframes liveDrawerGlitch{0%{transform:translate(-50%,-50%) scale(1);opacity:1;filter:none}18%{transform:translate(calc(-50% - 4px),-50%) scale(1.005);filter:contrast(1.5)}34%{transform:translate(calc(-50% + 3px),-50%) scale(.995);opacity:.82;filter:brightness(1.35)}52%{transform:translate(-50%,-50%) scale(1.002);filter:contrast(1.5)}72%{transform:translate(-50%,-50%) scale(.985);opacity:.55;filter:brightness(1.4)}100%{transform:translate(-50%,-48%) scale(.97);opacity:0;filter:none}}
-.live-drawer-backdrop{position:fixed;z-index:110;inset:0;background:rgba(0,0,0,.54);backdrop-filter:blur(3px);opacity:0;animation:liveBackdropIn .24s ease forwards}
-@keyframes liveBackdropIn{to{opacity:1}}
+/* Owner account modal — independent viewport layer */
+.live-user-drawer{position:fixed;z-index:120;top:43%;left:35.7%;width:min(460px,calc(100vw - 28px));max-height:min(86dvh,760px);display:flex;flex-direction:column;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-50%) scale(.94);visibility:hidden;opacity:0;will-change:transform,opacity;}
+.live-user-drawer.is-open{visibility:visible;opacity:1}
+.live-user-drawer.is-opening{animation:liveModalEnter .42s cubic-bezier(.18,.82,.22,1) both}
+.live-user-drawer.is-closing{animation:liveDrawerGlitch .36s cubic-bezier(.5,0,.75,.2) both}
+@keyframes liveModalEnter{0%{transform:translate(-50%,-47%) scale(.88);opacity:0;filter:blur(5px)}65%{transform:translate(-50%,-50%) scale(1.015);opacity:1;filter:blur(0)}100%{transform:translate(-50%,-50%) scale(1);opacity:1;filter:none}}
+@keyframes liveDrawerGlitch{0%{transform:translate(-50%,-50%) scale(1);opacity:1;filter:none}18%{transform:translate(calc(-50% - 5px),-50%) scale(1.008);filter:contrast(1.5)}34%{transform:translate(calc(-50% + 4px),-50%) scale(.992);opacity:.82;filter:brightness(1.35)}58%{transform:translate(-50%,-50%) scale(1.01);filter:contrast(1.5)}78%{transform:translate(-50%,-50%) scale(.96);opacity:.45;filter:blur(1px)}100%{transform:translate(-50%,-47%) scale(.9);opacity:0;filter:blur(4px)}}
+.live-drawer-backdrop{position:fixed;z-index:110;inset:0;background:rgba(0,0,0,.58);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;animation:liveBackdropIn .3s ease-out forwards;}
+@keyframes liveBackdropIn{from{opacity:0;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}to{opacity:1;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}}
 .live-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 24px 20px;border-bottom:1px solid #292929;background:linear-gradient(145deg,#1a1a1a,#121212)}
 .live-drawer-kicker{color:#858585;font-size:9px;font-weight:700;letter-spacing:.17em}
 .live-drawer-head h2{margin:8px 0 0;color:#f0f0f0;font-size:21px;font-weight:600;letter-spacing:-.04em}
@@ -128,5 +130,5 @@ body.live-users-page{margin:0;min-height:100vh;background:#0d0d0d;color:#ededed;
 .live-activity-track{height:5px;overflow:hidden;border-radius:99px;background:#2b2b2b}
 .live-activity-track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#777,#c7c7c7)}
 .live-activity-note{padding:10px;border:1px solid #303030;border-radius:6px;color:#858585;font-size:9px;line-height:1.6}
-@media(max-width:700px){.live-user-drawer{width:min(460px,calc(100vw - 24px));max-height:88dvh;border-radius:10px}.live-drawer-head{padding:19px 17px 16px}.live-drawer-body{padding:15px 14px 25px}}
-@media(prefers-reduced-motion:reduce){.live-user-drawer,.live-drawer-backdrop{transition:none;animation:none}.live-user-drawer.is-closing{animation:none;transform:translate(-50%,-48%) scale(.97);opacity:0}}
+@media(max-width:700px){.live-user-drawer{left:50%;top:50%;width:min(460px,calc(100vw - 24px));max-height:88dvh;border-radius:10px}.live-drawer-head{padding:19px 17px 16px}.live-drawer-body{padding:15px 14px 25px}}
+@media(prefers-reduced-motion:reduce){.live-user-drawer.is-opening{animation-duration:.2s}.live-user-drawer.is-closing{animation-duration:.2s}.live-drawer-backdrop{animation-duration:.15s}}
