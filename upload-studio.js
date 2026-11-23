@@ -1,3 +1,4 @@
+const $=s=>document.querySelector(s);
 const studioMenuToggle=$("#studioMenuToggle"),studioSidebar=$("#liveSidebar"),studioSidebarBackdrop=$("#liveSidebarBackdrop");
 let studioMenuCloseTimer=null;
 function setStudioMenu(open){
@@ -17,7 +18,7 @@ studioSidebarBackdrop?.addEventListener("click",()=>setStudioMenu(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")setStudioMenu(false)});
 studioSidebar?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>setStudioMenu(false)));
 window.matchMedia("(max-width:760px)").addEventListener?.("change",()=>setStudioMenu(false));
-const $=s=>document.querySelector(s);
+
 const state={user:null,type:"video",videoId:"",cover:"",categories:[],drafts:[],videos:[]};
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 async function api(path,opts={}){const r=await fetch("/api/"+path,{...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})},credentials:"same-origin"});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Request failed ("+r.status+")");return d;}
