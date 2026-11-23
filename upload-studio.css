@@ -50,3 +50,14 @@ dialog::backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!imp
  .panel input:not([type=checkbox]),.panel textarea,.panel select{font-size:16px}
  .studio-footer{font-size:12px}
 }
+
+
+
+/* Final typography pass: studio navigation, form hints and preview metadata */
+.brand small,.side-label,.eyebrow,.side-nav a b,.secure-mark,.status-pill,.identity,.autosave,.step,.field-hint,.yt-meta span,.yt-meta small,.cover-preview,.post-cover,.preview-type,.preview-meta,.preview-foot,.form-message,.list-row small,.list-row button,.studio-footer{font-size:12px}
+.sidebar-bottom a{font-size:12px}
+.panel-title p{font-size:14px}
+.panel label{font-size:14px}
+.url-row button,.use-button,.manage-inline button{font-size:13px}
+.yt-meta strong{font-size:13px}
+.post-preview-copy p{font-size:13px;line-height:1.55}
