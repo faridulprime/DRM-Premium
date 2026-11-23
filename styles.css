@@ -150,3 +150,15 @@ footer span+span{font-size:14px}
  .card-copy h4{font-size:15px}
  .card-copy p{font-size:13px}
 }
+
+
+
+/* Final typography pass: remaining homepage, signup and builder microcopy */
+.header-login-status,.eyebrow,.header-field input,.login-button,.signup-button{font-size:13px}
+.hero-kicker{font-size:12px}
+.sb-top small,.sb-muted,.sb-inspector-head span,.sb-field,.sb-top-actions button,.sb-sidebar,.sb-live-preview-head,.register-delivery-hint,.suspension-footnote,.profile-bar-action,.profile-brand-lockup{font-size:12px}
+.sb-layer small,.sb-side-foot p,.sb-stage-label,.sb-footer,.sb-live-preview-head span,.sb-draft-area-head span,.register-footnote,.profile-bar-message{font-size:12px}
+.sb-draft-area-head{font-size:12px}
+.register-form .eyebrow,.suspension-kicker{font-size:12px}
+.register-form label{font-size:14px}
+.profile-bar-message{line-height:1.5}
