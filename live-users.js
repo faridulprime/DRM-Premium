@@ -1,3 +1,27 @@
+const liveMenuToggle=$("#liveMenuToggle"),liveSidebar=$("#liveSidebar"),liveSidebarBackdrop=$("#liveSidebarBackdrop");
+let liveMenuCloseTimer=null;
+function setLiveMenu(open){
+ if(!liveMenuToggle||!liveSidebar)return;
+ const isOpen=Boolean(open),mobile=window.matchMedia("(max-width:760px)").matches;
+ clearTimeout(liveMenuCloseTimer);
+ liveSidebar.classList.remove("mobile-open");
+ document.body.classList.remove("sidebar-open");
+ if(liveSidebarBackdrop){liveSidebarBackdrop.classList.remove("is-closing");if(isOpen&&mobile)liveSidebarBackdrop.hidden=false;}
+ if(isOpen){
+  if(mobile)liveSidebar.classList.add("mobile-open");
+  else document.body.classList.add("sidebar-open");
+ }else if(liveSidebarBackdrop&&!liveSidebarBackdrop.hidden){
+  liveSidebarBackdrop.classList.add("is-closing");
+  liveMenuCloseTimer=setTimeout(()=>{liveSidebarBackdrop.hidden=true;liveSidebarBackdrop.classList.remove("is-closing");},720);
+ }
+ liveMenuToggle.setAttribute("aria-expanded",String(isOpen));
+ liveMenuToggle.setAttribute("aria-label",isOpen?"মেনু বন্ধ করুন":"মেনু খুলুন");
+}
+liveMenuToggle?.addEventListener("click",()=>setLiveMenu(liveSidebar.classList.contains("mobile-open")||document.body.classList.contains("sidebar-open")?false:true));
+liveSidebarBackdrop?.addEventListener("click",()=>setLiveMenu(false));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")setLiveMenu(false)});
+liveSidebar?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>setLiveMenu(false)));
+window.matchMedia("(max-width:760px)").addEventListener?.("change",()=>setLiveMenu(false));
 const $=s=>document.querySelector(s);
 let liveUser=null,refreshTimer=null,presenceTimer=null,latestUsers=[],accountUsers=[],selectedUser=null,drawerCloseTimer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
