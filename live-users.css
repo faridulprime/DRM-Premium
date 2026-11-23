@@ -1,10 +1,10 @@
 :root{color-scheme:dark}
 body.live-users-page{margin:0;min-height:100vh;padding-top:0;background:#0d0d0d;color:#ededed;font-family:"Space Grotesk","Hind Siliguri",sans-serif;transition:padding-left 700ms cubic-bezier(.16,1,.3,1)!important}
 body.live-users-page.sidebar-open{padding-left:240px!important}
-.live-topbar{position:relative;z-index:100;justify-content:flex-start;gap:16px}
+.live-topbar{position:fixed!important;z-index:130!important;justify-content:flex-start;gap:16px}
 .live-topbar .yt-menu-trigger{flex:0 0 40px}
 .live-topbar .live-back-link{margin-left:auto}
-@media(max-width:760px){body.live-users-page,body.live-users-page.sidebar-open{padding-left:0!important}.live-topbar{z-index:130}.live-topbar .yt-menu-trigger{width:38px;height:38px;min-width:38px;min-height:38px;flex-basis:38px}.live-topbar .live-back-link{font-size:11px}}
+@media(max-width:760px){body.live-users-page,body.live-users-page.sidebar-open{padding-left:0!important}.live-topbar{height:58px;min-height:58px;padding:0 10px!important;gap:8px!important}.live-topbar .yt-menu-trigger{width:38px;height:38px;min-width:38px;min-height:38px;flex-basis:38px}.live-topbar .brand{gap:6px}.live-topbar .brand-admin-suffix{font-size:11px;padding:3px 5px}.live-topbar .live-back-link{font-size:11px}}
 .live-topbar{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #252525;background:#101010}
 .live-brand{display:flex;align-items:center;gap:10px;color:#eee;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:.02em}.live-brand b{font-weight:500;color:#999}
 .live-brand-mark{width:27px;height:27px;display:grid;place-items:center;border:1px solid #555;border-radius:8px;font-size:13px}
