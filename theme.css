@@ -631,3 +631,21 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .topbar .account-controls{display:flex!important}
 }
 @media(max-width:520px){.profile-drawer{padding:20px 19px 16px}.profile-drawer-identity{margin-top:28px}}
+
+
+
+/* Typography audit · shared application shell and profile drawer */
+:root{--type-body:16px;--type-secondary:14px;--type-meta:12px;--type-label:14px}
+.side-link{font-size:14px}
+.sidebar-heading{font-size:16px}
+.category-chip{font-size:13px}
+.topbar .brand-admin-suffix{font-size:12px}
+.profile-drawer-name span{font-size:13px}
+.profile-drawer-view{font-size:14px}
+.profile-drawer-detail>span{font:600 12px/1.4 'Space Grotesk','Hind Siliguri',sans-serif;letter-spacing:.1em}
+.profile-drawer-detail p{font-size:14px;line-height:1.65}
+.profile-drawer-footer{font:600 12px/1.4 'Space Grotesk','Hind Siliguri',sans-serif;letter-spacing:.08em}
+@media(max-width:760px){
+ .side-link{font-size:14px}
+ .profile-drawer-detail>span{font-size:12px}
+}
