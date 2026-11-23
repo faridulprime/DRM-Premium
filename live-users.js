@@ -1,3 +1,4 @@
+const $=s=>document.querySelector(s);
 const liveMenuToggle=$("#liveMenuToggle"),liveSidebar=$("#liveSidebar"),liveSidebarBackdrop=$("#liveSidebarBackdrop");
 let liveMenuCloseTimer=null;
 function setLiveMenu(open){
@@ -5,10 +6,10 @@ function setLiveMenu(open){
  const isOpen=Boolean(open),mobile=window.matchMedia("(max-width:760px)").matches;
  clearTimeout(liveMenuCloseTimer);
  liveSidebar.classList.remove("mobile-open");
- document.body.classList.remove("sidebar-open");
+ document.body.classList.remove("sidebar-open","drawer-open");
  if(liveSidebarBackdrop){liveSidebarBackdrop.classList.remove("is-closing");if(isOpen&&mobile)liveSidebarBackdrop.hidden=false;}
  if(isOpen){
-  if(mobile)liveSidebar.classList.add("mobile-open");
+  if(mobile){liveSidebar.classList.add("mobile-open");document.body.classList.add("drawer-open");}
   else document.body.classList.add("sidebar-open");
  }else if(liveSidebarBackdrop&&!liveSidebarBackdrop.hidden){
   liveSidebarBackdrop.classList.add("is-closing");
@@ -22,7 +23,6 @@ liveSidebarBackdrop?.addEventListener("click",()=>setLiveMenu(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")setLiveMenu(false)});
 liveSidebar?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>setLiveMenu(false)));
 window.matchMedia("(max-width:760px)").addEventListener?.("change",()=>setLiveMenu(false));
-const $=s=>document.querySelector(s);
 let liveUser=null,refreshTimer=null,presenceTimer=null,latestUsers=[],accountUsers=[],selectedUser=null,drawerCloseTimer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 async function api(path,opts={}){const r=await fetch("/api/"+path,{...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})},credentials:"same-origin"});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||("Request failed ("+r.status+")"));return d}
