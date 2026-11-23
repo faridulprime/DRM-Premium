@@ -344,9 +344,10 @@ body.sidebar-open .yt-sidebar,
     opacity 520ms ease,
     visibility 0s linear 0s !important;
 }
-body.sidebar-open{transition:padding-left 700ms cubic-bezier(.16,1,.3,1)!important}
-body.sidebar-open .category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!important}
-.sidebar-backdrop:not([hidden]){animation:drawerBackdropFade 520ms ease both}
+body{transition:padding-left 700ms cubic-bezier(.16,1,.3,1)!important}
+.category-bar{transition:left 700ms cubic-bezier(.16,1,.3,1)!important}
+.sidebar-backdrop:not([hidden]){opacity:1;transition:opacity 700ms cubic-bezier(.16,1,.3,1)}
+.sidebar-backdrop.is-closing{opacity:0;pointer-events:none;animation:none}
 .yt-sidebar .side-link{transition:background-color 220ms ease,color 220ms ease,transform 260ms ease}
 .yt-sidebar .side-link:hover{transform:translateX(3px)}
 @keyframes drawerBackdropFade{from{opacity:0}to{opacity:1}}
