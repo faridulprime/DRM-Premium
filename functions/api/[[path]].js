@@ -190,13 +190,13 @@ async function handle(req,env){
    const fullName=String(d?.full_name||"").trim(),bio=String(d?.bio||"").trim(),dob=String(d?.date_of_birth||""),gender=String(d?.gender||""),location=String(d?.location||"").trim();
    if(!fullName||fullName.length>100)return fail("Full name ১–১০০ অক্ষরের মধ্যে দিন।",400);
    if(bio.length>500||location.length>120)return fail("Bio অথবা Location নির্ধারিত সীমা অতিক্রম করেছে।",400);
-   if(dob&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(dob))return fail("Date of birth সঠিক নয়।",400);
+   if(dob&&!/^\d{4}-\d{2}-\d{2}$/.test(dob))return fail("Date of birth সঠিক নয়।",400);
    if(gender&&!["female","male","non_binary","prefer_not_to_say"].includes(gender))return fail("Gender option সঠিক নয়।",400);
    const now=Math.floor(Date.now()/1000),existing=await env.DB.prepare("SELECT avatar_key,created_at FROM user_profiles WHERE user_id=?").bind(session.id).first();
    let avatarKey=existing?.avatar_key||null;
    if(d?.remove_avatar===true)avatarKey=null;
    if(d?.avatar_data_url){
-    const match=String(d.avatar_data_url).match(/^data:(image\\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
+    const match=String(d.avatar_data_url).match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
     if(!match)return fail("Profile picture হিসেবে JPEG, PNG অথবা WebP ফাইল দিন।",400);
     let binary;try{binary=atob(match[2])}catch{return fail("Profile picture data invalid.",400)}
     if(binary.length>2*1024*1024)return fail("Profile picture সর্বোচ্চ 2 MB হতে পারবে।",413);
