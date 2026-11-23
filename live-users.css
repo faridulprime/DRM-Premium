@@ -166,3 +166,12 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
  .live-username{font-size:14px}
  .live-drawer-action{font-size:13px}
 }
+
+
+
+/* Final typography pass: remaining live presence and detail microcopy */
+.live-topbar .brand-admin-suffix,.live-topbar .live-back-link,.live-back-link{font-size:12px}
+.live-kicker,.live-pill,.live-count-line span,.live-list-meta,.live-list-meta span:last-child,.live-role,.live-group-heading,.live-footnote,.live-notice{font-size:12px}
+.admin-gate-state .active-users-head p,.admin-gate-state .active-user-group-heading,.admin-gate-state .active-user-badge,.admin-gate-state .active-user-empty{font-size:12px}
+.live-drawer-kicker,.live-drawer-profile small,.live-drawer-chip,.live-drawer-section h3,.live-drawer-protected{font-size:12px}
+.live-detail-row span,.live-detail-row strong,.live-activity-summary span,.live-activity-summary small,.live-activity-row,.live-activity-row b,.live-activity-note{font-size:12px}
