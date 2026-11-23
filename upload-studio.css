@@ -116,3 +116,10 @@ body.upload-studio-page.sidebar-open{padding-left:240px!important}
  .upload-studio-page .main-area{padding:22px 15px 18px!important}
  .upload-studio-page .studio-heading{align-items:flex-start;flex-direction:column}
 }
+
+/* Match the Admin Dashboard title and role badge treatment. */
+.upload-studio-page .studio-title-line{display:flex;align-items:center;gap:12px}
+.upload-studio-page .studio-title-line h1{margin:0;color:#ededed;font-size:clamp(26px,3vw,36px);font-weight:700;letter-spacing:-1px;line-height:1.2}
+.upload-studio-page .dash-meta{display:flex;align-items:center;gap:10px}
+.upload-studio-page .dash-role{display:inline-flex;align-items:center;padding:7px 11px;border:1px solid #383838;border-radius:999px;background:#272727;color:#ededed;font-size:11px;font-weight:700;letter-spacing:.08em}
+@media(max-width:760px){.upload-studio-page .studio-title-line{gap:9px}.upload-studio-page .dash-role{padding:6px 10px}}
