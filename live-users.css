@@ -137,3 +137,32 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-activity-note{padding:10px;border:1px solid #303030;border-radius:6px;color:#858585;font-size:9px;line-height:1.6}
 @media(max-width:700px){.live-user-drawer{left:50%;top:50%;width:min(460px,calc(100vw - 24px));max-height:88dvh;border-radius:10px}.live-drawer-head{padding:19px 17px 16px}.live-drawer-body{padding:15px 14px 25px}}
 @media(prefers-reduced-motion:reduce){.live-user-drawer.is-opening{animation-duration:.2s}.live-user-drawer.is-closing{animation-duration:.2s}.live-drawer-backdrop{animation-duration:.15s}}
+
+
+
+/* Typography audit · live users and account detail surfaces */
+.live-topbar .brand-admin-suffix{font-size:12px}
+.live-topbar .live-back-link,.live-back-link{font-size:13px}
+.live-brand{font-size:15px}
+.live-kicker,.live-count-line span,.live-list-meta,.live-group-heading,.live-role,.live-footnote,.live-pill{font-size:12px}
+.live-title-line h1{font-size:27px}
+.live-subtitle{font-size:14px;line-height:1.55}
+.live-username{font-size:14px}
+.live-state{font-size:14px}
+.live-notice{font-size:13px}
+.live-drawer-kicker,.live-drawer-chip{font-size:11px}
+.live-drawer-head h2{font-size:22px}
+.live-drawer-profile strong{font-size:14px}
+.live-drawer-profile small,.live-drawer-protected{font-size:12px}
+.live-drawer-section h3{font-size:12px}
+.live-drawer-action{font-size:13px}
+.live-user-dialog>header h2{font-size:16px}
+.live-detail-row span,.live-activity-summary span,.live-activity-summary small{font-size:12px}
+.live-detail-row strong{font-size:13px}
+.live-activity-row,.live-activity-row b,.live-activity-note{font-size:12px}
+@media(max-width:700px){
+ .live-title-line h1{font-size:24px}
+ .live-subtitle{font-size:14px}
+ .live-username{font-size:14px}
+ .live-drawer-action{font-size:13px}
+}
