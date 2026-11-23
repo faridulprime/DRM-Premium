@@ -879,3 +879,36 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .admin-login-panel .live-title-line h1{font-size:23px}
  .admin-login-form{padding:18px 14px}
 }
+
+
+
+/* Typography audit · admin dashboard, user directory and login */
+.admin-main .primary,.admin-main .outline,.admin-main .row-actions button{font-size:14px}
+.editor label,.admin-main form label{font-size:14px}
+.active-users-head p,.active-user-empty,.data-row small,.hint{font-size:13px}
+.active-users-total,.active-user-group-heading,.overview-live{font-size:12px}
+.active-user-name,.overview-recent-row strong{font-size:14px}
+.active-user-badge,.overview-metric small,.overview-status-foot,.overview-recent-row small,.overview-activity span,.overview-activity small{font-size:12px}
+.overview-metric span{font-size:13px}
+.overview-card h3{font-size:16px}
+.overview-card-head p,.overview-heading p{font-size:14px}
+.overview-text-action{font-size:12px}
+.overview-status-top{font-size:13px}
+.user-protected-label,.uam-section-label,.uam-popover-head strong,#adminList .uam-popover-head>div>span{font-size:11px}
+.user-action-menu>summary,#adminList .user-action-menu>summary{font-size:13px}
+.user-action-popover button,#adminList .user-action-popover button{font-size:13px}
+.user-identity-top strong{font-size:14px}
+.user-meta-line,#adminList .user-meta-line,.admin-selected-user-meta,.admin-selected-user-top small{font-size:12px}
+.user-restriction-status,#adminList .user-restriction-status{font-size:11px}
+.user-details-head h3{font-size:17px}
+.user-detail-item span,.activity-summary span,.activity-summary small{font-size:12px}
+.user-detail-item strong{font-size:13px}
+.activity-hour-row,.activity-hour-row b,.activity-disclaimer{font-size:12px}
+.admin-login-form label{font-size:14px}
+.admin-login-form input{font-size:16px}
+.admin-login-form button.primary{font-size:14px}
+@media(max-width:760px){
+ .admin-main .primary,.admin-main .outline,.admin-main .row-actions button{font-size:14px}
+ .overview-metric span{font-size:12px}
+ .overview-card-head p,.overview-heading p{font-size:13px}
+}
