@@ -194,6 +194,7 @@ async function handle(req,env){
    if(gender&&!["female","male","non_binary","prefer_not_to_say"].includes(gender))return fail("Gender option সঠিক নয়।",400);
    const now=Math.floor(Date.now()/1000),existing=await env.DB.prepare("SELECT avatar_key,created_at FROM user_profiles WHERE user_id=?").bind(session.id).first();
    let avatarKey=existing?.avatar_key||null;
+   if(d?.remove_avatar===true)avatarKey=null;
    if(d?.avatar_data_url){
     const match=String(d.avatar_data_url).match(/^data:(image\\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
     if(!match)return fail("Profile picture হিসেবে JPEG, PNG অথবা WebP ফাইল দিন।",400);
