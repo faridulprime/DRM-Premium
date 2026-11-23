@@ -18,3 +18,35 @@
 .panel input:not([type=checkbox]),.panel textarea,.panel select,.markdown-preview{background:#171b30!important}
 .sticky-preview{position:static!important;top:auto!important}
 dialog::backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+
+
+/* Typography audit · Upload Studio workspace */
+.brand small,.side-label,.eyebrow{font-size:12px}
+.side-nav a{font-size:14px}
+.side-nav a b,.secure-mark{font-size:11px}
+.subhead,.view-heading p:not(.eyebrow){font-size:14px}
+.status-pill,.identity{font-size:12px}
+.tab{font-size:13px}
+.autosave,.step{font-size:12px}
+.panel-title h3,.preview-head h3{font-size:16px}
+.panel-title p,.panel label{font-size:14px}
+.panel input:not([type=checkbox]),.panel textarea,.panel select{font-size:16px}
+.url-row button,.use-button,.manage-inline button{font-size:13px}
+.field-hint{font-size:12px}
+.yt-meta strong{font-size:13px}
+.yt-meta span,.yt-meta small,.preview-meta,.preview-type{font-size:12px}
+.cover-preview,.post-cover{font-size:12px}
+.post-preview-copy h2{font-size:18px}
+.post-preview-copy p{font-size:13px;line-height:1.55}
+.preview-foot,.form-message,.studio-footer{font-size:12px;letter-spacing:normal}
+.publish-button,.secondary-button{font-size:14px}
+.empty-state{font-size:14px}
+.list-row strong{font-size:14px}
+.list-row small{font-size:12px}
+.list-row button{font-size:12px}
+.notice,dialog p{font-size:14px}
+@media(max-width:520px){
+ .panel input:not([type=checkbox]),.panel textarea,.panel select{font-size:16px}
+ .studio-footer{font-size:12px}
+}
