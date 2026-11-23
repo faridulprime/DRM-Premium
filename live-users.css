@@ -159,8 +159,8 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 
 /* Restricted accounts popup — reuses the Owner modal backdrop and motion */
 .live-title-line{flex-wrap:wrap}
-.live-banned-trigger{display:inline-flex;align-items:center;justify-content:center;min-height:26px;padding:4px 9px;border:1px solid rgba(211,105,105,.34);border-radius:999px;background:rgba(118,39,39,.18);color:#e5a0a0;font:700 10px/1 "Space Grotesk","Hind Siliguri",sans-serif;letter-spacing:.035em;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
-.live-banned-trigger:hover{background:rgba(140,48,48,.28);border-color:rgba(225,125,125,.55);color:#ffd0d0}
+.live-banned-trigger{display:inline-flex;align-items:center;justify-content:center;margin-left:3px;padding:4px 7px;border:1px solid rgba(239,131,131,.24);border-radius:7px;background:rgba(239,131,131,.10);color:#ef8383;font:600 13px/1.15 "Space Grotesk","Hind Siliguri",sans-serif;letter-spacing:-.02em;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.live-banned-trigger:hover{background:rgba(239,131,131,.17);border-color:rgba(239,131,131,.42);color:#ffb0b0}
 .live-restrictions-modal{position:fixed;z-index:120;top:50%;left:50%;width:min(560px,calc(100vw - 28px));max-height:min(82dvh,720px);display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-50%) scale(.94);visibility:hidden;opacity:0;will-change:transform,opacity}
 .live-restrictions-modal.is-open{visibility:visible;opacity:1;transform:translate(-50%,-50%) scale(1)}
 .live-restrictions-modal.is-opening{animation:liveModalEnter .42s ease-out both}
