@@ -109,15 +109,22 @@ body.account-suspended{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.suspension-progress i{transition:none}}
 
 
-/* Discord-inspired slim profile-completion banner after successful registration. */
+/* Discord-inspired profile prompt with the Live Users modal backdrop treatment. */
+.profile-bar-backdrop{position:fixed;z-index:10040;inset:0;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity .26s ease}
+.profile-bar-backdrop[hidden]{display:none}
+.profile-bar-backdrop.is-visible{opacity:1}
 .profile-complete-bar{position:fixed;z-index:10050;top:74px;left:50%;width:min(900px,calc(100vw - 32px));min-height:48px;display:flex;align-items:center;gap:12px;padding:7px 9px 7px 14px;border:1px solid #343b43;border-radius:9px;background:linear-gradient(105deg,#202832,#171d25);color:#e8edf3;box-shadow:0 12px 38px rgba(0,0,0,.38);opacity:0;transform:translate(-50%,-9px);pointer-events:none;transition:opacity .22s ease,transform .22s ease}
 .profile-complete-bar[hidden]{display:none}
 .profile-complete-bar.is-visible{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 .profile-complete-bar.is-hiding{opacity:0;transform:translate(-50%,-8px);pointer-events:none}
-.profile-bar-mark{width:27px;height:27px;display:grid;place-items:center;flex:none;border:1px solid rgba(131,239,165,.24);border-radius:7px;background:rgba(131,239,165,.1);color:#9de9b4;font-size:14px}
-.profile-complete-bar p{flex:1;min-width:0;margin:0;color:#d3dbe4;font-size:12px;line-height:1.45}
+.profile-bar-message{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:0;color:#d3dbe4;font:500 12px/1.45 'Space Grotesk','Hind Siliguri',sans-serif}
+.profile-welcome{color:#d3dbe4}
+.profile-brand-lockup{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;font:600 12px/1 'Space Grotesk',sans-serif;letter-spacing:-.025em}
+.profile-brand-mark{width:16px;height:16px;flex:none;color:#f1f1f1}
+.profile-brand-main{color:#f1f1f1}
+.profile-brand-accent{color:#60a5fa}
 .profile-bar-action{min-height:31px;display:inline-flex;align-items:center;justify-content:center;padding:0 13px;border:1px solid rgba(131,239,165,.35);border-radius:6px;background:rgba(131,239,165,.14);color:#a5f2bd;text-decoration:none;font-size:11px;font-weight:700;white-space:nowrap;transition:background .15s}
 .profile-bar-action:hover{background:rgba(131,239,165,.23)}
 .profile-bar-close{width:30px;height:30px;display:grid;place-items:center;flex:none;border:0;border-radius:6px;background:transparent;color:#aeb8c3;font-size:22px;line-height:1;cursor:pointer}
 .profile-bar-close:hover{background:rgba(255,255,255,.09);color:#fff}
-@media(max-width:600px){.profile-complete-bar{top:66px;width:calc(100vw - 20px);gap:8px;padding:7px}.profile-complete-bar p{font-size:10px}.profile-bar-action{padding:0 10px}.profile-bar-mark{display:none}}
+@media(max-width:600px){.profile-complete-bar{top:66px;width:calc(100vw - 20px);gap:8px;padding:7px}.profile-bar-message{font-size:10px;gap:3px}.profile-brand-lockup{font-size:10px}.profile-brand-mark{width:14px;height:14px}.profile-bar-action{padding:0 10px}}
