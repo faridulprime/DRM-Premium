@@ -1,3 +1,22 @@
+const studioMenuToggle=$("#studioMenuToggle"),studioSidebar=$("#liveSidebar"),studioSidebarBackdrop=$("#liveSidebarBackdrop");
+let studioMenuCloseTimer=null;
+function setStudioMenu(open){
+ if(!studioMenuToggle||!studioSidebar)return;
+ const isOpen=Boolean(open),mobile=window.matchMedia("(max-width:760px)").matches;
+ clearTimeout(studioMenuCloseTimer);
+ studioSidebar.classList.remove("mobile-open");
+ document.body.classList.remove("sidebar-open","drawer-open");
+ if(studioSidebarBackdrop){studioSidebarBackdrop.classList.remove("is-closing");if(isOpen&&mobile)studioSidebarBackdrop.hidden=false;}
+ if(isOpen){if(mobile){studioSidebar.classList.add("mobile-open");document.body.classList.add("drawer-open");}else document.body.classList.add("sidebar-open");}
+ else if(studioSidebarBackdrop&&!studioSidebarBackdrop.hidden){studioSidebarBackdrop.classList.add("is-closing");studioMenuCloseTimer=setTimeout(()=>{studioSidebarBackdrop.hidden=true;studioSidebarBackdrop.classList.remove("is-closing");},720);}
+ studioMenuToggle.setAttribute("aria-expanded",String(isOpen));
+ studioMenuToggle.setAttribute("aria-label",isOpen?"মেনু বন্ধ করুন":"মেনু খুলুন");
+}
+studioMenuToggle?.addEventListener("click",()=>setStudioMenu(studioSidebar.classList.contains("mobile-open")||document.body.classList.contains("sidebar-open")?false:true));
+studioSidebarBackdrop?.addEventListener("click",()=>setStudioMenu(false));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")setStudioMenu(false)});
+studioSidebar?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>setStudioMenu(false)));
+window.matchMedia("(max-width:760px)").addEventListener?.("change",()=>setStudioMenu(false));
 const $=s=>document.querySelector(s);
 const state={user:null,type:"video",videoId:"",cover:"",categories:[],drafts:[],videos:[]};
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
