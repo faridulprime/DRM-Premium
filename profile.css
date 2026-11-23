@@ -49,3 +49,12 @@ body.profile-page{margin:0;min-height:100vh;background:radial-gradient(ellipse a
 .profile-status{font-size:13px}
 .profile-footer>span,.profile-bottom-note{font-size:12px}
 .save-profile{font-size:14px}
+
+
+
+/* Final typography pass: profile form labels and helper copy */
+.profile-eyebrow,.avatar-copy small,.profile-field i,.profile-field small,.profile-footer>span,.profile-bottom-note{font-size:12px}
+.avatar-copy p{font-size:14px;line-height:1.5}
+.upload-button,.remove-avatar{font-size:13px}
+.profile-field>span{font-size:14px}
+.profile-status{font-size:13px}
