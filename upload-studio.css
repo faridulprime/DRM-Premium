@@ -67,7 +67,7 @@ body.upload-studio-page{padding:82px 0 0!important;background:#0d0d0d!important;
 body.upload-studio-page.sidebar-open{padding-left:240px!important}
 .upload-studio-page .studio-global-topbar{justify-content:flex-start!important;gap:18px!important}
 .upload-studio-page .studio-global-topbar .brand{gap:8px!important}
-.upload-studio-page .studio-global-topbar .brand-mark{width:30px!important;height:30px!important;flex:0 0 30px!important;display:block!important;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:0!important;filter:none!important}
+.upload-studio-page .studio-global-topbar .brand-mark{width:var(--brand-icon-size)!important;height:var(--brand-icon-size)!important;flex:0 0 var(--brand-icon-size)!important;display:block!important;object-fit:contain!important;background:transparent!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:0!important;filter:grayscale(1) brightness(0) invert(1)!important}
 .upload-studio-page .studio-global-topbar .brand-admin-suffix{display:inline-flex;align-items:center;margin-left:3px;padding:4px 7px;border:1px solid rgba(131,239,165,.2);border-radius:7px;background:rgba(131,239,165,.10);color:#83efa5;font-size:13px;font-weight:600;letter-spacing:-.02em}
 .studio-header-identity{margin-left:auto;color:#aaa;font-size:12px;white-space:nowrap}
 .upload-studio-page .main-area{width:100%;max-width:none;margin:0!important;padding:30px clamp(18px,3vw,46px) 18px!important}
