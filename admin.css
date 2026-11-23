@@ -912,3 +912,12 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .overview-metric span{font-size:12px}
  .overview-card-head p,.overview-heading p{font-size:13px}
 }
+
+
+
+/* Final typography pass: remaining dashboard and account-management microcopy */
+.gate-panel .eyebrow,.admin-main .eyebrow,.dash-role,.active-users-total,.active-user-group-heading,.active-user-badge,.overview-live,.overview-metric span,.overview-metric small,.overview-card-head p,.overview-status-foot,.overview-text-action,.overview-recent-row small,.overview-activity span,.overview-activity small{font-size:12px}
+.user-protected-label,.uam-section-label,.uam-popover-head strong,#adminList .uam-popover-head>div>span,.user-restriction-status,.user-meta-line,.user-action-menu>summary,.udr-eyebrow,.udr-section-title,.udr-status,.udr-profile span,.udr-note,.udr-foot,.udr-foot strong,.admin-selected-user-top small,.admin-selected-user-meta,#adminList .user-meta-line,#adminList .user-role-chip{font-size:12px}
+.user-action-popover button,#adminList .user-action-popover button{font-size:13px}
+.user-detail-item span,.user-detail-item strong,.activity-summary span,.activity-summary small,.activity-hour-row,.activity-hour-row b,.activity-disclaimer{font-size:12px}
+.admin-login-form label{font-size:14px}
