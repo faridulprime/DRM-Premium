@@ -36,8 +36,20 @@
     <footer class="live-footnote">Presence refreshes automatically · Online window 90 seconds</footer>
   </section>
   <aside class="live-empty-space" aria-hidden="true"></aside>
+  <aside id="liveUserDrawer" class="live-user-drawer" aria-hidden="true" aria-labelledby="drawerTitle">
+    <div class="live-drawer-head">
+      <div><span class="live-drawer-kicker">ACCOUNT CONTROL / OWNER</span><h2 id="drawerTitle">Selected User</h2></div>
+      <button id="liveDrawerClose" class="live-drawer-close" type="button" aria-label="Close user panel">×</button>
+    </div>
+    <div id="liveDrawerBody" class="live-drawer-body"></div>
+  </aside>
+  <div id="liveDrawerBackdrop" class="live-drawer-backdrop" hidden></div>
 </main>
+<dialog id="liveUserDialog" class="live-user-dialog">
+  <header><h2 id="liveDialogTitle">Account Details</h2><button id="liveDialogClose" type="button" aria-label="Close">×</button></header>
+  <div id="liveDialogBody" class="live-dialog-body"></div>
+</dialog>
 <p id="liveNotice" class="live-notice" role="status" aria-live="polite"></p>
-<script src="live-users.js?v=live-users-cinematic-01"></script>
+<script src="live-users.js?v=live-users-owner-panel-02"></script>
 </body>
 </html>
