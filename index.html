@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Sora:wght@600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=suspension-01">
+<link rel="stylesheet" href="styles.css?v=profile-onboarding-01">
 <link rel="stylesheet" href="theme.css?v=sidebar-close-01">
 
 </head>
@@ -28,7 +28,14 @@
     <span id="headerLoginStatus" class="header-login-status" role="status" aria-live="polite"></span>
   </form>
   <div class="account-controls"><span id="proBadge" class="pro-badge" hidden><span>PRO ELITE</span></span><a id="quickUploadButton" class="nav-upload" href="/upload-studio.html" hidden aria-label="আপলোড">＋</a></div>
-</header><div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+</header>
+<aside id="profileCompleteBar" class="profile-complete-bar" role="status" aria-live="polite" hidden>
+ <span class="profile-bar-mark" aria-hidden="true">✦</span>
+ <p>আপনার DRM Premium অভিজ্ঞতাকে আরও ব্যক্তিগত ও সম্পূর্ণ করতে প্রোফাইলের তথ্য যোগ করুন।</p>
+ <a class="profile-bar-action" href="/profile.html">Profile</a>
+ <button id="profileBarClose" class="profile-bar-close" type="button" aria-label="বার্তাটি বন্ধ করুন">×</button>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
 <aside class="yt-sidebar" id="ytSidebar" aria-label="প্রধান মেনু">
   <div class="sidebar-primary">
     <a class="side-link active" href="#home"><span class="side-icon">⌂</span><span>Home</span></a>
@@ -109,6 +116,6 @@
   <div class="suspension-wordmark">DRM– PREMIUM <span>·</span> ACCOUNT SECURITY</div>
  </div>
 </section>
-<script src="app.js?v=sidebar-close-01"></script>
+<script src="app.js?v=profile-onboarding-01"></script>
 </body>
 </html>
