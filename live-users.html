@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="theme.css?v=typography-audit-02">
-<link rel="stylesheet" href="live-users.css?v=live-users-source-spotlight-02">
+<link rel="stylesheet" href="live-users.css?v=live-users-restricted-users-01">
 </head>
 <body class="live-users-page">
 <header class="live-topbar topbar">
@@ -43,7 +43,7 @@
   <section class="live-panel" aria-labelledby="liveTitle">
     <header class="live-heading">
       <div class="live-kicker">DRM– PREMIUM / ADMINISTRATION</div>
-      <div class="live-title-line"><h1 id="liveTitle">Live Users</h1><span class="live-pill"><i></i> LIVE</span></div>
+      <div class="live-title-line"><h1 id="liveTitle">Live Users</h1><span class="live-pill"><i></i> LIVE</span><button id="liveRestrictionsOpen" class="live-banned-trigger" type="button">Banned Users</button></div>
       <div class="live-count-line"><strong id="liveCount">—</strong><span>ACTIVE NOW</span></div>
       <p class="live-subtitle">Currently active accounts</p>
     </header>
@@ -66,11 +66,24 @@
     <div id="liveDrawerBody" class="live-drawer-body"></div>
   </aside>
   <div id="liveDrawerBackdrop" class="live-drawer-backdrop" hidden></div>
+  <section id="liveRestrictionsModal" class="live-restrictions-modal" aria-hidden="true" aria-labelledby="liveRestrictionsTitle">
+    <header class="live-restrictions-head">
+      <div><span class="live-drawer-kicker">ACCOUNT SECURITY / OWNER</span><h2 id="liveRestrictionsTitle">Restricted Users</h2></div>
+      <button id="liveRestrictionsClose" class="live-drawer-close" type="button" aria-label="Close restricted users">×</button>
+    </header>
+    <div class="live-restrictions-content">
+      <div class="live-restrictions-tabs" role="tablist" aria-label="Restricted account type">
+        <button type="button" class="live-restriction-tab is-active" data-restriction-view="ban" role="tab" aria-selected="true">Banned <span id="liveBannedCount">0</span></button>
+        <button type="button" class="live-restriction-tab" data-restriction-view="suspend" role="tab" aria-selected="false">Suspended <span id="liveSuspendedCount">0</span></button>
+      </div>
+      <div id="liveRestrictionsList" class="live-restrictions-list" aria-live="polite"></div>
+    </div>
+  </section>
 <dialog id="liveUserDialog" class="live-user-dialog">
   <header><h2 id="liveDialogTitle">Account Details</h2><button id="liveDialogClose" type="button" aria-label="Close">×</button></header>
   <div id="liveDialogBody" class="live-dialog-body"></div>
 </dialog>
 <p id="liveNotice" class="live-notice" role="status" aria-live="polite"></p>
-<script src="live-users.js?v=live-users-owner-modal-06"></script>
+<script src="live-users.js?v=live-users-restricted-users-01"></script>
 </body>
 </html>
