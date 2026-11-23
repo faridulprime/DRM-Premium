@@ -175,3 +175,26 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .admin-gate-state .active-users-head p,.admin-gate-state .active-user-group-heading,.admin-gate-state .active-user-badge,.admin-gate-state .active-user-empty{font-size:12px}
 .live-drawer-kicker,.live-drawer-profile small,.live-drawer-chip,.live-drawer-section h3,.live-drawer-protected{font-size:12px}
 .live-detail-row span,.live-detail-row strong,.live-activity-summary span,.live-activity-summary small,.live-activity-row,.live-activity-row b,.live-activity-note{font-size:12px}
+
+
+
+/* Layout regression correction after typography pass */
+.live-topbar{box-sizing:border-box;width:100%;min-width:0}
+.live-topbar .brand{flex:0 0 auto;min-width:0}
+.live-topbar .live-back-link{flex:0 1 auto;min-width:0;max-width:clamp(130px,20vw,220px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.live-layout{box-sizing:border-box;width:100%;padding:104px 30px 48px;min-height:calc(100vh - 62px)}
+.live-panel{min-height:0;max-height:calc(100vh - 214px)}
+.live-username{font-size:12px;line-height:1.25}
+.live-user-row{min-height:46px}
+.live-footnote{font-size:12px;line-height:1.4}
+@media(max-width:760px){
+ .live-topbar .live-back-link{max-width:clamp(100px,34vw,170px);font-size:12px}
+}
+@media(max-width:700px){
+ .live-layout{display:block;padding:76px 12px 24px;min-height:calc(100vh - 58px)}
+ .live-panel{min-height:0;max-height:calc(100vh - 158px)}
+ .live-heading{padding:21px 17px 15px}
+ .live-title-line h1{font-size:23px}
+ .live-empty-space{display:none}
+ .live-back-link{font-size:12px}
+}
