@@ -853,3 +853,27 @@ body.user-context-menu-open #adminSidebar>#adminSelectedUser{display:block!impor
 @media(prefers-reduced-motion:reduce){
  #adminList .user-management-row,#adminList .user-details-trigger{transition:none!important;transform:none!important}
 }
+
+
+/* Admin login intentionally reuses the Live Users panel design and dimensions. */
+body.admin-gate-state .admin-main{padding:0!important}
+.admin-login-layout{grid-template-columns:minmax(300px,440px) 1fr;gap:clamp(28px,5vw,76px);max-width:1440px;margin:0 auto;padding:42px 30px 48px;min-height:calc(100vh - 148px)}
+.admin-login-panel{width:100%;min-height:calc(100vh - 210px);max-height:calc(100vh - 128px)}
+.admin-login-panel[hidden]{display:none!important}
+.admin-login-panel .live-heading{padding:25px 22px 18px}
+.admin-login-panel .live-title-line h1{margin:0;color:#ededed;font:600 25px/1.2 "Space Grotesk","Hind Siliguri",sans-serif;letter-spacing:-.045em}
+.admin-login-pill{white-space:nowrap}
+.admin-login-form{display:grid;gap:17px;padding:20px 16px 22px}
+.admin-login-form label{display:grid;gap:8px;color:#aaa;font-size:10px;font-weight:600;letter-spacing:.06em}
+.admin-login-form input{box-sizing:border-box;width:100%;height:39px;padding:0 12px;border:1px solid #303030;border-radius:7px;background:#171717;color:#eee;font:12px "Space Grotesk","Hind Siliguri",sans-serif;letter-spacing:normal}
+.admin-login-form input::placeholder{color:#6f6f6f}
+.admin-login-form input:focus{outline:0;border-color:#555;box-shadow:0 0 0 2px rgba(255,255,255,.035)}
+.admin-login-form button.primary{justify-self:start;min-width:116px;min-height:38px;padding:0 17px;border:1px solid #414141;border-radius:7px;background:#242424;color:#eee;font:600 12px "Hind Siliguri",sans-serif;cursor:pointer;transition:background .15s,border-color .15s}
+.admin-login-form button.primary:hover{background:#303030;border-color:#555}
+@media(max-width:700px){
+ .admin-login-layout{display:block;padding:18px 12px 24px;min-height:calc(100vh - 100px)}
+ .admin-login-panel{min-height:calc(100vh - 100px);max-height:none;border-radius:9px}
+ .admin-login-panel .live-heading{padding:21px 17px 15px}
+ .admin-login-panel .live-title-line h1{font-size:23px}
+ .admin-login-form{padding:18px 14px}
+}
