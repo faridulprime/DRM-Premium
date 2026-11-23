@@ -33,7 +33,6 @@ function renderOverview(){
  const recent=[...videos].sort((a,b)=>Number(b.created_at||0)-Number(a.created_at||0)).slice(0,4);
  $("#overviewRecent").innerHTML=recent.length?recent.map(v=>'<div class="overview-recent-row"><span class="overview-recent-dot"></span><div><strong>'+esc(v.title)+'</strong><small>'+esc(v.category)+' · '+(v.published?"Published":"Unpublished")+'</small></div></div>').join(""):'<p class="muted overview-empty">এখনো কোনো ভিডিও যোগ করা হয়নি।</p>';
  $("#overviewActivity").innerHTML='<span>Recorded tab views</span><strong>'+(state.analytics?Number(state.analytics.total_tab_views||0).toLocaleString():"—")+'</strong><small>সমস্ত রেকর্ডকৃত পৃষ্ঠা ভিজিট</small>';
- $("#overviewUsersAction").hidden=state.user?.role!=="owner";
 }
 document.querySelectorAll("[data-go-tab]").forEach(b=>b.addEventListener("click",()=>{const tab=b.dataset.goTab;navigateAdminTab(tab);if(b.dataset.action==="new-video")setTimeout(()=>editVideo(""),0)}));
 function renderVideos(){$("#videoCategory").innerHTML=state.categories.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");$("#videoList").innerHTML=state.videos.map(v=>`<div class="data-row"><div><strong>${esc(v.title)}</strong><small>${esc(v.category)} · ${v.published?"Published":"Unpublished"} · ${v.featured?"Featured":"Standard"}</small></div><div class="row-actions"><button data-edit="${esc(v.id)}">Edit</button><button class="delete" data-remove-video="${esc(v.id)}">Delete</button></div></div>`).join("")||'<p class="muted">এখনো কোনো ভিডিও নেই।</p>';document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editVideo(b.dataset.edit));document.querySelectorAll("[data-remove-video]").forEach(b=>b.onclick=()=>removeVideo(b.dataset.removeVideo))}
@@ -61,11 +60,10 @@ $("#videoForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={tit
 $("#categoryForm").onsubmit=async e=>{e.preventDefault();const name=new FormData(e.target).get("name").trim();try{await api("admin/categories",{method:"POST",body:JSON.stringify({name})});e.target.reset();await refresh();notice("ক্যাটাগরি যোগ হয়েছে।")}catch(err){notice(err.message,true)}};
 $("#settingsForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={};for(const el of f.elements)if(el.name)body[el.name]=el.type==="checkbox"?(el.checked?"true":"false"):el.value;try{await api("admin/settings",{method:"PUT",body:JSON.stringify(body)});await refresh();notice("ওয়েবসাইটের সেটিংস সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
 let adminMenuCloseTimer=null;
-function openAdminMenu(open)
+function openAdminMenu(open){
  const isOpen=Boolean(open),backdrop=$("#adminSidebarBackdrop");
  clearTimeout(adminMenuCloseTimer);
  document.body.classList.toggle("sidebar-open",isOpen);
- document.body.classList.toggle("user-context-menu-open",isOpen&&Boolean(userContext));
  $("#adminMenuToggle").setAttribute("aria-expanded",String(isOpen));
  $("#adminMenuToggle").setAttribute("aria-label",isOpen?"মেনু বন্ধ করুন":"মেনু খুলুন");
  if(backdrop){
@@ -76,7 +74,6 @@ function openAdminMenu(open)
    adminMenuCloseTimer=setTimeout(()=>{backdrop.hidden=true;backdrop.classList.remove("is-closing");},720);
   }
  }
- if(!isOpen)adminMenuCloseTimer=setTimeout(()=>{const selected=$("#");if(selected){selected.hidden=true;selected.innerHTML="";delete selected.dataset.userId;}},720);
 }
 function closeAdminMenu(){openAdminMenu(false);}
 $("#adminMenuToggle").onclick=()=>openAdminMenu(!document.body.classList.contains("sidebar-open"));
