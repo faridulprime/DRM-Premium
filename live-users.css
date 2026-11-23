@@ -78,3 +78,55 @@ body.live-users-page{margin:0;min-height:100vh;background:#0d0d0d;color:#ededed;
 @media(prefers-reduced-motion:reduce){
  .admin-gate-state .live-admin-content{scroll-behavior:auto}
 }
+
+
+/* Owner account drawer — part of the Live Users page */
+.live-user-drawer{position:fixed;z-index:120;top:0;right:0;width:min(470px,calc(100vw - 18px));height:100dvh;display:flex;flex-direction:column;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border-left:1px solid #383838;box-shadow:-24px 0 70px rgba(0,0,0,.58),inset 1px 0 rgba(255,255,255,.035);transform:translateX(105%);visibility:hidden;opacity:0;transition:transform .42s cubic-bezier(.2,.82,.2,1),opacity .28s ease,visibility .42s;will-change:transform}
+.live-user-drawer.is-open{transform:translateX(0);visibility:visible;opacity:1}
+.live-user-drawer.is-closing{animation:liveDrawerGlitch .34s steps(2,end) both}
+@keyframes liveDrawerGlitch{0%{transform:translateX(0);opacity:1;filter:none}18%{transform:translateX(-8px);filter:contrast(1.7)}34%{transform:translateX(5px);opacity:.82;filter:brightness(1.6)}52%{transform:translateX(-3px);filter:hue-rotate(18deg)}72%{transform:translateX(2px);opacity:.55;filter:contrast(1.8)}100%{transform:translateX(105%);opacity:0;filter:none}}
+.live-drawer-backdrop{position:fixed;z-index:110;inset:0;background:rgba(0,0,0,.54);backdrop-filter:blur(3px);opacity:0;animation:liveBackdropIn .24s ease forwards}
+@keyframes liveBackdropIn{to{opacity:1}}
+.live-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 24px 20px;border-bottom:1px solid #292929;background:linear-gradient(145deg,#1a1a1a,#121212)}
+.live-drawer-kicker{color:#858585;font-size:9px;font-weight:700;letter-spacing:.17em}
+.live-drawer-head h2{margin:8px 0 0;color:#f0f0f0;font-size:21px;font-weight:600;letter-spacing:-.04em}
+.live-drawer-close,.live-dialog-body~button{width:34px;height:34px;border:1px solid #3b3b3b;border-radius:7px;background:#202020;color:#ddd;font-size:21px;cursor:pointer}
+.live-drawer-body{flex:1;overflow:auto;padding:19px 20px 30px;scrollbar-width:thin;scrollbar-color:#414141 transparent}
+.live-drawer-profile{display:flex;align-items:center;gap:13px;padding:15px;border:1px solid #303030;border-radius:9px;background:linear-gradient(130deg,#1d1d1d,#151515)}
+.live-drawer-avatar{width:46px;height:46px;display:grid;place-items:center;flex:none;border:1px solid #454545;border-radius:50%;background:#292929;color:#eee;font-size:16px;font-weight:600}
+.live-drawer-profile strong,.live-drawer-profile small{display:block;overflow-wrap:anywhere}
+.live-drawer-profile strong{color:#eee;font-size:13px;font-weight:600}
+.live-drawer-profile small{margin-top:5px;color:#858585;font-size:10px}
+.live-drawer-meta{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 21px}
+.live-drawer-chip{padding:5px 8px;border:1px solid #363636;border-radius:5px;color:#aaa;font-size:9px;letter-spacing:.04em}
+.live-drawer-chip.owner{color:#d7c6e5;border-color:#55495e;background:#28222d}
+.live-drawer-chip.admin{color:#a7d8b7;border-color:#365241}
+.live-drawer-chip.restricted{color:#e1bd8d;border-color:#5b4933}
+.live-drawer-section{margin-top:20px}
+.live-drawer-section h3{margin:0 0 8px;padding:0 2px;color:#777;font-size:9px;font-weight:700;letter-spacing:.15em}
+.live-drawer-action{width:100%;min-height:43px;display:flex;align-items:center;gap:11px;margin:3px 0;padding:9px 11px;border:1px solid transparent;border-radius:7px;background:#171717;color:#d5d5d5;text-align:left;font:500 11px "Space Grotesk","Hind Siliguri",sans-serif;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.live-drawer-action:hover{border-color:#383838;background:#202020;color:#fff}
+.live-drawer-action .action-symbol{width:23px;height:23px;display:grid;place-items:center;border:1px solid #383838;border-radius:5px;color:#aab8c7;font-size:12px}
+.live-drawer-action.warning{color:#dfbd8d}.live-drawer-action.warning .action-symbol{color:#dfbd8d;border-color:#51412e}
+.live-drawer-action.danger{color:#dfa0a0}.live-drawer-action.danger .action-symbol{color:#dfa0a0;border-color:#503434}
+.live-drawer-protected{padding:12px;border:1px solid #383838;border-radius:7px;color:#999;font-size:10px;line-height:1.6}
+.live-user-dialog{width:min(520px,calc(100vw - 28px));max-height:min(82vh,720px);overflow:auto;padding:0;border:1px solid #3a3a3a;border-radius:11px;background:#171717;color:#eee;box-shadow:0 24px 80px rgba(0,0,0,.72)}
+.live-user-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(4px)}
+.live-user-dialog>header{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid #303030;background:#191919}
+.live-user-dialog>header h2{margin:0;font-size:14px;font-weight:600}
+.live-user-dialog>header button{width:30px;height:30px;border:1px solid #3b3b3b;border-radius:6px;background:#222;color:#ddd;font-size:19px;cursor:pointer}
+.live-dialog-body{padding:12px 19px 20px}
+.live-detail-row{display:flex;justify-content:space-between;gap:18px;padding:11px 0;border-bottom:1px solid #292929}
+.live-detail-row:last-child{border:0}
+.live-detail-row span{color:#888;font-size:10px}.live-detail-row strong{max-width:66%;overflow-wrap:anywhere;text-align:right;color:#e1e1e1;font-size:10px;font-weight:600}
+.live-activity-summary{padding:12px 0;border-bottom:1px solid #303030}
+.live-activity-summary span,.live-activity-summary small{display:block;color:#888;font-size:10px}
+.live-activity-summary strong{display:block;margin:6px 0;color:#eee;font:600 25px "Space Grotesk",sans-serif}
+.live-activity-bars{display:grid;gap:8px;padding:15px 0}
+.live-activity-row{display:grid;grid-template-columns:60px minmax(0,1fr) 24px;align-items:center;gap:9px;color:#aaa;font-size:9px}
+.live-activity-row b{text-align:right;color:#ddd;font-size:9px}
+.live-activity-track{height:5px;overflow:hidden;border-radius:99px;background:#2b2b2b}
+.live-activity-track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#777,#c7c7c7)}
+.live-activity-note{padding:10px;border:1px solid #303030;border-radius:6px;color:#858585;font-size:9px;line-height:1.6}
+@media(max-width:700px){.live-user-drawer{width:min(440px,calc(100vw - 10px))}.live-drawer-head{padding:19px 17px 16px}.live-drawer-body{padding:15px 14px 25px}}
+@media(prefers-reduced-motion:reduce){.live-user-drawer,.live-drawer-backdrop{transition:none;animation:none}.live-user-drawer.is-closing{animation:none;transform:translateX(105%);opacity:0}}
