@@ -85,7 +85,7 @@ body.live-users-page{margin:0;min-height:100vh;background:#0d0d0d;color:#ededed;
 .live-user-drawer.is-open{visibility:visible;opacity:1}
 .live-user-drawer.is-opening{animation:liveModalEnter .42s ease-out both}
 .live-user-drawer.is-closing{visibility:visible;animation:liveDrawerGlitch .36s cubic-bezier(.5,0,.75,.2) both}
-@keyframes liveModalEnter{from{transform:translate(calc(-50% + 44px),-50%);opacity:0}to{transform:translate(-50%,-50%);opacity:1}}
+@keyframes liveModalEnter{from{transform:translate(calc(-50% - 44px),-50%);opacity:0}to{transform:translate(-50%,-50%);opacity:1}}
 @keyframes liveDrawerGlitch{0%{transform:translate(-50%,-50%) scale(1);opacity:1;filter:none}18%{transform:translate(calc(-50% - 5px),-50%) scale(1.008);filter:contrast(1.5)}34%{transform:translate(calc(-50% + 4px),-50%) scale(.992);opacity:.82;filter:brightness(1.35)}58%{transform:translate(-50%,-50%) scale(1.01);filter:contrast(1.5)}78%{transform:translate(-50%,-50%) scale(.96);opacity:.45;filter:blur(1px)}100%{transform:translate(-50%,-47%) scale(.9);opacity:0;filter:blur(4px)}}
 .live-drawer-backdrop{position:fixed;z-index:110;inset:0;background:rgba(0,0,0,.58);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;animation:liveBackdropIn .3s ease-out forwards;}
 @keyframes liveBackdropIn{from{opacity:0;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}to{opacity:1;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}}
