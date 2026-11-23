@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css?v=shared-admin-menu-user-context-06">
+<link rel="stylesheet" href="admin.css?v=admin-login-live-panel-01">
 <link rel="stylesheet" href="theme.css?v=sidebar-close-01">
 <link rel="stylesheet" href="live-users.css?v=admin-directory-cinematic-01">
 </head>
@@ -79,15 +79,22 @@
    <div class="gate-actions"><button type="button" id="sendOwnerCode" class="outline">ইমেইলে কোড পাঠান</button><button class="primary">Owner অ্যাকাউন্ট তৈরি করুন</button></div>
   </form>
  </section>
- <section id="login" class="panel gate-panel" hidden>
-  <p class="eyebrow">SECURE ACCESS</p><h1>DRM PREMIUM Login</h1>
-  <p class="muted">অনুমোদিত অ্যাকাউন্ট দিয়ে প্রবেশ করুন।</p>
-  <form id="loginForm" class="editor single-column">
-   <label>Email<input name="email" type="email" required autocomplete="username"></label>
-   <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
-   <button class="primary">লগইন</button>
-  </form>
- </section>
+ <div class="live-layout admin-login-layout">
+  <section id="login" class="live-panel admin-login-panel" aria-labelledby="adminLoginTitle" hidden>
+   <header class="live-heading">
+    <div class="live-kicker">DRM– PREMIUM / ADMINISTRATION</div>
+    <div class="live-title-line"><h1 id="adminLoginTitle">Admin Login</h1><span class="live-pill admin-login-pill">SECURE</span></div>
+    <p class="live-subtitle">অনুমোদিত অ্যাকাউন্ট দিয়ে প্রবেশ করুন।</p>
+   </header>
+   <form id="loginForm" class="admin-login-form">
+    <label>Email<input name="email" type="email" required autocomplete="username" placeholder="Enter admin email"></label>
+    <label>Password<input name="password" type="password" required autocomplete="current-password" placeholder="Enter your password"></label>
+    <button class="primary" type="submit">লগইন</button>
+   </form>
+   <footer class="live-footnote">Secure administrator access · DRM Premium</footer>
+  </section>
+  <aside class="live-empty-space" aria-hidden="true"></aside>
+ </div>
  <section id="dashboard" hidden>
   <div class="dash-head">
    <div><p class="eyebrow">DRM PREMIUM MANAGEMENT</p><h1>Dashboard</h1><p class="muted" id="adminIdentity"></p></div>
