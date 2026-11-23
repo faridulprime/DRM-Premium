@@ -15,9 +15,27 @@
 </head>
 <body class="live-users-page">
 <header class="live-topbar">
-  <a class="live-brand" href="/admin" aria-label="Back to Admin Dashboard"><span class="live-brand-mark">D</span><span>DRM– <b>Premium</b></span></a>
+  <button class="yt-menu-trigger" id="liveMenuToggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6h17M3.5 12h17M3.5 18h17"/></svg>
+  </button>
+  <a class="live-brand" href="/" aria-label="DRM Premium Homepage"><span class="live-brand-mark">D</span><span>DRM– <b>Premium</b></span></a>
   <a class="live-back-link" href="/admin"><span aria-hidden="true">←</span> Admin Dashboard</a>
 </header>
+<div class="sidebar-backdrop" id="liveSidebarBackdrop" hidden></div>
+<aside class="yt-sidebar admin-sidebar" id="liveSidebar" aria-label="Main navigation">
+  <div class="sidebar-primary">
+    <a class="side-link" href="/"><span class="side-icon">⌂</span><span>Home</span></a>
+    <a class="side-link" href="/upload-studio.html"><span class="side-icon">＋</span><span>Upload Studio</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Dashboard</div>
+    <a class="side-link" href="/admin"><span class="side-icon">▦</span><span>Overview</span></a>
+    <a class="side-link" href="/admin#tab-videos"><span class="side-icon">▶</span><span>ভিডিও</span></a>
+    <a class="side-link" href="/admin#tab-categories"><span class="side-icon">▤</span><span>ক্যাটাগরি</span></a>
+    <a class="side-link" href="/admin#tab-admins"><span class="side-icon">♙</span><span>Users & Admins</span></a>
+    <a class="side-link active" href="/live-users.html"><span class="side-icon">●</span><span>Live Users</span></a>
+  </div>
+</aside>
 <main class="live-layout">
   <section class="live-panel" aria-labelledby="liveTitle">
     <header class="live-heading">
