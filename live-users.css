@@ -45,7 +45,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 
 
 /* Owner account modal — independent viewport layer */
-.live-user-drawer{position:fixed;z-index:120;top:51.1%;left:calc(54.4% - 120px);width:min(460px,calc(100vw - 28px));max-height:min(86dvh,760px);display:flex;flex-direction:column;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-50%) scale(.94);visibility:hidden;opacity:0;will-change:transform,opacity;}
+.live-user-drawer{position:fixed;z-index:120;top:51.1%;left:calc(54.4% - 90px);width:min(460px,calc(100vw - 28px));max-height:min(86dvh,760px);display:flex;flex-direction:column;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-50%) scale(.94);visibility:hidden;opacity:0;will-change:transform,opacity;}
 .live-user-drawer.is-open{visibility:visible;opacity:1;transform:translate(-50%,-50%) scale(1)}
 .live-user-drawer.is-opening{animation:liveModalEnter .42s ease-out both}
 .live-user-drawer.is-closing{visibility:visible;animation:liveDrawerGlitch .36s cubic-bezier(.5,0,.75,.2) both}
