@@ -170,6 +170,47 @@ async function handle(req,env){
  if(p[0]==="categories"&&m==="GET"){const r=await env.DB.prepare("SELECT id,name,sort_order FROM categories ORDER BY sort_order,name").all();return json(r.results||[])}
  if(p[0]==="settings"&&m==="GET")return json(await settings(env.DB));
  if(p[0]==="analytics"&&p[1]==="event"&&p.length===2&&m==="POST"){const d=await readBody(req),allowed=new Set(["home","browse","references","articles","books","admin","overview","videos","categories","site","admins"]);if(!allowed.has(d?.tab))return fail("Invalid analytics tab.",400);await env.DB.prepare("INSERT INTO analytics_events(tab,created_at) VALUES(?,?)").bind(d.tab,Math.floor(Date.now()/1000)).run();return json({ok:true},201)}
+ if(p[0]==="profile"){
+  const session=await getSession(req,env);if(!session)return fail("Login required.",401);
+  if(p.length===1&&m==="GET"){
+   const profile=await env.DB.prepare("SELECT full_name,bio,date_of_birth,gender,location,avatar_key,created_at,updated_at FROM user_profiles WHERE user_id=?").bind(session.id).first();
+   return json({profile:profile?{...profile,avatar_url:profile.avatar_key?"/api/profile/avatar?v="+profile.updated_at:null}:{full_name:"",bio:"",date_of_birth:"",gender:"",location:"",avatar_url:null}});
+  }
+  if(p.length===2&&p[1]==="avatar"&&m==="GET"){
+   if(!env.PROFILE_ASSETS)return fail("Profile image storage is not configured.",503);
+   const profile=await env.DB.prepare("SELECT avatar_key FROM user_profiles WHERE user_id=?").bind(session.id).first();
+   if(!profile?.avatar_key)return fail("Profile image not found.",404);
+   const object=await env.PROFILE_ASSETS.get(profile.avatar_key);if(!object)return fail("Profile image not found.",404);
+   return new Response(object.body,{headers:{"content-type":object.httpMetadata?.contentType||"image/webp","cache-control":"private, max-age=300","x-content-type-options":"nosniff"}});
+  }
+  if(p.length===1&&m==="PUT"){
+   if(!env.PROFILE_ASSETS)return fail("Profile image storage is not configured. Configure the PROFILE_ASSETS R2 binding.",503);
+   const length=Number(req.headers.get("content-length")||0);if(length>2900000)return fail("Profile payload is too large.",413);
+   let d;try{const raw=await req.text();if(new TextEncoder().encode(raw).length>2900000)return fail("Profile payload is too large.",413);d=JSON.parse(raw)}catch{return fail("Invalid profile data.",400)}
+   const fullName=String(d?.full_name||"").trim(),bio=String(d?.bio||"").trim(),dob=String(d?.date_of_birth||""),gender=String(d?.gender||""),location=String(d?.location||"").trim();
+   if(!fullName||fullName.length>100)return fail("Full name ১–১০০ অক্ষরের মধ্যে দিন।",400);
+   if(bio.length>500||location.length>120)return fail("Bio অথবা Location নির্ধারিত সীমা অতিক্রম করেছে।",400);
+   if(dob&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(dob))return fail("Date of birth সঠিক নয়।",400);
+   if(gender&&!["female","male","non_binary","prefer_not_to_say"].includes(gender))return fail("Gender option সঠিক নয়।",400);
+   const now=Math.floor(Date.now()/1000),existing=await env.DB.prepare("SELECT avatar_key,created_at FROM user_profiles WHERE user_id=?").bind(session.id).first();
+   let avatarKey=existing?.avatar_key||null;
+   if(d?.avatar_data_url){
+    const match=String(d.avatar_data_url).match(/^data:(image\\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/);
+    if(!match)return fail("Profile picture হিসেবে JPEG, PNG অথবা WebP ফাইল দিন।",400);
+    let binary;try{binary=atob(match[2])}catch{return fail("Profile picture data invalid.",400)}
+    if(binary.length>2*1024*1024)return fail("Profile picture সর্বোচ্চ 2 MB হতে পারবে।",413);
+    if(binary.length===0)return fail("Profile picture খালি।",400);
+    const ext=match[1]==="image/jpeg"?"jpg":match[1].split("/")[1],key="profiles/"+session.id+"/avatar-"+now+"."+ext;
+    const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
+    await env.PROFILE_ASSETS.put(key,bytes,{httpMetadata:{contentType:match[1],cacheControl:"private, max-age=300"}});
+    avatarKey=key;
+   }
+   await env.DB.prepare("INSERT INTO user_profiles(user_id,full_name,bio,date_of_birth,gender,location,avatar_key,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET full_name=excluded.full_name,bio=excluded.bio,date_of_birth=excluded.date_of_birth,gender=excluded.gender,location=excluded.location,avatar_key=excluded.avatar_key,updated_at=excluded.updated_at").bind(session.id,fullName,bio,dob,gender,location,avatarKey,existing?.created_at||now,now).run();
+   if(existing?.avatar_key&&avatarKey!==existing.avatar_key)await env.PROFILE_ASSETS.delete(existing.avatar_key).catch(()=>{});
+   return json({ok:true,profile:{full_name:fullName,bio,date_of_birth:dob,gender,location,avatar_url:avatarKey?"/api/profile/avatar?v="+now:null}});
+  }
+  return fail("Profile route not found.",404);
+ }
  const user=await getSession(req,env);if(!user||!["owner","admin"].includes(user.role))return fail("Admin login required.",401);
 
  if(p[0]==="builder"){
