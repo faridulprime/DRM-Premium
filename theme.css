@@ -649,3 +649,9 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .side-link{font-size:14px}
  .profile-drawer-detail>span{font-size:12px}
 }
+
+
+
+/* Final typography pass: shared header controls */
+.topbar .yt-create-button{font-size:13px}
+.topbar .brand-admin-suffix{font-size:12px}
