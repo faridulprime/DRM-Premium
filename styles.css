@@ -128,3 +128,25 @@ body.account-suspended{overflow:hidden}
 .profile-bar-close{width:30px;height:30px;display:grid;place-items:center;flex:none;border:0;border-radius:6px;background:transparent;color:#aeb8c3;font-size:22px;line-height:1;cursor:pointer}
 .profile-bar-close:hover{background:rgba(255,255,255,.09);color:#fff}
 @media(max-width:600px){.profile-complete-bar{top:66px;width:calc(100vw - 20px);gap:8px;padding:7px}.profile-bar-message{font-size:10px;gap:3px}.profile-brand-lockup{font-size:10px}.profile-brand-mark{width:14px;height:14px}.profile-bar-action{padding:0 10px}}
+
+
+
+/* Typography audit · homepage readability refinements */
+@media (min-width:761px){
+ nav a,.nav-categories a{font-size:14px}
+ .header-field input{font-size:14px}
+ .login-button,.signup-button{font-size:13px}
+}
+.hero-kicker{font-size:clamp(12px,1.2vw,16px)}
+.eyebrow{font-size:12px}
+.card-copy h4{font-size:16px}
+.card-copy p{font-size:14px;line-height:1.6}
+footer span+span{font-size:14px}
+@media(max-width:760px){
+ nav a,.nav-categories a{font-size:14px}
+ .header-field input{font-size:14px}
+ .login-button,.signup-button{font-size:13px}
+ .hero-kicker{font-size:12px}
+ .card-copy h4{font-size:15px}
+ .card-copy p{font-size:13px}
+}
