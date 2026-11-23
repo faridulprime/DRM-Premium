@@ -156,3 +156,33 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
  .live-empty-space{display:none}
  .live-back-link{font-size:12px}
 }
+
+/* Restricted accounts popup — reuses the Owner modal backdrop and motion */
+.live-title-line{flex-wrap:wrap}
+.live-banned-trigger{display:inline-flex;align-items:center;justify-content:center;min-height:26px;padding:4px 9px;border:1px solid rgba(211,105,105,.34);border-radius:999px;background:rgba(118,39,39,.18);color:#e5a0a0;font:700 10px/1 "Space Grotesk","Hind Siliguri",sans-serif;letter-spacing:.035em;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.live-banned-trigger:hover{background:rgba(140,48,48,.28);border-color:rgba(225,125,125,.55);color:#ffd0d0}
+.live-restrictions-modal{position:fixed;z-index:120;top:50%;left:50%;width:min(560px,calc(100vw - 28px));max-height:min(82dvh,720px);display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-50%) scale(.94);visibility:hidden;opacity:0;will-change:transform,opacity}
+.live-restrictions-modal.is-open{visibility:visible;opacity:1;transform:translate(-50%,-50%) scale(1)}
+.live-restrictions-modal.is-opening{animation:liveModalEnter .42s ease-out both}
+.live-restrictions-modal.is-closing{visibility:visible;animation:liveDrawerGlitch .36s cubic-bezier(.5,0,.75,.2) both}
+.live-restrictions-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:21px 23px 17px;border-bottom:1px solid #292929;background:linear-gradient(145deg,#1a1a1a,#121212)}
+.live-restrictions-head h2{margin:7px 0 0;color:#f0f0f0;font-size:21px;font-weight:600;letter-spacing:-.04em}
+.live-restrictions-content{display:flex;flex-direction:column;min-height:0;padding:16px 18px 18px}
+.live-restrictions-tabs{display:flex;gap:8px;padding-bottom:13px;border-bottom:1px solid #292929}
+.live-restriction-tab{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid #363636;border-radius:7px;background:#171717;color:#aaa;font:600 12px "Space Grotesk","Hind Siliguri",sans-serif;cursor:pointer}
+.live-restriction-tab span{min-width:19px;padding:2px 5px;border-radius:999px;background:#292929;color:#ccc;font-size:11px;text-align:center}
+.live-restriction-tab.is-active{border-color:#694040;background:#2a1919;color:#f0b0b0}
+.live-restriction-tab.is-active span{background:#593333;color:#ffe0e0}
+.live-restrictions-list{min-height:100px;overflow:auto;padding-top:9px;scrollbar-width:thin;scrollbar-color:#414141 transparent}
+.live-restricted-user-row{display:flex;align-items:center;gap:11px;width:100%;min-height:70px;margin:4px 0;padding:10px;border:1px solid #2d2d2d;border-radius:8px;background:#151515;color:#eee;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+.live-restricted-user-row:hover{border-color:#4a3939;background:#1d1919}
+.live-restricted-avatar{width:37px;height:37px;display:grid;place-items:center;flex:none;border:1px solid #454545;border-radius:50%;background:#292929;color:#eee;font-size:13px;font-weight:600}
+.live-restricted-copy{display:flex;flex:1;flex-direction:column;gap:3px;min-width:0}
+.live-restricted-copy strong{overflow:hidden;color:#eee;font-size:13px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+.live-restricted-copy small{overflow:hidden;color:#858585;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.live-restricted-copy .live-restricted-detail{color:#b88f8f}
+.live-restricted-status{flex:none;padding:5px 7px;border:1px solid #503434;border-radius:5px;color:#dfa0a0;font-size:10px;font-weight:700;letter-spacing:.04em}
+.live-restricted-status.suspend{border-color:#59482f;color:#dfbd8d}
+.live-restricted-user-row .live-row-arrow{opacity:1}
+@media(max-width:600px){.live-restrictions-modal{width:calc(100vw - 20px);max-height:86dvh}.live-restrictions-head{padding:18px 16px 15px}.live-restrictions-content{padding:13px 12px 14px}.live-restricted-user-row{gap:8px;padding:8px}.live-restricted-status{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.live-restrictions-modal.is-opening,.live-restrictions-modal.is-closing{animation-duration:.2s}}
