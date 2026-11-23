@@ -45,10 +45,8 @@
     <button class="side-link" type="button" data-tab="videos"><span class="side-icon">▶</span><span>ভিডিও</span></button>
     <button class="side-link" type="button" data-tab="categories"><span class="side-icon">▤</span><span>ক্যাটাগরি</span></button>
     <button class="side-link" type="button" data-tab="site" id="sidebarSiteTab" hidden><span class="side-icon">⚙</span><span>ওয়েবসাইট</span></button>
-    <button class="side-link" type="button" data-tab="admins" id="sidebarAdminsTab" hidden><span class="side-icon">♙</span><span>Users & Admins</span></button>
     <a class="side-link" href="/live-users.html" id="liveUsersSidebarTab" hidden><span class="side-icon">●</span><span>Live Users</span></a>
   </div>
-  <section id="adminSelectedUser" class="admin-selected-user" aria-label="Selected account details" hidden></section>
   <div class="sidebar-logout-area" id="adminSidebarLogoutArea" hidden>
     <button id="logout" class="sidebar-logout-button" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
@@ -62,7 +60,6 @@
     <button class="category-chip" type="button" data-tab="videos">ভিডিও</button>
     <button class="category-chip" type="button" data-tab="categories">ক্যাটাগরি</button>
     <button class="category-chip" type="button" data-tab="site" id="headerSiteTab" hidden>ওয়েবসাইট</button>
-    <button class="category-chip" type="button" data-tab="admins" id="headerAdminsTab" hidden>Users & Admins</button>
     <a class="category-chip" href="/live-users.html" id="headerLiveUsersTab" hidden>Live Users</a>
   </div>
 </nav>
@@ -107,7 +104,7 @@
   </div>
   <div class="overview-grid">
    <section class="overview-card"><div class="overview-card-head"><div><h3>Content status</h3><p class="muted">ভিডিও প্রকাশনার বর্তমান অবস্থা</p></div></div><div id="overviewContentStatus" class="overview-status"></div></section>
-   <section class="overview-card"><div class="overview-card-head"><div><h3>Quick actions</h3><p class="muted">প্রয়োজনীয় কাজ দ্রুত শুরু করুন</p></div></div><div class="overview-actions"><button type="button" data-go-tab="videos" data-action="new-video">＋ নতুন ভিডিও যোগ করুন</button><button type="button" data-go-tab="categories">▤ ক্যাটাগরি পরিচালনা</button><button type="button" data-go-tab="admins" id="overviewUsersAction" hidden>♙ Users & Admins</button></div></section>
+   <section class="overview-card"><div class="overview-card-head"><div><h3>Quick actions</h3><p class="muted">প্রয়োজনীয় কাজ দ্রুত শুরু করুন</p></div></div><div class="overview-actions"><button type="button" data-go-tab="videos" data-action="new-video">＋ নতুন ভিডিও যোগ করুন</button><button type="button" data-go-tab="categories">▤ ক্যাটাগরি পরিচালনা</button></div></section>
    <section class="overview-card overview-recent"><div class="overview-card-head"><div><h3>Recently added</h3><p class="muted">সর্বশেষ যুক্ত ভিডিও</p></div><button type="button" class="overview-text-action" data-go-tab="videos">সব ভিডিও দেখুন →</button></div><div id="overviewRecent"></div></section>
    <section class="overview-card"><div class="overview-card-head"><div><h3>Workspace activity</h3><p class="muted">সিস্টেমে রেকর্ড হওয়া ভিজিট</p></div></div><div id="overviewActivity" class="overview-activity"><span>Tab views</span><strong>—</strong></div></section>
   </div>
@@ -148,40 +145,11 @@
    </form>
    <p class="hint">এখানে ছবি URL হিসেবে যুক্ত হবে; এই সংস্করণে সরাসরি ছবি ফাইল আপলোড নেই।</p>
   </section>
-  <section id="tab-admins" class="panel tab-panel live-admin-tab" hidden>
-   <div class="live-layout live-admin-layout">
-    <section class="live-panel live-admin-panel" aria-labelledby="adminDirectoryTitle">
-     <header class="live-heading">
-      <div class="live-kicker">DRM– PREMIUM / ADMINISTRATION</div>
-      <div class="live-title-line"><h1 id="adminDirectoryTitle">Users &amp; Admins</h1><span class="live-pill live-admin-pill"><i></i> OWNER ACCESS</span></div>
-      <div class="live-count-line"><strong id="activeUsersTotal">—</strong><span>ACTIVE NOW</span></div>
-      <p class="live-subtitle">Verified accounts and current presence</p>
-     </header>
-     <label class="live-search">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
-      <input id="adminDirectorySearch" type="search" placeholder="Search username or email..." autocomplete="off" aria-label="Search username or email">
-      <button id="adminDirectorySearchClear" type="button" aria-label="Clear search" hidden>×</button>
-     </label>
-     <div class="live-list-meta"><span>ACCOUNT DIRECTORY</span><span id="adminDirectoryStatus">ALL ACCOUNTS</span></div>
-     <div class="live-admin-content">
-      <div class="user-management-shell"><div id="adminList" class="data-list"></div></div>
-      <section class="active-users" aria-labelledby="activeUsersTitle">
-       <div class="active-users-head"><div><h3 id="activeUsersTitle">Currently Active Users</h3><p class="muted">গত ৯০ সেকেন্ডে সক্রিয় Admin, Member ও Guest</p></div></div>
-       <div id="activeUsersList" class="active-users-list" aria-live="polite"><p class="muted">তালিকা লোড হচ্ছে…</p></div>
-      </section>
-     </div>
-     <footer class="live-footnote">Presence refreshes automatically · Online window 90 seconds</footer>
-    </section>
-    <aside class="live-empty-space" aria-hidden="true"></aside>
-   </div>
-  </section>
+  
  </section>
  
-<dialog id="userDetailsDialog" class="user-details-dialog" aria-labelledby="userDetailsTitle">
- <div class="user-details-head"><h3 id="userDetailsTitle">Account Details</h3><button type="button" id="userDetailsClose" aria-label="Close">×</button></div>
- <div id="userDetailsContent" class="user-details-content"></div>
-</dialog>
+
 <p id="notice" class="notice" role="status" aria-live="polite"></p>
 </main>
-<script src="admin.js?v=admin-login-role-gate-02"></script>
+<script src="admin.js?v=admins-tab-removed-01"></script>
 </body></html>
