@@ -176,6 +176,74 @@ def main() -> int:
         should_fail=True,
     )
 
+    check(
+        "affected systems must be a JSON array",
+        lambda: db.execute(
+            """INSERT INTO duga_change_requests
+               (id,title,summary,status,risk_level,affected_systems_json,
+                affected_paths_json,rollback_plan,requested_by_type,
+                requested_by_user_id,source_branch,policy_commit_sha,
+                created_at,updated_at)
+               VALUES ('change-systems-object','Valid title','Valid summary',
+                       'proposed','medium','{}','[]','revert','human',
+                       'human-1','feature/test','policy-sha',1,1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "affected paths must be a JSON array",
+        lambda: db.execute(
+            """INSERT INTO duga_change_requests
+               (id,title,summary,status,risk_level,affected_systems_json,
+                affected_paths_json,rollback_plan,requested_by_type,
+                requested_by_user_id,source_branch,policy_commit_sha,
+                created_at,updated_at)
+               VALUES ('change-paths-object','Valid title','Valid summary',
+                       'proposed','medium','[]','{}','revert','human',
+                       'human-1','feature/test','policy-sha',1,1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "job input must be a JSON object",
+        lambda: db.execute(
+            """INSERT INTO duga_jobs
+               (id,job_type,status,input_json,available_at,created_at,updated_at)
+               VALUES ('job-input-array','static_analysis','queued','[]',1,1,1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "job result must be a JSON object",
+        lambda: db.execute(
+            """INSERT INTO duga_jobs
+               (id,job_type,status,input_json,result_json,available_at,
+                created_at,updated_at)
+               VALUES ('job-result-array','static_analysis','failed','{}','[]',1,1,1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "audit payload must be a JSON object",
+        lambda: db.execute(
+            """INSERT INTO duga_audit_events
+               (id,aggregate_type,aggregate_id,event_type,actor_type,
+                actor_user_id,payload_json,created_at)
+               VALUES ('event-array','platform','platform','test','human',
+                       'human-1','[]',1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "malformed JSON remains a clean constraint rejection",
+        lambda: db.execute(
+            """INSERT INTO duga_jobs
+               (id,job_type,status,input_json,available_at,created_at,updated_at)
+               VALUES ('job-bad-json-again','static_analysis','queued','{',1,1,1)"""
+        ),
+        should_fail=True,
+    )
+
     def insert_change(change_id: str, *, status: str = "proposed",
                       risk: str = "medium", requester_type: str = "human",
                       requester_user: str | None = "human-1",
