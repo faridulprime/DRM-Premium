@@ -129,6 +129,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
 .category-chip{
   flex:0 0 auto;padding:var(--duss-category-chip-padding-y, 8px) var(--duss-category-chip-padding-x, 13px);border:0;border-radius:8px;
   background:#272727;color:var(--ink);font-size:var(--duss-category-chip-text, 13px);font-weight:600;white-space:nowrap;
+  text-decoration:none;
 }
 .category-chip:hover{background:#3f3f3f}
 .category-chip.active{background:#f1f1f1;color:#0f0f0f}
