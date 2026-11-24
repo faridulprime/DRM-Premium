@@ -35,6 +35,7 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 - Use CHECK constraints for enumerations, trimmed non-empty identifiers/required text and JSON syntax validity where supported; reject whitespace-only rollback plans, principals and evidence identifiers.
 - Enforce JSON value shape as well as syntax: affected-system and affected-path fields are arrays; review/finding evidence, validation results, audit payloads, and job input/result payloads are objects. API validation must additionally validate array element types, allowed system IDs, path normalization and payload schemas.
 - Use foreign keys to existing users for human identities; use ON DELETE RESTRICT for governance actors/approvers so deleting an account cannot erase accountability history.
+- Keep every review, approval and validation run attached to an existing change request with ON DELETE RESTRICT. The audit aggregate reference is intentionally polymorphic and therefore cannot be a conventional FK; API/service logic must validate the aggregate target before appending an event. Jobs are queue records and do not implicitly own a change request unless a future schema revision adds an explicit nullable FK.
 - Use XOR CHECK constraints for human vs AI actor identity.
 - Use scoped unique indexes for active assignments; enforce at most one active Platform Owner and one active human System Owner per system. Revoked assignments remain as history and permit replacement.
 - Add indexes for status/time, request references, actor lookups and pending jobs.
@@ -94,11 +95,36 @@ All endpoints are proposals. No route is live as a result of this document.
 11. Confirm Production DB binding is not used by Preview.
 12. Do not apply to Production under this design approval.
 
-## 10. Explicit non-goals
+## 10. Foreign-key and concurrency contract
+
+### Foreign-key integrity
+- Human assignment, requester, implementer, reviewer, approver, audit actor and finding-reviewer references use the existing `users` table with `ON DELETE RESTRICT`.
+- Reviews, approvals and validation runs reference an existing change request with `ON DELETE RESTRICT`; operational evidence must not become detached from its request.
+- The audit event's `(aggregate_type, aggregate_id)` pair is polymorphic across multiple aggregate tables. It is not a SQL FK; the trusted service must verify the target exists and is in scope before inserting the event.
+- The current job schema is generic and has no change-request FK. A future job-to-change association must be explicitly modeled, not inferred from JSON.
+- Local tests now probe missing user/change references and run `PRAGMA foreign_key_check` after valid fixtures. This still does not prove D1 foreign-key enforcement is enabled in a deployed database.
+
+### Optimistic concurrency and atomic audit
+For every state-changing operation, the future API must:
+1. Read the request's current `status`, `state_version` and `implementation_commit_sha`.
+2. Validate the requested transition and all actor/approval/review/validation preconditions against server-derived identity and the pinned policy/registry revision.
+3. Execute a conditional update equivalent to:
+   ```sql
+   UPDATE duga_change_requests
+   SET status = ?, state_version = state_version + 1, updated_at = ?
+   WHERE id = ? AND state_version = ? AND status = ?;
+   ```
+4. Require exactly one changed row. Zero rows means stale state or a concurrent writer; return a conflict and do not append success evidence.
+5. Append the corresponding audit event in the same D1 transactional batch as the conditional update. If either statement fails, neither state nor audit event may commit.
+6. On implementation commit change, treat every prior review, approval and validation record as historical evidence only. The service must compare each evidence commit to the current implementation commit before any later gate can pass.
+
+A conditional UPDATE alone is not sufficient if the audit insert is committed separately. D1 batch/transaction behavior and affected-row reporting must be verified against a disposable Preview database before relying on this contract. No runtime API or D1 operation is implemented by this design document.
+
+## 11. Explicit non-goals
 This document does not create a migration, API, UI, AI credential system, executable DACE, production deployment or database change. Those require a separate reviewed implementation change.
 
 
-## 11. Local SQL prototype review — 2026-11-25
+## 12. Local SQL prototype review — 2026-11-25
 The schema draft was syntax-tested in a local SQLite 3.46.1 in-memory database with a minimal users parent table. Eight DUGA tables, 16 indexes and two append-only audit triggers were created successfully. Behavioral probes passed for duplicate Platform Owner prevention, invalid human/AI actor combinations, audit UPDATE/DELETE rejection, referenced-user deletion restriction and malformed JSON rejection.
 
 The first probe exposed a role-kind/scope gap: the original draft did not prevent an AI principal from being assigned a human-only role. The SQL draft was tightened with CHECK constraints matching governance/ownership/roles.json: platform-owner, governance-manager and system-owner are human roles; ai-maintainer and independent-ai-auditor are AI roles; platform-wide roles use platform scope and system roles use system scope. Follow-up probes passed for AI-as-platform-owner rejection, wrong-scope AI maintainer rejection, human-as-AI-auditor rejection and a valid system-scoped AI maintainer.
@@ -106,7 +132,7 @@ The first probe exposed a role-kind/scope gap: the original draft did not preven
 Limitations: this was a local SQLite syntax/constraint test, not a Cloudflare D1 test. It does not validate Cloudflare's deployed SQLite runtime, D1 foreign-key settings, D1 batch semantics, migration history, API authorization, or regression compatibility with the live Preview database. No D1 database was accessed or modified.
 
 
-## 12. Lifecycle and authorization gap review — 2026-11-25
+## 13. Lifecycle and authorization gap review — 2026-11-25
 
 The schema was reviewed against the state-machine and authorization requirements above. The SQL draft enforces allowed enum values and identity-shape constraints, but it intentionally does not enforce the complete governance workflow. These are implementation gates, not evidence that the API already enforces them.
 
