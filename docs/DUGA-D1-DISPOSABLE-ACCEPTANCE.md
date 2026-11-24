@@ -1,7 +1,7 @@
 # DUGA — Disposable Cloudflare D1 Acceptance Plan
 
-Status: TEST PLAN ONLY — no database has been created, read, or modified by this document.
-Applies to: `duga-foundation-review` schema draft v0.1.0.
+Status: TEST PLAN ONLY — no database has been created, read, or modified. CAS + audit token design is now specified and locally tested; Cloudflare D1 acceptance remains pending.
+Applies to: `duga-foundation-review` schema draft v0.1.0 at commit `c33045567c4a94cc6c818d12a66efb4109c2b894`.
 Purpose: prove the candidate DUGA schema against Cloudflare D1 itself before any migration is proposed.
 
 ## 0. Hard safety gate
@@ -108,11 +108,16 @@ Probe B — affected-row reporting:
 
 Probe C — audit atomicity:
 - Do not assume that a zero-row conditional UPDATE automatically prevents a later audit INSERT in the same batch. Batch transactionality rolls back on statement errors; a zero-row UPDATE is not itself an error.
-- Before runtime API implementation, select and test an SQL design that makes the audit INSERT conditional on proof of the exact successful transition (for example, a unique transition token recorded by the successful update and checked by the audit INSERT).
-- Verify both success and stale-writer cases: successful transition produces exactly one audit event; stale transition produces none.
-- Verify duplicate/replayed transition tokens cannot create duplicate audit events.
+- The selected draft design is documented in `docs/DUGA-CAS-AUDIT-PATTERN.md`. It uses a server-generated one-time token stored by the successful conditional UPDATE (`last_transition_id`), a conditional `INSERT ... SELECT` that checks the exact incremented version/token, and a unique partial index on non-null audit `transition_id`.
+- Run the exact pattern from that document as a two-statement `db.batch([...])`; capture each statement's own `meta.changes`.
+- Verify success: UPDATE changes=1 and audit INSERT changes=1.
+- Verify stale expected version: UPDATE changes=0 and audit INSERT changes=0.
+- Verify replay of the original token: UPDATE changes=0 and audit INSERT changes=0.
+- Verify reuse of an already audited token against the next expected version: UPDATE changes=0 and audit INSERT changes=0.
+- Force the audit INSERT to fail a CHECK constraint and confirm the batch rejects and the state row remains at its pre-batch version/status/token.
+- Run two competing transitions with different tokens and the same expected version. Exactly one may win; there must be exactly one audit event for the winning token.
 
-This probe is a required blocker. Do not implement state-changing API routes until the stale-writer/no-audit property is demonstrated.
+This probe remains a required blocker. Local SQLite models these cases, but D1 acceptance must demonstrate them on Cloudflare D1 before state-changing API routes are implemented.
 
 ## 6. Evidence package
 
@@ -137,8 +142,9 @@ If any probe fails or cannot be run, report PARTIAL/FAIL with the exact gap. Do 
 ## 8. Current verified status
 
 As of the document's creation:
-- Local SQLite schema/validator CI is passing on the review branch.
+- Local SQLite schema/validator CI is passing on the review branch, including CAS success, stale writer, replay, token reuse and audit-failure rollback probes.
 - Cloudflare D1 platform documentation has been reviewed.
+- The CAS token + conditional audit-write design is documented, but no D1 runtime evidence exists yet.
 - No disposable D1 database has been created or tested by the assistant.
 - No D1 migration has been applied.
 - PR #4 remains draft and unmerged.
