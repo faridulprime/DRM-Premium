@@ -252,6 +252,75 @@ def main() -> int:
                  VALUES ('validation-json-bad','change-1','commit-a','passed','ci','[]oops',4)"""
           ), should_fail=True)
 
+    check("queued validation cannot have a start timestamp",
+          lambda: db.execute(
+              """INSERT INTO duga_validation_runs
+                 (id,change_request_id,commit_sha,status,validator,results_json,
+                  started_at,created_at)
+                 VALUES ('validation-queued-start','change-1','commit-a','queued',
+                         'ci','{}',5,4)"""
+          ), should_fail=True)
+    check("completed validation requires ordered timestamps",
+          lambda: db.execute(
+              """INSERT INTO duga_validation_runs
+                 (id,change_request_id,commit_sha,status,validator,results_json,
+                  started_at,completed_at,created_at)
+                 VALUES ('validation-time-order','change-1','commit-a','passed',
+                         'ci','{}',8,7,4)"""
+          ), should_fail=True)
+    check("valid running validation requires start and no completion",
+          lambda: db.execute(
+              """INSERT INTO duga_validation_runs
+                 (id,change_request_id,commit_sha,status,validator,results_json,
+                  started_at,created_at)
+                 VALUES ('validation-running','change-1','commit-a','running',
+                         'ci','{}',5,4)"""
+          ), should_fail=False)
+    check("successful validation requires completion timestamp",
+          lambda: db.execute(
+              """INSERT INTO duga_validation_runs
+                 (id,change_request_id,commit_sha,status,validator,results_json,
+                  started_at,created_at)
+                 VALUES ('validation-passed-no-end','change-1','commit-a','passed',
+                         'ci','{}',5,4)"""
+          ), should_fail=True)
+
+    check("running job requires lease expiry",
+          lambda: db.execute(
+              """INSERT INTO duga_jobs
+                 (id,job_type,status,input_json,available_at,created_at,updated_at)
+                 VALUES ('job-running-no-lease','validation','running','{}',1,1,1)"""
+          ), should_fail=True)
+    check("queued job cannot retain a lease",
+          lambda: db.execute(
+              """INSERT INTO duga_jobs
+                 (id,job_type,status,input_json,available_at,lease_expires_at,
+                  created_at,updated_at)
+                 VALUES ('job-queued-lease','validation','queued','{}',1,9,1,1)"""
+          ), should_fail=True)
+    check("succeeded job requires result payload",
+          lambda: db.execute(
+              """INSERT INTO duga_jobs
+                 (id,job_type,status,input_json,available_at,created_at,updated_at)
+                 VALUES ('job-success-no-result','validation','succeeded','{}',1,1,1)"""
+          ), should_fail=True)
+    check("valid running job accepts lease",
+          lambda: db.execute(
+              """INSERT INTO duga_jobs
+                 (id,job_type,status,input_json,available_at,lease_expires_at,
+                  created_at,updated_at)
+                 VALUES ('job-running-valid','validation','running','{}',1,99,1,1)"""
+          ), should_fail=False)
+
+    check("assignment revocation cannot predate assignment",
+          lambda: db.execute(
+              """INSERT INTO duga_assignments
+                 (id,scope_type,role_id,subject_type,user_id,status,
+                  created_at,revoked_at)
+                 VALUES ('assignment-time-invalid','platform','governance-manager',
+                         'human','human-2','revoked',10,9)"""
+          ), should_fail=True)
+
     # Schema-level boundary: the SQL enum permits any listed status; legal transition
     # order, stale-commit invalidation and actor/assignment authorization belong to API logic.
     db.execute("UPDATE duga_change_requests SET status='accepted', state_version=state_version+1 WHERE id='change-1'")
