@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "levels": [
+    {"id":"low","description":"Documentation or isolated non-runtime metadata with no permission or data impact.","approval":"system-owner","validation":"schema-or-diff-check"},
+    {"id":"medium","description":"Scoped subsystem changes with bounded dependencies and reversible behavior.","approval":"system-owner-and-platform-policy","validation":"relevant-automated-tests"},
+    {"id":"high","description":"Authentication, authorization, security, data model, migrations, cross-system contracts or broad runtime changes.","approval":"platform-owner-explicit","validation":"independent-review-and-relevant-tests"},
+    {"id":"critical","description":"Production data deletion, secret exposure, privilege escalation, irreversible operations or production deployment.","approval":"platform-owner-explicit-and-separate-execution-authorization","validation":"documented-recovery-plan-and-independent-verification"}
+  ],
+  "default": "high",
+  "rules": [
+    "When impact is unknown, do not downgrade risk; request evidence.",
+    "Risk may be raised during review but cannot be lowered without documented rationale.",
+    "Destructive actions require a reversible quarantine or verified backup where technically possible.",
+    "This policy defines intended governance; enforcement is not active until the corresponding backend exists."
+  ]
+}
