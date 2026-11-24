@@ -108,7 +108,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
 .topbar .yt-create-button:hover:not(:disabled){background:#263747;border-color:#263747}
 .topbar .yt-create-button:disabled{opacity:.75;cursor:not-allowed}
 .topbar .header-login-status{
-  top:calc(100% + 8px);right:0;z-index:110;max-width:min(360px,80vw);
+  top:calc(100% + 8px);right:0;z-index:var(--dups-layer-header-status, 110);max-width:min(360px,80vw);
   white-space:normal;background:#272727;border:1px solid #444;color:var(--ink);
 }
 .account-controls{display:flex;align-items:center;gap:10px;flex:0 0 auto;margin:0}
@@ -236,7 +236,7 @@ footer span+span{margin-left:12px;font-size:13px;font-weight:400}
 .player-info h2{margin-bottom:5px}
 .player-info p{color:#aaa;line-height:1.6}
 /* Keep owner-only editing tools and the Builder functional, but visually separate. */
-.visual-editor-toggle{position:fixed;z-index:990;top:auto;left:auto;right:14px;bottom:14px;width:28px;height:28px;display:grid;place-items:center;padding:0;border:1px solid #444;border-radius:50%;background:#272727;color:#f1f1f1;font-size:16px;line-height:1;cursor:pointer;box-shadow:none;}
+.visual-editor-toggle{position:fixed;z-index:var(--dups-layer-visual-editor, 990);top:auto;left:auto;right:14px;bottom:14px;width:28px;height:28px;display:grid;place-items:center;padding:0;border:1px solid #444;border-radius:50%;background:#272727;color:#f1f1f1;font-size:16px;line-height:1;cursor:pointer;box-shadow:none;}
 .visual-editor-panel{background:#181818!important;color:#eee!important;border:1px solid #444!important;border-radius:12px!important;box-shadow:0 12px 32px #0008!important}
 .visual-editor-panel input,.visual-editor-panel textarea{background:#0f0f0f!important;color:#eee!important;border-color:#444!important}
 @media(max-width:1100px){
@@ -629,7 +629,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
 @media(max-width:760px){
  body.profile-drawer-open{padding-right:0!important;overflow:hidden}
  body.profile-drawer-open .category-bar{right:0}
- .profile-drawer{z-index:181;width:min(280px,82vw);padding:18px 12px}
+ .profile-drawer{z-index:var(--dups-layer-profile-drawer, 181);width:min(280px,82vw);padding:18px 12px}
  .profile-drawer-backdrop:not([hidden]){display:block!important;position:fixed;z-index:var(--dups-layer-profile-backdrop, 180);inset:0;background:rgba(0,0,0,.58);opacity:1}
  .topbar .account-controls{display:flex!important}
 }
@@ -776,12 +776,12 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .register-form label{font-size:14px}
  .home-page .register-form input{min-height:44px;font-size:16px}
  .home-page .register-actions button{min-height:46px;font-size:14px}
- .home-page .yt-sidebar{width:min(320px,88vw);z-index:300;top:0;padding:14px 12px 18px}
+ .home-page .yt-sidebar{width:min(320px,88vw);z-index:var(--dups-layer-home-sidebar-mobile, 300);top:0;padding:14px 12px 18px}
  .home-page .side-link{min-height:46px;height:auto;padding:10px 12px;gap:16px;font-size:14px}
  .home-page .side-icon{width:24px;flex-basis:24px;font-size:19px}
  .home-page .sidebar-heading{font-size:15px}
- .home-page.drawer-open .topbar{z-index:100!important}
- .home-page.drawer-open .sidebar-backdrop:not([hidden]){z-index:290!important}
+ .home-page.drawer-open .topbar{z-index:var(--dups-layer-page-header, 100)!important}
+ .home-page.drawer-open .sidebar-backdrop:not([hidden]){z-index:var(--dups-layer-home-sidebar-backdrop, 290)!important}
  .home-page .profile-drawer{width:min(380px,94vw);padding:20px 18px 16px}
  .home-page .profile-drawer-name strong{font-size:18px}
  .home-page .profile-drawer-detail p{font-size:14px}
