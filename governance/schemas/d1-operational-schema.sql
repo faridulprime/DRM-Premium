@@ -17,6 +17,11 @@ CREATE TABLE duga_assignments (
   created_at INTEGER NOT NULL,
   revoked_at INTEGER,
   CHECK ((scope_type='platform' AND scope_id IS NULL) OR (scope_type='system' AND scope_id IS NOT NULL AND length(scope_id)>0)),
+  CHECK ((role_id IN ('platform-owner','governance-manager','system-owner','read-only-observer') AND subject_type='human') OR
+         (role_id IN ('ai-maintainer','independent-ai-auditor') AND subject_type='ai')),
+  CHECK ((role_id IN ('platform-owner','governance-manager') AND scope_type='platform') OR
+         (role_id IN ('system-owner','ai-maintainer','independent-ai-auditor') AND scope_type='system') OR
+         role_id='read-only-observer'),
   CHECK ((subject_type='human' AND user_id IS NOT NULL AND principal_id IS NULL) OR (subject_type='ai' AND user_id IS NULL AND principal_id IS NOT NULL AND length(principal_id)>0)),
   CHECK ((status='active' AND revoked_at IS NULL) OR (status='revoked' AND revoked_at IS NOT NULL))
 );
