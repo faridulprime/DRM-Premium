@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "approvalModel": "review",
+  "requiredStages": ["proposed","analysis","impact-review","independent-ai-audit","human-approval","implementation","automated-validation","final-review","accepted"],
+  "rules": [
+    "Every change must identify scope, affected systems, paths, risk, validation plan and rollback plan.",
+    "The implementer cannot be the independent auditor for the same change.",
+    "Independent AI audit is advisory evidence and never substitutes for human approval.",
+    "A designated Human Owner must approve before implementation begins.",
+    "High-risk, destructive, security-sensitive, permission-changing, migration and production-impacting changes require explicit Platform Owner approval.",
+    "Failed required validation blocks acceptance.",
+    "Production merge and deployment are separate actions requiring their own explicit authorization.",
+    "No workflow may write directly to main as part of routine implementation.",
+    "Approval records must identify actor, role, decision, timestamp, target change and reviewed commit."
+  ],
+  "terminalStates": ["accepted","rejected","cancelled"],
+  "implementationBranchPolicy": "feature-branch-only"
+}
