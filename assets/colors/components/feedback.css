@@ -19,4 +19,9 @@
   /* Shared shell focus and logout feedback. */
   --ducs-shell-focus-ring: #8ab4f8;
   --ducs-shell-logout-error: #ff8b8b;
+
+  /* Profile status and field focus. */
+  --ducs-profile-status-success: #a8d9b3;
+  --ducs-profile-status-error: #ff9b9b;
+  --ducs-profile-field-focus-ring: #83efa510;
 }
