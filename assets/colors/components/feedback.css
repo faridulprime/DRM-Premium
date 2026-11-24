@@ -28,4 +28,6 @@
   /* Upload Studio validation and overlays. */
   --ducs-upload-notice-error: #f0aaaa;
   --ducs-upload-dialog-scrim: #000b;
+  --ducs-live-presence-border: #101010;
+  --ducs-live-presence-bg: #36bd73;
 }
