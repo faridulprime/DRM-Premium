@@ -221,3 +221,15 @@ Allowed next work:
 - documentation and security test planning.
 
 No database, Production environment, `main` branch, or existing runtime code was modified during this audit.
+
+## 11. Safe local schema test harness — 2026-11-25
+
+Added `scripts/test-duga-schema.py`, a standard-library-only smoke test that creates an in-memory SQLite database, creates a minimal `users` parent table, and executes the DUGA schema draft. It checks role/subject constraints, scope restrictions, duplicate active Platform Owner prevention, append-only audit triggers, user deletion restriction and malformed JSON rejection.
+
+Run from the repository root:
+
+```bash
+python scripts/test-duga-schema.py
+```
+
+This is a local test harness only. It neither connects to Cloudflare nor changes Preview/Production. The harness is intended as an early regression check before a separate disposable D1 test is designed and approved.
