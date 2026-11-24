@@ -6,6 +6,7 @@ function setStudioMenu(open){
  const isOpen=Boolean(open),mobile=window.matchMedia("(max-width:760px)").matches;
  clearTimeout(studioMenuCloseTimer);
  studioSidebar.classList.remove("mobile-open");
+ void studioSidebar.offsetWidth;
  document.body.classList.remove("sidebar-open","drawer-open");
  if(studioSidebarBackdrop){studioSidebarBackdrop.classList.remove("is-closing");if(isOpen&&mobile)studioSidebarBackdrop.hidden=false;}
  if(isOpen){if(mobile){studioSidebar.classList.add("mobile-open");document.body.classList.add("drawer-open");}else document.body.classList.add("sidebar-open");}
