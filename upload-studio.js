@@ -5,6 +5,7 @@ function setStudioMenu(open){
  if(!studioMenuToggle||!studioSidebar)return;
  const isOpen=Boolean(open),mobile=window.matchMedia("(max-width:760px)").matches;
  clearTimeout(studioMenuCloseTimer);
+ if(mobile&&window.DRMMotion){window.DRMMotion.drawer({sidebar:studioSidebar,backdrop:studioSidebarBackdrop,toggle:studioMenuToggle,open:isOpen});return;}
  studioSidebar.classList.remove("mobile-open");
  void studioSidebar.offsetWidth;
  document.body.classList.remove("sidebar-open","drawer-open");
