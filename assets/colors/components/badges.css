@@ -119,4 +119,25 @@
   --ducs-live-state-text: #777;
   --ducs-live-state-error: #c88b8b;
   --ducs-live-footnote: #666;
+  /* Live Users account drawer and dialog text roles. */
+  --ducs-live-drawer-kicker: #858585;
+  --ducs-live-drawer-title: #f0f0f0;
+  --ducs-live-drawer-close-text: #ddd;
+  --ducs-live-drawer-avatar-text: #eee;
+  --ducs-live-drawer-profile-name: #eee;
+  --ducs-live-drawer-profile-muted: #858585;
+  --ducs-live-drawer-chip-text: #aaa;
+  --ducs-live-drawer-section-title: #777;
+  --ducs-live-drawer-action-text: #d5d5d5;
+  --ducs-live-drawer-action-hover-text: #fff;
+  --ducs-live-drawer-action-icon: #aab8c7;
+  --ducs-live-drawer-protected-text: #999;
+  --ducs-live-dialog-text: #eee;
+  --ducs-live-dialog-detail-label: #888;
+  --ducs-live-dialog-detail-value: #e1e1e1;
+  --ducs-live-dialog-activity-muted: #888;
+  --ducs-live-dialog-activity-value: #eee;
+  --ducs-live-dialog-activity-label: #aaa;
+  --ducs-live-dialog-activity-count: #ddd;
+  --ducs-live-dialog-note: #858585;
 }
