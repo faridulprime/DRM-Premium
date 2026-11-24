@@ -186,4 +186,9 @@
   --ducs-live-drawer-profile-border: #454545;
   --ducs-live-dialog-shadow: rgba(0,0,0,.72);
   --ducs-live-dialog-detail-divider: #292929;
+  /* Upload Studio legacy palette aliases and opaque workspace surfaces */
+  --ducs-upload-panel-strong-bg: #242943;
+  --ducs-upload-sidebar-bg: #171b30;
+  --ducs-upload-pink-accent: #e49a9a;
+  --ducs-upload-panel-secondary-bg: #181818;
 }
