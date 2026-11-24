@@ -1139,3 +1139,13 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  cursor:wait!important;
  transform:none!important;
 }
+
+
+/* Admin primary-owner badge override.
+   This is intentionally placed after legacy green Admin suffix rules. */
+body.admin-dashboard-state .admin-topbar .brand #adminBrandRole.brand-admin-suffix.brand-owner-suffix{
+ color:#d8b4fe!important;
+ -webkit-text-fill-color:#d8b4fe!important;
+ background:rgba(168,85,247,.14)!important;
+ border:1px solid rgba(192,132,252,.42)!important;
+}
