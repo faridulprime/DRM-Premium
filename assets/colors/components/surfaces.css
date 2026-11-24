@@ -116,4 +116,20 @@
   --ducs-upload-notice-error-bg: #291616;
   --ducs-upload-notice-error-border: #633737;
   --ducs-upload-dialog-backdrop: #000b;
+
+  /* Homepage editorial content surfaces. */
+  --ducs-home-page-bg: #f5f0e9;
+  --ducs-home-header-bg: rgba(249, 245, 239, .97);
+  --ducs-home-hero-bg: #f8f3ec;
+  --ducs-home-card-bg: #fffdfa;
+  --ducs-home-card-border: #e4ddd4;
+  --ducs-home-select-border: #8d8984;
+  --ducs-home-report-track: #e7e0d7;
+  --ducs-home-modal-backdrop: #000b;
+  --ducs-home-modal-border: #aaa;
+  --ducs-home-editor-panel-bg: #edf3fa;
+  --ducs-home-editor-border: #9bb0c7;
+  --ducs-home-builder-bg: #edf1f5;
+  --ducs-home-builder-sidebar: #f8fafc;
+  --ducs-home-builder-canvas: #fff;
 }
