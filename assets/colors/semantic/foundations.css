@@ -12,8 +12,8 @@
   --ducs-text-muted: #929292;
   --ducs-text-inverse: var(--ducs-neutral-950);
   --ducs-border-subtle: #303030;
-  --ducs-border-default: #414141;
-  --ducs-border-strong: #666666;
+  --ducs-border-default: #666666;
+  --ducs-border-strong: #929292;
   --ducs-icon-primary: var(--ducs-text-primary);
   --ducs-icon-secondary: var(--ducs-text-secondary);
   --ducs-icon-muted: var(--ducs-text-muted);
