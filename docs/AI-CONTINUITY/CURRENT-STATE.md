@@ -1,7 +1,7 @@
 # DRM Premium — Current State
 Verified ref: duga-foundation-review
 Verification date: 2026-11-25
-Verified commit: 3d560f9fa36fa553a81435ea15e7c5d3ef320ad0
+Verified commit: 13f6edbaa0485917e78af662fd8b92be2337b7a5
 
 ## DUGA foundation
 - Isolated review branch is based directly on `main`; it contains only DUGA foundation assets and excludes unrelated Admin/application work.
@@ -12,6 +12,7 @@ Verified commit: 3d560f9fa36fa553a81435ea15e7c5d3ef320ad0
 - Local SQLite schema smoke tests, governance validation and malformed-input unit cases passed in GitHub Actions. Latest expanded schema suite passed in run `45508682329` on commit `d012b10f34e62a7895bebc4c0af6a31a9ea49230`, covering active System Owner uniqueness/reassignment, temporal ordering, validation lifecycle states, job lease/status/result consistency and rejection of blank required values.
 - D1 design review documents server-side gates still required: legal state transitions, stale-commit invalidation, active assignment checks, reviewer/implementer separation, trusted validation, canonical Git-ref validation, role-specific approval authorization and server-derived audit actors.
 - SQL draft now also checks validation lifecycle timestamps, job lease/status/result consistency, assignment revocation ordering, change/job update ordering and nonblank identity/rollback fields.
+- JSON constraints now enforce arrays for affected systems/paths and objects for review/finding evidence, validation results, audit payloads and job input/result. Added malformed/type-shape probes; GitHub Actions run `45509071788` has completed the test step successfully (run finalization pending at last check).
 - CI path filters cover `governance/**`, DUGA design and continuity docs, schema/validator tests and workflow files.
 - Cloudflare Pages automatically published a branch Preview: https://duga-foundation-review.drm-premium.pages.dev. This is not Production and does not establish D1 migration or runtime governance validation.
 
