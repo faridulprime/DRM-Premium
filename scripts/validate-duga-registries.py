@@ -87,10 +87,11 @@ def validate_dependencies(systems: dict, rules: dict) -> list[str]:
             errors.append(f"{where} has unsupported edge type {kind!r}")
         if not nonempty(edge.get("evidence")):
             errors.append(f"{where} requires evidence")
-        key = (source, target, kind)
-        if key in seen_edges:
-            errors.append(f"{where} duplicates edge {key!r}")
-        seen_edges.add(key)
+        if nonempty(source) and nonempty(target) and kind in allowed_types:
+            key = (source, target, kind)
+            if key in seen_edges:
+                errors.append(f"{where} duplicates edge {key!r}")
+            seen_edges.add(key)
     pages = systems.get("pageAssets")
     if not isinstance(pages, list):
         errors.append("systems.json: pageAssets must be an array")
