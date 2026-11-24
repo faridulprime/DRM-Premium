@@ -1,7 +1,7 @@
 :root{color-scheme:dark}
 body.live-users-page{margin:0;min-height:100vh;padding-top:0;background:#0d0d0d;color:#ededed;font-family:"Space Grotesk","Hind Siliguri",sans-serif;transition:padding-left 700ms cubic-bezier(.16,1,.3,1)!important}
 body.live-users-page.sidebar-open{padding-left:240px!important}
-.live-topbar{position:fixed!important;z-index:130!important;justify-content:flex-start;gap:16px}
+.live-topbar{position:fixed!important;z-index:var(--dups-layer-live-header, 130)!important;justify-content:flex-start;gap:16px}
 .live-topbar .yt-menu-trigger{flex:0 0 40px}
 .live-topbar .live-back-link{margin-left:auto}
 @media(max-width:760px){body.live-users-page,body.live-users-page.sidebar-open{padding-left:0!important}.live-topbar{height:58px;min-height:58px;padding:0 10px!important;gap:8px!important}.live-topbar .yt-menu-trigger{width:38px;height:38px;min-width:38px;min-height:38px;flex-basis:38px}.live-topbar .brand{gap:6px}.live-topbar .brand-admin-suffix{font-size:11px;padding:3px 5px}.live-topbar .live-back-link{font-size:11px}}
@@ -27,7 +27,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-list{flex:1;min-height:80px;overflow-y:auto;padding:2px 9px 12px;scrollbar-width:thin;scrollbar-color:#393939 transparent}
 .live-list::-webkit-scrollbar{width:5px}.live-list::-webkit-scrollbar-thumb{background:#393939;border-radius:8px}
 .live-user-row{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:5px 10px;border:0;border-radius:6px;background:transparent;color:#e7e7e7;text-align:left;cursor:pointer;transition:background .12s}
-.live-user-row:hover{background:#1c1c1c}.live-user-row.is-source-highlight{position:relative;z-index:115;background:#1b1b1b;outline:1px solid rgba(255,255,255,.2);outline-offset:1px;box-shadow:0 0 0 7px rgba(0,0,0,.24)}.live-user-row:focus-visible{outline:1px solid #777;outline-offset:-1px}.live-user-row[disabled]{cursor:default}
+.live-user-row:hover{background:#1c1c1c}.live-user-row.is-source-highlight{position:relative;z-index:var(--dups-layer-live-highlight, 115);background:#1b1b1b;outline:1px solid rgba(255,255,255,.2);outline-offset:1px;box-shadow:0 0 0 7px rgba(0,0,0,.24)}.live-user-row:focus-visible{outline:1px solid #777;outline-offset:-1px}.live-user-row[disabled]{cursor:default}
 .live-avatar{position:relative;display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:50%;background:#303030;color:#ddd;font-size:12px;font-weight:600;overflow:visible}
 .live-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .live-presence-dot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border:2px solid #101010;border-radius:50%;background:#36bd73}
@@ -40,16 +40,16 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-state{padding:25px 12px;text-align:center;color:#777;font-size:12px}.live-state.error{color:#c88b8b}
 .live-footnote{padding:10px 17px;border-top:1px solid #242424;color:#666;font-size:9px;letter-spacing:.015em}
 .live-empty-space{min-width:0}
-.live-notice{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);margin:0;padding:9px 14px;border:1px solid #343434;border-radius:8px;background:#191919;color:#ccc;font-size:11px;opacity:0;pointer-events:none;transition:opacity .2s}.live-notice.show{opacity:1}
+ .live-notice{position:fixed;z-index:var(--dups-layer-live-notice, 140);left:50%;bottom:18px;transform:translateX(-50%);margin:0;padding:9px 14px;border:1px solid #343434;border-radius:8px;background:#191919;color:#ccc;font-size:11px;opacity:0;pointer-events:none;transition:opacity .2s}.live-notice.show{opacity:1}
 @media(max-width:700px){.live-topbar{height:56px;padding:0 16px}.live-layout{display:block;padding:18px 12px 24px}.live-panel{min-height:calc(100vh - 100px);max-height:calc(100vh - 76px);border-radius:9px}.live-heading{padding:21px 17px 15px}.live-title-line h1{font-size:23px}.live-empty-space{display:none}.live-back-link{font-size:11px}}
 
 
 /* Owner account modal — independent viewport layer */
-.live-user-drawer{position:fixed;z-index:120;top:51.1%;left:calc(54.4% - 90px);width:min(460px,calc(100vw - 28px));max-height:min(86dvh,760px);display:flex;flex-direction:column;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-50%) scale(.94);visibility:hidden;opacity:0;will-change:transform,opacity;}
+.live-user-drawer{position:fixed;z-index:var(--dups-layer-live-drawer, 120);top:51.1%;left:calc(54.4% - 90px);width:min(460px,calc(100vw - 28px));max-height:min(86dvh,760px);display:flex;flex-direction:column;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-50%) scale(.94);visibility:hidden;opacity:0;will-change:transform,opacity;}
 .live-user-drawer.is-open{visibility:visible;opacity:1;transform:translate(-50%,-50%) scale(1)}
 .live-user-drawer.is-opening{animation:liveModalEnter .42s ease-out both}
 .live-user-drawer.is-closing{visibility:visible;isolation:isolate;animation:liveDrawerSmokeVanish .64s cubic-bezier(.2,.65,.25,1) both;pointer-events:none}
-.live-user-drawer.is-closing::before,.live-user-drawer.is-closing::after{content:"";position:absolute;inset:-13%;z-index:5;pointer-events:none;border-radius:22px;opacity:0;mix-blend-mode:screen}
+.live-user-drawer.is-closing::before,.live-user-drawer.is-closing::after{content:"";position:absolute;inset:-13%;z-index:var(--dups-layer-live-effect, 5);pointer-events:none;border-radius:22px;opacity:0;mix-blend-mode:screen}
 .live-user-drawer.is-closing::before{background:radial-gradient(ellipse at 24% 28%,rgba(205,211,220,.32) 0,rgba(154,164,178,.16) 18%,transparent 43%),radial-gradient(ellipse at 72% 36%,rgba(222,226,232,.28) 0,rgba(145,154,168,.13) 22%,transparent 48%),radial-gradient(ellipse at 48% 76%,rgba(185,194,207,.24) 0,transparent 46%);filter:blur(17px);animation:liveDrawerSmokeCloud .64s ease-out both}
 .live-user-drawer.is-closing::after{inset:-24%;background:radial-gradient(ellipse at 34% 42%,rgba(190,199,211,.24) 0,transparent 38%),radial-gradient(ellipse at 68% 62%,rgba(220,224,231,.2) 0,transparent 42%),radial-gradient(ellipse at 52% 18%,rgba(157,168,184,.18) 0,transparent 40%);filter:blur(27px);animation:liveDrawerSmokeWisps .72s ease-out both}
 @keyframes liveDrawerSmokeVanish{0%{transform:translate(-50%,-50%) scale(1);opacity:1;filter:blur(0)}24%{transform:translate(-50%,-50%) scale(1.015);opacity:.9;filter:blur(1px)}58%{transform:translate(-50%,-52%) scale(.965);opacity:.42;filter:blur(7px)}100%{transform:translate(-50%,-56%) scale(.88);opacity:0;filter:blur(19px)}}
@@ -58,7 +58,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 
 @keyframes liveModalEnter{from{transform:translate(-50%,-50%) translateX(-44px) scale(.94);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
 @keyframes liveDrawerGlitch{0%{transform:translate(-50%,-50%) scale(1);opacity:1;filter:none}18%{transform:translate(calc(-50% - 5px),-50%) scale(1.008);filter:contrast(1.5)}34%{transform:translate(calc(-50% + 4px),-50%) scale(.992);opacity:.82;filter:brightness(1.35)}58%{transform:translate(-50%,-50%) scale(1.01);filter:contrast(1.5)}78%{transform:translate(-50%,-50%) scale(.96);opacity:.45;filter:blur(1px)}100%{transform:translate(-50%,-47%) scale(.9);opacity:0;filter:blur(4px)}}
-.live-drawer-backdrop{position:fixed;z-index:110;inset:0;background:rgba(0,0,0,.58);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;animation:liveBackdropIn .3s ease-out forwards;}
+.live-drawer-backdrop{position:fixed;z-index:var(--dups-layer-live-backdrop, 110);inset:0;background:rgba(0,0,0,.58);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;animation:liveBackdropIn .3s ease-out forwards;}
 @keyframes liveBackdropIn{from{opacity:0;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}to{opacity:1;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}}
 .live-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 24px 20px;border-bottom:1px solid #292929;background:linear-gradient(145deg,#1a1a1a,#121212)}
 .live-drawer-kicker{color:#858585;font-size:9px;font-weight:700;letter-spacing:.17em}
@@ -285,10 +285,10 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 
 /* Render stored account profile photos while keeping initials as a fallback. */
 .live-avatar{isolation:isolate}
-.live-avatar img{position:absolute;inset:0;z-index:1;display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;background:#303030}
-.live-presence-dot{z-index:2}
+.live-avatar img{position:absolute;inset:0;z-index:var(--dups-layer-live-avatar, 1);display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;background:#303030}
+.live-presence-dot{z-index:var(--dups-layer-live-presence, 2)}
 .live-drawer-avatar{position:relative;overflow:hidden;isolation:isolate}
-.live-drawer-avatar img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;border-radius:50%;background:#292929}
+.live-drawer-avatar img{position:absolute;inset:0;z-index:var(--dups-layer-live-avatar, 1);width:100%;height:100%;object-fit:cover;border-radius:50%;background:#292929}
 
 
 /* PHANTOM DIMENSION — cinematic atmosphere and spectral transition layer. */
@@ -299,7 +299,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
  animation:liveModalEnter .42s ease-out both,phantomRiftPulse .78s ease-out both;
 }
 .live-user-drawer.is-opening::before,.live-user-drawer.is-opening::after{
- content:"";position:absolute;inset:-2px;z-index:4;pointer-events:none;border-radius:inherit;opacity:0;
+ content:"";position:absolute;inset:-2px;z-index:var(--dups-layer-live-effect, 5);pointer-events:none;border-radius:inherit;opacity:0;
 }
 .live-user-drawer.is-opening::before{
  border:1px solid rgba(190,174,226,.3);
@@ -331,7 +331,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
  animation:phantomSmokeBloom .9s ease-out both;
 }
 .live-user-drawer.is-closing::after{
- inset:-30%;z-index:6;
+ inset:-30%;z-index:var(--dups-layer-live-effect-top, 6);
  background:radial-gradient(ellipse at 27% 50%,rgba(189,197,211,.2),transparent 34%),radial-gradient(ellipse at 72% 27%,rgba(204,192,224,.2),transparent 38%),radial-gradient(ellipse at 58% 72%,rgba(164,176,194,.17),transparent 42%);
  filter:blur(30px);mix-blend-mode:screen;
  animation:phantomSmokeEcho 1s ease-out both;
