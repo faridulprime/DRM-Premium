@@ -62,7 +62,6 @@
   --dups-layer-home-sidebar-mobile: 300;
 
   /* Audited floating UI and editor layers; preserve current numeric order. */
-  --dups-layer-header-status: 110;
   --dups-layer-live-header: 130;
   --dups-layer-live-highlight: 115;
   --dups-layer-live-drawer: 120;
