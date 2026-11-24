@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "edges": [
+    {"from":"DCP","to":"DACP","type":"governance-coordination","evidence":"DUGA architecture decision; implementation pending"},
+    {"from":"DACP","to":"DCP","type":"governance-documentation","evidence":"DACP documents DUGA decisions; no runtime dependency"},
+    {"from":"DUME","to":"DUSS","type":"boundary-coordination","evidence":"DUME spec assigns geometry to DUSS; not a runtime import"},
+    {"from":"DUME","to":"DUPS","type":"boundary-coordination","evidence":"DUME spec assigns positioning to DUPS; not a runtime import"},
+    {"from":"DUME","to":"DUCS","type":"boundary-coordination","evidence":"DUME spec assigns color semantics to DUCS; not a runtime import"},
+    {"from":"DUPS","to":"DUSS","type":"boundary-coordination","evidence":"DUPS spec assigns dimensions and layout geometry to DUSS; not a runtime import"},
+    {"from":"DUPS","to":"DUCS","type":"boundary-coordination","evidence":"DUPS spec assigns colors to DUCS; not a runtime import"},
+    {"from":"DUCS","to":"DUSS","type":"boundary-coordination","evidence":"DUCS spec assigns sizing and geometry to DUSS; not a runtime import"},
+    {"from":"DUCS","to":"DUME","type":"boundary-coordination","evidence":"DUCS spec assigns motion behavior to DUME; not a runtime import"}
+  ],
+  "pageAssets": [
+    {"page":"index.html","systems":["DUME","DUSS","DUPS","DUCS"],"evidence":"Stylesheet/script references observed in current branch; verify on future page changes."},
+    {"page":"admin.html","systems":["DUME","DUSS","DUPS","DUCS"],"evidence":"Stylesheet/script references observed in current branch; verify on future page changes."},
+    {"page":"live-users.html","systems":["DUME","DUSS","DUPS","DUCS"],"evidence":"Stylesheet/script references observed in current branch; verify on future page changes."},
+    {"page":"upload-studio.html","systems":["DUME","DUSS","DUPS","DUCS"],"evidence":"Stylesheet/script references observed in current branch; verify on future page changes."},
+    {"page":"profile.html","systems":["DUSS","DUPS","DUCS"],"evidence":"Current HTML links these token stylesheets; DUME is not linked in the inspected head."}
+  ],
+  "caveat": "This is an evidence-labelled architectural baseline, not a complete runtime dependency graph. Boundary-coordination edges are conceptual ownership relationships, not code imports."
+}
