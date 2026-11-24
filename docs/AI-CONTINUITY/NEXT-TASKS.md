@@ -25,12 +25,13 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 - The CAS + conditional audit token pattern is now specified in `docs/DUGA-CAS-AUDIT-PATTERN.md` and locally tested.
 - The D1 acceptance plan has been updated to test success, stale writer, replay, token reuse, audit-failure rollback and two competing writers on an isolated D1 database.
-- No Cloudflare D1 tools are connected to this session; no database or Worker has been created/deployed.
-- Required: user provisions a newly created disposable D1 database (not existing Preview or Production), confirms its database name/ID and supplies the reviewed `users` schema baseline or a synthetic test-user ID. Then bind it only to a separate acceptance Worker and execute the plan.
-- Do not create billable resources, change Pages bindings, deploy a worker, apply a migration or use shared Preview/Production as a substitute.
+- Owner provisioned and confirmed disposable D1 `drm-duga-acceptance-disposable` (`6d512429-34a3-498b-9430-45f11d382da9`); it was empty except `_cf_KV`.
+- Owner manually applied the comment-free fixture with synthetic `users(id)`. Screenshots verify all eight DUGA tables, both audit triggers, clean foreign-key check, successful audit INSERT, and blocked audit UPDATE/DELETE.
+- Added a separate bearer-secret-protected acceptance Worker source and Wrangler config pinned to that disposable DB under `scripts/duga-d1-acceptance-worker/`; not deployed or run.
+- Next: run CI syntax check, then obtain explicit owner approval before deploying this separate Worker and creating its one-off secret. Never use Pages bindings or shared Preview/Production.
 
 ## Immediate blockers / required evidence
-1. D1 acceptance has not been run. A newly created disposable D1 database and explicit authorization to create/use that resource are required; do not substitute shared Preview or Production.
+1. Schema/FK/append-only probes have partial D1 evidence. CAS + batch atomicity, `meta.changes`, rollback and concurrency probes remain unrun; Worker deployment requires explicit owner approval.
 2. The API concurrency contract has a known unresolved edge case: a zero-row conditional UPDATE is not a SQL error, so a later audit INSERT in the same transactional batch may still execute. Do not assume batch transactionality solves this.
 3. Before implementing state-changing API routes, choose and test a design that makes the audit INSERT conditional on the exact successful transition (e.g. a unique transition token written by the successful update and checked by the audit insert). Prove stale writers and replayed tokens create no audit event.
 4. Human authentication/assignment authorization, reviewer/implementer separation, commit-bound evidence invalidation, trusted validation and canonical Git-ref checks remain design contracts, not runtime enforcement.
@@ -52,7 +53,7 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 - No DUGA API or Control Center exists.
 - No trusted AI service credentials or automatic DACE execution exist.
 - No human identity assignments have been made.
-- No disposable D1 database has been created or tested by the assistant.
+- The owner-created disposable D1 has partial manually observed tests; the assistant has not directly accessed Cloudflare or deployed the acceptance Worker.
 - Local SQLite CI and a successful Pages Preview do not establish Cloudflare D1 behavior.
 
 ## Preview D1 preflight handoff
