@@ -1,0 +1,43 @@
+/* DUCS page identity mappings. These tokens document existing page palettes;
+   they intentionally do not restyle page selectors during the foundation phase. */
+body.home-page {
+  --ducs-page-bg: #0f0f0f;
+  --ducs-page-surface: #181818;
+  --ducs-page-text: #f1f1f1;
+  --ducs-page-muted: #aaa;
+  --ducs-page-border: #303030;
+  --ducs-page-accent: #3ea6ff;
+}
+body.admin-gate-state,
+body.admin-dashboard-state {
+  --ducs-page-bg: #0f0f0f;
+  --ducs-page-surface: #181818;
+  --ducs-page-text: #f1f1f1;
+  --ducs-page-muted: #aaa;
+  --ducs-page-border: #303030;
+  --ducs-page-accent: #3ea6ff;
+}
+body.live-users-page {
+  --ducs-page-bg: #0d0d0d;
+  --ducs-page-surface: #141414;
+  --ducs-page-text: #ededed;
+  --ducs-page-muted: #929292;
+  --ducs-page-border: #303030;
+  --ducs-page-accent: #3ea6ff;
+}
+body.upload-studio-page {
+  --ducs-page-bg: #0d0d0d;
+  --ducs-page-surface: #141414;
+  --ducs-page-text: #ededed;
+  --ducs-page-muted: #929292;
+  --ducs-page-border: #303030;
+  --ducs-page-accent: #7ce2bd;
+}
+body.profile-page {
+  --ducs-page-bg: #0d0d0d;
+  --ducs-page-surface: #131313;
+  --ducs-page-text: #ededed;
+  --ducs-page-muted: #929292;
+  --ducs-page-border: #303030;
+  --ducs-page-accent: #83efa5;
+}
