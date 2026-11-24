@@ -1,0 +1,15 @@
+/* DUCS accessibility hooks. Contrast values must be tested in their final pairings. */
+:root {
+  --ducs-a11y-focus-width: 2px;
+  --ducs-a11y-focus-offset: 2px;
+  --ducs-a11y-min-text-contrast: 4.5;
+  --ducs-a11y-min-large-text-contrast: 3;
+  --ducs-a11y-min-ui-contrast: 3;
+}
+@media (forced-colors: active) {
+  :root {
+    --ducs-focus-ring: Highlight;
+    --ducs-border-default: CanvasText;
+    --ducs-text-primary: CanvasText;
+  }
+}
