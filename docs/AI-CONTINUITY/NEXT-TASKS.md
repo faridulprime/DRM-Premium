@@ -4,6 +4,8 @@ Target review branch: duga-foundation-review
 Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## DUGA foundation completed
+- Added foreign-key integrity probes for orphan actor/evidence references and a clean `PRAGMA foreign_key_check` assertion.
+- Added local compare-and-swap concurrency and audit-failure rollback probes; documented that Cloudflare D1 batch semantics still require disposable Preview verification.
 - Added SQL JSON value-shape constraints (arrays for affected systems/paths; objects for evidence, results, audit and job payloads) plus negative tests for wrong container types and malformed JSON.
 - Isolated governance foundation from unrelated application/Admin changes on a branch based directly on `main`.
 - Added specification, implementation plan, repository baseline and continuity documentation.
