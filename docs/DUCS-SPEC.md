@@ -1,6 +1,6 @@
 # DRM Universal Color System (DUCS)
-Version: 0.1.0 — Token foundation
-Status: Initial architecture and token foundation added; component migration and contrast validation remain in progress.
+Version: 0.2.0 — Token foundation + color inventory
+Status: Token foundation, initial page mappings, per-file source inventory, and dependency registry added; component migration and contrast validation remain in progress.
 
 ## Purpose
 DUCS centralizes color decisions for the DRM Premium interface. It separates raw palette values from semantic meaning and component implementation so that a color can be changed coherently without hunting through unrelated CSS files.
@@ -19,7 +19,7 @@ DUCS centralizes color decisions for the DRM Premium interface. It separates raw
 - `themes/`: page/theme mappings; distinct page identities are preserved.
 - `states/`: hover, active, selected, focus, disabled, and loading color states.
 - `accessibility/`: contrast targets and forced-colors integration.
-- `docs/`: specifications, token registry, usage and accessibility guidance.
+- `docs/`: specifications, token registry, usage and accessibility guidance, source inventory, and dependency registry.
 
 ## Token layers
 1. Primitive: `--ducs-neutral-950`, `--ducs-brand-blue-400`.
@@ -28,7 +28,7 @@ DUCS centralizes color decisions for the DRM Premium interface. It separates raw
 
 Components should consume component or semantic tokens, never reach into the primitive palette directly unless a documented exception exists.
 
-## Initial page mappings
+## Source audit and dependency tracking\nA per-stylesheet source inventory and dependency map are maintained in `DUCS-COLOR-INVENTORY.md` and `DUCS-COLOR-DEPENDENCY-REGISTRY.md`. Counts are distinct literal HEX and RGB(A) expressions per file, not a deduplicated runtime color count.\n\n## Initial page mappings
 The first mapping records existing visual direction without applying new styling:
 - Homepage and Admin: dark neutral foundation with blue action accent.
 - Live Users: near-black neutral foundation.
