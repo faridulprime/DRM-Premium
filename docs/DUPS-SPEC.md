@@ -1,5 +1,5 @@
 # DRM Universal Positioning System (DUPS)
-Version: 0.2.0 — Shared shell and floating-layer migration
+Version: 0.3.0 — Shared shell, floating layers, and viewport placement migration
 Status: Token foundation, shared-shell stacking, Live Users overlay layers, editor overlays, and Upload Studio fixed layers migrated; browser validation pending
 
 ## Purpose
@@ -98,7 +98,7 @@ A component is considered migrated only when:
 - no unintended visual or interaction regression is observed.
 
 ## Known limitations
-- Component migrations cover audited stacking-layer values only; positioning modes, anchor offsets, collision handling, and all component families have not been fully migrated.
+- Component migrations cover audited stacking-layer values and selected Live Users viewport coordinates only; general positioning modes, anchor offsets, collision handling, and all component families have not been fully migrated.
 - The token layer does not automatically normalize existing z-index values.
 - CSS Anchor Positioning is not enabled as a required dependency.
 - Browser-based visual, stacking, keyboard, zoom, and mobile safe-area validation remains outstanding.
