@@ -15,4 +15,8 @@
   --ducs-admin-error-text: #ff9292;
   --ducs-admin-live-dot: #83efa5;
   --ducs-admin-live-dot-halo: rgba(131, 239, 165, .10);
+
+  /* Shared shell focus and logout feedback. */
+  --ducs-shell-focus-ring: #8ab4f8;
+  --ducs-shell-logout-error: #ff8b8b;
 }
