@@ -1,9 +1,9 @@
 # DRM Universal Color System (DUCS)
-Version: 0.2.0 — Token foundation + color inventory
-Status: Token foundation, initial page mappings, per-file source inventory, and dependency registry added; component migration and contrast validation remain in progress.
+Version: 0.2.1 — Token foundation + source audit + shared shell aliases
+Status: Token foundation, page mappings, per-file source inventory, dependency registry, and shared shell root palette aliases are in place. Component migration and full contrast validation remain in progress.
 
 ## Purpose
-DUCS centralizes color decisions for the DRM Premium interface. It separates raw palette values from semantic meaning and component implementation so that a color can be changed coherently without hunting through unrelated CSS files.
+DUCS centralizes color decisions for DRM Premium. It separates raw palette values from semantic meaning and component implementation so color changes can be reviewed across their dependencies.
 
 ## Ownership boundaries
 - DUCS owns color values, semantic color meaning, theme mappings, and color-related accessibility rules.
@@ -15,7 +15,6 @@ DUCS centralizes color decisions for the DRM Premium interface. It separates raw
 `assets/colors/`
 - `primitives/`: raw palette values; no component selectors.
 - `semantic/`: meaning-based tokens for backgrounds, surfaces, text, borders, icons, actions, overlays, and status.
-- `components/`: aliases for buttons, fields, badges, cards, dialogs, tooltips, and notifications.
 - `themes/`: page/theme mappings; distinct page identities are preserved.
 - `states/`: hover, active, selected, focus, disabled, and loading color states.
 - `accessibility/`: contrast targets and forced-colors integration.
@@ -28,14 +27,17 @@ DUCS centralizes color decisions for the DRM Premium interface. It separates raw
 
 Components should consume component or semantic tokens, never reach into the primitive palette directly unless a documented exception exists.
 
-## Source audit and dependency tracking\nA per-stylesheet source inventory and dependency map are maintained in `DUCS-COLOR-INVENTORY.md` and `DUCS-COLOR-DEPENDENCY-REGISTRY.md`. Counts are distinct literal HEX and RGB(A) expressions per file, not a deduplicated runtime color count.\n\n## Initial page mappings
-The first mapping records existing visual direction without applying new styling:
-- Homepage and Admin: dark neutral foundation with blue action accent.
-- Live Users: near-black neutral foundation.
-- Upload Studio: near-black foundation with mint accent.
-- Profile: near-black foundation with green accent.
+## Source audit and dependency tracking
+A per-stylesheet source inventory and dependency map are maintained in `DUCS-COLOR-INVENTORY.md` and `DUCS-COLOR-DEPENDENCY-REGISTRY.md`. Counts are distinct literal HEX and RGB(A) expressions per file, not a deduplicated runtime color count.
 
-These are compatibility mappings, not a redesign or a claim that every existing CSS color has already been normalized.
+## Initial page mappings
+The mapping records existing page identity:
+- Homepage and Admin: dark neutral foundation with blue action accent.
+- Live Users: near-black neutral foundation with green online and red restriction states.
+- Upload Studio: near-black foundation with mint and violet creative accents.
+- Profile: near-black foundation with green accent and status.
+
+These are compatibility mappings, not a redesign or a claim that every existing CSS color has been normalized.
 
 ## Rules
 1. Do not introduce arbitrary HEX/RGB values in new component styles; add or reuse a named token.
@@ -51,10 +53,10 @@ These are compatibility mappings, not a redesign or a claim that every existing 
 Use WCAG 2.2 AA as the baseline: 4.5:1 for normal text, 3:1 for large text, and 3:1 for meaningful UI boundaries and graphical indicators. Visible keyboard focus is required. Test actual foreground/background pairs, including hover, disabled, selected, and error states. Forced-colors support is provided as a hook, not yet a completed full-page audit.
 
 ## Compatibility and migration
-DUCS v0.1.0 adds tokens only. Existing page CSS remains authoritative; no broad color replacement is performed. Migrate one component family at a time: audit current computed colors, map them to semantic/component tokens, compare screenshots, verify contrast and interaction states, then remove obsolete literals.
+The initial shared shell migration replaces the legacy root aliases in `theme.css` with DUCS semantic references. Those referenced semantic tokens resolve to the same original shell values. The remaining component CSS is still authoritative. Migrate one component family at a time: audit, map, compare rendered states, verify contrast, then remove obsolete literals.
 
 ## Known limitations
-- Existing CSS contains many literal color values; the initial audit counted unique HEX literals per stylesheet, not a deduplicated repository-wide inventory.
-- Contrast ratios have not yet been computed for every token pairing.
+- Existing CSS contains many literal color values; the initial audit counted unique HEX and RGB(A) literals per stylesheet, not a deduplicated repository-wide inventory.
+- Contrast ratios have not been computed for every token pairing.
 - Light and high-contrast theme variants are planned but not activated.
 - Browser visual regression, keyboard focus, forced-colors, and color-vision simulation checks remain outstanding.
