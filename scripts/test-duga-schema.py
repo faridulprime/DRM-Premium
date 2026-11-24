@@ -208,6 +208,22 @@ def main() -> int:
           lambda: insert_change("change-main", branch="main"),
           should_fail=True)
 
+    check("whitespace-only rollback plan rejected",
+          lambda: db.execute(
+              """INSERT INTO duga_change_requests
+                 (id,title,summary,status,risk_level,affected_systems_json,
+                  affected_paths_json,rollback_plan,requested_by_type,
+                  requested_by_user_id,source_branch,policy_commit_sha,
+                  created_at,updated_at)
+                 VALUES ('change-blank-rollback','Valid title','Valid summary',
+                         'proposed','medium','[]','[]','   ','human',
+                         'human-1','feature/test','policy-sha',1,1)"""
+          ), should_fail=True)
+    check("blank AI requester principal rejected",
+          lambda: insert_change("change-blank-principal", requester_type="ai",
+                                requester_user=None, requester_principal="   "),
+          should_fail=True)
+
     db.execute(
         """INSERT INTO duga_reviews
            (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
