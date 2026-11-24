@@ -59,8 +59,10 @@ function renderRestrictions(){
  }).join(""):'<div class="live-state">কোনো '+(restrictionView==="ban"?"Banned":"Suspended")+' account পাওয়া যায়নি।</div>';
 }
 function openRestrictionsModal(){
- const modal=$("#liveRestrictionsModal"),backdrop=$("#liveDrawerBackdrop");if(!modal)return;
+ const modal=$("#liveRestrictionsModal"),backdrop=$("#liveDrawerBackdrop"),panel=document.querySelector(".live-panel");if(!modal)return;
  clearTimeout(restrictionCloseTimer);restrictionView="ban";
+ /* Anchor the Block List window to the Live Users panel instead of viewport center. */
+ if(panel){const rect=panel.getBoundingClientRect();modal.style.left=(rect.left+rect.width/2)+"px";modal.style.top=(rect.top+rect.height/2)+"px";}
  document.querySelectorAll(".live-restriction-tab").forEach(tab=>{const active=tab.dataset.restrictionView===restrictionView;tab.classList.toggle("is-active",active);tab.setAttribute("aria-selected",String(active))});
  renderRestrictions();modal.classList.remove("is-closing","is-opening");modal.classList.add("is-open","is-opening");
  setTimeout(()=>modal.classList.remove("is-opening"),450);modal.setAttribute("aria-hidden","false");backdrop.hidden=false;document.body.style.overflow="hidden";$("#liveRestrictionsClose").focus();
