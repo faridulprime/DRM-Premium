@@ -1,0 +1,10 @@
+/* DRM-Premium Universal Motion Engine — shared drawer primitives.
+   State and timing are owned by /assets/motion/core/motion-controller.js. */
+:root{--dume-drawer-duration:700ms;--dume-drawer-easing:cubic-bezier(.16,1,.3,1);--dume-backdrop-duration:240ms}
+@media(max-width:760px){
+ .yt-sidebar.dume-mobile-drawer{will-change:transform,opacity;backface-visibility:hidden;transform:translate3d(-110%,0,0)}
+ .sidebar-backdrop.dume-mobile-backdrop{transition:opacity var(--dume-backdrop-duration) ease}
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+ .yt-sidebar.dume-mobile-drawer,.sidebar-backdrop.dume-mobile-backdrop{will-change:auto}
+}
