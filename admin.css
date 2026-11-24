@@ -258,3 +258,15 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .admin-topbar{grid-template-columns:42px minmax(0,1fr);padding-inline:8px!important}
  .admin-topbar .brand-word{font-size:14px!important}
 }
+
+/* Final mobile Admin header sizing — compact search row matching public header. */
+@media(max-width:760px){
+ body.admin-gate-state,body.admin-dashboard-state{padding:94px 0 0!important}
+ .admin-topbar{grid-template-rows:44px 36px!important;min-height:86px!important;gap:5px 8px!important;padding:4px 10px 6px!important}
+ .admin-topbar>.yt-menu-trigger{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important}
+ .admin-topbar .admin-search{height:36px!important;min-height:36px!important;border-radius:10px!important}
+ .admin-topbar .admin-search input{font-size:13px!important;padding:0 10px!important}
+ .admin-topbar .admin-search button{width:36px!important;min-width:36px!important;flex:0 0 36px!important;height:34px!important;border-radius:0 9px 9px 0!important}
+ .admin-topbar .admin-search svg{width:16px!important;height:16px!important}
+ .admin-category-bar{top:86px!important}
+}
