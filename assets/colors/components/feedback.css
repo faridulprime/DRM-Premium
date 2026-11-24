@@ -9,4 +9,10 @@
   --ducs-live-notice-bg: #191919;
   --ducs-live-notice-text: #ccc;
   --ducs-live-notice-border: #343434;
+
+  /* Admin dashboard feedback and live indicators — legacy colors preserved. */
+  --ducs-admin-success-text: #a9d9b8;
+  --ducs-admin-error-text: #ff9292;
+  --ducs-admin-live-dot: #83efa5;
+  --ducs-admin-live-dot-halo: rgba(131, 239, 165, .10);
 }
