@@ -8,7 +8,7 @@ CREATE TABLE duga_assignments (
   id TEXT PRIMARY KEY,
   scope_type TEXT NOT NULL CHECK (scope_type IN ('platform','system')),
   scope_id TEXT,
-  role_id TEXT NOT NULL,
+  role_id TEXT NOT NULL CHECK (role_id IN ('platform-owner','governance-manager','system-owner','ai-maintainer','independent-ai-auditor','read-only-observer')),
   subject_type TEXT NOT NULL CHECK (subject_type IN ('human','ai')),
   user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
   principal_id TEXT,
@@ -27,6 +27,9 @@ CREATE UNIQUE INDEX uq_duga_assignment_ai_active
   ON duga_assignments(scope_type,ifnull(scope_id,''),role_id,principal_id)
   WHERE status='active' AND subject_type='ai';
 CREATE INDEX idx_duga_assignments_subject ON duga_assignments(user_id,principal_id,status);
+CREATE UNIQUE INDEX uq_duga_single_platform_owner
+  ON duga_assignments(scope_type,role_id)
+  WHERE scope_type='platform' AND role_id='platform-owner' AND status='active';
 
 CREATE TABLE duga_change_requests (
   id TEXT PRIMARY KEY,
