@@ -149,6 +149,7 @@ function openAccountMenu(open){
  const mobile=window.matchMedia("(max-width: 760px)").matches,state=Boolean(open);
  clearTimeout(accountMenuCloseTimer);
  sidebar.classList.remove("mobile-open");
+ void sidebar.offsetWidth;
  document.body.classList.remove("drawer-open","sidebar-open");
  if(backdrop){backdrop.classList.remove("is-closing");if(state&&mobile)backdrop.hidden=false;}
  if(state){
