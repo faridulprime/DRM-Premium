@@ -289,3 +289,74 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-presence-dot{z-index:2}
 .live-drawer-avatar{position:relative;overflow:hidden;isolation:isolate}
 .live-drawer-avatar img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;border-radius:50%;background:#292929}
+
+
+/* PHANTOM DIMENSION — cinematic atmosphere and spectral transition layer. */
+/* Preserve the established drawer entrance motion; add only restrained dimensional atmosphere. */
+.live-user-drawer.is-opening{
+ isolation:isolate;
+ box-shadow:0 30px 100px rgba(0,0,0,.78),0 0 0 1px rgba(173,151,220,.08),0 0 42px rgba(117,91,168,.12),inset 0 1px rgba(255,255,255,.055);
+ animation:liveModalEnter .42s ease-out both,phantomRiftPulse .78s ease-out both;
+}
+.live-user-drawer.is-opening::before,.live-user-drawer.is-opening::after{
+ content:"";position:absolute;inset:-2px;z-index:4;pointer-events:none;border-radius:inherit;opacity:0;
+}
+.live-user-drawer.is-opening::before{
+ border:1px solid rgba(190,174,226,.3);
+ box-shadow:0 0 18px rgba(166,139,214,.14),inset 0 0 24px rgba(166,139,214,.055);
+ animation:phantomRiftEdge .72s ease-out both;
+}
+.live-user-drawer.is-opening::after{
+ inset:-18%;border-radius:28px;
+ background:radial-gradient(ellipse at 10% 48%,rgba(156,132,203,.18),transparent 43%),radial-gradient(ellipse at 90% 56%,rgba(184,194,211,.12),transparent 42%);
+ filter:blur(24px);mix-blend-mode:screen;
+ animation:phantomRiftAura .78s ease-out both;
+}
+@keyframes phantomRiftPulse{
+ 0%{box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035)}
+ 38%{box-shadow:0 34px 110px rgba(0,0,0,.82),0 0 48px rgba(117,91,168,.18),inset 0 1px rgba(255,255,255,.07)}
+ 100%{box-shadow:0 30px 90px rgba(0,0,0,.74),0 0 18px rgba(117,91,168,.07),inset 0 1px rgba(255,255,255,.035)}
+}
+@keyframes phantomRiftEdge{0%,18%{opacity:0;transform:scale(.985)}46%{opacity:.9}100%{opacity:0;transform:scale(1.012)}}
+@keyframes phantomRiftAura{0%{opacity:0;transform:scale(.76)}35%{opacity:.9}100%{opacity:0;transform:scale(1.18)}}
+
+/* Closing: dimensional collapse, two smoke volumes, then a fine spectral echo. */
+.live-user-drawer.is-closing{
+ animation:phantomCollapse .9s cubic-bezier(.2,.68,.2,1) both;
+}
+.live-user-drawer.is-closing::before{
+ inset:-18%;z-index:5;
+ background:radial-gradient(ellipse at 18% 34%,rgba(207,213,224,.34),transparent 38%),radial-gradient(ellipse at 78% 43%,rgba(183,173,208,.28),transparent 42%),radial-gradient(ellipse at 48% 78%,rgba(205,211,221,.22),transparent 44%);
+ filter:blur(19px);mix-blend-mode:screen;
+ animation:phantomSmokeBloom .9s ease-out both;
+}
+.live-user-drawer.is-closing::after{
+ inset:-30%;z-index:6;
+ background:radial-gradient(ellipse at 27% 50%,rgba(189,197,211,.2),transparent 34%),radial-gradient(ellipse at 72% 27%,rgba(204,192,224,.2),transparent 38%),radial-gradient(ellipse at 58% 72%,rgba(164,176,194,.17),transparent 42%);
+ filter:blur(30px);mix-blend-mode:screen;
+ animation:phantomSmokeEcho 1s ease-out both;
+}
+@keyframes phantomCollapse{
+ 0%{transform:translate(-50%,-50%) scale(1);opacity:1;filter:blur(0);clip-path:inset(0 round 12px)}
+ 20%{transform:translate(-50%,-50%) scale(1.012);opacity:.96;filter:blur(.5px);clip-path:inset(0 round 15px)}
+ 48%{transform:translate(-50%,-52%) scale(.975);opacity:.7;filter:blur(4px);clip-path:inset(2% 1% round 24px)}
+ 76%{transform:translate(-50%,-55%) scale(.91);opacity:.26;filter:blur(12px);clip-path:inset(9% 7% round 42px)}
+ 100%{transform:translate(-50%,-59%) scale(.82);opacity:0;filter:blur(22px);clip-path:inset(22% 18% round 60px)}
+}
+@keyframes phantomSmokeBloom{
+ 0%,12%{opacity:0;transform:scale(.72) translateY(13px)}
+ 36%{opacity:.88}
+ 68%{opacity:.58;transform:scale(1.16) translateY(-14px)}
+ 100%{opacity:0;transform:scale(1.52) translateY(-38px)}
+}
+@keyframes phantomSmokeEcho{
+ 0%,24%{opacity:0;transform:scale(.68) translateY(22px) rotate(-5deg)}
+ 52%{opacity:.62}
+ 100%{opacity:0;transform:scale(1.62) translateY(-48px) rotate(8deg)}
+}
+@media(prefers-reduced-motion:reduce){
+ .live-user-drawer.is-opening{animation-duration:.2s,.2s}
+ .live-user-drawer.is-opening::before,.live-user-drawer.is-opening::after{animation-duration:.2s}
+ .live-user-drawer.is-closing{animation-duration:.2s}
+ .live-user-drawer.is-closing::before,.live-user-drawer.is-closing::after{animation-duration:.2s;filter:blur(8px)}
+}
