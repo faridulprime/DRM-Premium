@@ -1,6 +1,6 @@
 # DUGA — Disposable Cloudflare D1 Acceptance Plan
 
-Status: TEST PLAN ONLY — no database has been created, read, or modified. CAS + audit token design is now specified and locally tested; Cloudflare D1 acceptance remains pending.
+Status: PARTIAL D1 ACCEPTANCE — owner created and manually populated the named disposable database. Schema inventory, foreign-key check, audit INSERT, and append-only UPDATE/DELETE probes have been run successfully. CAS + transactional audit acceptance is still pending; the assistant has no direct Cloudflare access.
 Applies to: `duga-foundation-review` schema draft v0.1.0 at commit `c33045567c4a94cc6c818d12a66efb4109c2b894`.
 Purpose: prove the candidate DUGA schema against Cloudflare D1 itself before any migration is proposed.
 
@@ -93,7 +93,7 @@ Both mutations must fail because of the append-only triggers. Confirm the origin
 
 ## 5. Transaction and compare-and-swap probes
 
-Cloudflare documents `D1Database.batch()` as transactional, but the actual DUGA statement sequence must be tested through a small Worker bound only to the disposable database. The Worker must return each statement's individual `D1Result.meta.changes` value and the batch error/result. Do not infer row counts from aggregate metadata.
+Cloudflare documents `D1Database.batch()` as transactional, but the actual DUGA statement sequence must be tested through a small Worker bound only to the disposable database. The isolated Worker source at `scripts/duga-d1-acceptance-worker/` is designed to return each statement's individual `D1Result.meta.changes` value and batch error/result. It is not deployed. Do not infer row counts from aggregate metadata.
 
 Probe A — rollback:
 1. In one `db.batch([...])`, perform a valid disposable test-row insert followed by a deliberately failing statement.
@@ -141,10 +141,13 @@ If any probe fails or cannot be run, report PARTIAL/FAIL with the exact gap. Do 
 
 ## 8. Current verified status
 
-As of the document's creation:
-- Local SQLite schema/validator CI is passing on the review branch, including CAS success, stale writer, replay, token reuse and audit-failure rollback probes.
-- Cloudflare D1 platform documentation has been reviewed.
-- The CAS token + conditional audit-write design is documented, but no D1 runtime evidence exists yet.
-- No disposable D1 database has been created or tested by the assistant.
-- No D1 migration has been applied.
-- PR #4 remains draft and unmerged.
+Owner-reported and screenshot-verified on 2026-11-24:
+- Disposable database: `drm-duga-acceptance-disposable` / `6d512429-34a3-498b-9430-45f11d382da9`.
+- The database was initially empty except for Cloudflare's `_cf_KV` table.
+- The comment-free fixture was manually executed. The inventory query showed all eight DUGA tables and both append-only audit triggers.
+- `PRAGMA foreign_key_check` completed successfully with no violation rows shown.
+- A synthetic audit event INSERT succeeded.
+- UPDATE and DELETE against that event were both rejected by `DUGA audit events are append-only` (`SQLITE_CONSTRAINT_TRIGGER`).
+- These are direct Cloudflare D1 Console observations supplied by the owner; they are not Worker batch/CAS evidence.
+- A separate authenticated acceptance Worker source and pinned Wrangler config now exist under `scripts/duga-d1-acceptance-worker/`. It has not been deployed or run.
+- No production migration has been applied. PR #4 remains draft and unmerged.
