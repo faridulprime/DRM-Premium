@@ -37,4 +37,18 @@
   --ducs-profile-save-bg: rgba(131, 239, 165, .13);
   --ducs-profile-save-hover-bg: rgba(131, 239, 165, .22);
   --ducs-profile-save-border: #83efa5;
+
+  /* Upload Studio creator actions and selected controls. */
+  --ducs-upload-accent: #7ce2bd;
+  --ducs-upload-step-bg: #193126;
+  --ducs-upload-step-border: #315d47;
+  --ducs-upload-type-active-bg: #1c2b23;
+  --ducs-upload-type-active-border: #4c8566;
+  --ducs-upload-inline-action-bg: #17251d;
+  --ducs-upload-inline-action-border: #416b54;
+  --ducs-upload-publish-bg: #203b2c;
+  --ducs-upload-publish-border: #57916f;
+  --ducs-upload-publish-text: #d5f6e2;
+  --ducs-upload-active-text: #b9efd2;
+  --ducs-upload-secondary-border: #383838;
 }
