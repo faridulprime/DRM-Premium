@@ -35,6 +35,11 @@ CREATE INDEX idx_duga_assignments_subject ON duga_assignments(user_id,principal_
 CREATE UNIQUE INDEX uq_duga_single_platform_owner
   ON duga_assignments(scope_type,role_id)
   WHERE scope_type='platform' AND role_id='platform-owner' AND status='active';
+-- A registered system has one accountable human System Owner at a time.
+-- Historical revoked assignments remain available for audit and reassignment.
+CREATE UNIQUE INDEX uq_duga_single_system_owner
+  ON duga_assignments(scope_id,role_id)
+  WHERE scope_type='system' AND role_id='system-owner' AND status='active';
 
 CREATE TABLE duga_change_requests (
   id TEXT PRIMARY KEY,
