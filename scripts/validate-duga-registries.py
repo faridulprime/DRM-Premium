@@ -167,7 +167,8 @@ def validate_system_registry(registry: dict[str, Any], ownership: dict[str, Any]
             errors.append(f"{where} dependencies must be a unique string array")
         for field, kind in (("ownerRole", "human"), ("maintainerRole", "ai"),
                             ("auditorRole", "ai")):
-            if role_kinds.get(system.get(field)) != kind:
+            role_id = system.get(field)
+            if not isinstance(role_id, str) or role_kinds.get(role_id) != kind:
                 errors.append(f"{where} {field} must reference a registered {kind} role")
         if system.get("maintainerRole") == system.get("auditorRole"):
             errors.append(f"{where} maintainer and auditor roles must be distinct")
