@@ -1,6 +1,6 @@
 # DUCS Color Inventory — initial audit
 
-Version: 0.2.0
+Version: 0.2.1
 Branch: `feature/full-admin-panel`
 Scope: stylesheet source inventory; not a computed-style or screenshot audit.
 
@@ -11,7 +11,7 @@ Counts below are the number of distinct literal HEX values and distinct rgb()/rg
 | Stylesheet | Unique HEX literals | Unique RGB(A) expressions | Dominant source palette / notes |
 |---|---:|---:|---|
 | `styles.css` | 128 | 31 | Homepage legacy light neutral palette, blue/steel UI colors, green status accents, warm gold highlights |
-| `theme.css` | 58 | 20 | Shared dark neutral shell, blue action accent, green success, additional dashboard/status accents |
+| `theme.css` | 57 | 20 | Shared dark neutral shell, blue action accent, green success, additional dashboard/status accents |
 | `admin.css` | 31 | 3 | Dark neutral panels, green success, red error, blue informational accents |
 | `live-users.css` | 72 | 12 | Near-black surfaces, green online state, multiple red/restricted-account states, amber warning |
 | `upload-studio.css` | 119 | 5 | Near-black base, violet/lavender creative palette, mint accent, red/pink validation states |
