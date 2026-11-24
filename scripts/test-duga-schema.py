@@ -458,6 +458,7 @@ def main() -> int:
     passed.append("optimistic state_version update rejects a stale second writer")
 
     # SQLite transaction probe: a failed audit insert must roll back the state update.
+    db.commit()
     db.execute("BEGIN")
     try:
         db.execute(
