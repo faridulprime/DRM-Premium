@@ -86,4 +86,14 @@
   --ducs-shell-category-chip-active-bg: #f1f1f1;
   --ducs-shell-logout-divider: #303030;
   --ducs-shell-logout-hover-bg: #272727;
+
+  /* Profile page surfaces — exact legacy palette retained. */
+  --ducs-profile-card-bg-start: #171717;
+  --ducs-profile-card-bg-end: #111;
+  --ducs-profile-avatar-bg-start: #282e34;
+  --ducs-profile-avatar-bg-end: #17191c;
+  --ducs-profile-divider: #2a2a2a;
+  --ducs-profile-topbar-bg: rgba(13, 13, 13, .9);
+  --ducs-profile-topbar-border: #242424;
+  --ducs-profile-card-shadow: #0005;
 }
