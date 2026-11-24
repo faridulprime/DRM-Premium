@@ -23,7 +23,7 @@ def main() -> int:
     db = sqlite3.connect(":memory:")
     db.execute("PRAGMA foreign_keys = ON")
     db.execute("CREATE TABLE users (id TEXT PRIMARY KEY)")
-    db.execute("INSERT INTO users(id) VALUES ('human-1')")
+    db.executemany("INSERT INTO users(id) VALUES (?)", [('human-1',), ('human-2',)])
 
     try:
         db.executescript(SCHEMA.read_text(encoding="utf-8"))
@@ -107,7 +107,7 @@ def main() -> int:
         "duplicate active platform-owner blocked",
         lambda: insert_assignment(
             "assignment-second-owner", "platform", None,
-            "platform-owner", "human", user_id="human-1"
+            "platform-owner", "human", user_id="human-2"
         ),
         should_fail=True,
     )
