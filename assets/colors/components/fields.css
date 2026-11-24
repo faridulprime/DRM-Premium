@@ -5,4 +5,11 @@
   --ducs-field-placeholder: var(--ducs-text-muted);
   --ducs-field-border: var(--ducs-border-default);
   --ducs-field-border-focus: var(--ducs-focus-ring);
+
+  /* Live Users search field — exact legacy values preserved. */
+  --ducs-live-field-bg: #171717;
+  --ducs-live-field-text: #eee;
+  --ducs-live-field-placeholder: #6f6f6f;
+  --ducs-live-field-border: #303030;
+  --ducs-live-field-border-focus: #555;
 }
