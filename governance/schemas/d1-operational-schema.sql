@@ -62,6 +62,7 @@ CREATE TABLE duga_change_requests (
   implementer_principal_id TEXT,
   implementation_commit_sha TEXT,
   state_version INTEGER NOT NULL DEFAULT 1 CHECK (state_version>0),
+  last_transition_id TEXT,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
   CHECK ((requested_by_type='human' AND requested_by_user_id IS NOT NULL AND requested_by_principal_id IS NULL) OR (requested_by_type='ai' AND requested_by_user_id IS NULL AND requested_by_principal_id IS NOT NULL AND length(trim(requested_by_principal_id))>0)),
@@ -133,6 +134,7 @@ CREATE TABLE duga_audit_events (
   actor_principal_id TEXT,
   actor_system_id TEXT,
   payload_json TEXT NOT NULL CHECK (CASE WHEN json_valid(payload_json) THEN json_type(payload_json)='object' ELSE 0 END),
+  transition_id TEXT,
   policy_commit_sha TEXT,
   created_at INTEGER NOT NULL,
   CHECK ((actor_type='human' AND actor_user_id IS NOT NULL AND actor_principal_id IS NULL AND actor_system_id IS NULL) OR
@@ -142,6 +144,10 @@ CREATE TABLE duga_audit_events (
 CREATE INDEX idx_duga_audit_aggregate_time ON duga_audit_events(aggregate_type,aggregate_id,created_at DESC);
 CREATE INDEX idx_duga_audit_actor_time ON duga_audit_events(actor_type,actor_user_id,actor_principal_id,created_at DESC);
 CREATE INDEX idx_duga_audit_time ON duga_audit_events(created_at DESC);
+-- A transition token may produce at most one audit event; NULL remains valid for non-transition events.
+CREATE UNIQUE INDEX uq_duga_audit_transition_id
+  ON duga_audit_events(transition_id)
+  WHERE transition_id IS NOT NULL;
 CREATE TRIGGER duga_audit_no_update
 BEFORE UPDATE ON duga_audit_events
 BEGIN SELECT RAISE(ABORT,'DUGA audit events are append-only'); END;
