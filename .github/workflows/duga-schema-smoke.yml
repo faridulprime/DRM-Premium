@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/full-admin-panel
+      - duga-foundation-review
     paths:
       - "governance/schemas/d1-operational-schema.sql"
       - "governance/ownership/roles.json"
