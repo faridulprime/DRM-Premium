@@ -12,4 +12,8 @@
   --ducs-live-field-placeholder: #6f6f6f;
   --ducs-live-field-border: #303030;
   --ducs-live-field-border-focus: #555;
+
+  /* Admin dashboard fields — legacy colors preserved. */
+  --ducs-admin-field-border: #3f3f3f;
+  --ducs-admin-field-bg: #121212;
 }
