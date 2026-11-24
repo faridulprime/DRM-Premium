@@ -1,0 +1,29 @@
+/* DUCS semantic foundation — meaning-based tokens, no component styling. */
+:root {
+  color-scheme: dark;
+  --ducs-bg-canvas: var(--ducs-neutral-950);
+  --ducs-bg-subtle: var(--ducs-neutral-975);
+  --ducs-surface-base: var(--ducs-neutral-900);
+  --ducs-surface-raised: var(--ducs-neutral-850);
+  --ducs-surface-sunken: var(--ducs-neutral-975);
+  --ducs-surface-hover: #272727;
+  --ducs-text-primary: #f1f1f1;
+  --ducs-text-secondary: #aaa;
+  --ducs-text-muted: #929292;
+  --ducs-text-inverse: var(--ducs-neutral-950);
+  --ducs-border-subtle: #303030;
+  --ducs-border-default: #414141;
+  --ducs-border-strong: #666666;
+  --ducs-icon-primary: var(--ducs-text-primary);
+  --ducs-icon-secondary: var(--ducs-text-secondary);
+  --ducs-icon-muted: var(--ducs-text-muted);
+  --ducs-action-primary: var(--ducs-brand-blue-400);
+  --ducs-action-primary-hover: #68b8ff;
+  --ducs-action-danger: var(--ducs-red-400);
+  --ducs-focus-ring: var(--ducs-brand-blue-400);
+  --ducs-overlay-scrim: rgb(0 0 0 / 56%);
+  --ducs-status-success: var(--ducs-green-400);
+  --ducs-status-warning: var(--ducs-yellow-400);
+  --ducs-status-danger: var(--ducs-red-400);
+  --ducs-status-info: var(--ducs-blue-400);
+}
