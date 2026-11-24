@@ -101,4 +101,22 @@
   --ducs-shell-profile-menu-text: #e8edf5;
   --ducs-shell-profile-drawer-text: #eef2f7;
   --ducs-shell-profile-drawer-name-muted: #8995a4;
+  /* Live Users page chrome and list text roles. */
+  --ducs-live-brand-text: #eee;
+  --ducs-live-brand-muted: #999;
+  --ducs-live-mark-border: #555;
+  --ducs-live-back-link: #aaa;
+  --ducs-live-back-link-hover: #fff;
+  --ducs-live-kicker: #777;
+  --ducs-live-count-muted: #858585;
+  --ducs-live-subtitle: #777;
+  --ducs-live-list-meta: #737373;
+  --ducs-live-row-text: #e7e7e7;
+  --ducs-live-avatar-text: #ddd;
+  --ducs-live-role-text: #858585;
+  --ducs-live-row-arrow: #555;
+  --ducs-live-group-heading: #777;
+  --ducs-live-state-text: #777;
+  --ducs-live-state-error: #c88b8b;
+  --ducs-live-footnote: #666;
 }
