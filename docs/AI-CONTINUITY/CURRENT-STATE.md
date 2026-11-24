@@ -1,7 +1,7 @@
 # DRM Premium — Current State
 Verified ref: duga-foundation-review
 Verification date: 2026-11-25
-Verified commit: 8e2a64ef30cef4bf503cc6ca4f3cc06ae2a18c83
+Verified commit: 4a7008f34565d8bdfe8fff092308f7df2189833d
 
 ## DUGA foundation
 - Isolated review branch is based directly on `main`; it contains only DUGA foundation assets and excludes unrelated Admin/application work.
@@ -16,6 +16,7 @@ Verified commit: 8e2a64ef30cef4bf503cc6ca4f3cc06ae2a18c83
 - Foreign-key probes now reject orphan assignments/reviews/approvals/validation runs and confirm `PRAGMA foreign_key_check` is clean after valid fixtures. Optimistic-concurrency probes reject a stale second writer and verify local SQLite rollback when the audit insert fails. These do not prove Cloudflare D1 batch semantics.
 - Found and fixed the DACE finding-evidence JSON constraint so malformed JSON is safely rejected through `CASE WHEN json_valid(...) THEN json_type(...)` rather than relying on boolean evaluation order; added wrong-type and malformed-input tests.
 - Reviewed current Cloudflare D1 documentation: FK constraints are enforced by default; `D1Database.batch()` is transactional and rolls back the sequence on statement failure; JSON `json_valid`/`json_type` are documented. Updated DUGA design docs accordingly. Concrete schema and affected-row checks still need a disposable Preview integration test.
+- Also confirmed from D1 result-object docs that each `batch()` statement returns its own `D1Result` and `meta.changes`; API design now requires checking the conditional UPDATE's individual result, not aggregate batch counts. Official docs reviewed: `d1/worker-api/return-object/`.
 - CI path filters cover `governance/**`, DUGA design and continuity docs, schema/validator tests and workflow files.
 - Cloudflare Pages automatically published a branch Preview: https://duga-foundation-review.drm-premium.pages.dev. This is not Production and does not establish D1 migration or runtime governance validation.
 
