@@ -59,3 +59,8 @@ This is a source-level migration only. Actual stacking-context behavior still re
 ## Migration rule
 
 Do not globally replace numeric z-index or offset values. For each component family: inspect the selector and ancestor stacking contexts, establish the intended containing block, map only semantically equivalent values, preserve rendered behavior, and validate all consuming pages.
+
+
+## Migration update — DUPS v0.2.0
+
+Audited stacking-layer consumers have been migrated to semantic DUPS aliases in `theme.css`, `styles.css`, `live-users.css`, and `upload-studio.css`. Scope includes shared shell layers, Profile drawer/backdrop, Live Users header/highlight/drawer/backdrop/notice/avatar/effects, visual editor, site builder, suspension screen, profile-completion overlay, and Upload Studio sidebar/inspector/header. Numeric fallbacks preserve the original audited values. This does not migrate every position/inset declaration, implement anchor collision handling, or prove computed stacking behavior. Browser verification remains pending.
