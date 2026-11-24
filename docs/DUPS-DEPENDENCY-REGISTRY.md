@@ -45,7 +45,8 @@ These totals are lexical declaration counts, not a claim that 60 distinct compon
 - Stylesheet integration: linked on Homepage, Admin, Live Users, Upload Studio, and Profile with cache key `dups-01`.
 - Token registry: added.
 - Source dependency audit: added.
-- Component mapping and migration: pending.
+- Shared-shell stacking migration: source-level tokenized in `theme.css` for desktop header, category bar, desktop/mobile sidebar, sidebar backdrop, mobile home header/sidebar/backdrop, and Profile drawer/backdrop. Numeric fallbacks preserve the audited values.
+- Other component positioning migration: pending.
 - Stacking-context inspection and browser visual validation: pending.
 - Keyboard, zoom, mobile safe-area, and RTL checks: pending.
 
