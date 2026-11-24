@@ -31,4 +31,11 @@
   --ducs-live-restricted-row-bg: #151515;
   --ducs-live-restricted-row-hover-bg: #1d1919;
   --ducs-live-activity-track-bg: #2b2b2b;
+  --ducs-live-modal-gradient-start: #171717;
+  --ducs-live-modal-gradient-mid: #101010;
+  --ducs-live-modal-gradient-end: #0d0d0d;
+  --ducs-live-header-gradient-start: #1a1a1a;
+  --ducs-live-header-gradient-end: #121212;
+  --ducs-live-profile-gradient-start: #1d1d1d;
+  --ducs-live-profile-gradient-end: #151515;
 }
