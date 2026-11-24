@@ -1,6 +1,6 @@
 # DRM Universal Sizing System (DUSS)
-Version: 0.1.0 — Foundation
-Status: Token foundation; component migration not started
+Version: 0.2.0 — Foundation + first component migration
+Status: Core token foundation complete; shared form-control and profile geometry migration started
 
 ## Purpose and boundaries
 DUSS centralizes sizing for typography, icons, spacing, controls, layout, surfaces, and responsive behavior. DUME continues to own motion and animation. DUSS does not redesign colors or visual themes.
@@ -81,3 +81,27 @@ A component is migrated only when its dimensions use semantic tokens or a docume
 
 ## Known limitations
 This is a static source audit. It does not measure computed browser styles, rendered geometry, or visual regressions. Browser screenshots and interaction checks are required before changing live component dimensions.
+
+
+## Phase 2 implementation update — 2026-11-24
+
+Completed on `feature/full-admin-panel`:
+- Added semantic typography aliases for captions, body text, emphasis, and heading roles.
+- Added semantic control, field, form-gap, header, sidebar, modal, table, tooltip, and toast geometry tokens.
+- Migrated shared Admin and Upload Studio form-control typography and minimum field heights to DUSS tokens.
+- Migrated Profile form typography, card padding, avatar dimensions, field gaps, and form row gaps to DUSS tokens.
+- Added the DUSS stylesheet to Profile, which previously did not load the sizing system.
+- Bumped the DUSS cache key to `duss-02` on Homepage, Admin, Live Users, Upload Studio, and Profile.
+
+## Migration status and remaining work
+
+The following are not yet fully migrated and must not be marked complete:
+- Header and navigation dimensions across the public site and admin shell.
+- Sidebar/drawer geometry and menu item sizing.
+- Icon sizing and optical alignment across SVG, icon-font, and inline icon implementations.
+- Button variants, badges, status pills, and touch-target audit.
+- Cards, grids, page gutters, modal/drawer widths, tables, pagination, toast, tooltip, and progress indicators.
+- Responsive behavior and density modes across every page.
+- Browser-based visual regression, keyboard, zoom (200%), and Bengali/Latin overflow checks.
+
+The CSS-only migration is intentionally conservative. Existing component-specific layout, colors, and motion remain unchanged. Static source checks are not a substitute for rendered-browser validation.
