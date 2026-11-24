@@ -1,4 +1,4 @@
-# DUCS Color Dependency Registry — v0.2.2
+# DUCS Color Dependency Registry — v0.2.3
 
 This registry links page/component color responsibilities to semantic tokens and source stylesheets. It is a migration map, not a claim that every listed component has already been converted.
 
@@ -31,7 +31,7 @@ This registry links page/component color responsibilities to semantic tokens and
 - Per-file source inventory: added.
 - Shared shell root palette alias migration: complete; individual shared shell components still pending.
 - Component token aliases are separated into `components/buttons.css`, `fields.css`, `badges.css`, `surfaces.css`, and `feedback.css`.
-- Live Users first-pass migration: page/panel surface, search-field, hover/active surface, overlay, online state, and restriction-trigger color aliases are consumed by `live-users.css`; exact legacy values are retained.
-- Live Users: surfaces, search field, online badge and restriction-trigger colors partially migrated.
+- Live Users first-pass migration: page/panel surfaces, search-field states, drawer/dialog gradients and surfaces, role/restriction states, overlay, notice, and restriction-trigger color aliases are consumed by `live-users.css`; exact legacy values are retained. Some decorative and activity-chart colors remain literal.
+- Live Users: page/panel, search field, drawer/dialog, role/status, restriction list, overlay, and notice colors partially migrated; decorative and activity-chart colors remain.
 - Remaining drawer/dialog internals, shared shell components, Admin forms, homepage cards, Upload Studio, Profile, tables, charts, and notifications: pending.
 - Visual regression and full contrast audit: pending.
