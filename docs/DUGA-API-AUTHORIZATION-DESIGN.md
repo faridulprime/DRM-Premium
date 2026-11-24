@@ -50,11 +50,11 @@ A state transition must be a compare-and-swap operation, not a read-then-uncondi
 - Read `status`, `state_version` and `implementation_commit_sha`.
 - Validate the transition matrix, active actor assignment, risk gates and commit-bound evidence.
 - Update with `WHERE id = ? AND state_version = ? AND status = ?`, incrementing `state_version`.
-- Require one changed row. If zero rows changed, return a conflict and do not append an accepted/approved event.
+- Require one changed row. If zero rows changed, return a conflict and do not append an accepted/approved event. Cloudflare documents each D1 statement result with `meta.changes`; inspect the conditional UPDATE's result entry, not aggregate batch totals.
 - Insert the audit event in the same D1 batch/transaction as the state update. A failed audit insert must roll back the state change.
 - Treat evidence rows as immutable history. If `implementation_commit_sha` changes, all prior review, approval and validation evidence is stale until re-recorded against the new commit.
 
-The local SQLite test suite models a stale second writer and verifies rollback when an audit insert fails. Cloudflare's current D1 docs state that `batch()` is transactional and rolls back the sequence on statement failure. A disposable-Preview test remains necessary for this schema's concrete statement results and exactly-one-row detection. Reference: https://developers.cloudflare.com/d1/worker-api/d1-database/.
+The local SQLite test suite models a stale second writer and verifies rollback when an audit insert fails. Cloudflare's current D1 docs state that `batch()` is transactional and rolls back the sequence on statement failure. A disposable-Preview test remains necessary for this schema's concrete statement results and exactly-one-row detection. D1's documented `D1Result.meta.changes` is the row-change count for each `run()`/`batch()` statement result. References: https://developers.cloudflare.com/d1/worker-api/d1-database/ and https://developers.cloudflare.com/d1/worker-api/return-object/.
 
 ## Security invariants
 - Never accept a browser-supplied role, approver identity, AI identity, implementation SHA or risk downgrade as authoritative.
