@@ -1,6 +1,6 @@
 # DRM Universal Positioning System (DUPS)
-Version: 0.1.0 — Positioning token foundation
-Status: Specification, token foundation, and five-page stylesheet integration added; component migration and browser validation pending
+Version: 0.2.0 — Shared shell and floating-layer migration
+Status: Token foundation, shared-shell stacking, Live Users overlay layers, editor overlays, and Upload Studio fixed layers migrated; browser validation pending
 
 ## Purpose
 DUPS centralizes coordinate-based positioning decisions in DRM Premium. It makes positioning contexts, logical offsets, anchored placement, and stacking order explicit and reviewable across pages.
@@ -83,7 +83,7 @@ A component should use the lowest layer that satisfies its interaction requireme
 - Avoid fixed coordinates that assume a single viewport or content length.
 
 ## Compatibility and migration
-Version 0.1.0 adds custom properties only. The stylesheet is linked by Homepage, Admin, Live Users, Upload Studio, and Profile. The token file itself contains only the root custom-property declaration and does not alter component rendering. A first consumer migration in `theme.css` maps audited shared-shell and Profile overlay stacking values to DUPS layer tokens with numeric fallbacks, preserving the existing order. This is a source-level migration; browser stacking-context validation remains pending.
+Version 0.1.0 adds custom properties only. The stylesheet is linked by Homepage, Admin, Live Users, Upload Studio, and Profile. The token file contains root custom properties only. Consumer migrations now map audited shared-shell, Profile drawer, Live Users overlay, visual editor, site builder, profile-completion overlay, suspension screen, and Upload Studio fixed-layer stacking values to DUPS layer tokens with numeric fallbacks. The migrations preserve audited numeric values, including legacy exceptions. These are source-level changes; browser stacking-context validation remains pending.
 
 The initial source audit is lexical and limited to declarations for position, z-index, and inset-like offsets in the six principal stylesheets. It does not resolve computed styles, selectors' runtime applicability, JavaScript positioning, SVG, or stacking-context behavior.
 
@@ -98,7 +98,7 @@ A component is considered migrated only when:
 - no unintended visual or interaction regression is observed.
 
 ## Known limitations
-- No component selectors have been migrated yet.
+- Component migrations cover audited stacking-layer values only; positioning modes, anchor offsets, collision handling, and all component families have not been fully migrated.
 - The token layer does not automatically normalize existing z-index values.
 - CSS Anchor Positioning is not enabled as a required dependency.
 - Browser-based visual, stacking, keyboard, zoom, and mobile safe-area validation remains outstanding.
