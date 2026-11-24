@@ -270,3 +270,11 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .admin-topbar .admin-search svg{width:16px!important;height:16px!important}
  .admin-category-bar{top:86px!important}
 }
+
+
+/* Primary owner brand badge: distinct from the green Admin badge. */
+.admin-topbar .brand-admin-suffix.brand-owner-suffix{
+ color:#d8b4fe!important;
+ background:rgba(168,85,247,.14)!important;
+ border:1px solid rgba(192,132,252,.42)!important;
+}
