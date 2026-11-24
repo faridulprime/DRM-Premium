@@ -18,6 +18,7 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 - Added local SQLite schema smoke tests for request/review/approval/validation constraints, active assignment cardinality, temporal ordering, validation lifecycle, job lease/status/result invariants, nonblank values, policy/registry validation and malformed-input cases.
 - Latest CI on head `bb3923dbb62dac5f1bcc240273a0dc9a85d15f06`: push run `45509730303` and PR run `45509738006` both completed successfully; the `sqlite-smoke-test` job and local schema/registry/validator test step passed.
 - Added `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md`, a stepwise Cloudflare D1 acceptance plan restricted to a newly created disposable database. It includes schema inventory, JSON/FK/append-only probes, batch rollback, per-statement row counts, and a required stale-writer/no-audit replay test.
+- Closed the known CAS/audit gap at the design and local-test level: request rows store `last_transition_id`; audit rows store a unique nullable `transition_id`; conditional `INSERT ... SELECT` appends only for the exact successful state version. Local SQLite tests cover success, stale writer, replay, token reuse and audit failure rollback.
 - Cloudflare Pages automatically published a branch Preview. This does not modify D1 and is not a Production deployment.
 
 ## Immediate blockers / required evidence
@@ -29,7 +30,7 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 ## Next review sequence
 1. Review the disposable D1 acceptance plan for completeness and provision a separate disposable database only after explicit resource-creation approval.
 2. Run every acceptance probe in `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md` against that disposable D1; retain exact outputs and errors.
-3. Resolve and test the conditional audit-write/concurrency design, including stale-writer and duplicate/replay cases.
+3. Verify the CAS token + conditional audit insert pattern on D1, including simultaneous writers, stale state, replay, token reuse and rollback.
 4. Complete the API transition matrix with optimistic `state_version` checks.
 5. Specify commit-bound gate invalidation: changed implementation SHA must stale prior review, approval and validation evidence.
 6. Specify active assignment/scope checks, reviewer/implementer separation, trusted CI validation, canonical Git-ref verification and server-derived audit actors.
