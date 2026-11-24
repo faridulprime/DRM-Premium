@@ -1,0 +1,8 @@
+/* DUCS form-field color aliases. */
+:root {
+  --ducs-field-bg: var(--ducs-surface-sunken);
+  --ducs-field-text: var(--ducs-text-primary);
+  --ducs-field-placeholder: var(--ducs-text-muted);
+  --ducs-field-border: var(--ducs-border-default);
+  --ducs-field-border-focus: var(--ducs-focus-ring);
+}
