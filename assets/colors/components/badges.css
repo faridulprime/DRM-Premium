@@ -38,4 +38,12 @@
   --ducs-admin-owner-border: rgba(192, 132, 252, .42);
   --ducs-admin-danger-border: #74383d;
   --ducs-admin-danger-text: #ffaaaa;
+
+  /* Shared shell identity and active navigation colors. */
+  --ducs-shell-brand-text: #f1f1f1;
+  --ducs-shell-brand-accent: #60a5fa;
+  --ducs-shell-admin-badge-text: #83efa5;
+  --ducs-shell-admin-badge-bg: rgba(131, 239, 165, .10);
+  --ducs-shell-admin-badge-border: rgba(131, 239, 165, .2);
+  --ducs-shell-category-chip-active-text: #0f0f0f;
 }
