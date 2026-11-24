@@ -161,6 +161,25 @@ def validate_system_registry(registry: dict, ownership: dict, roles: dict, depen
         for dep in system.get("dependencies", []) if isinstance(system.get("dependencies"), list) else []:
             if dep not in by_id or dep == sid:
                 errors.append(f"registry/systems.json: {sid} has invalid dependency {dep!r}")
+    # Dependency cycles are rejected by default; intentional cycles need a future explicit policy exception.
+    visiting: set[str] = set()
+    visited: set[str] = set()
+    def visit(node: str) -> None:
+        if node in visiting:
+            errors.append(f"registry/systems.json: dependency cycle detected at {node}")
+            return
+        if node in visited:
+            return
+        visiting.add(node)
+        node_deps = by_id.get(node, {}).get("dependencies", [])
+        if isinstance(node_deps, list):
+            for dep in node_deps:
+                if dep in by_id:
+                    visit(dep)
+        visiting.remove(node)
+        visited.add(node)
+    for sid in by_id:
+        visit(sid)
     assignments = ownership.get("assignments")
     if not nonempty(ownership.get("version")) or not isinstance(assignments, list):
         errors.append("ownership.json: version and assignments array are required")
