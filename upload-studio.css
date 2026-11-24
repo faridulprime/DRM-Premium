@@ -148,3 +148,48 @@ body.upload-studio-page.sidebar-open{padding-left:240px!important}
  .upload-studio-page .list-row{flex-wrap:wrap}
  .upload-studio-page .page-tabs,.upload-studio-page .type-switch{max-width:100%;overflow-x:auto}
 }
+
+
+/* Mobile UI system v2 — Creator workspace sizing and form ergonomics. */
+@media(max-width:760px){
+ body.upload-studio-page{font-size:14px;line-height:1.5;padding-top:58px!important}
+ .upload-studio-page .studio-global-topbar{height:58px!important;min-height:58px!important;flex-wrap:nowrap!important;padding:0 10px!important;gap:8px!important}
+ .upload-studio-page .studio-global-topbar .yt-menu-trigger{width:44px;height:44px;min-width:44px;min-height:44px;flex-basis:44px}
+ .upload-studio-page .studio-global-topbar .brand{min-width:0;gap:6px}
+ .upload-studio-page .studio-global-topbar .brand-mark{width:26px;height:26px;flex-basis:26px}
+ .upload-studio-page .studio-global-topbar .brand-word{font-size:14px!important}
+ .upload-studio-page .studio-global-topbar .brand-admin-suffix{font-size:10px;min-height:21px;padding:2px 5px}
+ .upload-studio-page .studio-header-identity{display:none!important}
+ .upload-studio-page .main-area{padding:18px 12px!important}
+ .upload-studio-page .studio-heading h1{font-size:25px;line-height:1.25}
+ .upload-studio-page .studio-heading .subhead,.upload-studio-page .view-heading p:not(.eyebrow){font-size:13px;line-height:1.5}
+ .upload-studio-page .eyebrow,.upload-studio-page .autosave,.upload-studio-page .step{font-size:11px}
+ .upload-studio-page .status-pill{min-height:24px;padding:4px 8px;font-size:11px}
+ .upload-studio-page .page-tabs{display:flex;gap:5px;overflow-x:auto;overscroll-behavior-x:contain;padding:8px 0;scrollbar-width:thin}
+ .upload-studio-page .tab{flex:0 0 auto;min-height:42px;padding:9px 11px;font-size:13px}
+ .upload-studio-page .type-switch{display:flex;gap:7px;overflow-x:auto}
+ .upload-studio-page .type{flex:0 0 auto;min-height:42px;padding:9px 12px;font-size:13px}
+ .upload-studio-page .panel,.upload-studio-page .list-panel{padding:14px 12px;border-radius:11px}
+ .upload-studio-page .panel-title h3,.upload-studio-page .preview-head h3{font-size:16px;line-height:1.35}
+ .upload-studio-page .panel-title p,.upload-studio-page .panel label{font-size:13px;line-height:1.5}
+ .upload-studio-page .panel input:not([type=checkbox]),.upload-studio-page .panel textarea,.upload-studio-page .panel select{min-height:44px;font-size:16px;padding:10px 11px}
+ .upload-studio-page .panel textarea{min-height:100px}
+ .upload-studio-page .panel input[type=checkbox]{width:18px;height:18px}
+ .upload-studio-page .url-row{gap:7px}
+ .upload-studio-page .url-row button,.upload-studio-page .use-button,.upload-studio-page .manage-inline button{min-height:42px;padding:8px 11px;font-size:13px}
+ .upload-studio-page .field-hint,.upload-studio-page .yt-meta span,.upload-studio-page .yt-meta small,.upload-studio-page .preview-foot{font-size:12px;line-height:1.5}
+ .upload-studio-page .yt-meta strong{font-size:14px}
+ .upload-studio-page .post-preview-copy h2{font-size:17px;line-height:1.35}
+ .upload-studio-page .post-preview-copy p{font-size:13px;line-height:1.55}
+ .upload-studio-page .publish-button,.upload-studio-page .secondary-button{min-height:46px;font-size:14px}
+ .upload-studio-page .list-row{gap:9px;padding:12px 9px}
+ .upload-studio-page .list-row strong{font-size:13px}
+ .upload-studio-page .list-row small{font-size:12px}
+ .upload-studio-page .list-row button{min-height:38px;font-size:12px}
+ .upload-studio-page dialog{width:calc(100vw - 20px);max-width:460px;max-height:88dvh;overflow:auto;padding:18px}
+}
+@media(max-width:380px){
+ .upload-studio-page .main-area{padding-inline:10px!important}
+ .upload-studio-page .panel,.upload-studio-page .list-panel{padding:12px 10px}
+ .upload-studio-page .tab,.upload-studio-page .type{font-size:12px;padding-inline:9px}
+}
