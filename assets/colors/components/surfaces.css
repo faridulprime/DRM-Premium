@@ -135,4 +135,23 @@
   --ducs-home-builder-bg: #edf1f5;
   --ducs-home-builder-sidebar: #f8fafc;
   --ducs-home-builder-canvas: #fff;
+
+  /* Homepage editor, builder and account overlays. */
+  --ducs-home-editor-toggle-bg: #e7eef7;
+  --ducs-home-editor-panel-border: #9bb0c7;
+  --ducs-home-builder-border: #cbd5df;
+  --ducs-home-builder-stage: #f3f6f9;
+  --ducs-home-builder-canvas-border: #d5dde6;
+  --ducs-home-register-bg-start: #171717;
+  --ducs-home-register-bg-mid: #101010;
+  --ducs-home-register-bg-end: #0d0d0d;
+  --ducs-home-register-border: #383838;
+  --ducs-home-register-input-bg: #0e0e0e;
+  --ducs-home-suspension-bg-start: #202833;
+  --ducs-home-suspension-bg-mid: #11151b;
+  --ducs-home-suspension-bg-end: #090b0f;
+  --ducs-home-suspension-panel-border: rgba(177,194,214,.16);
+  --ducs-home-profilebar-bg-start: #202832;
+  --ducs-home-profilebar-bg-end: #171d25;
+  --ducs-home-profilebar-border: #343b43;
 }
