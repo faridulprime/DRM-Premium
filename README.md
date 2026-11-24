@@ -27,33 +27,41 @@ All current work is on `feature/full-admin-panel`. Production `main` has not bee
 The management API requires the D1 database binding and encrypted secrets.
 
 1. Cloudflare Pages project `drm-premium` → Settings → Bindings → D1 database.
-2. Keep the existing Production database `drmdatabase` untouched for now. Create a separate D1 database named `drmdatabase-preview` and bind it as `DB` in the Preview environment only. Do not point Preview at the Production database.
-3. In the `drmdatabase-preview` Console, run `migrations/0001_admin.sql` once.
-4. Then run `migrations/0002_owner_roles_and_content_ownership.sql` once.
-5. Then run `migrations/0003_single_owner_guard.sql` once. This adds a database-level unique constraint so only one Owner can exist.
-6. Then run **both** `migrations/0004_admin_analytics.sql` and `migrations/0004_owner_email_otp.sql` once. The first creates the analytics and admin-presence tables; the second creates the Owner OTP table. Both are required by the current API.
-7. Apply `migrations/0005_site_builder_foundation.sql` once to the Preview D1 database. This creates the isolated Owner-only Website Builder draft document and 30-day revision timeline; it does not change the currently published site.
-8. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
+2. Keep the existing Production database `drmdatabase` untouched. Create a separate D1 database named `drmdatabase-preview` and bind it as `DB` in the Preview environment only. Do not point Preview at the Production database.
+3. For a **brand-new, empty Preview database only**, open its D1 Console and execute the SQL files individually, in this exact order:
+   - `migrations/0001_admin.sql`
+   - `migrations/0002_owner_roles_and_content_ownership.sql`
+   - `migrations/0003_single_owner_guard.sql`
+   - `migrations/0004_admin_analytics.sql`
+   - `migrations/0004_owner_email_otp.sql`
+   - `migrations/0005_site_builder_foundation.sql`
+   - `migrations/0006_active_user_presence.sql`
+   - `migrations/0007_user_registration.sql`
+   - `migrations/0007_user_restrictions_and_activity.sql`
+   - `migrations/0008_user_profiles.sql`
+   
+   Both files sharing prefix `0004` and both files sharing prefix `0007` are required. The complete inventory and dependency notes are in [`migrations/manifest.json`](migrations/manifest.json). Run one file at a time and inspect the result before continuing.
+4. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
    - In Project Settings → Script Properties, add `DRM_OTP_TOKEN` (a long random value) and `OWNER_EMAIL` (the same Owner email).
    - Deploy → New deployment → Web app. Execute as **Me**; access: **Anyone**. Authorize Gmail sending when prompted and copy the Web app URL ending in `/exec`.
-9. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
+5. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
    - `OWNER_EMAIL`: the one email address allowed to create the single Owner account.
    - `GOOGLE_APPS_SCRIPT_URL`: the Apps Script Web app `/exec` URL.
    - `GOOGLE_APPS_SCRIPT_TOKEN`: exactly the same random value saved as Apps Script property `DRM_OTP_TOKEN`.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
-10. Deploy the `feature/full-admin-panel` branch to a Preview URL.
-11. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
-12. Test Owner and Admin permissions using separate test accounts before merging.
+6. Deploy the `feature/full-admin-panel` branch to a Preview URL.
+7. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
+8. Test Owner and Admin permissions using separate test accounts before merging.
 
 Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only. Do not use a password previously shared in chat.
 
 ## D1 migrations
 
-The first migration creates the original users, sessions, login-attempt throttling, videos, categories and settings tables, plus sample content.
+The complete migration inventory, fresh-database execution order, dependencies and known filename-prefix collisions are recorded in [`migrations/manifest.json`](migrations/manifest.json). The manifest is documentation only: it is not a Wrangler migrations configuration and does not record applied state.
 
-The second migration adds usernames, email-verification state, Owner role and content ownership columns. It promotes the first existing account to Owner. If the Owner is created after migration, the bootstrap endpoint assigns any legacy unowned content to that Owner.
+For a brand-new empty database, apply all ten SQL files individually in the order listed in the Cloudflare setup section above. Both `0004` files and both `0007` files are required. The `0002` migration promotes the earliest existing account to Owner; review that behavior before using it on a database with existing users.
 
-Run the migrations once per database in the documented order: `0001`, `0002`, `0003`, both `0004` files, then `0005_site_builder_foundation.sql`, `0006_active_user_presence.sql`, and `0007_user_registration.sql`. Keep D1 backups/exports before applying schema changes to a database containing important data.
+**Existing database warning:** Do not rerun these files against an existing Preview or Production database. A schema inspection that finds the expected tables does not prove which migration files ran or in what order. The current Preview preflight found no migration/meta table, so its historical migration ledger is unverified. Do not run `wrangler d1 migrations apply` or create a synthetic migration baseline until the database has been backed up and its complete schema/data state has been reconciled against a fresh-install test. Keep D1 backups/exports before any schema change.
 
 ## Important implementation status / limitations
 
