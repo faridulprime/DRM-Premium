@@ -46,6 +46,19 @@
   --dups-align-start: start;
   --dups-align-center: center;
   --dups-align-end: end;
+
+  /* Audited shared-shell and profile overlay layers.
+     These aliases preserve the existing numeric stacking order. */
+  --dups-layer-category-bar: 90;
+  --dups-layer-page-header: 100;
+  --dups-layer-header-status: 110;
+  --dups-layer-sidebar-backdrop: 110;
+  --dups-layer-sidebar-mobile: 120;
+  --dups-layer-home-header-mobile: 150;
+  --dups-layer-profile-backdrop: 180;
+  --dups-layer-profile-drawer: 181;
+  --dups-layer-home-sidebar-backdrop: 290;
+  --dups-layer-home-sidebar-mobile: 300;
 }
 
 /* DUPS intentionally ships no global position, inset, z-index, or transform
