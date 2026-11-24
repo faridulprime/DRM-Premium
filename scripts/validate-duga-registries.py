@@ -73,7 +73,7 @@ def validate_dependencies(systems: dict, rules: dict) -> list[str]:
     if not isinstance(edges, list):
         errors.append("systems.json: edges must be an array")
         edges = []
-    allowed_types = {"runtime-import", "asset-reference", "data-contract", "boundary-coordination"}
+    allowed_types = {"runtime-import", "asset-reference", "data-contract", "boundary-coordination", "governance-documentation"}
     seen_edges: set[tuple[str, str, str]] = set()
     for i, edge in enumerate(edges):
         where = f"systems.json: edges[{i}]"
