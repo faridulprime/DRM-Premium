@@ -165,7 +165,7 @@ def main() -> int:
 
     check("valid human change request", lambda: insert_change("change-1"),
           should_fail=False)
-    check("unknown change state rejected",
+    check("known terminal state is accepted by the SQL enum",
           lambda: insert_change("change-bad-state", status="accepted"),
           should_fail=False)  # accepted is an allowed enum; transition authorization is API-owned.
     check("invalid risk level rejected",
