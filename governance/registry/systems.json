@@ -4,12 +4,119 @@
   "authority": "github-desired-state",
   "lastReviewed": "2026-11-25",
   "systems": [
-    {"id":"DCP","name":"DRM Control Plane","version":"0.1.0","status":"proposed","description":"Coordinates governance policies, system registry, ownership, dependencies and change workflows; does not replace subsystem ownership.","ownerRole":"platform-owner","maintainerRole":"ai-maintainer","auditorRole":"independent-ai-auditor","paths":["governance/","docs/DUGA-SPEC.md"],"dependencies":["DACP"],"runtimeCritical":false},
-    {"id":"DUME","name":"DRM Universal Motion Engine","version":"0.2.0","status":"active","description":"Owns motion timing, easing, animation orchestration and reduced-motion behavior.","ownerRole":"system-owner","maintainerRole":"ai-maintainer","auditorRole":"independent-ai-auditor","paths":["assets/motion/","docs/DUME-SPEC.md"],"dependencies":[],"runtimeCritical":true},
-    {"id":"DUSS","name":"DRM Universal Sizing System","version":"0.3.0","status":"active","description":"Owns dimensions, typography sizing, spacing, icons and layout geometry.","ownerRole":"system-owner","maintainerRole":"ai-maintainer","auditorRole":"independent-ai-auditor","paths":["assets/sizing/","docs/DUSS-SPEC.md"],"dependencies":[],"runtimeCritical":true},
-    {"id":"DUPS","name":"DRM Universal Positioning System","version":"0.3.0","status":"active","description":"Owns positioning modes, containing-block intent, logical offsets, anchors and stacking layers.","ownerRole":"system-owner","maintainerRole":"ai-maintainer","auditorRole":"independent-ai-auditor","paths":["assets/positioning/","docs/DUPS-SPEC.md"],"dependencies":[],"runtimeCritical":true},
-    {"id":"DUCS","name":"DRM Universal Color System","version":"0.3.1","status":"active","description":"Owns color values, semantic color meaning, themes and color-related accessibility rules.","ownerRole":"system-owner","maintainerRole":"ai-maintainer","auditorRole":"independent-ai-auditor","paths":["assets/colors/","docs/DUCS-SPEC.md"],"dependencies":[],"runtimeCritical":true},
-    {"id":"DACP","name":"DRM AI Continuity Protocol","version":"0.1.0","status":"proposed","description":"Maintains repository-based onboarding, verified project state, decisions and recovery guidance for AI handover.","ownerRole":"platform-owner","maintainerRole":"ai-maintainer","auditorRole":"independent-ai-auditor","paths":["docs/AI-CONTINUITY/"],"dependencies":["DCP"],"runtimeCritical":false},
-    {"id":"DACE","name":"DRM Code Archaeology & Cleanup Engine","version":"0.1.0","status":"proposed","description":"Collects evidence about code usage and produces risk-classified cleanup proposals; initial mode is analysis-only.","ownerRole":"platform-owner","maintainerRole":"ai-maintainer","auditorRole":"independent-ai-auditor","paths":["governance/"],"dependencies":["DCP"],"runtimeCritical":false}
+    {
+      "id": "DCP",
+      "name": "DRM Control Plane",
+      "version": "0.1.0",
+      "status": "proposed",
+      "description": "Coordinates governance policies, system registry, ownership, dependencies and change workflows; does not replace subsystem ownership.",
+      "ownerRole": "platform-owner",
+      "maintainerRole": "ai-maintainer",
+      "auditorRole": "independent-ai-auditor",
+      "paths": [
+        "governance/",
+        "docs/DUGA-SPEC.md"
+      ],
+      "dependencies": [],
+      "runtimeCritical": false
+    },
+    {
+      "id": "DUME",
+      "name": "DRM Universal Motion Engine",
+      "version": "0.2.0",
+      "status": "active",
+      "description": "Owns motion timing, easing, animation orchestration and reduced-motion behavior.",
+      "ownerRole": "system-owner",
+      "maintainerRole": "ai-maintainer",
+      "auditorRole": "independent-ai-auditor",
+      "paths": [
+        "assets/motion/",
+        "docs/DUME-SPEC.md"
+      ],
+      "dependencies": [],
+      "runtimeCritical": true
+    },
+    {
+      "id": "DUSS",
+      "name": "DRM Universal Sizing System",
+      "version": "0.3.0",
+      "status": "active",
+      "description": "Owns dimensions, typography sizing, spacing, icons and layout geometry.",
+      "ownerRole": "system-owner",
+      "maintainerRole": "ai-maintainer",
+      "auditorRole": "independent-ai-auditor",
+      "paths": [
+        "assets/sizing/",
+        "docs/DUSS-SPEC.md"
+      ],
+      "dependencies": [],
+      "runtimeCritical": true
+    },
+    {
+      "id": "DUPS",
+      "name": "DRM Universal Positioning System",
+      "version": "0.3.0",
+      "status": "active",
+      "description": "Owns positioning modes, containing-block intent, logical offsets, anchors and stacking layers.",
+      "ownerRole": "system-owner",
+      "maintainerRole": "ai-maintainer",
+      "auditorRole": "independent-ai-auditor",
+      "paths": [
+        "assets/positioning/",
+        "docs/DUPS-SPEC.md"
+      ],
+      "dependencies": [],
+      "runtimeCritical": true
+    },
+    {
+      "id": "DUCS",
+      "name": "DRM Universal Color System",
+      "version": "0.3.1",
+      "status": "active",
+      "description": "Owns color values, semantic color meaning, themes and color-related accessibility rules.",
+      "ownerRole": "system-owner",
+      "maintainerRole": "ai-maintainer",
+      "auditorRole": "independent-ai-auditor",
+      "paths": [
+        "assets/colors/",
+        "docs/DUCS-SPEC.md"
+      ],
+      "dependencies": [],
+      "runtimeCritical": true
+    },
+    {
+      "id": "DACP",
+      "name": "DRM AI Continuity Protocol",
+      "version": "0.1.0",
+      "status": "proposed",
+      "description": "Maintains repository-based onboarding, verified project state, decisions and recovery guidance for AI handover.",
+      "ownerRole": "platform-owner",
+      "maintainerRole": "ai-maintainer",
+      "auditorRole": "independent-ai-auditor",
+      "paths": [
+        "docs/AI-CONTINUITY/"
+      ],
+      "dependencies": [
+        "DCP"
+      ],
+      "runtimeCritical": false
+    },
+    {
+      "id": "DACE",
+      "name": "DRM Code Archaeology & Cleanup Engine",
+      "version": "0.1.0",
+      "status": "proposed",
+      "description": "Collects evidence about code usage and produces risk-classified cleanup proposals; initial mode is analysis-only.",
+      "ownerRole": "platform-owner",
+      "maintainerRole": "ai-maintainer",
+      "auditorRole": "independent-ai-auditor",
+      "paths": [
+        "governance/"
+      ],
+      "dependencies": [
+        "DCP"
+      ],
+      "runtimeCritical": false
+    }
   ]
 }
