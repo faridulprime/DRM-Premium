@@ -1,0 +1,52 @@
+/* DRM Universal Positioning System (DUPS) — v0.1.0
+ * Token foundation only. No selectors are overridden and no existing
+ * component geometry is changed until each consumer is audited and migrated.
+ *
+ * Ownership: DUPS owns coordinate placement, positioning context, logical
+ * offsets, anchoring intent, and stacking layers. DUSS owns flow/grid/flex
+ * layout geometry, dimensions, spacing, and responsive sizing. DUME owns
+ * motion and transforms. DUCS owns color.
+ */
+:root {
+  /* Logical offset scale — values are reusable primitives, not mandates. */
+  --dups-offset-0: 0;
+  --dups-offset-1: 0.25rem;
+  --dups-offset-2: 0.5rem;
+  --dups-offset-3: 0.75rem;
+  --dups-offset-4: 1rem;
+  --dups-offset-6: 1.5rem;
+  --dups-offset-8: 2rem;
+
+  /* Semantic placement offsets. */
+  --dups-inset-edge: var(--dups-offset-4);
+  --dups-inset-edge-compact: var(--dups-offset-2);
+  --dups-overlay-inset: var(--dups-offset-4);
+  --dups-floating-clearance: var(--dups-offset-3);
+
+  /* Explicit stacking scale. Keep values sparse to allow local composition. */
+  --dups-layer-base: 0;
+  --dups-layer-raised: 10;
+  --dups-layer-sticky: 100;
+  --dups-layer-dropdown: 200;
+  --dups-layer-overlay: 300;
+  --dups-layer-drawer: 400;
+  --dups-layer-modal: 500;
+  --dups-layer-popover: 600;
+  --dups-layer-tooltip: 700;
+  --dups-layer-toast: 800;
+  --dups-layer-critical: 900;
+
+  /* Anchor relationship spacing. */
+  --dups-anchor-gap-xs: 0.25rem;
+  --dups-anchor-gap-sm: 0.5rem;
+  --dups-anchor-gap-md: 0.75rem;
+  --dups-anchor-gap-lg: 1rem;
+
+  /* Alignment reference values for positioned elements. */
+  --dups-align-start: start;
+  --dups-align-center: center;
+  --dups-align-end: end;
+}
+
+/* DUPS intentionally ships no global position, inset, z-index, or transform
+   rules. Consumers opt into semantic tokens only after component review. */
