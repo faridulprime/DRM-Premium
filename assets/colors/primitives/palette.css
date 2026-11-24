@@ -11,7 +11,8 @@
   --ducs-neutral-400: #929292;
   --ducs-neutral-450: #aaaaaa;
   --ducs-neutral-500: #737373;
-  --ducs-neutral-600: #66615b;\n  --ducs-neutral-650: #666666;
+  --ducs-neutral-600: #66615b;
+  --ducs-neutral-650: #666666;
   --ducs-neutral-700: #414141;
   --ducs-neutral-800: #303030;
   --ducs-neutral-850: #272727;
@@ -21,7 +22,8 @@
   --ducs-neutral-950: #0f0f0f;
   --ducs-neutral-975: #0d0d0d;
 
-  --ducs-brand-blue-300: #68b8ff;\n  --ducs-brand-blue-400: #3ea6ff;
+  --ducs-brand-blue-300: #68b8ff;
+  --ducs-brand-blue-400: #3ea6ff;
   --ducs-brand-blue-500: #183d5c;
   --ducs-brand-red-500: #e51b13;
   --ducs-brand-mint-400: #7ce2bd;
@@ -50,5 +52,10 @@
   --ducs-alpha-black-56: rgb(0 0 0 / 56%);
   --ducs-alpha-white-06: rgb(255 255 255 / 6%);
   --ducs-alpha-white-10: rgb(255 255 255 / 10%);
-  --ducs-alpha-white-16: rgb(255 255 255 / 16%);\n  --ducs-alpha-success-12: rgb(131 239 165 / 12%);\n  --ducs-alpha-warning-12: rgb(244 201 107 / 12%);\n  --ducs-alpha-danger-12: rgb(248 113 113 / 12%);\n  --ducs-alpha-info-12: rgb(96 165 250 / 12%);\n  --ducs-ink-on-primary: #07131f;
+  --ducs-alpha-white-16: rgb(255 255 255 / 16%);
+  --ducs-alpha-success-12: rgb(131 239 165 / 12%);
+  --ducs-alpha-warning-12: rgb(244 201 107 / 12%);
+  --ducs-alpha-danger-12: rgb(248 113 113 / 12%);
+  --ducs-alpha-info-12: rgb(96 165 250 / 12%);
+  --ducs-ink-on-primary: #07131f;
 }
