@@ -151,7 +151,7 @@ def main() -> int:
         "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name LIKE 'duga_%'"
     ).fetchone()[0]
     index_count = db.execute(
-        "SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name LIKE '%duga_%'"
+        "SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name LIKE '%duga_%' AND name NOT LIKE 'sqlite_autoindex_%'"
     ).fetchone()[0]
     trigger_count = db.execute(
         "SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'duga_%'"
