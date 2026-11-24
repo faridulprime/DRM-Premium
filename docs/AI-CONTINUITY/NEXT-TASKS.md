@@ -28,3 +28,10 @@ Target branch: feature/full-admin-panel
 
 ## Preview D1 preflight handoff
 A read-only diagnostic script is available at `governance/schemas/d1-preview-preflight.sql`. Run each SELECT separately in the Cloudflare D1 Console against the Preview database only. Share the outputs for the SQLite version, sqlite_master table/index/trigger listings, migration/meta table discovery, and `PRAGMA table_info('users')`. Do not execute the schema draft or any migration yet. The script contains SELECT/PRAGMA inspection only and makes no database changes.
+
+## DUGA validation automation — 2026-11-25
+- Added `scripts/validate-duga-registries.py` for standard-library structural checks of roles, role kinds, required governance roles, permission lists, separation-of-duties statements, dependency edge metadata/types, duplicate edges, page asset references, and dependency-rule documentation.
+- Added the registry validator to `.github/workflows/duga-schema-smoke.yml` alongside the local SQLite schema smoke test.
+- CI exposed an existing registry edge type, `governance-documentation`, that was missing from the validator's accepted type set. The validator and dependency rules now explicitly recognize it.
+- CI run for commit `9813aa01a1f7dd0d9d755d89d62f6e917acdf291` completed both test commands successfully; the run's job finalization was still being checked at the time of this note.
+- The workflow remains scoped to the feature branch and pull requests targeting `main`; no deploy, migration or D1 action is included.
