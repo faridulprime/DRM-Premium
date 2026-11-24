@@ -8,6 +8,7 @@ on:
       - "governance/schemas/d1-operational-schema.sql"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-registries.py"
+      - "scripts/validate-duga-registries.py"
       - ".github/workflows/duga-schema-smoke.yml"
   pull_request:
     branches:
@@ -15,6 +16,7 @@ on:
     paths:
       - "governance/schemas/d1-operational-schema.sql"
       - "scripts/test-duga-schema.py"
+      - "scripts/validate-duga-registries.py"
       - ".github/workflows/duga-schema-smoke.yml"
   workflow_dispatch:
 
