@@ -1,0 +1,9 @@
+/* DUCS button color aliases. */
+:root {
+  --ducs-button-primary-bg: var(--ducs-action-primary);
+  --ducs-button-primary-text: #07131f;
+  --ducs-button-primary-hover-bg: var(--ducs-action-primary-hover);
+  --ducs-button-secondary-bg: var(--ducs-surface-raised);
+  --ducs-button-secondary-text: var(--ducs-text-primary);
+  --ducs-button-secondary-border: var(--ducs-border-default);
+}
