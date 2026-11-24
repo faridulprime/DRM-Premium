@@ -15,4 +15,19 @@
   --ducs-live-status-danger: #ef8383;
   --ducs-live-status-danger-bg: rgba(239, 131, 131, .10);
   --ducs-live-status-danger-border: rgba(239, 131, 131, .24);
+  --ducs-live-owner-text: #d7c6e5;
+  --ducs-live-owner-border: #55495e;
+  --ducs-live-owner-bg: #28222d;
+  --ducs-live-admin-text: #a7d8b7;
+  --ducs-live-admin-border: #365241;
+  --ducs-live-restricted-text: #e1bd8d;
+  --ducs-live-restricted-border: #5b4933;
+  --ducs-live-danger-muted-text: #dfa0a0;
+  --ducs-live-danger-muted-border: #503434;
+  --ducs-live-warning-text: #dfbd8d;
+  --ducs-live-warning-border: #59482f;
+  --ducs-live-tab-active-text: #f0b0b0;
+  --ducs-live-tab-active-border: #694040;
+  --ducs-live-tab-active-count-bg: #593333;
+  --ducs-live-tab-active-count-text: #ffe0e0;
 }
