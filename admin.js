@@ -2,6 +2,7 @@ const $=s=>document.querySelector(s);
 let state={videos:[],categories:[],settings:{},analytics:null,user:null}
 let activeUsersTimer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function setRoleBadge(el,role){if(!el)return;const key=role==="owner"?"owner":role==="admin"?"admin":role==="user"||role==="member"?"member":"";el.classList.add("role-badge");el.classList.remove("role-badge--owner","role-badge--admin","role-badge--member");if(key)el.classList.add("role-badge--"+key);}
 async function api(path,opts={}){const res=await fetch("/api/"+path,{...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})},credentials:"same-origin"});let data={};try{data=await res.json()}catch{}if(!res.ok)throw new Error(data.error||("Request failed ("+res.status+")"));return data}
 function show(id){
  ["loading","setup","login","dashboard"].forEach(x=>$("#"+x).hidden=x!==id);
@@ -11,8 +12,9 @@ function show(id){
  document.body.classList.toggle("admin-gate-state",!dashboard);
  document.body.classList.toggle("admin-dashboard-state",dashboard);
  if(dashboard&&state.user){
-  $("#adminHeaderIdentity").textContent=state.user.role==="owner"?"OWNER":state.user.role==="admin"?"ADMIN":"USER";
-  $("#dashRole").textContent=state.user.role.toUpperCase();
+  $("#adminHeaderIdentity").textContent=state.user.role==="owner"?"OWNER":state.user.role==="admin"?"ADMIN":"MEMBER";
+  $("#dashRole").textContent=state.user.role==="user"?"MEMBER":state.user.role.toUpperCase();
+  setRoleBadge($("#adminHeaderIdentity"),state.user.role);setRoleBadge($("#dashRole"),state.user.role);
   $("#adminSidebarLogoutArea").hidden=false;
  }else $("#adminSidebarLogoutArea").hidden=true;
 }
