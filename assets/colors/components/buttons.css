@@ -18,4 +18,16 @@
   --ducs-admin-action-bg: #1d1d1d;
   --ducs-admin-action-hover-bg: #272727;
   --ducs-admin-login-button-border: #414141;
+
+  /* Shared shell controls — exact existing theme.css colors preserved. */
+  --ducs-shell-menu-hover-bg: #272727;
+  --ducs-shell-menu-active-bg: #3a3a3a;
+  --ducs-shell-search-button-bg: #222;
+  --ducs-shell-search-button-hover-bg: #303030;
+  --ducs-shell-auth-button-bg: #272727;
+  --ducs-shell-auth-button-hover-bg: #3f3f3f;
+  --ducs-shell-auth-button-active-bg: #505050;
+  --ducs-shell-create-hover-bg: #263747;
+  --ducs-shell-sidebar-link-hover-bg: #272727;
+  --ducs-shell-logout-hover-bg: #272727;
 }
