@@ -157,7 +157,7 @@ CREATE TABLE duga_analysis_findings (
   symbol TEXT,
   classification TEXT NOT NULL CHECK (classification IN ('A','B','C','D','E')),
   confidence REAL NOT NULL CHECK (confidence>=0 AND confidence<=1),
-  evidence_json TEXT NOT NULL CHECK (json_valid(evidence_json) AND json_type(evidence_json)='object'),
+  evidence_json TEXT NOT NULL CHECK (CASE WHEN json_valid(evidence_json) THEN json_type(evidence_json)='object' ELSE 0 END),
   status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','under_review','accepted','dismissed','quarantined')),
   created_at INTEGER NOT NULL,
   reviewed_at INTEGER,
