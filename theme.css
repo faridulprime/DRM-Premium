@@ -4,13 +4,15 @@
    ========================================================= */
 :root{
   color-scheme:dark;
-  --paper:#0f0f0f;
-  --surface:#181818;
-  --surface-hover:#272727;
-  --ink:#f1f1f1;
-  --muted:#aaa;
-  --line:#303030;
-  --accent:#3ea6ff;
+  /* Shared shell palette aliases are owned by DUCS. */
+  --paper:var(--ducs-bg-canvas);
+  --surface:var(--ducs-surface-base);
+  --surface-hover:var(--ducs-surface-hover);
+  --ink:var(--ducs-text-primary);
+  --muted:var(--ducs-text-secondary);
+  --line:var(--ducs-border-subtle);
+  --accent:var(--ducs-action-primary);
+  /* Legacy pure-red state retained until component-level status audit. */
   --red:#f00;
 }
 [hidden]{display:none!important}
