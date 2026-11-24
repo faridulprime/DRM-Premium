@@ -59,3 +59,10 @@ The Git governance registry, role definitions, ownership boundaries, dependency 
 
 ## Change policy
 All implementation remains on feature branches. Production main and Production D1 must remain untouched unless separately and explicitly authorized.
+
+
+## D1 schema and API design references
+- Operational schema design: docs/DUGA-D1-SCHEMA-DESIGN.md.
+- Non-executable SQL draft: governance/schemas/d1-operational-schema.sql. Do not execute this file.
+- API authorization contract: docs/DUGA-API-AUTHORIZATION-DESIGN.md.
+- Proposed migration name after review: migrations/0009_duga_governance_foundation.sql.
