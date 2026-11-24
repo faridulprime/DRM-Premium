@@ -717,3 +717,12 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .topbar>#headerLoginForm>.yt-login-action,.home-page .topbar .yt-create-button{font-size:12px}
  .home-page .cards{grid-template-columns:1fr}
 }
+
+
+/* Mobile drawer must stack above the complete header, including login controls. */
+@media(max-width:760px){
+ body.home-page.drawer-open .topbar{z-index:100!important}
+ body.home-page.drawer-open .yt-sidebar,
+ body.home-page .yt-sidebar.mobile-open{z-index:300!important}
+ body.home-page.drawer-open .sidebar-backdrop:not([hidden]){z-index:290!important}
+}
