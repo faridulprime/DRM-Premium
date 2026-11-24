@@ -6,4 +6,15 @@
   --ducs-button-secondary-bg: var(--ducs-surface-raised);
   --ducs-button-secondary-text: var(--ducs-text-primary);
   --ducs-button-secondary-border: var(--ducs-border-default);
+
+  /* Admin dashboard action controls — legacy colors preserved. */
+  --ducs-admin-button-border: #454545;
+  --ducs-admin-button-hover-bg: #383838;
+  --ducs-admin-button-hover-border: #555;
+  --ducs-admin-outline-border: #444;
+  --ducs-admin-row-action-bg: #222;
+  --ducs-admin-row-action-hover-bg: #333;
+  --ducs-admin-action-border: #343434;
+  --ducs-admin-action-bg: #1d1d1d;
+  --ducs-admin-action-hover-bg: #272727;
 }
