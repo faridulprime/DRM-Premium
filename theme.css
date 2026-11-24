@@ -811,3 +811,21 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
   max-width:min(205px,72vw)!important;
  }
 }
+
+
+/* Mobile universal drawer entrance animation.
+   Explicit keyframes make the entrance reliable across mobile browsers,
+   even when the drawer is opened by a class toggle in the same event frame. */
+@keyframes mobileUniversalDrawerEnter{
+ from{transform:translate3d(-110%,0,0);opacity:0}
+ to{transform:translate3d(0,0,0);opacity:1}
+}
+@media(max-width:760px){
+ .yt-sidebar.mobile-open{
+  animation:mobileUniversalDrawerEnter 700ms cubic-bezier(.16,1,.3,1) both!important;
+  will-change:transform,opacity;
+ }
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+ .yt-sidebar.mobile-open{animation:none!important}
+}
