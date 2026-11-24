@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    "System IDs are stable and unique; do not reuse retired IDs.",
+    "Every system must have exactly one accountable human owner role.",
+    "AI maintainer and independent AI auditor responsibilities must be separated for each change.",
+    "Owned paths must be explicit; overlapping ownership requires a documented shared-boundary rule.",
+    "Dependencies must reference registered system IDs and must not contain cycles without an explicit exception.",
+    "Status and version changes require a reviewed GitHub change.",
+    "A proposed system is not considered implemented or runtime-active merely because it is registered.",
+    "Registry files describe desired state; D1 may store operational snapshots but must not silently redefine registry policy."
+  ]
+}
