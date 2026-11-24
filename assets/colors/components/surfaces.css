@@ -1,0 +1,9 @@
+/* DUCS card, divider, tooltip and dialog color aliases. */
+:root {
+  --ducs-card-bg: var(--ducs-surface-base);
+  --ducs-card-border: var(--ducs-border-subtle);
+  --ducs-divider: var(--ducs-border-subtle);
+  --ducs-tooltip-bg: var(--ducs-surface-raised);
+  --ducs-tooltip-text: var(--ducs-text-primary);
+  --ducs-dialog-backdrop: var(--ducs-overlay-scrim);
+}
