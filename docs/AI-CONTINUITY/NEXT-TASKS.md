@@ -33,5 +33,5 @@ A read-only diagnostic script is available at `governance/schemas/d1-preview-pre
 - Added `scripts/validate-duga-registries.py` for standard-library structural checks of roles, role kinds, required governance roles, permission lists, separation-of-duties statements, dependency edge metadata/types, duplicate edges, page asset references, and dependency-rule documentation.
 - Added the registry validator to `.github/workflows/duga-schema-smoke.yml` alongside the local SQLite schema smoke test.
 - CI exposed an existing registry edge type, `governance-documentation`, that was missing from the validator's accepted type set. The validator and dependency rules now explicitly recognize it.
-- CI run for commit `9813aa01a1f7dd0d9d755d89d62f6e917acdf291` completed both test commands successfully; the run's job finalization was still being checked at the time of this note.
+- GitHub Actions run for commit `a61102d3fb80cc4162e4363a66a0b11aa9ef93fb` completed successfully (both schema smoke tests and registry validation). Earlier validator runs correctly failed on the unrecognized existing edge type; that mismatch was fixed and the rerun passed.
 - The workflow remains scoped to the feature branch and pull requests targeting `main`; no deploy, migration or D1 action is included.
