@@ -29,6 +29,7 @@ This registry links page/component color responsibilities to semantic tokens and
 - Token foundation: added.
 - Initial page palette mapping: added as descriptive CSS custom properties.
 - Per-file source inventory: added.
-- Shared shell root palette alias migration: complete; individual shared shell components still pending.\n- Component token aliases are now separated into `components/buttons.css`, `fields.css`, `badges.css`, `surfaces.css`, and `feedback.css`; page CSS consumers remain pending.
+- Shared shell root palette alias migration: complete; individual shared shell components still pending.
+- Component token aliases are now separated into `components/buttons.css`, `fields.css`, `badges.css`, `surfaces.css`, and `feedback.css`; page CSS consumers remain pending.
 - Button, field, badge, card, dialog, table, chart, and notification migrations: pending.
 - Visual regression and full contrast audit: pending.
