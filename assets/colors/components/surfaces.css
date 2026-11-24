@@ -96,4 +96,19 @@
   --ducs-profile-topbar-bg: rgba(13, 13, 13, .9);
   --ducs-profile-topbar-border: #242424;
   --ducs-profile-card-shadow: #0005;
+
+  /* Upload Studio graphite creator workspace. */
+  --ducs-upload-page-bg: #0d0d0d;
+  --ducs-upload-panel-bg: #141414;
+  --ducs-upload-panel-border: #303030;
+  --ducs-upload-input-bg: #0d0d0d;
+  --ducs-upload-preview-bg: #101010;
+  --ducs-upload-list-bg: #121212;
+  --ducs-upload-control-bg: #181818;
+  --ducs-upload-dialog-bg: #181818;
+  --ducs-upload-header-bg: #0f0f0f;
+  --ducs-upload-header-border: #292929;
+  --ducs-upload-notice-error-bg: #291616;
+  --ducs-upload-notice-error-border: #633737;
+  --ducs-upload-dialog-backdrop: #000b;
 }
