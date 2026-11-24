@@ -186,3 +186,9 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-restricted-user-row .live-row-arrow{opacity:1}
 @media(max-width:700px){.live-restrictions-modal{width:min(460px,calc(100vw - 24px));max-height:88dvh}.live-restrictions-head{padding:18px 16px 15px}.live-restrictions-content{padding:13px 12px 14px}.live-restricted-user-row{gap:8px;padding:8px}.live-restricted-status{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.live-restrictions-modal.is-opening,.live-restrictions-modal.is-closing{animation-duration:.2s}}
+
+
+/* Universal role colors on Live Users: keep Guest and account-status chips neutral. */
+.live-role.role-badge{padding:2px 7px;font-size:9px;letter-spacing:.015em}
+.live-role.role-badge svg{flex:none}
+.live-drawer-chip.role-badge{padding:5px 8px;font-size:9px}
