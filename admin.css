@@ -172,3 +172,21 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
 
 /* Admin dashboard role chip follows the shared semantic role palette. */
 .dash-role.role-badge{padding:7px 11px;font-size:11px;letter-spacing:.08em}
+
+
+/* Mobile Admin: prevent header/search and dashboard grids from exceeding viewport. */
+@media(max-width:760px){
+ body.admin-gate-state,body.admin-dashboard-state{padding:58px 0 0!important;overflow-x:clip}
+ .admin-topbar{height:auto!important;min-height:58px!important;flex-wrap:wrap!important;gap:8px!important;padding:0 10px 9px!important}
+ .admin-topbar .yt-search{order:3;flex:1 1 100%;width:100%;max-width:none;height:38px;margin:0}
+ .admin-topbar .brand{min-width:0}
+ .admin-topbar .brand-word{font-size:15px!important}
+ .admin-topbar .brand-admin-suffix{font-size:11px!important}
+ .admin-topbar .account-controls{margin-left:auto}
+ .admin-main{width:100%;min-width:0;padding:18px 12px 42px}
+ .admin-main .panel,.admin-main .gate-panel{width:100%;min-width:0;max-width:100%;padding:16px}
+ .admin-main .data-row,.admin-main .panel-head,.admin-main .actions{flex-wrap:wrap}
+ .admin-main .row-actions{max-width:100%;flex-wrap:wrap}
+ .admin-main input,.admin-main select,.admin-main textarea{max-width:100%}
+ .admin-metrics,.admin-report-grid,.editor{grid-template-columns:minmax(0,1fr)}
+}
