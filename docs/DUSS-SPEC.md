@@ -1,6 +1,6 @@
 # DRM Universal Sizing System (DUSS)
-Version: 0.2.0 — Foundation + first component migration
-Status: Core token foundation complete; shared form-control and profile geometry migration started
+Version: 0.3.0 — Foundation + shared shell migration
+Status: Core token foundation complete; shared form controls, profile geometry, and public navigation shell migrated to semantic tokens
 
 ## Purpose and boundaries
 DUSS centralizes sizing for typography, icons, spacing, controls, layout, surfaces, and responsive behavior. DUME continues to own motion and animation. DUSS does not redesign colors or visual themes.
@@ -105,3 +105,19 @@ The following are not yet fully migrated and must not be marked complete:
 - Browser-based visual regression, keyboard, zoom (200%), and Bengali/Latin overflow checks.
 
 The CSS-only migration is intentionally conservative. Existing component-specific layout, colors, and motion remain unchanged. Static source checks are not a substitute for rendered-browser validation.
+
+
+## Phase 3 implementation update — 2026-11-24
+
+Completed on `feature/full-admin-panel`:
+- Centralized public shell geometry in DUSS: desktop/mobile header and category-bar heights, combined page offsets, sidebar widths, menu-trigger sizes, navigation row/icon geometry, category-chip spacing, brand icon sizes, and homepage gutters.
+- Replaced the corresponding audited legacy dimensions in `theme.css` with semantic DUSS references while retaining the original pixel-equivalent values.
+- Preserved the existing 760px responsive boundary and the established desktop/mobile dimensions; this is a tokenization pass, not a visual redesign.
+- Bumped the DUSS stylesheet cache key to `duss-03` on all five pages.
+
+Still outstanding:
+- Admin and utility-page sidebar/header variants need their own selector-level audit before migration.
+- Remaining icon implementations, action buttons, badges/status pills, cards/grids, dialogs, tables, pagination, toasts, tooltips, and progress indicators.
+- Responsive density modes and full browser-based visual, keyboard, zoom, and Bengali/Latin overflow validation.
+
+No rendered-browser regression test was available during this source update. The migrated shell dimensions are source-level verified only.
