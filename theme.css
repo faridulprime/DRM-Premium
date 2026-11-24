@@ -910,3 +910,10 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .live-topbar .brand-mark,.studio-global-topbar .brand-mark{width:25px;height:25px;flex-basis:25px}
  .live-topbar .brand-word,.studio-global-topbar .brand-word{font-size:15px!important}
 }
+
+@media(max-width:760px){
+ .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .topbar{min-height:150px!important}
+ .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]){padding-top:154px!important}
+ .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .category-bar{top:152px!important}
+ .home-page .topbar .account-controls:has(#profileMenuToggle:not([hidden])){display:flex!important;grid-column:1/-1;grid-row:3;justify-self:end;align-self:center}
+}
