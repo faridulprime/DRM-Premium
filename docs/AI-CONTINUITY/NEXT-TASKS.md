@@ -4,6 +4,7 @@ Target review branch: duga-foundation-review
 Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## DUGA foundation completed
+- D1 docs confirm per-statement `D1Result.meta.changes`; use the conditional UPDATE's result for compare-and-swap row-count checks, not aggregate batch metadata.
 - Hardened DACE finding-evidence JSON validation against malformed JSON and added negative tests.
 - Reviewed current official Cloudflare D1 docs for FK enforcement, transactional `batch()` behavior and JSON function support; design docs now distinguish documented platform guarantees from the still-required disposable-Preview integration test.
 - Added foreign-key integrity probes for orphan actor/evidence references and a clean `PRAGMA foreign_key_check` assertion.
