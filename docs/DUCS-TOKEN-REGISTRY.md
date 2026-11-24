@@ -1,10 +1,10 @@
-# DUCS Token Registry — v0.1.0
+# DUCS Token Registry — v0.2.0
 
 ## Primitive tokens
 | Family | Tokens |
 |---|---|
 | Neutral | `--ducs-neutral-0` through `--ducs-neutral-975` |
-| Brand | `--ducs-brand-blue-400`, `--ducs-brand-blue-500`, `--ducs-brand-red-500`, `--ducs-brand-mint-400` |
+| Brand | `--ducs-brand-blue-400`, `--ducs-brand-blue-500`, `--ducs-brand-red-500`, `--ducs-brand-mint-400`, `--ducs-brand-violet-400`, `--ducs-brand-indigo-500`, `--ducs-brand-gold-400`, `--ducs-brand-steel-400`, `--ducs-brand-rose-400` |
 | Status palette | `--ducs-green-400/500`, `--ducs-yellow-400`, `--ducs-orange-400`, `--ducs-red-400/500`, `--ducs-blue-400`, `--ducs-purple-400` |
 | Transparency | `--ducs-alpha-black-*`, `--ducs-alpha-white-*` |
 
@@ -31,3 +31,4 @@ States: `--ducs-state-{hover,active,selected,focus,disabled,loading}-*`.
 Accessibility: `--ducs-a11y-focus-width`, `--ducs-a11y-focus-offset`, and contrast target tokens.
 
 New tokens must be added here with a description, owner, and intended foreground/background pairing where relevant.
+\n## Page mapping tokens\nPage-scoped descriptive tokens use `--ducs-page-*`; Upload Studio creative accents use `--ducs-page-creative-*`. See `DUCS-COLOR-DEPENDENCY-REGISTRY.md` for consumers and migration status.\n
