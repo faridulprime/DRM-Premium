@@ -5,7 +5,7 @@
 -- Existing app users are human identities; AI principals are stored separately.
 
 CREATE TABLE duga_assignments (
-  id TEXT PRIMARY KEY,
+  id TEXT PRIMARY KEY CHECK (length(trim(id))>0),
   scope_type TEXT NOT NULL CHECK (scope_type IN ('platform','system')),
   scope_id TEXT,
   role_id TEXT NOT NULL CHECK (role_id IN ('platform-owner','governance-manager','system-owner','ai-maintainer','independent-ai-auditor','read-only-observer')),
@@ -22,7 +22,7 @@ CREATE TABLE duga_assignments (
   CHECK ((role_id IN ('platform-owner','governance-manager') AND scope_type='platform') OR
          (role_id IN ('system-owner','ai-maintainer','independent-ai-auditor') AND scope_type='system') OR
          role_id='read-only-observer'),
-  CHECK ((subject_type='human' AND user_id IS NOT NULL AND principal_id IS NULL) OR (subject_type='ai' AND user_id IS NULL AND principal_id IS NOT NULL AND length(principal_id)>0)),
+  CHECK ((subject_type='human' AND user_id IS NOT NULL AND principal_id IS NULL) OR (subject_type='ai' AND user_id IS NULL AND principal_id IS NOT NULL AND length(trim(principal_id))>0)),
   CHECK ((status='active' AND revoked_at IS NULL) OR (status='revoked' AND revoked_at IS NOT NULL AND revoked_at>=created_at))
 );
 CREATE UNIQUE INDEX uq_duga_assignment_human_active
@@ -42,21 +42,21 @@ CREATE UNIQUE INDEX uq_duga_single_system_owner
   WHERE scope_type='system' AND role_id='system-owner' AND status='active';
 
 CREATE TABLE duga_change_requests (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL CHECK (length(title) BETWEEN 1 AND 200),
-  summary TEXT NOT NULL CHECK (length(summary) BETWEEN 1 AND 10000),
+  id TEXT PRIMARY KEY CHECK (length(trim(id))>0),
+  title TEXT NOT NULL CHECK (length(trim(title)) BETWEEN 1 AND 200),
+  summary TEXT NOT NULL CHECK (length(trim(summary)) BETWEEN 1 AND 10000),
   rationale TEXT NOT NULL DEFAULT '',
   status TEXT NOT NULL CHECK (status IN ('proposed','analyzing','impact_review','awaiting_ai_audit','awaiting_human_approval','approved','implementing','validating','final_review','accepted','rejected','cancelled','blocked')),
   risk_level TEXT NOT NULL CHECK (risk_level IN ('low','medium','high','critical')),
   affected_systems_json TEXT NOT NULL CHECK (json_valid(affected_systems_json)),
   affected_paths_json TEXT NOT NULL CHECK (json_valid(affected_paths_json)),
-  rollback_plan TEXT NOT NULL,
+  rollback_plan TEXT NOT NULL CHECK (length(trim(rollback_plan))>0),
   requested_by_type TEXT NOT NULL CHECK (requested_by_type IN ('human','ai')),
   requested_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
   requested_by_principal_id TEXT,
-  source_branch TEXT NOT NULL CHECK (length(source_branch)>0 AND source_branch<>'main'),
+  source_branch TEXT NOT NULL CHECK (length(trim(source_branch))>0 AND source_branch<>'main'),
   base_commit_sha TEXT,
-  policy_commit_sha TEXT NOT NULL,
+  policy_commit_sha TEXT NOT NULL CHECK (length(trim(policy_commit_sha))>0),
   implementer_type TEXT CHECK (implementer_type IN ('human','ai')),
   implementer_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
   implementer_principal_id TEXT,
@@ -64,10 +64,10 @@ CREATE TABLE duga_change_requests (
   state_version INTEGER NOT NULL DEFAULT 1 CHECK (state_version>0),
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
-  CHECK ((requested_by_type='human' AND requested_by_user_id IS NOT NULL AND requested_by_principal_id IS NULL) OR (requested_by_type='ai' AND requested_by_user_id IS NULL AND requested_by_principal_id IS NOT NULL)),
+  CHECK ((requested_by_type='human' AND requested_by_user_id IS NOT NULL AND requested_by_principal_id IS NULL) OR (requested_by_type='ai' AND requested_by_user_id IS NULL AND requested_by_principal_id IS NOT NULL AND length(trim(requested_by_principal_id))>0)),
   CHECK ((implementer_type IS NULL AND implementer_user_id IS NULL AND implementer_principal_id IS NULL) OR
          (implementer_type='human' AND implementer_user_id IS NOT NULL AND implementer_principal_id IS NULL) OR
-         (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL)),
+         (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL AND length(trim(implementer_principal_id))>0)),
   CHECK (updated_at>=created_at)
 );
 CREATE INDEX idx_duga_changes_status_updated ON duga_change_requests(status,updated_at DESC);
@@ -85,7 +85,7 @@ CREATE TABLE duga_reviews (
   evidence_json TEXT NOT NULL CHECK (json_valid(evidence_json)),
   created_at INTEGER NOT NULL,
   CHECK ((reviewer_type='human' AND reviewer_user_id IS NOT NULL AND reviewer_principal_id IS NULL AND review_type='human_review') OR
-         (reviewer_type='ai' AND reviewer_user_id IS NULL AND reviewer_principal_id IS NOT NULL AND review_type='independent_ai_audit'))
+         (reviewer_type='ai' AND reviewer_user_id IS NULL AND reviewer_principal_id IS NOT NULL AND length(trim(reviewer_principal_id))>0 AND review_type='independent_ai_audit'))
 );
 CREATE INDEX idx_duga_reviews_change_time ON duga_reviews(change_request_id,created_at DESC);
 
@@ -106,7 +106,7 @@ CREATE TABLE duga_validation_runs (
   change_request_id TEXT NOT NULL REFERENCES duga_change_requests(id) ON DELETE RESTRICT,
   commit_sha TEXT NOT NULL,
   status TEXT NOT NULL CHECK (status IN ('queued','running','passed','failed','cancelled')),
-  validator TEXT NOT NULL,
+  validator TEXT NOT NULL CHECK (length(trim(validator))>0),
   validator_version TEXT NOT NULL DEFAULT '',
   results_json TEXT NOT NULL CHECK (json_valid(results_json)),
   started_at INTEGER,
@@ -127,7 +127,7 @@ CREATE TABLE duga_audit_events (
   id TEXT PRIMARY KEY,
   aggregate_type TEXT NOT NULL CHECK (aggregate_type IN ('change_request','assignment','system','job','finding','platform')),
   aggregate_id TEXT NOT NULL,
-  event_type TEXT NOT NULL,
+  event_type TEXT NOT NULL CHECK (length(trim(event_type))>0),
   actor_type TEXT NOT NULL CHECK (actor_type IN ('human','ai','system')),
   actor_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
   actor_principal_id TEXT,
@@ -136,8 +136,8 @@ CREATE TABLE duga_audit_events (
   policy_commit_sha TEXT,
   created_at INTEGER NOT NULL,
   CHECK ((actor_type='human' AND actor_user_id IS NOT NULL AND actor_principal_id IS NULL AND actor_system_id IS NULL) OR
-         (actor_type='ai' AND actor_user_id IS NULL AND actor_principal_id IS NOT NULL AND actor_system_id IS NULL) OR
-         (actor_type='system' AND actor_user_id IS NULL AND actor_principal_id IS NULL AND actor_system_id IS NOT NULL))
+         (actor_type='ai' AND actor_user_id IS NULL AND actor_principal_id IS NOT NULL AND length(trim(actor_principal_id))>0 AND actor_system_id IS NULL) OR
+         (actor_type='system' AND actor_user_id IS NULL AND actor_principal_id IS NULL AND actor_system_id IS NOT NULL AND length(trim(actor_system_id))>0))
 );
 CREATE INDEX idx_duga_audit_aggregate_time ON duga_audit_events(aggregate_type,aggregate_id,created_at DESC);
 CREATE INDEX idx_duga_audit_actor_time ON duga_audit_events(actor_type,actor_user_id,actor_principal_id,created_at DESC);
@@ -153,7 +153,7 @@ CREATE TABLE duga_analysis_findings (
   id TEXT PRIMARY KEY,
   analyzer_version TEXT NOT NULL,
   repository_commit_sha TEXT NOT NULL,
-  file_path TEXT NOT NULL,
+  file_path TEXT NOT NULL CHECK (length(trim(file_path))>0),
   symbol TEXT,
   classification TEXT NOT NULL CHECK (classification IN ('A','B','C','D','E')),
   confidence REAL NOT NULL CHECK (confidence>=0 AND confidence<=1),
