@@ -67,8 +67,8 @@ The initial shared shell migration replaces the legacy root aliases in `theme.cs
 
 ## Source validation snapshot — 2026-11-25
 
-- Token modules declare 423 DUCS custom properties across the audited component and foundation files.
-- Six page/shared stylesheets contain 273 unique DUCS token references; the reference scan found zero undefined DUCS references.
+- Token modules declare 465 DUCS custom properties across the audited component and foundation files.
+- Six page/shared stylesheets contain 315 unique DUCS token references; the reference scan found zero undefined DUCS references.
 - CSS brace-balance checks passed for the six consumer stylesheets and the audited DUCS token modules.
 - The source inventory remains partial: unique literal HEX and rgb()/rgba() counts are recorded in `DUCS-COLOR-INVENTORY.md`. These literals are not automatically defects; each requires context-aware review before migration.
 - This is static source validation only. It does not establish runtime cascade correctness, rendered contrast, responsive behavior, or visual equivalence.
