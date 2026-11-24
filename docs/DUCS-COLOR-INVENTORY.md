@@ -6,12 +6,12 @@ Scope: stylesheet source inventory; not a computed-style or screenshot audit.
 
 ## Per-file source inventory
 
-Counts below are the number of distinct literal HEX values and distinct rgb()/rgba() expressions found in each stylesheet. They are per-file counts; values can repeat between files. HSL, named colors, gradients, shadows, SVG attributes, inline styles, and runtime-generated colors are not represented by these two counts.
+Counts below are the number of distinct literal HEX values and distinct rgb()/rgba() expressions found in each stylesheet. Refreshed after the shared profile drawer, role badge, profile menu, and homepage search migration (2026-11-25). They are per-file counts; values can repeat between files. HSL, named colors, gradients, shadows, SVG attributes, inline styles, and runtime-generated colors are not represented by these two counts.
 
 | Stylesheet | Unique HEX literals | Unique RGB(A) expressions | Dominant source palette / notes |
 |---|---:|---:|---|
 | `styles.css` | 128 | 31 | Homepage editorial palette and editor/builder overlays; core consumers tokenized, auxiliary literals remain |
-| `theme.css` | 61 | 27 | Shared dark shell; Admin navigation migrated, other shared components partial |
+| `theme.css` | 37 | 15 | Shared dark shell; Admin navigation migrated, other shared components partial |
 | `admin.css` | 32 | 5 | Admin dashboard components and login; partial migration |
 | `live-users.css` | 72 | 40 | Live Users components; partial migration |
 | `upload-studio.css` | 119 | 5 | Upload Studio creator workspace; first-pass migration |
