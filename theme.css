@@ -1063,6 +1063,10 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
   opacity:1!important;transform:translateX(0)!important;
   visibility:visible!important;pointer-events:auto!important;
   transition:transform 700ms cubic-bezier(.16,1,.3,1),opacity 520ms ease,visibility 0s linear 0s!important;
+  /* The earlier broad homepage rule sets animation:none!important.
+     Re-enable the entrance animation on the actual open state. */
+  animation:mobileUniversalDrawerEnter 700ms cubic-bezier(.16,1,.3,1) both!important;
+  animation-fill-mode:both!important;
  }
 }
 @media (max-width:760px) and (prefers-reduced-motion:reduce){
