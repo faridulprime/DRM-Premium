@@ -1,7 +1,7 @@
 # DRM Premium — Current State
 Verified ref: duga-foundation-review
 Verification date: 2026-11-25
-Verified commit: 13f6edbaa0485917e78af662fd8b92be2337b7a5
+Verified commit: a92793a2937b01ea66daf521a4aaae34f3bfabc0
 
 ## DUGA foundation
 - Isolated review branch is based directly on `main`; it contains only DUGA foundation assets and excludes unrelated Admin/application work.
@@ -13,6 +13,7 @@ Verified commit: 13f6edbaa0485917e78af662fd8b92be2337b7a5
 - D1 design review documents server-side gates still required: legal state transitions, stale-commit invalidation, active assignment checks, reviewer/implementer separation, trusted validation, canonical Git-ref validation, role-specific approval authorization and server-derived audit actors.
 - SQL draft now also checks validation lifecycle timestamps, job lease/status/result consistency, assignment revocation ordering, change/job update ordering and nonblank identity/rollback fields.
 - JSON constraints now enforce arrays for affected systems/paths and objects for review/finding evidence, validation results, audit payloads and job input/result. Added malformed/type-shape probes; GitHub Actions run `45509071788` has completed the test step successfully (run finalization pending at last check).
+- Foreign-key probes now reject orphan assignments/reviews/approvals/validation runs and confirm `PRAGMA foreign_key_check` is clean after valid fixtures. Optimistic-concurrency probes reject a stale second writer and verify local SQLite rollback when the audit insert fails. These do not prove Cloudflare D1 batch semantics.
 - CI path filters cover `governance/**`, DUGA design and continuity docs, schema/validator tests and workflow files.
 - Cloudflare Pages automatically published a branch Preview: https://duga-foundation-review.drm-premium.pages.dev. This is not Production and does not establish D1 migration or runtime governance validation.
 
