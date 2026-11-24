@@ -1,6 +1,6 @@
 # DRM Universal Color System (DUCS)
-Version: 0.2.8 — Admin shell, Profile, and Upload Studio first-pass migrations
-Status: Token foundation, page mappings, refreshed per-file source inventory, dependency registry, and component alias modules are in place. Admin, Live Users, Profile, and Upload Studio have partial first-pass component migrations. Homepage component migration, residual literal cleanup, browser visual regression, and full contrast validation remain pending.
+Version: 0.2.9 — Homepage core and remaining page first-pass migrations
+Status: Token foundation, page mappings, refreshed per-file source inventory, dependency registry, and component alias modules are in place. Admin, Live Users, Profile, and Upload Studio have partial first-pass component migrations. Homepage visual-editor/site-builder and overlay component migration, residual literal cleanup, browser visual regression, and full contrast validation remain pending.
 
 ## Purpose
 DUCS centralizes color decisions for DRM Premium. It separates raw palette values from semantic meaning and component implementation so color changes can be reviewed across their dependencies.
