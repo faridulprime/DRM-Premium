@@ -9,23 +9,23 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 - Added role, ownership, system registry, dependency baseline and governance policy metadata.
 - Added D1 operational schema design draft and Preview read-only preflight SQL; neither is a migration.
 - Added API authorization and route contract design; no API is implemented.
-- Added local SQLite schema smoke tests for request/review/approval/validation constraints, policy/registry validator and malformed-input tests.
-- GitHub Actions run 45507058477 passed: SQLite schema smoke test, governance validator and five malformed-input cases. Expanded lifecycle probes passed in run 45507227112 (commit `93a767474e9a046a27012df9b412b64605c9ce9c`).
-- CI path filters cover all governance assets and both validation test scripts.
+- Added local SQLite schema smoke tests for request/review/approval/validation constraints, active assignment cardinality, temporal ordering, validation lifecycle and job lease/status/result invariants, nonblank required values, policy/registry validation and malformed-input cases.
+- Latest expanded schema suite passed in GitHub Actions run `45508682329` (commit `d012b10f34e62a7895bebc4c0af6a31a9ea49230`).
+- CI path filters cover governance assets, DUGA design/continuity docs, both validation test scripts and the workflow itself.
 - Cloudflare Pages automatically published a branch Preview. This does not modify D1 and is not a Production deployment.
 
 ## Next review sequence
-1. Implement and test the future API transition matrix with optimistic state_version checks; the SQL enum alone permits direct status changes.
-2. Implement commit-bound gate invalidation: changed implementation SHA must stale prior review, approval and validation evidence.
-3. Enforce active assignment/scope checks, reviewer/implementer separation, trusted CI validation and server-derived audit actors.
-4. Add JSON array/type validation for affected systems and paths against the pinned Git registry.
-5. Re-run D1-specific tests only against a disposable/Preview D1 after explicit approval; local SQLite tests are not D1 evidence.
-4. Review Preview D1 migration history with read-only evidence; do not infer applied history from filenames or table shape.
-5. Obtain a verified Preview backup or disposable D1 database before any candidate migration test.
-6. Convert the approved SQL draft into a uniquely named additive migration only after migration-history reconciliation and review.
-7. Test D1-specific constraints, triggers, foreign keys and transaction behavior only in disposable/Preview D1 after explicit approval.
-8. Implement Owner-only governance API routes only after schema and trusted actor/authentication design are approved.
-9. Keep `main` and Production D1 untouched unless separately authorized.
+1. Continue static schema review for identity, JSON shape, referential and concurrency edge cases; add focused local tests where the database can enforce an invariant safely.
+2. Design the API transition matrix with optimistic `state_version` checks; the SQL enum alone permits direct status changes.
+3. Specify commit-bound gate invalidation: changed implementation SHA must stale prior review, approval and validation evidence.
+4. Specify active assignment/scope checks, reviewer/implementer separation, trusted CI validation, canonical Git-ref verification and server-derived audit actors.
+5. Add strict JSON array/type validation for affected systems and paths against a pinned Git registry revision.
+6. Review Preview D1 migration history with read-only evidence; do not infer applied history from filenames or table shape.
+7. Obtain a verified Preview backup or disposable D1 database before any candidate migration test.
+8. D1-specific constraint, trigger, foreign-key and transaction tests require explicit approval and a disposable/Preview database; local SQLite is not D1 evidence.
+9. Convert the reviewed SQL draft into a uniquely named additive migration only after migration-history reconciliation and review.
+10. Implement Owner-only governance API routes only after schema and trusted actor/authentication design are approved.
+11. Keep `main` and Production D1 untouched unless separately authorized.
 
 ## Not implemented
 - No DUGA migration has been applied.
