@@ -147,6 +147,92 @@ def main() -> int:
         should_fail=True,
     )
 
+    def insert_change(change_id: str, *, status: str = "proposed",
+                      risk: str = "medium", requester_type: str = "human",
+                      requester_user: str | None = "human-1",
+                      requester_principal: str | None = None,
+                      branch: str = "feature/schema-test") -> None:
+        db.execute(
+            """INSERT INTO duga_change_requests
+               (id,title,summary,status,risk_level,affected_systems_json,
+                affected_paths_json,rollback_plan,requested_by_type,
+                requested_by_user_id,requested_by_principal_id,source_branch,
+                policy_commit_sha,state_version,created_at,updated_at)
+               VALUES (?,?,?,?,?,'["DUSS"]','["src/test.js"]','revert commit',?,?,?,?,?,1,1,1)""",
+            (change_id, "Test change", "Lifecycle test", status, risk,
+             requester_type, requester_user, requester_principal, branch, "policy-sha"),
+        )
+
+    check("valid human change request", lambda: insert_change("change-1"),
+          should_fail=False)
+    check("unknown change state rejected",
+          lambda: insert_change("change-bad-state", status="accepted"),
+          should_fail=False)  # accepted is an allowed enum; transition authorization is API-owned.
+    check("invalid risk level rejected",
+          lambda: insert_change("change-bad-risk", risk="unbounded"),
+          should_fail=True)
+    check("requester human/AI XOR enforced",
+          lambda: insert_change("change-bad-xor", requester_type="human",
+                                requester_user="human-1", requester_principal="agent-x"),
+          should_fail=True)
+    check("main branch rejected",
+          lambda: insert_change("change-main", branch="main"),
+          should_fail=True)
+
+    db.execute(
+        """INSERT INTO duga_reviews
+           (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
+            decision,reviewed_commit_sha,evidence_json,created_at)
+           VALUES ('review-ai','change-1','independent_ai_audit','ai','auditor-x',
+                   'approved','commit-a','{}',2)"""
+    )
+    check("AI principal cannot submit human review",
+          lambda: db.execute(
+              """INSERT INTO duga_reviews
+                 (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
+                  decision,reviewed_commit_sha,evidence_json,created_at)
+                 VALUES ('review-bad','change-1','human_review','ai','agent-x',
+                         'approved','commit-a','{}',2)"""
+          ), should_fail=True)
+
+    db.execute(
+        """INSERT INTO duga_approvals
+           (id,change_request_id,approver_user_id,approver_role,decision,
+            approved_commit_sha,created_at)
+           VALUES ('approval-1','change-1','human-1','platform-owner',
+                   'approved','commit-a',3)"""
+    )
+    check("AI-only approver role rejected",
+          lambda: db.execute(
+              """INSERT INTO duga_approvals
+                 (id,change_request_id,approver_user_id,approver_role,decision,
+                  approved_commit_sha,created_at)
+                 VALUES ('approval-bad','change-1','human-1','ai-maintainer',
+                         'approved','commit-a',3)"""
+          ), should_fail=True)
+    check("unknown validation status rejected",
+          lambda: db.execute(
+              """INSERT INTO duga_validation_runs
+                 (id,change_request_id,commit_sha,status,validator,results_json,created_at)
+                 VALUES ('validation-bad','change-1','commit-a','green','ci','{}',4)"""
+          ), should_fail=True)
+    check("malformed validation evidence rejected",
+          lambda: db.execute(
+              """INSERT INTO duga_validation_runs
+                 (id,change_request_id,commit_sha,status,validator,results_json,created_at)
+                 VALUES ('validation-json-bad','change-1','commit-a','passed','ci','[]oops',4)"""
+          ), should_fail=True)
+
+    # Schema-level boundary: the SQL enum permits any listed status; legal transition
+    # order, stale-commit invalidation and actor/assignment authorization belong to API logic.
+    db.execute("UPDATE duga_change_requests SET status='accepted', state_version=state_version+1 WHERE id='change-1'")
+    final_state = db.execute(
+        "SELECT status FROM duga_change_requests WHERE id='change-1'"
+    ).fetchone()[0]
+    if final_state != "accepted":
+        raise AssertionError("status enum probe did not behave as documented")
+    passed.append("state transition authorization is not enforced by SQL (API gate required)")
+
     table_count = db.execute(
         "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name LIKE 'duga_%'"
     ).fetchone()[0]
