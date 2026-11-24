@@ -117,3 +117,109 @@
 @media (min-width: 1024px) {
   :root { --duss-page-gutter: var(--duss-page-gutter-desktop); }
 }
+
+
+/* DUSS v0.2 — semantic component aliases and first migration layer.
+   Keep page composition local; centralize reusable sizing decisions here. */
+:root {
+  /* Semantic typography */
+  --duss-text-micro: var(--duss-font-size-micro);
+  --duss-text-caption: var(--duss-font-size-xs);
+  --duss-text-secondary: var(--duss-font-size-sm);
+  --duss-text-body: var(--duss-font-size-base);
+  --duss-text-emphasis: var(--duss-font-size-md);
+  --duss-heading-section: var(--duss-font-size-lg);
+  --duss-heading-card: var(--duss-font-size-xl);
+  --duss-heading-page: var(--duss-font-size-2xl);
+  --duss-heading-hero: var(--duss-font-size-3xl);
+
+  /* Semantic control geometry */
+  --duss-control-height-nav: 2.75rem;
+  --duss-control-height-field: 2.75rem;
+  --duss-control-height-field-mobile: 2.875rem;
+  --duss-control-height-action: 2.75rem;
+  --duss-control-height-action-mobile: 2.875rem;
+  --duss-control-height-icon: 2.75rem;
+  --duss-control-padding-inline: var(--duss-space-3);
+  --duss-control-gap: var(--duss-space-2);
+  --duss-field-gap: var(--duss-space-2);
+  --duss-form-row-gap: var(--duss-space-4);
+
+  /* Semantic component geometry */
+  --duss-header-height-desktop: 4rem;
+  --duss-header-height-mobile: 3.625rem;
+  --duss-sidebar-width: 15rem;
+  --duss-modal-width-sm: 28.75rem;
+  --duss-modal-width-md: 40rem;
+  --duss-modal-width-lg: 56.25rem;
+  --duss-card-gap: var(--duss-space-4);
+  --duss-section-gap: var(--duss-space-8);
+  --duss-table-cell-padding-y: var(--duss-space-3);
+  --duss-table-cell-padding-x: var(--duss-space-4);
+  --duss-tooltip-max-width: 20rem;
+  --duss-toast-max-width: 24rem;
+
+  /* Explicit exceptions preserve established visual identity. */
+  --duss-home-auth-height: 1.875rem;
+  --duss-home-auth-height-mobile: 1.75rem;
+  --duss-profile-avatar-size: 5.5rem;
+  --duss-profile-avatar-size-mobile: 4.25rem;
+}
+
+/* First migration: shared form controls use semantic typography and geometry.
+   Component-specific widths, colors, and layout remain owned by page styles. */
+:where(.admin-main, .upload-studio-page, .profile-page)
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea) {
+  font-size: var(--duss-text-body);
+}
+
+:where(.admin-main, .upload-studio-page) .panel
+:where(input:not([type="checkbox"]), select) {
+  min-height: var(--duss-control-height-field);
+}
+
+.upload-studio-page .panel textarea {
+  font-size: var(--duss-text-body);
+}
+
+.profile-field input,
+.profile-field select {
+  min-height: var(--duss-control-height-field);
+}
+
+.profile-field textarea {
+  font-size: var(--duss-text-body);
+}
+
+.profile-card {
+  padding: var(--duss-card-padding-lg);
+}
+
+.avatar-preview {
+  width: var(--duss-profile-avatar-size);
+  height: var(--duss-profile-avatar-size);
+}
+
+.profile-field {
+  gap: var(--duss-field-gap);
+}
+
+.profile-fields {
+  row-gap: var(--duss-form-row-gap);
+}
+
+@media (max-width: 760px) {
+  :where(.admin-main, .upload-studio-page) .panel
+  :where(input:not([type="checkbox"]), select) {
+    min-height: var(--duss-control-height-field-mobile);
+  }
+
+  .profile-card {
+    padding: var(--duss-space-4) var(--duss-space-3);
+  }
+
+  .avatar-preview {
+    width: var(--duss-profile-avatar-size-mobile);
+    height: var(--duss-profile-avatar-size-mobile);
+  }
+}
