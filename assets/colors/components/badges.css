@@ -64,4 +64,14 @@
   --ducs-upload-preview-accent: #7ce2bd;
   --ducs-upload-success-text: #b9efd2;
   --ducs-upload-notice-error-text: #f0aaaa;
+
+  /* Homepage editorial text and brand palette. */
+  --ducs-home-brand-text: #111;
+  --ducs-home-muted-text: #66615b;
+  --ducs-home-nav-text: #292725;
+  --ducs-home-hero-text: #252321;
+  --ducs-home-footer-text: #5f5a54;
+  --ducs-home-card-muted: #777;
+  --ducs-home-editor-text: #183d5c;
+  --ducs-home-builder-text: #243142;
 }
