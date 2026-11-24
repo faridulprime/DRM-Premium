@@ -56,4 +56,12 @@
   --ducs-admin-progress-end: #a9c9ef;
   --ducs-admin-row-divider: rgba(255, 255, 255, .055);
   --ducs-admin-activity-dot: #8cb8f2;
+  --ducs-admin-login-title: #ededed;
+  --ducs-admin-login-field-bg: #171717;
+  --ducs-admin-login-field-text: #eee;
+  --ducs-admin-login-placeholder: #6f6f6f;
+  --ducs-admin-login-focus-ring: rgba(255, 255, 255, .035);
+  --ducs-admin-login-button-bg: #242424;
+  --ducs-admin-login-button-text: #eee;
+  --ducs-admin-login-button-hover-bg: #303030;
 }
