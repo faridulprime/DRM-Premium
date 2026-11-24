@@ -1,6 +1,6 @@
 # DRM Universal Positioning System (DUPS)
 Version: 0.1.0 — Positioning token foundation
-Status: Specification and token foundation added; component migration and browser validation pending
+Status: Specification, token foundation, and five-page stylesheet integration added; component migration and browser validation pending
 
 ## Purpose
 DUPS centralizes coordinate-based positioning decisions in DRM Premium. It makes positioning contexts, logical offsets, anchored placement, and stacking order explicit and reviewable across pages.
