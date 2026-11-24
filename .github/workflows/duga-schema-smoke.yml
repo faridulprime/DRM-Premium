@@ -9,6 +9,7 @@ on:
       - "governance/**"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-registries.py"
+      - "scripts/test-duga-validator.py"
       - ".github/workflows/duga-schema-smoke.yml"
   pull_request:
     branches:
