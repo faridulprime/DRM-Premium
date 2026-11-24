@@ -168,3 +168,7 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
 /* Final typography pass: remaining dashboard and account-management microcopy */
 .user-detail-item span,.user-detail-item strong,.activity-summary span,.activity-summary small,.activity-hour-row,.activity-hour-row b,.activity-disclaimer{font-size:12px}
 .admin-login-form label{font-size:14px}
+
+
+/* Admin dashboard role chip follows the shared semantic role palette. */
+.dash-role.role-badge{padding:7px 11px;font-size:11px;letter-spacing:.08em}
