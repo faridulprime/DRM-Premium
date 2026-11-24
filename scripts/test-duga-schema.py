@@ -166,6 +166,15 @@ def main() -> int:
         lambda: db.execute("DELETE FROM users WHERE id='human-1'"),
         should_fail=True,
     )
+
+    check(
+        "assignment cannot reference an unknown human",
+        lambda: insert_assignment(
+            "assignment-unknown-human", "platform", None,
+            "governance-manager", "human", user_id="missing-user"
+        ),
+        should_fail=True,
+    )
     check(
         "malformed JSON rejected",
         lambda: db.execute(
@@ -308,6 +317,15 @@ def main() -> int:
                          'approved','commit-a','{}',2)"""
           ), should_fail=True)
 
+    check("review must reference an existing change request",
+          lambda: db.execute(
+              """INSERT INTO duga_reviews
+                 (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
+                  decision,reviewed_commit_sha,evidence_json,created_at)
+                 VALUES ('review-orphan','missing-change','independent_ai_audit','ai',
+                         'auditor-x','approved','commit-a','{}',2)"""
+          ), should_fail=True)
+
     db.execute(
         """INSERT INTO duga_approvals
            (id,change_request_id,approver_user_id,approver_role,decision,
@@ -323,11 +341,27 @@ def main() -> int:
                  VALUES ('approval-bad','change-1','human-1','ai-maintainer',
                          'approved','commit-a',3)"""
           ), should_fail=True)
+
+    check("approval must reference an existing change request",
+          lambda: db.execute(
+              """INSERT INTO duga_approvals
+                 (id,change_request_id,approver_user_id,approver_role,decision,
+                  approved_commit_sha,created_at)
+                 VALUES ('approval-orphan','missing-change','human-1','platform-owner',
+                         'approved','commit-a',3)"""
+          ), should_fail=True)
     check("unknown validation status rejected",
           lambda: db.execute(
               """INSERT INTO duga_validation_runs
                  (id,change_request_id,commit_sha,status,validator,results_json,created_at)
                  VALUES ('validation-bad','change-1','commit-a','green','ci','{}',4)"""
+          ), should_fail=True)
+
+    check("validation run must reference an existing change request",
+          lambda: db.execute(
+              """INSERT INTO duga_validation_runs
+                 (id,change_request_id,commit_sha,status,validator,results_json,created_at)
+                 VALUES ('validation-orphan','missing-change','commit-a','queued','ci','{}',4)"""
           ), should_fail=True)
     check("malformed validation evidence rejected",
           lambda: db.execute(
@@ -429,6 +463,11 @@ def main() -> int:
         raise AssertionError(
             f"Unexpected schema object counts: tables={table_count}, triggers={trigger_count}"
         )
+
+    foreign_key_errors = db.execute("PRAGMA foreign_key_check").fetchall()
+    if foreign_key_errors:
+        raise AssertionError(f"Foreign key violations after valid fixtures: {foreign_key_errors}")
+    passed.append("foreign_key_check reports no violations after valid fixtures")
 
     print("DUGA schema local SQLite smoke test: PASS")
     print(f"Tables: {table_count}; DUGA indexes: {index_count}; triggers: {trigger_count}")
