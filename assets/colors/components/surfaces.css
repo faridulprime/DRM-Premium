@@ -180,4 +180,10 @@
   --ducs-live-heading-gradient-end: #101010;
   --ducs-live-row-highlight-bg: #1b1b1b;
   --ducs-live-avatar-surface: #303030;
+  /* Live Users account drawer and dialog surfaces. */
+  --ducs-live-drawer-close-border: #3b3b3b;
+  --ducs-live-drawer-scrollbar: #414141;
+  --ducs-live-drawer-profile-border: #454545;
+  --ducs-live-dialog-shadow: rgba(0,0,0,.72);
+  --ducs-live-dialog-detail-divider: #292929;
 }
