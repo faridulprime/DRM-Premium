@@ -1,0 +1,11 @@
+/* DUCS status badge color aliases. */
+:root {
+  --ducs-badge-success-bg: rgb(131 239 165 / 12%);
+  --ducs-badge-success-text: var(--ducs-status-success);
+  --ducs-badge-warning-bg: rgb(244 201 107 / 12%);
+  --ducs-badge-warning-text: var(--ducs-status-warning);
+  --ducs-badge-danger-bg: rgb(248 113 113 / 12%);
+  --ducs-badge-danger-text: var(--ducs-status-danger);
+  --ducs-badge-info-bg: rgb(96 165 250 / 12%);
+  --ducs-badge-info-text: var(--ducs-status-info);
+}
