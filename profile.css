@@ -73,3 +73,33 @@ body.profile-page{margin:0;min-height:100vh;background:radial-gradient(ellipse a
  .profile-footer{align-items:stretch;flex-direction:column}
  .save-profile{width:100%}
 }
+
+
+/* Mobile UI system v2 — profile form readability and touch targets. */
+@media(max-width:600px){
+ body.profile-page{font-size:14px;line-height:1.5}
+ .profile-topbar{min-height:60px;padding:8px 12px;gap:8px}
+ .profile-brand{font-size:15px;gap:7px}
+ .profile-brand svg{width:27px;height:27px}
+ .profile-back{font-size:13px;min-height:40px;display:inline-flex;align-items:center}
+ .profile-shell{width:calc(100% - 24px);margin:24px auto 36px}
+ .profile-heading{margin-bottom:17px}
+ .profile-eyebrow{font-size:11px;line-height:1.4}
+ .profile-heading h1{font-size:25px;line-height:1.25}
+ .profile-subtitle{font-size:14px;line-height:1.55}
+ .profile-card{padding:16px 13px;border-radius:12px}
+ .avatar-section{align-items:flex-start;gap:12px}
+ .avatar-preview{width:68px;height:68px;font-size:23px}
+ .avatar-copy strong{font-size:14px}
+ .avatar-copy p{font-size:13px;line-height:1.45}
+ .upload-button,.remove-avatar{min-height:40px;font-size:13px}
+ .avatar-copy small{font-size:12px;line-height:1.4}
+ .profile-fields{gap:15px}
+ .profile-field>span{font-size:14px}
+ .profile-field i,.profile-field small{font-size:12px}
+ .profile-field input,.profile-field select{height:46px;min-height:46px;padding:0 11px;font-size:16px}
+ .profile-field textarea{min-height:100px;font-size:16px}
+ .profile-status{font-size:13px;line-height:1.5}
+ .profile-footer>span,.profile-bottom-note{font-size:12px;line-height:1.5}
+ .save-profile{min-height:46px;font-size:14px}
+}
