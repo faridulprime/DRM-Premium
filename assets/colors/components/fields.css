@@ -33,4 +33,11 @@
   --ducs-profile-field-border: #383838;
   --ducs-profile-field-focus-border: #718c7a;
   --ducs-profile-field-placeholder: #666;
+
+  /* Upload Studio form controls. */
+  --ducs-upload-field-border: #353535;
+  --ducs-upload-field-focus-border: #6d9f86;
+  --ducs-upload-field-focus-ring: #7ce2bd18;
+  --ducs-upload-field-text: #ededed;
+  --ducs-upload-field-label: #d5d5d5;
 }
