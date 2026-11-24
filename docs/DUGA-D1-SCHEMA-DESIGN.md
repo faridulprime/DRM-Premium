@@ -101,3 +101,30 @@ The schema draft was syntax-tested in a local SQLite 3.46.1 in-memory database w
 The first probe exposed a role-kind/scope gap: the original draft did not prevent an AI principal from being assigned a human-only role. The SQL draft was tightened with CHECK constraints matching governance/ownership/roles.json: platform-owner, governance-manager and system-owner are human roles; ai-maintainer and independent-ai-auditor are AI roles; platform-wide roles use platform scope and system roles use system scope. Follow-up probes passed for AI-as-platform-owner rejection, wrong-scope AI maintainer rejection, human-as-AI-auditor rejection and a valid system-scoped AI maintainer.
 
 Limitations: this was a local SQLite syntax/constraint test, not a Cloudflare D1 test. It does not validate Cloudflare's deployed SQLite runtime, D1 foreign-key settings, D1 batch semantics, migration history, API authorization, or regression compatibility with the live Preview database. No D1 database was accessed or modified.
+
+
+## 12. Lifecycle and authorization gap review — 2026-11-25
+
+The schema was reviewed against the state-machine and authorization requirements above. The SQL draft enforces allowed enum values and identity-shape constraints, but it intentionally does not enforce the complete governance workflow. These are implementation gates, not evidence that the API already enforces them.
+
+### SQL-level checks now covered by local probes
+- Change request rejects unknown risk values, invalid human/AI requester combinations and the literal `main` source branch.
+- Review rows reject mismatched reviewer type and review type (for example, an AI principal cannot submit a `human_review`).
+- Approval rows reject role labels outside `system-owner` and `platform-owner`.
+- Validation rows reject unknown statuses and malformed JSON evidence.
+- A valid terminal status is accepted by the SQL enum. This demonstrates that enum validation is not transition authorization.
+
+### Mandatory server-side invariants before any API can be enabled
+1. **Transition matrix:** validate every old-state → new-state pair against an explicit transition table; reject direct jumps such as proposed → accepted. Use `state_version` in a conditional UPDATE and require exactly one affected row.
+2. **Commit-bound gates:** before acceptance, require the current `implementation_commit_sha` to equal the reviewed, approved and successfully validated commit. Any implementation SHA change invalidates all earlier gates and requires a new review/approval/validation sequence.
+3. **Reviewer separation:** resolve the implementer from the stored request; reject a review if reviewer identity equals the implementer. AI principal IDs are attribution labels only until a trusted AI service authentication design exists.
+4. **Approver authorization:** derive the human approver from the authenticated session; verify the current active assignment and scope in the pinned Git registry. Never trust `approver_role` from request JSON or the database row alone.
+5. **Risk-specific approval:** high/critical changes require Platform Owner approval; production merge and deployment remain separate authorization events.
+6. **Trusted validation:** only a trusted CI/validation runner may create authoritative validation results. A browser must not be able to assert `passed`.
+7. **Assignment lifecycle:** check active assignment, scope and role on every authorization decision. Revocation must take effect immediately; do not treat an old assignment row as active merely because it exists.
+8. **Audit actor integrity:** derive human actor from session and system actor from a server-controlled allowlist. Never accept `actor_type`, `actor_user_id`, `actor_principal_id` or `actor_system_id` as trusted client claims.
+9. **JSON shape validation:** SQL currently checks JSON syntax, not that affected-system/path values are arrays of the expected primitive types. Validate those shapes in the API before persistence.
+10. **Registry references:** D1 does not own a writable system registry. Verify system IDs and path ownership against the pinned Git registry revision referenced by the change.
+
+### Local test boundary
+The expanded in-memory SQLite smoke test exercises the SQL constraints above and includes an explicit probe showing that the database permits a listed status to be written directly. This is expected under the current draft: transition order, commit staleness, assignment authorization and trusted actor provenance must be enforced in the future API/service layer. The test does not claim those server-side controls are implemented. Cloudflare D1 behavior remains unverified.
