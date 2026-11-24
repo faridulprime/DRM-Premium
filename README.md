@@ -65,7 +65,7 @@ For a brand-new empty database, apply all ten SQL files individually in the orde
 
 ## Important implementation status / limitations
 
-- Public account registration is implemented as a two-step email-verified flow. Apply `migrations/0007_user_registration.sql` to the Preview D1 database before enabling it. New public accounts are created with the `user` role only; Owner/Admin privileges remain Owner-controlled.
+- Public account registration is implemented as a two-step email-verified flow. The required `user_registration_otps` table is created by `migrations/0007_user_registration.sql` in the fresh-database sequence above. Before enabling registration on an existing database, verify that table exists; do not rerun the migration if it is already present. New public accounts are created with the `user` role only; Owner/Admin privileges remain Owner-controlled.
 - Google Authenticator (TOTP), SMS OTP, password reset and email-based account recovery are not implemented yet.
 - The initial Owner setup verifies the configured Owner email with a one-time code sent through Gmail using the Google Apps Script mailer; no Owner password, OTP, or mailer token is stored in source code.
 - Direct binary image upload is not included; the current site accepts HTTPS image URLs.
