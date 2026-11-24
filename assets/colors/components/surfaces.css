@@ -170,4 +170,8 @@
   --ducs-shell-home-search-border: #303030;
   --ducs-shell-home-search-button-bg: #202020;
 
+  --ducs-shell-profile-menu-bg: #202329;
+  --ducs-shell-profile-menu-border: #41464e;
+  --ducs-shell-profile-menu-hover-ring: rgba(91,190,137,.12);
+  --ducs-shell-profile-drawer-avatar-border: #414a55;
 }
