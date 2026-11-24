@@ -41,7 +41,8 @@ These totals are lexical declaration counts, not a claim that 60 distinct compon
 ## Migration status
 
 - DUPS specification: added.
-- Token foundation: added; no existing selectors changed.
+- Token foundation: added; no existing component selectors changed.
+- Stylesheet integration: linked on Homepage, Admin, Live Users, Upload Studio, and Profile with cache key `dups-01`.
 - Token registry: added.
 - Source dependency audit: added.
 - Component mapping and migration: pending.
