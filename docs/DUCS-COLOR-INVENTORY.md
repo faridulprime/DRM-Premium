@@ -1,6 +1,6 @@
 # DUCS Color Inventory — updated source audit
 
-Version: 0.2.2
+Version: 0.2.3
 Branch: `feature/full-admin-panel`
 Scope: stylesheet source inventory; not a computed-style or screenshot audit.
 
@@ -10,12 +10,12 @@ Counts below are the number of distinct literal HEX values and distinct rgb()/rg
 
 | Stylesheet | Unique HEX literals | Unique RGB(A) expressions | Dominant source palette / notes |
 |---|---:|---:|---|
-| `styles.css` | 128 | 31 | Homepage light legacy palette and visual-editor/site-builder colors |
-| `theme.css` | 61 | 27 | Shared shell dark palette; component migration partial |
-| `admin.css` | 32 | 5 | Admin dashboard; component migration partial |
-| `live-users.css` | 72 | 40 | Live Users; first-pass migration partial |
-| `upload-studio.css` | 119 | 5 | Upload Studio graphite/mint palette; first-pass migration partial |
-| `profile.css` | 39 | 3 | Profile dark/green palette; first-pass migration partial |
+| `styles.css` | 128 | 31 | Homepage editorial palette and editor/builder overlays; core consumers tokenized, auxiliary literals remain |
+| `theme.css` | 61 | 27 | Shared dark shell; Admin navigation migrated, other shared components partial |
+| `admin.css` | 32 | 5 | Admin dashboard components and login; partial migration |
+| `live-users.css` | 72 | 40 | Live Users components; partial migration |
+| `upload-studio.css` | 119 | 5 | Upload Studio creator workspace; first-pass migration |
+| `profile.css` | 39 | 3 | Profile page and form; first-pass migration |
 
 These counts must not be summed and described as repository-wide unique colors. A deduplicated repository inventory requires parsing every color syntax and resolving CSS cascade, variables, pseudo-states, SVG, and runtime styles.
 
@@ -23,13 +23,13 @@ These counts must not be summed and described as repository-wide unique colors. 
 
 | Page | Base | Primary accent | Secondary / status identity |
 |---|---|---|---|
-| Homepage | Dark shell; legacy light palette declarations also exist in `styles.css` | Blue | Green success; warm gold and steel-blue decorative/secondary accents |
+| Homepage | Light editorial palette | Red | Neutral surfaces, steel-blue builder/editor controls, green account feedback |
 | Admin | Dark neutral | Blue | Green success; red danger; blue information |
 | Live Users | Near-black | Blue/neutral | Green online; red restriction/danger; amber warning |
 | Upload Studio | Near-black | Mint | Violet/lavender creative controls; pink/red validation |
 | Profile | Near-black | Green | Blue secondary; red validation |
 
-Page mappings in `assets/colors/themes/page-mapping.css` record this observed direction. Page-scoped component aliases now cover first-pass migrations in Admin, Live Users, Upload Studio, and Profile; homepage component migration remains pending.
+Page mappings in `assets/colors/themes/page-mapping.css` record this observed direction. Core homepage, Admin, Live Users, Upload Studio, and Profile consumers now use page/component aliases in partial first-pass migrations; residual components and decorative treatments remain.
 
 ## Migration groups
 
