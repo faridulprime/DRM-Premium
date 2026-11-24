@@ -14,7 +14,7 @@ function show(id){
  if(dashboard&&state.user){
   const isPrimaryOwner=state.user.role==="owner"&&String(state.user.email||"").trim().toLowerCase()==="faridulprime@gmail.com";
   const brandRole=$("#adminBrandRole");
-  if(brandRole)brandRole.textContent=isPrimaryOwner?"Owner":"Admin";
+  if(brandRole){brandRole.textContent=isPrimaryOwner?"Owner":"Admin";brandRole.classList.toggle("brand-owner-suffix",isPrimaryOwner);}
   $(".admin-topbar .brand")?.setAttribute("aria-label",isPrimaryOwner?"DRM– Premium Owner — Admin Dashboard":"DRM– Premium Admin — Admin Dashboard");
   $("#adminHeaderIdentity").textContent=state.user.role==="owner"?"OWNER":state.user.role==="admin"?"ADMIN":"MEMBER";
   $("#dashRole").textContent=state.user.role==="user"?"MEMBER":state.user.role.toUpperCase();
