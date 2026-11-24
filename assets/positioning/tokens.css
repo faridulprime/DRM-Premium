@@ -60,6 +60,27 @@
   --dups-layer-profile-drawer: 181;
   --dups-layer-home-sidebar-backdrop: 290;
   --dups-layer-home-sidebar-mobile: 300;
+
+  /* Audited floating UI and editor layers; preserve current numeric order. */
+  --dups-layer-header-status: 110;
+  --dups-layer-live-header: 130;
+  --dups-layer-live-highlight: 115;
+  --dups-layer-live-drawer: 120;
+  --dups-layer-live-backdrop: 110;
+  --dups-layer-live-notice: 140;
+  --dups-layer-live-avatar: 1;
+  --dups-layer-live-presence: 2;
+  --dups-layer-live-effect: 5;
+  --dups-layer-live-effect-top: 6;
+  --dups-layer-visual-editor: 990;
+  --dups-layer-visual-editor-panel: 991;
+  --dups-layer-site-builder: 1000;
+  --dups-layer-register-dialog: 1001;
+  --dups-layer-suspension-screen: 100000;
+  --dups-layer-profile-complete-backdrop: 10040;
+  --dups-layer-profile-complete-bar: 10050;
+  --dups-layer-studio-sidebar: 5;
+  --dups-layer-studio-inspector: 2;
 }
 
 /* DUPS intentionally ships no global position, inset, z-index, or transform
