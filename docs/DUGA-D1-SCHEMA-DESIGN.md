@@ -165,3 +165,21 @@ The schema was reviewed against the state-machine and authorization requirements
 
 ### Local test boundary
 The expanded in-memory SQLite smoke test exercises the SQL constraints above, including JSON container types (arrays for affected systems/paths; objects for evidence, results, audit payloads and job payloads), and includes an explicit probe showing that the database permits a listed status to be written directly. This is expected under the current draft: transition order, commit staleness, assignment authorization and trusted actor provenance must be enforced in the future API/service layer. The test does not claim those server-side controls are implemented. Cloudflare D1 behavior remains unverified.
+
+
+## 14. Idempotent compare-and-swap audit token — 2026-11-25
+
+A review identified that a zero-row conditional UPDATE is not a statement error. Therefore a later unconditional audit INSERT in the same transactional batch could still execute. Batch atomicity alone does not couple the audit insert to a successful compare-and-swap.
+
+The schema draft now adds:
+- `duga_change_requests.last_transition_id`, set only by a successful conditional transition.
+- `duga_audit_events.transition_id`, nullable for non-transition audit events.
+- A unique partial index over non-null audit transition IDs, so one token can produce at most one transition audit event.
+
+The proposed batch uses a fresh server-generated token:
+1. Conditional UPDATE checks request ID, expected state version/status, and that the token does not already exist in the audit table; it increments the version and stores the token.
+2. Conditional `INSERT ... SELECT` appends the audit event only if the request now carries that exact token/version and the token is still absent from audit history.
+3. The API checks the individual D1 `meta.changes` for both statements and only reports success for exactly one updated row and one inserted audit row.
+
+The local SQLite test now probes successful transition, stale writer (0 update / 0 audit), replay, token reuse on a later version, and rollback when audit insertion fails. This is a local SQL prototype only. It does not prove D1 transaction/concurrency behavior; all cases remain in the disposable D1 acceptance plan. See `docs/DUGA-CAS-AUDIT-PATTERN.md`.
+
