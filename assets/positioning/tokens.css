@@ -71,8 +71,11 @@
   --dups-layer-live-avatar: 1;
   --dups-layer-live-presence: 2;
   --dups-layer-live-effect: 5;
+  --dups-layer-live-effect-base: 4;
   --dups-layer-live-effect-top: 6;
   --dups-layer-visual-editor: 990;
+  --dups-layer-visual-editor-legacy: 90;
+  --dups-layer-visual-editor-panel-legacy: 91;
   --dups-layer-visual-editor-panel: 991;
   --dups-layer-site-builder: 1000;
   --dups-layer-register-dialog: 1001;
