@@ -12,6 +12,10 @@ function show(id){
  document.body.classList.toggle("admin-gate-state",!dashboard);
  document.body.classList.toggle("admin-dashboard-state",dashboard);
  if(dashboard&&state.user){
+  const isPrimaryOwner=state.user.role==="owner"&&String(state.user.email||"").trim().toLowerCase()==="faridulprime@gmail.com";
+  const brandRole=$("#adminBrandRole");
+  if(brandRole)brandRole.textContent=isPrimaryOwner?"Owner":"Admin";
+  $(".admin-topbar .brand")?.setAttribute("aria-label",isPrimaryOwner?"DRM– Premium Owner — Admin Dashboard":"DRM– Premium Admin — Admin Dashboard");
   $("#adminHeaderIdentity").textContent=state.user.role==="owner"?"OWNER":state.user.role==="admin"?"ADMIN":"MEMBER";
   $("#dashRole").textContent=state.user.role==="user"?"MEMBER":state.user.role.toUpperCase();
   setRoleBadge($("#adminHeaderIdentity"),state.user.role);setRoleBadge($("#dashRole"),state.user.role);
