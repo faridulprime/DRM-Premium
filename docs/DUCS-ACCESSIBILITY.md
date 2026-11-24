@@ -14,5 +14,8 @@ Use WCAG 2.2 AA contrast targets:
 - Preserve visible keyboard focus and test Windows/high-contrast forced-colors behavior.
 - Include color-vision deficiency simulation as a review aid, not as a substitute for contrast measurement.
 
+## Initial token spot-check
+The current default border token (#666666) measures approximately 3.38:1 against #0d0d0d and 3.09:1 against #181818. This is a limited calculation for these two pairings only; it does not validate every component, opacity blend, state, or page.
+
 ## Current status
 The token foundation includes contrast target variables and a forced-colors hook. It is not a completed accessibility certification. Full token-pair calculations and browser testing are pending.
