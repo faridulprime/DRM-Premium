@@ -83,7 +83,7 @@ A component should use the lowest layer that satisfies its interaction requireme
 - Avoid fixed coordinates that assume a single viewport or content length.
 
 ## Compatibility and migration
-Version 0.1.0 adds custom properties only. The stylesheet contains no selectors that alter existing component rendering. It must not be described as a completed component migration.
+Version 0.1.0 adds custom properties only. The stylesheet is linked by Homepage, Admin, Live Users, Upload Studio, and Profile. Its only rule scope is the root custom-property declaration; it contains no component selectors and does not alter existing component rendering. It must not be described as a completed component migration.
 
 The initial source audit is lexical and limited to declarations for position, z-index, and inset-like offsets in the six principal stylesheets. It does not resolve computed styles, selectors' runtime applicability, JavaScript positioning, SVG, or stacking-context behavior.
 
