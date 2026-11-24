@@ -846,3 +846,67 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  body.sidebar-open .yt-sidebar,
  .yt-sidebar.mobile-open{animation:none!important}
 }
+
+/* Universal mobile header v3 — Admin-aligned title row, compact search row. */
+@media(max-width:760px){
+ .home-page .topbar{
+  grid-template-columns:44px minmax(0,1fr);
+  grid-template-rows:48px 40px auto;
+  align-content:start;align-items:center;
+  gap:7px 9px!important;
+  height:auto!important;min-height:104px!important;
+  padding:6px 10px 8px!important;
+ }
+ .home-page .topbar>.yt-menu-trigger{grid-column:1;grid-row:1;width:44px;height:44px;min-width:44px;min-height:44px}
+ .home-page .topbar>.brand{grid-column:2;grid-row:1;min-width:0;gap:6px}
+ .home-page .topbar .brand-mark{width:25px;height:25px;flex-basis:25px}
+ .home-page .topbar .brand #brandName{display:inline-flex!important;font-size:15px!important;letter-spacing:-.025em!important}
+ .home-page .yt-search{
+  grid-column:1/-1;grid-row:2;justify-self:stretch;
+  display:flex!important;flex:0 0 auto!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  height:40px!important;min-height:40px!important;margin:0!important;
+  border:1px solid #303030;border-radius:11px;background:#151515;
+ }
+ .home-page .yt-search input{display:block!important;flex:1 1 auto;min-width:0;width:100%;padding:0 11px;font-size:14px!important}
+ .home-page .yt-search button{display:grid!important;place-items:center;width:40px!important;min-width:40px;flex:0 0 40px!important;height:38px!important;border:0;border-left:1px solid #303030;border-radius:0 10px 10px 0;background:#202020}
+ .home-page .yt-search svg{width:17px;height:17px}
+ .home-page .topbar .yt-account-actions[hidden]{display:none!important}
+ .home-page .topbar .yt-account-actions:not([hidden]){
+  grid-column:1/-1;grid-row:3;display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-rows:40px 40px;gap:7px!important;
+  width:100%;min-width:0;margin:0!important;padding:0 1px;box-sizing:border-box;
+ }
+ .home-page .topbar .yt-auth-field{height:40px;min-height:40px;border-radius:10px;padding:0 9px}
+ .home-page .topbar .yt-auth-field input{font-size:14px}
+ .home-page .topbar>#headerLoginForm>.yt-login-action,
+ .home-page .topbar .yt-create-button{height:40px;min-height:40px;border-radius:10px;font-size:13px}
+ .home-page .topbar .account-controls{grid-column:1/-1;grid-row:3;justify-self:end;align-self:center}
+ .home-page:has(#headerLoginForm[hidden]) .topbar{min-height:104px!important}
+ .home-page:has(#headerLoginForm[hidden]){padding-top:108px!important}
+ .home-page:has(#headerLoginForm:not([hidden])) .topbar{min-height:198px!important}
+ .home-page:has(#headerLoginForm:not([hidden])){padding-top:202px!important}
+ .home-page .category-bar{top:106px!important}
+ .home-page:has(#headerLoginForm:not([hidden])) .category-bar{top:202px!important}
+}
+@media(max-width:380px){
+ .home-page .topbar{grid-template-columns:42px minmax(0,1fr);padding-inline:8px!important}
+ .home-page .topbar .brand #brandName{font-size:14px!important}
+ .home-page .yt-search{height:38px!important;min-height:38px!important}
+ .home-page .yt-search button{height:36px!important}
+}
+
+/* Keep the shared title row consistent on mobile across secondary application pages. */
+@media(max-width:760px){
+ .live-topbar,.studio-global-topbar{
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+  height:58px!important;min-height:58px!important;padding:0 10px!important;gap:8px!important;
+ }
+ .live-topbar>.yt-menu-trigger,.studio-global-topbar>.yt-menu-trigger{
+  width:44px;height:44px;min-width:44px;min-height:44px;flex:0 0 44px;
+ }
+ .live-topbar>.brand,.studio-global-topbar>.brand{min-width:0;gap:6px}
+ .live-topbar .brand-mark,.studio-global-topbar .brand-mark{width:25px;height:25px;flex-basis:25px}
+ .live-topbar .brand-word,.studio-global-topbar .brand-word{font-size:15px!important}
+}
