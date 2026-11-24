@@ -1,6 +1,6 @@
 # DRM Universal Color System (DUCS)
-Version: 0.2.3 — Primitive-to-semantic token normalization
-Status: Token foundation, page mappings, per-file source inventory, dependency registry, component alias modules, and shared shell root palette aliases are in place. Component migration and full contrast validation remain in progress.
+Version: 0.2.4 — First Live Users component color migration
+Status: Token foundation, page mappings, per-file source inventory, dependency registry, component alias modules, shared shell aliases, and a first Live Users surface/field/status migration are in place. Broader component migration and full contrast validation remain in progress.
 
 ## Purpose
 DUCS centralizes color decisions for DRM Premium. It separates raw palette values from semantic meaning and component implementation so color changes can be reviewed across their dependencies.
@@ -54,11 +54,12 @@ These are compatibility mappings, not a redesign or a claim that every existing 
 Use WCAG 2.2 AA as the baseline: 4.5:1 for normal text, 3:1 for large text, and 3:1 for meaningful UI boundaries and graphical indicators. Visible keyboard focus is required. Test actual foreground/background pairs, including hover, disabled, selected, and error states. Forced-colors support is provided as a hook, not yet a completed full-page audit.
 
 ## Compatibility and migration
-Component aliases are split into focused files under `components/`; these define token values but do not yet restyle existing component selectors.
+Component aliases are split into focused files under `components/`. The Live Users page now consumes dedicated DUCS aliases for its page/panel surfaces, search field states, selected hover surfaces, overlay, and online/restriction colors. These aliases preserve the exact prior CSS values; this is a source migration, not a visual redesign.
 
 The initial shared shell migration replaces the legacy root aliases in `theme.css` with DUCS semantic references. Those referenced semantic tokens resolve to the same original shell values. The remaining component CSS is still authoritative. Migrate one component family at a time: audit, map, compare rendered states, verify contrast, then remove obsolete literals.
 
 ## Known limitations
+- The Live Users migration is intentionally partial; numerous drawer, restriction-modal, typography, decorative, and shadow colors remain literal.
 - Existing CSS contains many literal color values; the initial audit counted unique HEX and RGB(A) literals per stylesheet, not a deduplicated repository-wide inventory.
 - Contrast ratios have not been computed for every token pairing.
 - Light and high-contrast theme variants are planned but not activated.
