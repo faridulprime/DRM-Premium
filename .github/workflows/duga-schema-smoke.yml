@@ -7,6 +7,8 @@ on:
       - duga-foundation-review
     paths:
       - "governance/**"
+      - "docs/DUGA-*.md"
+      - "docs/AI-CONTINUITY/**"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-registries.py"
       - "scripts/test-duga-validator.py"
