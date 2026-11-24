@@ -50,4 +50,12 @@
   --ducs-upload-publish-text: #d5f6e2;
   --ducs-upload-active-text: #b9efd2;
   --ducs-upload-secondary-border: #383838;
+
+  /* Homepage actions and visual-editor controls. */
+  --ducs-home-primary-bg: #e51b13;
+  --ducs-home-secondary-bg: #242321;
+  --ducs-home-editor-button-bg: #d8e5f2;
+  --ducs-home-editor-button-border: #8ca6c0;
+  --ducs-home-builder-button-bg: #e9eff5;
+  --ducs-home-builder-button-border: #c8d3df;
 }
