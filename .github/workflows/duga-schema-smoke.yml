@@ -7,6 +7,7 @@ on:
     paths:
       - "governance/schemas/d1-operational-schema.sql"
       - "scripts/test-duga-schema.py"
+      - "scripts/validate-duga-registries.py"
       - ".github/workflows/duga-schema-smoke.yml"
   pull_request:
     branches:
@@ -33,4 +34,6 @@ jobs:
           python-version: "3.12"
 
       - name: Run local schema smoke tests
-        run: python scripts/test-duga-schema.py
+        run: |
+          python scripts/test-duga-schema.py
+          python scripts/validate-duga-registries.py
