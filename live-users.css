@@ -299,7 +299,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
  animation:liveModalEnter .42s ease-out both,phantomRiftPulse .78s ease-out both;
 }
 .live-user-drawer.is-opening::before,.live-user-drawer.is-opening::after{
- content:"";position:absolute;inset:-2px;z-index:var(--dups-layer-live-effect, 5);pointer-events:none;border-radius:inherit;opacity:0;
+ content:"";position:absolute;inset:-2px;z-index:var(--dups-layer-live-effect-base, 4);pointer-events:none;border-radius:inherit;opacity:0;
 }
 .live-user-drawer.is-opening::before{
  border:1px solid rgba(190,174,226,.3);
