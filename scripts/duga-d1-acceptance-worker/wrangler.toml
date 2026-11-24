@@ -1,0 +1,8 @@
+name = "duga-d1-acceptance-disposable"
+main = "src/index.js"
+compatibility_date = "2026-11-25"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "drm-duga-acceptance-disposable"
+database_id = "6d512429-34a3-498b-9430-45f11d382da9"
