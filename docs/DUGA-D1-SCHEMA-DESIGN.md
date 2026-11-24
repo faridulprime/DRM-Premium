@@ -33,6 +33,7 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 - Use TEXT UUIDs for externally referenced records.
 - Use integer Unix epoch seconds consistently, matching existing API patterns.
 - Use CHECK constraints for enumerations, trimmed non-empty identifiers/required text and JSON syntax validity where supported; reject whitespace-only rollback plans, principals and evidence identifiers.
+- Enforce JSON value shape as well as syntax: affected-system and affected-path fields are arrays; review/finding evidence, validation results, audit payloads, and job input/result payloads are objects. API validation must additionally validate array element types, allowed system IDs, path normalization and payload schemas.
 - Use foreign keys to existing users for human identities; use ON DELETE RESTRICT for governance actors/approvers so deleting an account cannot erase accountability history.
 - Use XOR CHECK constraints for human vs AI actor identity.
 - Use scoped unique indexes for active assignments; enforce at most one active Platform Owner and one active human System Owner per system. Revoked assignments remain as history and permit replacement.
@@ -111,6 +112,7 @@ The schema was reviewed against the state-machine and authorization requirements
 
 ### SQL-level checks now covered by local probes
 - Active assignment cardinality: at most one active Platform Owner globally and one active human System Owner per system; revocation permits reassignment.
+- The one-System-Owner rule matches the current ownership registry's single `accountableRole: system-owner` entry per system. It is a governance-model assumption; if the project later adopts co-owners, revise the registry contract and index together rather than bypassing the constraint.
 - Temporal consistency: assignment revocation ordering, validation queued/running/completed timestamp shapes, job lease/status consistency, successful job result requirement, and update timestamp ordering.
 - Required text/identity values reject whitespace-only strings, including rollback plan and AI principal IDs.
 - Change request rejects unknown risk values, invalid human/AI requester combinations and the literal `main` source branch.
@@ -134,4 +136,4 @@ The schema was reviewed against the state-machine and authorization requirements
 12. **Role-specific approval:** the SQL `approver_role` enum is descriptive, not authorization. Resolve the approver's active assignment and scope from the pinned registry; require Platform Owner for high/critical risk, and enforce the applicable System Owner/platform-policy gates for lower risk.
 
 ### Local test boundary
-The expanded in-memory SQLite smoke test exercises the SQL constraints above and includes an explicit probe showing that the database permits a listed status to be written directly. This is expected under the current draft: transition order, commit staleness, assignment authorization and trusted actor provenance must be enforced in the future API/service layer. The test does not claim those server-side controls are implemented. Cloudflare D1 behavior remains unverified.
+The expanded in-memory SQLite smoke test exercises the SQL constraints above, including JSON container types (arrays for affected systems/paths; objects for evidence, results, audit payloads and job payloads), and includes an explicit probe showing that the database permits a listed status to be written directly. This is expected under the current draft: transition order, commit staleness, assignment authorization and trusted actor provenance must be enforced in the future API/service layer. The test does not claim those server-side controls are implemented. Cloudflare D1 behavior remains unverified.
