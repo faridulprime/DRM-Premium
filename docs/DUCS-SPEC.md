@@ -1,5 +1,5 @@
 # DRM Universal Color System (DUCS)
-Version: 0.2.1 — Token foundation + source audit + shared shell aliases
+Version: 0.2.2 — Token foundation + source audit + component token modules + shared shell aliases
 Status: Token foundation, page mappings, per-file source inventory, dependency registry, and shared shell root palette aliases are in place. Component migration and full contrast validation remain in progress.
 
 ## Purpose
@@ -14,7 +14,7 @@ DUCS centralizes color decisions for DRM Premium. It separates raw palette value
 ## Architecture
 `assets/colors/`
 - `primitives/`: raw palette values; no component selectors.
-- `semantic/`: meaning-based tokens for backgrounds, surfaces, text, borders, icons, actions, overlays, and status.
+- `semantic/`: meaning-based tokens for backgrounds, surfaces, text, borders, icons, actions, overlays, and status.\n- `components/`: component color aliases for buttons, fields, badges, surfaces, and feedback.
 - `themes/`: page/theme mappings; distinct page identities are preserved.
 - `states/`: hover, active, selected, focus, disabled, and loading color states.
 - `accessibility/`: contrast targets and forced-colors integration.
@@ -53,7 +53,7 @@ These are compatibility mappings, not a redesign or a claim that every existing 
 Use WCAG 2.2 AA as the baseline: 4.5:1 for normal text, 3:1 for large text, and 3:1 for meaningful UI boundaries and graphical indicators. Visible keyboard focus is required. Test actual foreground/background pairs, including hover, disabled, selected, and error states. Forced-colors support is provided as a hook, not yet a completed full-page audit.
 
 ## Compatibility and migration
-The initial shared shell migration replaces the legacy root aliases in `theme.css` with DUCS semantic references. Those referenced semantic tokens resolve to the same original shell values. The remaining component CSS is still authoritative. Migrate one component family at a time: audit, map, compare rendered states, verify contrast, then remove obsolete literals.
+Component aliases are split into focused files under `components/`; these define token values but do not yet restyle existing component selectors.\n\nThe initial shared shell migration replaces the legacy root aliases in `theme.css` with DUCS semantic references. Those referenced semantic tokens resolve to the same original shell values. The remaining component CSS is still authoritative. Migrate one component family at a time: audit, map, compare rendered states, verify contrast, then remove obsolete literals.
 
 ## Known limitations
 - Existing CSS contains many literal color values; the initial audit counted unique HEX and RGB(A) literals per stylesheet, not a deduplicated repository-wide inventory.
