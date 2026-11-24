@@ -36,6 +36,11 @@
   --dups-layer-toast: 800;
   --dups-layer-critical: 900;
 
+  /* Audited viewport placement coordinates for Live Users overlays. */
+  --dups-live-drawer-top: 51.1%;
+  --dups-live-drawer-left: calc(54.4% - 90px);
+  --dups-viewport-center: 50%;
+
   /* Anchor relationship spacing. */
   --dups-anchor-gap-xs: 0.25rem;
   --dups-anchor-gap-sm: 0.5rem;
