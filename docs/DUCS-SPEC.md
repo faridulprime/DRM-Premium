@@ -1,6 +1,6 @@
 # DRM Universal Color System (DUCS)
-Version: 0.2.7 — Admin dashboard and login color migration
-Status: Token foundation, page mappings, per-file source inventory, dependency registry, component alias modules, shared shell aliases, and a first Live Users surface/field/status/dialog migration are in place. Live Users and Admin component migrations are partial; broader component migration and full contrast validation remain in progress.
+Version: 0.2.8 — Admin shell, Profile, and Upload Studio first-pass migrations
+Status: Token foundation, page mappings, refreshed per-file source inventory, dependency registry, and component alias modules are in place. Admin, Live Users, Profile, and Upload Studio have partial first-pass component migrations. Homepage component migration, residual literal cleanup, browser visual regression, and full contrast validation remain pending.
 
 ## Purpose
 DUCS centralizes color decisions for DRM Premium. It separates raw palette values from semantic meaning and component implementation so color changes can be reviewed across their dependencies.
@@ -60,7 +60,7 @@ The initial shared shell migration replaces the legacy root aliases in `theme.cs
 
 ## Known limitations
 - The Live Users and Admin migrations are intentionally partial; numerous decorative, typography, shadow, and ancillary micro-state colors remain literal. Activity-chart track and bar colors plus key dialog/action colors now use DUCS aliases. Admin dashboard buttons, fields, data rows, overview cards/metrics, progress indicators, activity markers, owner badge, feedback states, and login controls now consume page-scoped DUCS aliases.
-- Existing CSS contains many literal color values; the initial audit counted unique HEX and RGB(A) literals per stylesheet, not a deduplicated repository-wide inventory.
+- Existing CSS still contains literal color values, including dormant base rules, decorative treatments, and unmigrated homepage components. The source inventory counts unique HEX and RGB(A) literals per stylesheet; it is not a computed-style audit.
 - Contrast ratios have not been computed for every token pairing.
 - Light and high-contrast theme variants are planned but not activated.
 - Browser visual regression, keyboard focus, forced-colors, and color-vision simulation checks remain outstanding.
