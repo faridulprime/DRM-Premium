@@ -44,7 +44,7 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 - Use optimistic state versioning on change requests to prevent lost updates.
 - Preserve audit history: UPDATE and DELETE triggers should abort for duga_audit_events. Corrections are new events.
 - A trigger is not cryptographic tamper-proofing against a database administrator. Periodically export/sign audit checkpoints outside D1 in a later operational phase.
-- D1 foreign-key enforcement and batch transaction semantics must be verified in Preview before relying on them.
+- Cloudflare's current D1 documentation states that foreign keys are enforced by default for every query/migration (equivalent to SQLite `PRAGMA foreign_keys=on`) and that `batch()` is transactional: a failed statement aborts/rolls back the whole batch. The JSON extension documents `json_valid()` and `json_type()`. These are platform guarantees, but the complete DUGA schema and exact affected-row/result behavior still require an isolated disposable-Preview integration test before rollout.
 
 ## 6. State machine
 Change request states:
@@ -102,7 +102,7 @@ All endpoints are proposals. No route is live as a result of this document.
 - Reviews, approvals and validation runs reference an existing change request with `ON DELETE RESTRICT`; operational evidence must not become detached from its request.
 - The audit event's `(aggregate_type, aggregate_id)` pair is polymorphic across multiple aggregate tables. It is not a SQL FK; the trusted service must verify the target exists and is in scope before inserting the event.
 - The current job schema is generic and has no change-request FK. A future job-to-change association must be explicitly modeled, not inferred from JSON.
-- Local tests now probe missing user/change references and run `PRAGMA foreign_key_check` after valid fixtures. This still does not prove D1 foreign-key enforcement is enabled in a deployed database.
+- Local tests probe missing user/change references and run `PRAGMA foreign_key_check` after valid fixtures. Cloudflare's current D1 docs say FK enforcement is enabled by default for each query/migration; still run the full DUGA schema against a disposable Preview DB to catch schema/runtime incompatibilities.
 
 ### Optimistic concurrency and atomic audit
 For every state-changing operation, the future API must:
@@ -118,7 +118,9 @@ For every state-changing operation, the future API must:
 5. Append the corresponding audit event in the same D1 transactional batch as the conditional update. If either statement fails, neither state nor audit event may commit.
 6. On implementation commit change, treat every prior review, approval and validation record as historical evidence only. The service must compare each evidence commit to the current implementation commit before any later gate can pass.
 
-A conditional UPDATE alone is not sufficient if the audit insert is committed separately. D1 batch/transaction behavior and affected-row reporting must be verified against a disposable Preview database before relying on this contract. No runtime API or D1 operation is implemented by this design document.
+A conditional UPDATE alone is not sufficient if the audit insert is committed separately. Cloudflare documents `D1Database.batch()` as transactional: statements execute sequentially, and a failing statement aborts/rolls back the batch. The exact DUGA statement/result contract—including how the API confirms exactly one changed row—must still be tested against a disposable Preview database. No runtime API or D1 operation is implemented by this design document.
+
+Cloudflare references (reviewed 2026-11-25): [D1 foreign keys](https://developers.cloudflare.com/d1/sql-api/foreign-keys/), [D1 database batch API](https://developers.cloudflare.com/d1/worker-api/d1-database/), [D1 JSON functions](https://developers.cloudflare.com/d1/sql-api/query-json/).
 
 ## 11. Explicit non-goals
 This document does not create a migration, API, UI, AI credential system, executable DACE, production deployment or database change. Those require a separate reviewed implementation change.
