@@ -44,12 +44,26 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 - GET /api/governance/audit — cursor-paginated append-only audit events.
 - GET /api/governance/findings — DACE evidence findings; no destructive endpoint.
 
+## State transition transaction contract
+
+A state transition must be a compare-and-swap operation, not a read-then-unconditional-write:
+- Read `status`, `state_version` and `implementation_commit_sha`.
+- Validate the transition matrix, active actor assignment, risk gates and commit-bound evidence.
+- Update with `WHERE id = ? AND state_version = ? AND status = ?`, incrementing `state_version`.
+- Require one changed row. If zero rows changed, return a conflict and do not append an accepted/approved event.
+- Insert the audit event in the same D1 batch/transaction as the state update. A failed audit insert must roll back the state change.
+- Treat evidence rows as immutable history. If `implementation_commit_sha` changes, all prior review, approval and validation evidence is stale until re-recorded against the new commit.
+
+The local SQLite test suite now models a stale second writer and verifies rollback when an audit insert fails. These are SQLite behavior probes only; D1 batch atomicity and affected-row semantics remain a mandatory disposable-Preview acceptance test.
+
 ## Security invariants
 - Never accept a browser-supplied role, approver identity, AI identity, implementation SHA or risk downgrade as authoritative.
 - The SQL approval-role enum is not proof of authorization; verify active assignment and scope against the pinned registry.
 - Validate Git refs canonically and verify both source and target branches; do not rely on rejecting only the literal `main`.
 - A changed implementation commit invalidates earlier review/approval/validation gates.
 - Use optimistic state_version and conditional UPDATE for state transitions.
+- The conditional UPDATE and audit-event INSERT must execute in one D1 batch/transaction; require exactly one changed request row, and return a conflict without recording success if the version/status predicate matches zero rows.
+- Before accepting a change, compare the current implementation commit with every required review, approval and successful validation commit. A mismatch makes that evidence stale even though the historical row remains stored.
 - Enforce actor/reviewer separation in application logic and, where practical, database triggers.
 - Keep audit actor references under ON DELETE RESTRICT.
 - No public unauthenticated governance endpoint.
