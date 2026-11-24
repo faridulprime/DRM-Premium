@@ -1,0 +1,7 @@
+/* DUCS notification and inline feedback color aliases. */
+:root {
+  --ducs-notice-success: var(--ducs-status-success);
+  --ducs-notice-warning: var(--ducs-status-warning);
+  --ducs-notice-danger: var(--ducs-status-danger);
+  --ducs-notice-info: var(--ducs-status-info);
+}
