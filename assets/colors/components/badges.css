@@ -74,4 +74,10 @@
   --ducs-home-card-muted: #777;
   --ducs-home-editor-text: #183d5c;
   --ducs-home-builder-text: #243142;
+  --ducs-home-suspension-text: #edf1f6;
+  --ducs-home-suspension-muted: #aeb8c5;
+  --ducs-home-suspension-accent: #c7a97b;
+  --ducs-home-register-text: #ededed;
+  --ducs-home-register-label: #d8d8d8;
+  --ducs-home-profilebar-text: #d3dbe4;
 }
