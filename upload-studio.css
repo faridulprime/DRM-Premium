@@ -124,3 +124,27 @@ body.upload-studio-page.sidebar-open{padding-left:240px!important}
 .studio-header-email{color:#aaa;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .upload-studio-page .studio-role-badge{font-size:10px}
 @media(max-width:760px){.studio-header-email{max-width:42vw;font-size:10px}}
+
+
+/* Mobile Upload Studio: override the legacy creator topbar column layout. */
+@media(max-width:760px){
+ body.upload-studio-page{width:100%;max-width:100%;padding:58px 0 0!important;overflow-x:clip}
+ .upload-studio-page .studio-global-topbar{
+  position:fixed!important;top:0;left:0;right:0;z-index:150;
+  display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
+  align-items:center!important;gap:8px!important;width:100%;min-height:58px;height:auto;
+  padding:8px 10px!important;background:#0f0f0f!important;border-bottom:1px solid #292929
+ }
+ .upload-studio-page .studio-global-topbar .brand{min-width:0;flex:0 1 auto;font-size:14px}
+ .upload-studio-page .studio-global-topbar .brand-word{font-size:14px!important}
+ .upload-studio-page .studio-global-topbar .brand-admin-suffix{font-size:10px!important;padding:2px 4px}
+ .upload-studio-page .studio-header-identity{display:flex!important;flex:0 1 100%;order:3;margin:0 0 2px 46px;font-size:10px}
+ .upload-studio-page .studio-shell{min-width:0}
+ .upload-studio-page .main-area{width:100%;min-width:0;margin:0;padding:18px 12px}
+ .upload-studio-page .studio-heading{align-items:flex-start;flex-wrap:wrap;gap:10px}
+ .upload-studio-page .editor-grid{grid-template-columns:minmax(0,1fr)}
+ .upload-studio-page .panel,.upload-studio-page .list-panel{min-width:0;max-width:100%;padding:15px}
+ .upload-studio-page .markdown-grid{grid-template-columns:minmax(0,1fr)}
+ .upload-studio-page .list-row{flex-wrap:wrap}
+ .upload-studio-page .page-tabs,.upload-studio-page .type-switch{max-width:100%;overflow-x:auto}
+}
