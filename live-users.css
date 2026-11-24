@@ -1,5 +1,5 @@
 :root{color-scheme:dark}
-body.live-users-page{margin:0;min-height:100vh;padding-top:0;background:#0d0d0d;color:#ededed;font-family:"Space Grotesk","Hind Siliguri",sans-serif;transition:padding-left 700ms cubic-bezier(.16,1,.3,1)!important}
+body.live-users-page{margin:0;min-height:100vh;padding-top:0;background:var(--ducs-live-page-bg, #0d0d0d);color:var(--ducs-live-text, #ededed);font-family:"Space Grotesk","Hind Siliguri",sans-serif;transition:padding-left 700ms cubic-bezier(.16,1,.3,1)!important}
 body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-topbar{position:fixed!important;z-index:var(--dups-layer-live-header, 130)!important;justify-content:flex-start;gap:16px}
 .live-topbar .yt-menu-trigger{flex:0 0 40px}
@@ -10,24 +10,24 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-brand-mark{width:27px;height:27px;display:grid;place-items:center;border:1px solid #555;border-radius:8px;font-size:13px}
 .live-back-link{color:#aaa;text-decoration:none;font-size:12px;transition:color .15s}.live-back-link:hover{color:#fff}
 .live-layout{display:grid;grid-template-columns:minmax(300px,440px) 1fr;gap:clamp(28px,5vw,76px);max-width:1440px;margin:0 auto;padding:42px 30px 48px;min-height:calc(100vh - 148px)}
-.live-panel{display:flex;flex-direction:column;min-height:calc(100vh - 210px);max-height:calc(100vh - 128px);background:#101010;border:1px solid #292929;border-radius:12px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.18)}
+.live-panel{display:flex;flex-direction:column;min-height:calc(100vh - 210px);max-height:calc(100vh - 128px);background:var(--ducs-live-surface, #101010);border:1px solid var(--ducs-live-border, #292929);border-radius:12px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.18)}
 .live-heading{padding:25px 22px 18px;background:linear-gradient(145deg,#151515,#101010);border-bottom:1px solid #252525}
 .live-kicker{font-size:9px;letter-spacing:.17em;color:#777;font-weight:600;margin-bottom:12px}
 .live-title-line{display:flex;align-items:center;gap:12px}.live-title-line h1{margin:0;font-size:25px;line-height:1.2;font-weight:600;letter-spacing:-.045em}
-.live-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid rgba(54,190,113,.22);border-radius:999px;color:#9bd7b2;font-size:9px;font-weight:700;letter-spacing:.1em}.live-pill i{width:6px;height:6px;border-radius:50%;background:#35bd72;box-shadow:0 0 0 3px rgba(53,189,114,.1)}
+.live-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid rgba(54,190,113,.22);border-radius:999px;color:var(--ducs-live-status-online-text, #9bd7b2);font-size:9px;font-weight:700;letter-spacing:.1em}.live-pill i{width:6px;height:6px;border-radius:50%;background:var(--ducs-live-status-online, #35bd72);box-shadow:0 0 0 3px rgba(53,189,114,.1)}
 .live-count-line{display:flex;align-items:baseline;gap:9px;margin-top:16px}.live-count-line strong{font-size:34px;line-height:1;font-weight:500;letter-spacing:-.055em;font-variant-numeric:tabular-nums}.live-count-line span{font-size:9px;letter-spacing:.14em;color:#858585;font-weight:600}
 .live-subtitle{margin:6px 0 0;color:#777;font-size:11px}
-.live-search{display:flex;align-items:center;gap:10px;margin:15px 16px 13px;padding:0 12px;height:39px;border:1px solid #303030;border-radius:7px;background:#171717;color:#888}
-.live-search:focus-within{border-color:#555;box-shadow:0 0 0 2px rgba(255,255,255,.035)}
+.live-search{display:flex;align-items:center;gap:10px;margin:15px 16px 13px;padding:0 12px;height:39px;border:1px solid #303030;border-radius:7px;background:var(--ducs-live-field-bg, #171717);color:var(--ducs-live-text-secondary, #888)}
+.live-search:focus-within{border-color:var(--ducs-live-field-border-focus, #555);box-shadow:0 0 0 2px rgba(255,255,255,.035)}
 .live-search svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;flex:none}
-.live-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#eee;font:12px "Space Grotesk","Hind Siliguri",sans-serif}
-.live-search input::placeholder{color:#6f6f6f}.live-search button{border:0;background:transparent;color:#888;font-size:20px;cursor:pointer}
+.live-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ducs-live-field-text, #eee);font:12px "Space Grotesk","Hind Siliguri",sans-serif}
+.live-search input::placeholder{color:var(--ducs-live-field-placeholder, #6f6f6f)}.live-search button{border:0;background:transparent;color:#888;font-size:20px;cursor:pointer}
 .live-list-meta{display:flex;align-items:center;justify-content:space-between;padding:0 19px 9px;color:#737373;font-size:9px;font-weight:600;letter-spacing:.11em}
 .live-list-meta span:last-child{font-size:8px;letter-spacing:.07em;font-weight:500}
 .live-list{flex:1;min-height:80px;overflow-y:auto;padding:2px 9px 12px;scrollbar-width:thin;scrollbar-color:#393939 transparent}
 .live-list::-webkit-scrollbar{width:5px}.live-list::-webkit-scrollbar-thumb{background:#393939;border-radius:8px}
 .live-user-row{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:5px 10px;border:0;border-radius:6px;background:transparent;color:#e7e7e7;text-align:left;cursor:pointer;transition:background .12s}
-.live-user-row:hover{background:#1c1c1c}.live-user-row.is-source-highlight{position:relative;z-index:var(--dups-layer-live-highlight, 115);background:#1b1b1b;outline:1px solid rgba(255,255,255,.2);outline-offset:1px;box-shadow:0 0 0 7px rgba(0,0,0,.24)}.live-user-row:focus-visible{outline:1px solid #777;outline-offset:-1px}.live-user-row[disabled]{cursor:default}
+.live-user-row:hover{background:var(--ducs-live-surface-hover, #1c1c1c)}.live-user-row.is-source-highlight{position:relative;z-index:var(--dups-layer-live-highlight, 115);background:#1b1b1b;outline:1px solid rgba(255,255,255,.2);outline-offset:1px;box-shadow:0 0 0 7px rgba(0,0,0,.24)}.live-user-row:focus-visible{outline:1px solid #777;outline-offset:-1px}.live-user-row[disabled]{cursor:default}
 .live-avatar{position:relative;display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:50%;background:#303030;color:#ddd;font-size:12px;font-weight:600;overflow:visible}
 .live-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .live-presence-dot{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border:2px solid #101010;border-radius:50%;background:#36bd73}
@@ -58,9 +58,9 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 
 @keyframes liveModalEnter{from{transform:translate(-50%,-50%) translateX(-44px) scale(.94);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
 @keyframes liveDrawerGlitch{0%{transform:translate(-50%,-50%) scale(1);opacity:1;filter:none}18%{transform:translate(calc(-50% - 5px),-50%) scale(1.008);filter:contrast(1.5)}34%{transform:translate(calc(-50% + 4px),-50%) scale(.992);opacity:.82;filter:brightness(1.35)}58%{transform:translate(-50%,-50%) scale(1.01);filter:contrast(1.5)}78%{transform:translate(-50%,-50%) scale(.96);opacity:.45;filter:blur(1px)}100%{transform:translate(-50%,-47%) scale(.9);opacity:0;filter:blur(4px)}}
-.live-drawer-backdrop{position:fixed;z-index:var(--dups-layer-live-backdrop, 110);inset:0;background:rgba(0,0,0,.58);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;animation:liveBackdropIn .3s ease-out forwards;}
+.live-drawer-backdrop{position:fixed;z-index:var(--dups-layer-live-backdrop, 110);inset:0;background:var(--ducs-live-overlay, rgba(0,0,0,.58));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;animation:liveBackdropIn .3s ease-out forwards;}
 @keyframes liveBackdropIn{from{opacity:0;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}to{opacity:1;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}}
-.live-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 24px 20px;border-bottom:1px solid #292929;background:linear-gradient(145deg,#1a1a1a,#121212)}
+.live-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 24px 20px;border-bottom:1px solid var(--ducs-live-border, #292929);background:linear-gradient(145deg,#1a1a1a,#121212)}
 .live-drawer-kicker{color:#858585;font-size:9px;font-weight:700;letter-spacing:.17em}
 .live-drawer-head h2{margin:8px 0 0;color:#f0f0f0;font-size:21px;font-weight:600;letter-spacing:-.04em}
 .live-drawer-close,.live-dialog-body~button{width:34px;height:34px;border:1px solid #3b3b3b;border-radius:7px;background:#202020;color:#ddd;font-size:21px;cursor:pointer}
@@ -78,7 +78,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-drawer-section{margin-top:20px}
 .live-drawer-section h3{margin:0 0 8px;padding:0 2px;color:#777;font-size:9px;font-weight:700;letter-spacing:.15em}
 .live-drawer-action{width:100%;min-height:43px;display:flex;align-items:center;gap:11px;margin:3px 0;padding:9px 11px;border:1px solid transparent;border-radius:7px;background:#171717;color:#d5d5d5;text-align:left;font:500 11px "Space Grotesk","Hind Siliguri",sans-serif;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
-.live-drawer-action:hover{border-color:#383838;background:#202020;color:#fff}
+.live-drawer-action:hover{border-color:#383838;background:var(--ducs-live-surface-active, #202020);color:#fff}
 .live-drawer-action .action-symbol{width:23px;height:23px;display:grid;place-items:center;border:1px solid #383838;border-radius:5px;color:#aab8c7;font-size:12px}
 .live-drawer-action.warning{color:#dfbd8d}.live-drawer-action.warning .action-symbol{color:#dfbd8d;border-color:#51412e}
 .live-drawer-action.danger{color:#dfa0a0}.live-drawer-action.danger .action-symbol{color:#dfa0a0;border-color:#503434}
@@ -166,13 +166,13 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 
 /* Restricted accounts popup — reuses the Owner modal backdrop and motion */
 .live-title-line{flex-wrap:wrap}
-.live-banned-trigger{display:inline-flex;align-items:center;justify-content:center;margin-left:3px;padding:4px 7px;border:1px solid rgba(239,131,131,.24);border-radius:7px;background:rgba(239,131,131,.10);color:#ef8383;font:600 13px/1.15 "Space Grotesk","Hind Siliguri",sans-serif;letter-spacing:-.02em;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.live-banned-trigger{display:inline-flex;align-items:center;justify-content:center;margin-left:3px;padding:4px 7px;border:1px solid var(--ducs-live-status-danger-border, rgba(239,131,131,.24));border-radius:7px;background:var(--ducs-live-status-danger-bg, rgba(239,131,131,.10));color:var(--ducs-live-status-danger, #ef8383);font:600 13px/1.15 "Space Grotesk","Hind Siliguri",sans-serif;letter-spacing:-.02em;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
 .live-banned-trigger:hover{background:rgba(239,131,131,.17);border-color:rgba(239,131,131,.42);color:#ffb0b0}
 .live-restrictions-modal{position:fixed;z-index:120;top:var(--dups-viewport-center, 50%);left:var(--dups-viewport-center, 50%);width:min(460px,calc(100vw - 28px));max-height:min(86dvh,760px);display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(155deg,#171717 0%,#101010 48%,#0d0d0d 100%);border:1px solid #383838;border-radius:12px;box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035);transform:translate(-50%,-50%) scale(.94);visibility:hidden;opacity:0;will-change:transform,opacity}
 .live-restrictions-modal.is-open{visibility:visible;opacity:1;transform:translate(-50%,-50%) scale(1)}
 .live-restrictions-modal.is-opening{animation:liveModalEnter .42s ease-out both}
 .live-restrictions-modal.is-closing{visibility:visible;animation:liveDrawerGlitch .36s cubic-bezier(.5,0,.75,.2) both}
-.live-restrictions-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:21px 23px 17px;border-bottom:1px solid #292929;background:linear-gradient(145deg,#1a1a1a,#121212)}
+.live-restrictions-head{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:21px 23px 17px;border-bottom:1px solid var(--ducs-live-border, #292929);background:linear-gradient(145deg,#1a1a1a,#121212)}
 .live-restrictions-head h2{margin:7px 0 0;color:#f0f0f0;font-size:21px;font-weight:600;letter-spacing:-.04em}
 .live-restrictions-content{display:flex;flex-direction:column;min-height:0;padding:16px 18px 18px}
 .live-restrictions-tabs{display:flex;gap:8px;padding-bottom:13px;border-bottom:1px solid #292929}
