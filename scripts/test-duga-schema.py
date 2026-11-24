@@ -439,6 +439,50 @@ def main() -> int:
                          'human','human-2','revoked',10,9)"""
           ), should_fail=True)
 
+    # Optimistic concurrency prototype: only one writer can claim a state_version.
+    insert_change("change-concurrency")
+    first_writer = db.execute(
+        """UPDATE duga_change_requests
+           SET status='analyzing', state_version=state_version+1, updated_at=2
+           WHERE id='change-concurrency' AND state_version=1 AND status='proposed'"""
+    )
+    if first_writer.rowcount != 1:
+        raise AssertionError("first optimistic writer should update exactly one row")
+    stale_writer = db.execute(
+        """UPDATE duga_change_requests
+           SET status='impact_review', state_version=state_version+1, updated_at=3
+           WHERE id='change-concurrency' AND state_version=1 AND status='proposed'"""
+    )
+    if stale_writer.rowcount != 0:
+        raise AssertionError("stale optimistic writer must update zero rows")
+    passed.append("optimistic state_version update rejects a stale second writer")
+
+    # SQLite transaction probe: a failed audit insert must roll back the state update.
+    db.execute("BEGIN")
+    try:
+        db.execute(
+            """UPDATE duga_change_requests
+               SET status='impact_review', state_version=state_version+1, updated_at=3
+               WHERE id='change-concurrency' AND state_version=2 AND status='analyzing'"""
+        )
+        db.execute(
+            """INSERT INTO duga_audit_events
+               (id,aggregate_type,aggregate_id,event_type,actor_type,
+                payload_json,created_at)
+               VALUES ('event-invalid-actor','change_request','change-concurrency',
+                       'test','human','{}',3)"""
+        )
+    except sqlite3.IntegrityError:
+        db.rollback()
+    else:
+        raise AssertionError("invalid audit actor should abort the transaction")
+    rollback_state = db.execute(
+        "SELECT status,state_version FROM duga_change_requests WHERE id='change-concurrency'"
+    ).fetchone()
+    if rollback_state != ("analyzing", 2):
+        raise AssertionError(f"state update was not rolled back with failed audit: {rollback_state}")
+    passed.append("failed audit insert rolls back state update in local SQLite transaction")
+
     # Schema-level boundary: the SQL enum permits any listed status; legal transition
     # order, stale-commit invalidation and actor/assignment authorization belong to API logic.
     db.execute("UPDATE duga_change_requests SET status='accepted', state_version=state_version+1 WHERE id='change-1'")
