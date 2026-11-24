@@ -1,4 +1,4 @@
-# DUCS Color Dependency Registry — v0.3.0
+# DUCS Color Dependency Registry — v0.3.1
 
 This registry links page/component color responsibilities to semantic tokens and source stylesheets. It is a migration map, not a claim that every listed component has already been converted.
 
@@ -36,6 +36,6 @@ This registry links page/component color responsibilities to semantic tokens and
 - Admin: dashboard buttons, fields, data rows, overview cards/metrics, progress indicators, activity markers, owner badge, feedback states, and login controls consume `--ducs-admin-*` aliases. Admin shared header, search/auth controls, category navigation, sidebar, brand badge, and logout states consume `--ducs-shell-*` aliases; remaining shell/component colors are pending.
 - Profile first-pass migration: page header, card, avatar surface, dividers, form fields and focus states, upload/save actions, identity accents, and status feedback consume `--ducs-profile-*` aliases. Decorative background gradient and remaining minor literals are not fully inventoried.
 - Upload Studio first-pass migration: creator workspace page/panel surfaces, primary form controls and focus states, tab/action states, preview/list surfaces, publish controls, dialog, and error notice consume `--ducs-upload-*` aliases. The underlying legacy stylesheet still contains dormant base palette declarations and some decorative literals; full literal cleanup is pending.
-- Homepage core page/header, hero, cards, navigation, account field, and action consumers now use `--ducs-home-*` aliases. Visual-editor/site-builder, suspension, profile-completion overlays, and decorative homepage colors remain pending.
+- Homepage core page/header, hero, cards, navigation, account field, and action consumers now use `--ducs-home-*` aliases. Homepage visual-editor controls, Site Builder shell/workbench, registration dialog, suspension screen, and profile-completion banner now consume first-pass `--ducs-home-*` aliases. Decorative and ancillary homepage literals remain.
 - Remaining shared shell decorative colors, Admin ancillary states, Upload Studio decorative/base legacy declarations, Profile decorative gradients and minor literals, and residual Live Users micro-states: pending.
 - Full foreground/background contrast matrix, responsive state screenshots, and visual regression: pending.
