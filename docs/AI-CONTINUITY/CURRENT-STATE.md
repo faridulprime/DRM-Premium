@@ -1,7 +1,7 @@
 # DRM Premium — Current State
 Verified ref: duga-foundation-review
 Verification date: 2026-11-25
-Verified commit: f5db6c1776de301395fd6e3221d4c3fde0f15972
+Verified commit: 83c1a49d11ab66b14730e5b96829a2ebfba1d3a3
 
 ## DUGA foundation
 - Isolated review branch is based directly on `main`; it contains only DUGA foundation assets and excludes unrelated Admin/application work.
