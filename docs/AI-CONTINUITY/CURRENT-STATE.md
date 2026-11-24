@@ -25,3 +25,11 @@ The DUGA registry files require JSON and cross-reference validation after change
 3. Design D1 operational schema without applying it to Production.
 4. Define API authorization and approval state-transition contracts.
 5. Add automated CI validation for governance files.
+
+
+## D1 design update — 2026-11-25
+- Operational schema design: docs/DUGA-D1-SCHEMA-DESIGN.md.
+- Non-executable SQL draft: governance/schemas/d1-operational-schema.sql.
+- API authorization design: docs/DUGA-API-AUTHORIZATION-DESIGN.md.
+- Migration ordering hazard identified: duplicate 0004 and 0007 prefixes; verify actual Preview migration history before proposing rollout.
+- No DUGA migration has been applied; no API implementation has been added.
