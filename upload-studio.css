@@ -117,3 +117,10 @@ body.upload-studio-page.sidebar-open{padding-left:240px!important}
  .upload-studio-page .main-area{padding:22px 15px 18px!important}
  .upload-studio-page .studio-heading{align-items:flex-start;flex-direction:column}
 }
+
+
+/* Upload Studio account identity separates semantic role from the email. */
+.studio-header-identity{display:flex;align-items:center;gap:10px}
+.studio-header-email{color:#aaa;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upload-studio-page .studio-role-badge{font-size:10px}
+@media(max-width:760px){.studio-header-email{max-width:42vw;font-size:10px}}
