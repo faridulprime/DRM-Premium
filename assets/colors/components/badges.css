@@ -8,4 +8,11 @@
   --ducs-badge-danger-text: var(--ducs-status-danger);
   --ducs-badge-info-bg: var(--ducs-alpha-info-12);
   --ducs-badge-info-text: var(--ducs-status-info);
+
+  /* Live presence and restriction states — exact legacy values preserved. */
+  --ducs-live-status-online: #35bd72;
+  --ducs-live-status-online-text: #9bd7b2;
+  --ducs-live-status-danger: #ef8383;
+  --ducs-live-status-danger-bg: rgba(239, 131, 131, .10);
+  --ducs-live-status-danger-border: rgba(239, 131, 131, .24);
 }
