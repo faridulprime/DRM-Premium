@@ -980,3 +980,89 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
 @media(max-width:760px) and (prefers-reduced-motion:reduce){
  .home-page #ytSidebar,.home-page #ytSidebar.mobile-open{transition:none!important}
 }
+
+
+/* Mobile header correction — compact search, profile aligned with brand, shared drawer trigger. */
+@media (max-width:760px){
+ .home-page .topbar{
+  display:grid!important;
+  grid-template-columns:40px minmax(0,1fr) auto!important;
+  grid-template-rows:44px 32px auto!important;
+  align-items:center!important;
+  column-gap:8px!important;row-gap:5px!important;
+  min-height:86px!important;height:auto!important;
+  padding:4px 10px 6px!important;
+  box-sizing:border-box!important;
+ }
+ .home-page .topbar>.yt-menu-trigger{grid-column:1;grid-row:1;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important}
+ .home-page .topbar>.brand{grid-column:2;grid-row:1;min-width:0;max-width:100%;gap:6px!important}
+ .home-page .topbar .brand-mark{width:25px!important;height:25px!important;flex-basis:25px!important}
+ .home-page .topbar .brand #brandName{display:inline-flex!important;font-size:15px!important;white-space:nowrap}
+ .home-page .yt-search{
+  grid-column:1/-1!important;grid-row:2!important;
+  justify-self:start!important;display:flex!important;
+  flex:0 0 auto!important;width:min(260px,100%)!important;
+  min-width:0!important;max-width:100%!important;
+  height:32px!important;min-height:32px!important;margin:0!important;
+  border-radius:9px!important;box-sizing:border-box!important;
+ }
+ .home-page .yt-search input{flex:1 1 auto!important;min-width:0!important;width:0!important;padding:0 9px!important;font-size:12px!important}
+ .home-page .yt-search button{flex:0 0 32px!important;width:32px!important;min-width:32px!important;height:30px!important;border-radius:0 8px 8px 0!important}
+ .home-page .yt-search svg{width:15px!important;height:15px!important}
+ .home-page .topbar .account-controls:has(#profileMenuToggle:not([hidden])){
+  display:flex!important;grid-column:3!important;grid-row:1!important;
+  justify-self:end!important;align-self:center!important;margin:0!important;
+ }
+ .home-page .topbar .account-controls #profileMenuToggle{width:34px!important;height:34px!important;min-width:34px!important;flex:0 0 34px!important}
+ .home-page:has(#headerLoginForm[hidden]) .topbar{min-height:86px!important}
+ .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]){padding-top:90px!important}
+ .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .category-bar{top:88px!important}
+ .home-page:has(#headerLoginForm[hidden]) .category-bar{top:88px!important}
+ .home-page:has(#headerLoginForm:not([hidden])) .topbar{min-height:170px!important}
+ .home-page:has(#headerLoginForm:not([hidden])){padding-top:174px!important}
+ .home-page:has(#headerLoginForm:not([hidden])) .category-bar{top:174px!important}
+}
+/* Admin mobile search: explicitly place it below the complete brand row. */
+@media (max-width:760px){
+ body.admin-gate-state,body.admin-dashboard-state{padding-top:94px!important}
+ .admin-topbar{
+  display:grid!important;
+  grid-template-columns:40px minmax(0,1fr) auto!important;
+  grid-template-rows:44px 36px!important;
+  align-content:start!important;align-items:center!important;
+  gap:5px 8px!important;min-height:86px!important;height:auto!important;
+  padding:4px 10px 6px!important;box-sizing:border-box!important;
+ }
+ .admin-topbar>#adminMenuToggle{grid-column:1!important;grid-row:1!important}
+ .admin-topbar>.brand{grid-column:2!important;grid-row:1!important;min-width:0!important;max-width:100%!important}
+ .admin-topbar>#adminHeaderAccount{display:none!important}
+ .admin-topbar .admin-search{
+  grid-column:1/-1!important;grid-row:2!important;order:initial!important;
+  display:flex!important;flex:0 0 auto!important;
+  width:min(260px,100%)!important;min-width:0!important;max-width:100%!important;
+  height:36px!important;min-height:36px!important;margin:0!important;
+ }
+ .admin-topbar .admin-search input{display:block!important;flex:1 1 auto!important;min-width:0!important;width:0!important;font-size:13px!important;padding:0 10px!important}
+ .admin-topbar .admin-search button{display:grid!important;flex:0 0 36px!important;width:36px!important;min-width:36px!important;height:34px!important}
+ .admin-topbar .admin-search svg{width:16px!important;height:16px!important}
+ .admin-category-bar{top:86px!important}
+}
+/* Homepage uses the same body state as Admin so the exact drawer transition is shared. */
+@media (max-width:760px){
+ .home-page #ytSidebar,
+ .home-page #ytSidebar:not(.mobile-open){
+  opacity:0!important;transform:translateX(-110%)!important;
+  visibility:hidden!important;pointer-events:none!important;
+  will-change:transform,opacity;
+  transition:transform 700ms cubic-bezier(.16,1,.3,1),opacity 520ms ease,visibility 0s linear 700ms!important;
+ }
+ .home-page.sidebar-open #ytSidebar,
+ .home-page #ytSidebar.mobile-open{
+  opacity:1!important;transform:translateX(0)!important;
+  visibility:visible!important;pointer-events:auto!important;
+  transition:transform 700ms cubic-bezier(.16,1,.3,1),opacity 520ms ease,visibility 0s linear 0s!important;
+ }
+}
+@media (max-width:760px) and (prefers-reduced-motion:reduce){
+ .home-page #ytSidebar,.home-page #ytSidebar.mobile-open{transition:none!important}
+}
