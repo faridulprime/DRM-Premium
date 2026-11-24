@@ -35,7 +35,7 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 - Use CHECK constraints for enumerations, non-empty identifiers and JSON validity where supported.
 - Use foreign keys to existing users for human identities; use ON DELETE RESTRICT for governance actors/approvers so deleting an account cannot erase accountability history.
 - Use XOR CHECK constraints for human vs AI actor identity.
-- Use scoped unique indexes for active assignments; avoid ambiguous platform/system scope.
+- Use scoped unique indexes for active assignments; enforce at most one active Platform Owner and one active human System Owner per system. Revoked assignments remain as history and permit replacement.
 - Add indexes for status/time, request references, actor lookups and pending jobs.
 - Use optimistic state versioning on change requests to prevent lost updates.
 - Preserve audit history: UPDATE and DELETE triggers should abort for duga_audit_events. Corrections are new events.
@@ -125,6 +125,8 @@ The schema was reviewed against the state-machine and authorization requirements
 8. **Audit actor integrity:** derive human actor from session and system actor from a server-controlled allowlist. Never accept `actor_type`, `actor_user_id`, `actor_principal_id` or `actor_system_id` as trusted client claims.
 9. **JSON shape validation:** SQL currently checks JSON syntax, not that affected-system/path values are arrays of the expected primitive types. Validate those shapes in the API before persistence.
 10. **Registry references:** D1 does not own a writable system registry. Verify system IDs and path ownership against the pinned Git registry revision referenced by the change.
+11. **Canonical branch validation:** the SQL check only rejects the literal `main`; the API must parse and validate the Git ref, reject `main`, `refs/heads/main`, protected/default branches and malformed refs, and independently verify the PR base branch. Never infer branch safety from a string inequality.
+12. **Role-specific approval:** the SQL `approver_role` enum is descriptive, not authorization. Resolve the approver's active assignment and scope from the pinned registry; require Platform Owner for high/critical risk, and enforce the applicable System Owner/platform-policy gates for lower risk.
 
 ### Local test boundary
 The expanded in-memory SQLite smoke test exercises the SQL constraints above and includes an explicit probe showing that the database permits a listed status to be written directly. This is expected under the current draft: transition order, commit staleness, assignment authorization and trusted actor provenance must be enforced in the future API/service layer. The test does not claim those server-side controls are implemented. Cloudflare D1 behavior remains unverified.
