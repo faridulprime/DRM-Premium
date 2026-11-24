@@ -53,4 +53,15 @@
   --ducs-profile-avatar-text: #c8d3df;
   --ducs-profile-upload-text: #a9f3bd;
   --ducs-profile-save-text: #a5f2bd;
+
+  /* Upload Studio identity and editor accents. */
+  --ducs-upload-brand-text: #fff;
+  --ducs-upload-muted-accent: #b4a8ed;
+  --ducs-upload-nav-text: #bcb7d8;
+  --ducs-upload-heading-text: #ededed;
+  --ducs-upload-muted-text: #929292;
+  --ducs-upload-soft-text: #aaa;
+  --ducs-upload-preview-accent: #7ce2bd;
+  --ducs-upload-success-text: #b9efd2;
+  --ducs-upload-notice-error-text: #f0aaaa;
 }
