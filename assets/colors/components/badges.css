@@ -80,4 +80,22 @@
   --ducs-home-register-text: #ededed;
   --ducs-home-register-label: #d8d8d8;
   --ducs-home-profilebar-text: #d3dbe4;
+  /* Shared profile drawer and role badge identities. */
+  --ducs-shell-profile-drawer-kicker: #8492a4;
+  --ducs-shell-profile-drawer-close-text: #cbd3de;
+  --ducs-shell-profile-drawer-avatar-text: #e8f1fb;
+  --ducs-shell-profile-drawer-view-text: #9de0b8;
+  --ducs-shell-profile-drawer-detail-label: #7f8b9b;
+  --ducs-shell-profile-drawer-detail-text: #e1e6ed;
+  --ducs-shell-profile-drawer-footer-text: #697585;
+  --ducs-shell-role-owner-text: #d8b4fe;
+  --ducs-shell-role-owner-bg: rgba(168,85,247,.14);
+  --ducs-shell-role-owner-border: rgba(192,132,252,.42);
+  --ducs-shell-role-admin-text: #86efac;
+  --ducs-shell-role-admin-bg: rgba(34,197,94,.12);
+  --ducs-shell-role-admin-border: rgba(74,222,128,.38);
+  --ducs-shell-role-member-text: #f4f6fa;
+  --ducs-shell-role-member-bg: rgba(255,255,255,.075);
+  --ducs-shell-role-member-border: rgba(255,255,255,.28);
+
 }
