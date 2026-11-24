@@ -223,3 +223,31 @@
     height: var(--duss-profile-avatar-size-mobile);
   }
 }
+
+
+/* DUSS v0.3 — shared site shell geometry.
+   Values mirror the audited legacy dimensions; this layer centralizes them
+   without changing the rendered sizes. */
+:root {
+  --duss-header-height-desktop: 4rem;
+  --duss-header-height-mobile: 3.625rem;
+  --duss-category-bar-height-desktop: 3.25rem;
+  --duss-category-bar-height-mobile: 3.125rem;
+  --duss-home-shell-offset-desktop: calc(var(--duss-header-height-desktop) + var(--duss-category-bar-height-desktop));
+  --duss-home-shell-offset-mobile: calc(var(--duss-header-height-mobile) + var(--duss-category-bar-height-mobile));
+  --duss-sidebar-width: 15rem;
+  --duss-sidebar-width-mobile-max: 17.5rem;
+  --duss-nav-trigger-size-desktop: 2.5rem;
+  --duss-nav-trigger-size-mobile: 2.375rem;
+  --duss-nav-item-height: 2.625rem;
+  --duss-nav-item-gap: 1.25rem;
+  --duss-nav-icon-size: 1.5rem;
+  --duss-category-gap: 0.75rem;
+  --duss-category-chip-padding-y: 0.5rem;
+  --duss-category-chip-padding-x: 0.8125rem;
+  --duss-category-chip-text: 0.8125rem;
+  --duss-brand-icon-size-desktop: 1.75rem;
+  --duss-brand-icon-size-mobile: 1.5625rem;
+  --duss-page-gutter-home-desktop: 1.375rem;
+  --duss-page-gutter-home-mobile: 0.75rem;
+}
