@@ -6,10 +6,7 @@ on:
       - feature/full-admin-panel
       - duga-foundation-review
     paths:
-      - "governance/schemas/d1-operational-schema.sql"
-      - "governance/ownership/roles.json"
-      - "governance/dependencies/systems.json"
-      - "governance/dependencies/dependency-rules.json"
+      - "governance/**"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-registries.py"
       - ".github/workflows/duga-schema-smoke.yml"
@@ -17,10 +14,7 @@ on:
     branches:
       - main
     paths:
-      - "governance/schemas/d1-operational-schema.sql"
-      - "governance/ownership/roles.json"
-      - "governance/dependencies/systems.json"
-      - "governance/dependencies/dependency-rules.json"
+      - "governance/**"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-registries.py"
       - ".github/workflows/duga-schema-smoke.yml"
