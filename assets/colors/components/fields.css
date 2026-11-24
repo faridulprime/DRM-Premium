@@ -19,4 +19,11 @@
   --ducs-admin-login-label: #aaa;
   --ducs-admin-login-field-border: #303030;
   --ducs-admin-login-focus-border: #555;
+
+  /* Shared shell search and authentication fields. */
+  --ducs-shell-search-placeholder: #888;
+  --ducs-shell-auth-field-border: #3f3f3f;
+  --ducs-shell-auth-field-focus-border: #8ab4f8;
+  --ducs-shell-auth-field-icon: #aaa;
+  --ducs-shell-auth-placeholder: #aaa;
 }
