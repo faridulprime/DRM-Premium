@@ -174,4 +174,10 @@
   --ducs-shell-profile-menu-border: #41464e;
   --ducs-shell-profile-menu-hover-ring: rgba(91,190,137,.12);
   --ducs-shell-profile-drawer-avatar-border: #414a55;
+  /* Live Users page chrome and list-state surfaces. */
+  --ducs-live-topbar-border: #252525;
+  --ducs-live-heading-gradient-start: #151515;
+  --ducs-live-heading-gradient-end: #101010;
+  --ducs-live-row-highlight-bg: #1b1b1b;
+  --ducs-live-avatar-surface: #303030;
 }
