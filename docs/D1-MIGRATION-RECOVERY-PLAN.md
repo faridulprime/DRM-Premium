@@ -33,9 +33,9 @@ The repository's `migrations/manifest.json` is documentation-only. It explicitly
 
 ### Preview D1 evidence supplied by the project owner
 
-The read-only `sqlite_master` inventory showed these 17 application tables:
+The read-only `sqlite_master` inventory showed these 16 application tables:
 
-`admin_presence`, `analytics_events`, `categories`, `login_attempts`, `owner_setup_otps`, `sessions`, `settings`, `site_builder_documents`, `site_builder_revisions`, `user_activity_hours`, `user_profiles`, `user_registration_otps`, `user_restrictions`, `users`, `videos`, `visitor_presence`, plus the table `_cf_KV` maintained by Cloudflare.
+`admin_presence`, `analytics_events`, `categories`, `login_attempts`, `owner_setup_otps`, `sessions`, `settings`, `site_builder_documents`, `site_builder_revisions`, `user_activity_hours`, `user_profiles`, `user_registration_otps`, `user_restrictions`, `users`, `videos`, `visitor_presence`, plus the Cloudflare-maintained system table `_cf_KV` (17 tables visible in total).
 
 The same inventory showed 17 named application indexes. No application triggers were listed. The separate migration/meta table lookup returned no rows.
 
