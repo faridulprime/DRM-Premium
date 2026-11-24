@@ -264,6 +264,15 @@ async function handle(req,env){
   }
   return fail("Builder API route not found.",404);
  }
+ if(p[0]==="admin"&&p[1]==="users"&&p.length===4&&p[3]==="avatar"&&m==="GET"){
+  if(!env.PROFILE_ASSETS)return fail("Profile image storage is not configured.",503);
+  const target=await env.DB.prepare("SELECT up.avatar_key FROM users u LEFT JOIN user_profiles up ON up.user_id=u.id WHERE u.id=?").bind(p[2]).first();
+  if(!target?.avatar_key)return fail("Profile image not found.",404);
+  const object=await env.PROFILE_ASSETS.getWithMetadata(target.avatar_key,"text");if(!object?.value)return fail("Profile image not found.",404);
+  let binary;try{binary=atob(object.value)}catch{return fail("Stored profile image is invalid.",500)}
+  const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
+  return new Response(bytes,{headers:{"content-type":object.metadata?.contentType||"image/webp","cache-control":"private, max-age=300","x-content-type-options":"nosniff"}});
+ }
  if(p[0]==="admin"&&p[1]==="active-users"&&m==="GET"){
   if(user.role!=="owner")return fail("শুধু Owner সক্রিয় ব্যবহারকারীদের তালিকা দেখতে পারবেন।",403);
   const now=Math.floor(Date.now()/1000);await env.DB.prepare("DELETE FROM visitor_presence WHERE last_seen<?").bind(now-120).run();
