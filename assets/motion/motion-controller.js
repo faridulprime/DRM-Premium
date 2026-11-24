@@ -10,7 +10,7 @@
  function mobile(){return window.matchMedia("(max-width:760px)").matches;}
  function clearJob(el){const job=jobs.get(el);if(job){clearTimeout(job.timer);jobs.delete(el);}}
  function setImportant(el,p,v){el.style.setProperty(p,v,"important");}
- function clearInline(el){["transition","transform","opacity","visibility","pointer-events","will-change"].forEach(p=>el.style.removeProperty(p));}
+ function clearInline(el){["transition","animation","transform","opacity","visibility","pointer-events","will-change"].forEach(p=>el.style.removeProperty(p));}
  function backdropState(backdrop,open){
   if(!backdrop)return;
   backdrop.classList.add("dume-mobile-backdrop");
@@ -36,6 +36,8 @@
   sidebar.classList.add("dume-mobile-drawer");
   const duration=REDUCED.matches?0:DURATION;
   setImportant(sidebar,"transition","transform "+duration+"ms "+EASING+", opacity "+Math.min(duration,520)+"ms ease");
+  /* Disable legacy page keyframes; DUME owns the transition on this element. */
+  setImportant(sidebar,"animation","none");
   setImportant(sidebar,"visibility","visible");setImportant(sidebar,"pointer-events",state?"auto":"none");setImportant(sidebar,"will-change","transform,opacity");
   if(state){
    sidebar.classList.add("mobile-open");backdropState(backdrop,true);
