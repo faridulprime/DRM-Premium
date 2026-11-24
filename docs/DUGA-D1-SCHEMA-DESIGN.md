@@ -37,6 +37,8 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 - Use XOR CHECK constraints for human vs AI actor identity.
 - Use scoped unique indexes for active assignments; enforce at most one active Platform Owner and one active human System Owner per system. Revoked assignments remain as history and permit replacement.
 - Add indexes for status/time, request references, actor lookups and pending jobs.
+- Enforce basic temporal consistency in SQL: assignment revocation cannot predate creation; change/job updates cannot predate creation; validation status must agree with start/completion timestamps; completed validation cannot finish before it starts; running jobs require a lease, queued/terminal jobs must not retain one, and succeeded jobs must contain a result payload.
+- Require finding review timestamp and reviewer identity to be either both absent or both present, with review time not before finding creation.
 - Use optimistic state versioning on change requests to prevent lost updates.
 - Preserve audit history: UPDATE and DELETE triggers should abort for duga_audit_events. Corrections are new events.
 - A trigger is not cryptographic tamper-proofing against a database administrator. Periodically export/sign audit checkpoints outside D1 in a later operational phase.
@@ -108,6 +110,8 @@ Limitations: this was a local SQLite syntax/constraint test, not a Cloudflare D1
 The schema was reviewed against the state-machine and authorization requirements above. The SQL draft enforces allowed enum values and identity-shape constraints, but it intentionally does not enforce the complete governance workflow. These are implementation gates, not evidence that the API already enforces them.
 
 ### SQL-level checks now covered by local probes
+- Active assignment cardinality: at most one active Platform Owner globally and one active human System Owner per system; revocation permits reassignment.
+- Temporal consistency: assignment revocation ordering, validation queued/running/completed timestamp shapes, job lease/status consistency, successful job result requirement, and update timestamp ordering.
 - Change request rejects unknown risk values, invalid human/AI requester combinations and the literal `main` source branch.
 - Review rows reject mismatched reviewer type and review type (for example, an AI principal cannot submit a `human_review`).
 - Approval rows reject role labels outside `system-owner` and `platform-owner`.
