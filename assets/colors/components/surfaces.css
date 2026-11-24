@@ -154,4 +154,20 @@
   --ducs-home-profilebar-bg-start: #202832;
   --ducs-home-profilebar-bg-end: #171d25;
   --ducs-home-profilebar-border: #343b43;
+  /* Shared profile drawer and secondary homepage search surfaces. */
+  --ducs-shell-profile-drawer-bg-start: #171a20;
+  --ducs-shell-profile-drawer-bg-mid: #101216;
+  --ducs-shell-profile-drawer-bg-end: #0d0f12;
+  --ducs-shell-profile-drawer-border: rgba(255,255,255,.1);
+  --ducs-shell-profile-drawer-shadow: rgba(0,0,0,.42);
+  --ducs-shell-profile-drawer-avatar-bg-start: #303946;
+  --ducs-shell-profile-drawer-avatar-bg-end: #1b2028;
+  --ducs-shell-profile-drawer-view-bg-start: rgba(58,133,95,.2);
+  --ducs-shell-profile-drawer-view-bg-end: rgba(58,133,95,.07);
+  --ducs-shell-profile-drawer-divider-start: rgba(255,255,255,.15);
+  --ducs-shell-profile-drawer-divider-end: rgba(255,255,255,.025);
+  --ducs-shell-home-search-bg: #151515;
+  --ducs-shell-home-search-border: #303030;
+  --ducs-shell-home-search-button-bg: #202020;
+
 }
