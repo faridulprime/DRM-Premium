@@ -232,6 +232,29 @@ def main() -> int:
         ),
         should_fail=True,
     )
+
+    check(
+        "finding evidence must be a JSON object",
+        lambda: db.execute(
+            """INSERT INTO duga_analysis_findings
+               (id,analyzer_version,repository_commit_sha,file_path,
+                classification,confidence,evidence_json,created_at)
+               VALUES ('finding-array','test','commit-a','src/app.js',
+                       'A',0.5,'[]',1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "malformed finding evidence is rejected cleanly",
+        lambda: db.execute(
+            """INSERT INTO duga_analysis_findings
+               (id,analyzer_version,repository_commit_sha,file_path,
+                classification,confidence,evidence_json,created_at)
+               VALUES ('finding-bad-json','test','commit-a','src/app.js',
+                       'A',0.5,'{',1)"""
+        ),
+        should_fail=True,
+    )
     check(
         "audit payload must be a JSON object",
         lambda: db.execute(
