@@ -260,13 +260,22 @@ async function init(){
   button.disabled=true;button.classList.add("is-loading");status.textContent="";
   const label=button.querySelector("span");if(label)label.textContent="Logging out…";
   try{
-   const response=await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin"});
+   const response=await fetch("/api/auth/logout",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    credentials:"same-origin",
+    cache:"no-store",
+    body:JSON.stringify({})
+   });
    const data=await response.json().catch(()=>({}));
-   if(!response.ok||data.ok===false)throw new Error(data.error||"Logout করা যায়নি। আবার চেষ্টা করুন।");
+   if(!response.ok||data.ok!==true)throw new Error(data.error||"Logout করা যায়নি। আবার চেষ্টা করুন।");
+   const sessionCheck=await fetch("/api/auth/me",{method:"GET",credentials:"same-origin",cache:"no-store"});
+   const sessionData=await sessionCheck.json().catch(()=>({}));
+   if(!sessionCheck.ok||sessionData.authenticated!==false)throw new Error("Logout সম্পন্ন হয়েছে কি না যাচাই করা যায়নি। পেজ Refresh করে আবার চেষ্টা করুন।");
    $("#headerLoginForm")?.reset();
    setSignedIn(null);
    openAccountMenu(false);
-   status.textContent="";
+   status.textContent="Logout সফল হয়েছে।";
   }catch(error){
    status.textContent=error.message||"Logout করা যায়নি। আবার চেষ্টা করুন।";
   }finally{
