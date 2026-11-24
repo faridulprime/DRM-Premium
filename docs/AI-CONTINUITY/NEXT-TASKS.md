@@ -9,20 +9,20 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 - Added role, ownership, system registry, dependency baseline and governance policy metadata.
 - Added D1 operational schema design draft and Preview read-only preflight SQL; neither is a migration.
 - Added API authorization and route contract design; no API is implemented.
-- Added local SQLite schema smoke tests and structural registry validation.
-- CI run 45506463903 passed for commit `3264662e545af5e3336a1949946130c14bcb7290`.
-- CI path filters have been widened to cover all `governance/**` changes, not only a subset of registry files.
+- Added local SQLite schema smoke tests, policy/registry validator and malformed-input tests.
+- GitHub Actions run 45507058477 passed on commit `61e7957ebf789a49be22950b723f1fffad8141db`: SQLite schema smoke test, governance validator and five malformed-input cases.
+- CI path filters cover all governance assets and both validation test scripts.
 - Cloudflare Pages automatically published a branch Preview. This does not modify D1 and is not a Production deployment.
 
 ## Next review sequence
-1. Review validator coverage and schema invariants against the written governance policies.
-2. Review D1 design, especially assignment uniqueness/revocation, state transitions, append-only audit behavior, actor attribution and commit-bound approval gates.
-3. Confirm actual Preview D1 applied migration history; do not infer it from migration filenames or table shape.
-4. Obtain a verified Preview backup or create a disposable D1 database before any candidate migration test.
-5. Convert the approved SQL draft into a uniquely named additive migration only after migration-history reconciliation and review.
-6. Test D1-specific constraints, triggers, foreign keys and transaction behavior only in disposable/Preview D1 after explicit approval.
-7. Implement Owner-only governance API routes only after schema and trusted actor/authentication design are approved.
-8. Add API and application regression tests for existing auth, content, registration, profile, presence and Website Builder routes.
+1. Inspect D1 schema for state-transition gaps, stale approval/review invalidation, assignment revocation semantics and audit actor integrity.
+2. Compare each schema invariant to the API authorization/state-machine design; document constraints that must be enforced in server logic rather than SQL.
+3. Add targeted SQLite tests for valid and invalid change/review/approval/validation lifecycle combinations, while clearly labeling SQLite-only evidence.
+4. Review Preview D1 migration history with read-only evidence; do not infer applied history from filenames or table shape.
+5. Obtain a verified Preview backup or disposable D1 database before any candidate migration test.
+6. Convert the approved SQL draft into a uniquely named additive migration only after migration-history reconciliation and review.
+7. Test D1-specific constraints, triggers, foreign keys and transaction behavior only in disposable/Preview D1 after explicit approval.
+8. Implement Owner-only governance API routes only after schema and trusted actor/authentication design are approved.
 9. Keep `main` and Production D1 untouched unless separately authorized.
 
 ## Not implemented
