@@ -31,4 +31,11 @@
   --ducs-live-tab-active-border: #694040;
   --ducs-live-tab-active-count-bg: #593333;
   --ducs-live-tab-active-count-text: #ffe0e0;
+
+  /* Admin Owner identity badge — distinct purple role identity. */
+  --ducs-admin-owner-text: #d8b4fe;
+  --ducs-admin-owner-bg: rgba(168, 85, 247, .14);
+  --ducs-admin-owner-border: rgba(192, 132, 252, .42);
+  --ducs-admin-danger-border: #74383d;
+  --ducs-admin-danger-text: #ffaaaa;
 }
