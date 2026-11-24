@@ -1,6 +1,6 @@
-# DUCS Color Inventory — initial audit
+# DUCS Color Inventory — updated source audit
 
-Version: 0.2.1
+Version: 0.2.2
 Branch: `feature/full-admin-panel`
 Scope: stylesheet source inventory; not a computed-style or screenshot audit.
 
@@ -10,12 +10,12 @@ Counts below are the number of distinct literal HEX values and distinct rgb()/rg
 
 | Stylesheet | Unique HEX literals | Unique RGB(A) expressions | Dominant source palette / notes |
 |---|---:|---:|---|
-| `styles.css` | 128 | 31 | Homepage legacy light neutral palette, blue/steel UI colors, green status accents, warm gold highlights |
-| `theme.css` | 57 | 20 | Shared dark neutral shell, blue action accent, green success, additional dashboard/status accents |
-| `admin.css` | 31 | 3 | Dark neutral panels, green success, red error, blue informational accents |
-| `live-users.css` | 72 | 12 | Near-black surfaces, green online state, multiple red/restricted-account states, amber warning |
-| `upload-studio.css` | 119 | 5 | Near-black base, violet/lavender creative palette, mint accent, red/pink validation states |
-| `profile.css` | 39 | 3 | Near-black base, green accent/success, blue secondary accent, red error |
+| `styles.css` | 128 | 31 | Homepage light legacy palette and visual-editor/site-builder colors |
+| `theme.css` | 61 | 27 | Shared shell dark palette; component migration partial |
+| `admin.css` | 32 | 5 | Admin dashboard; component migration partial |
+| `live-users.css` | 72 | 40 | Live Users; first-pass migration partial |
+| `upload-studio.css` | 119 | 5 | Upload Studio graphite/mint palette; first-pass migration partial |
+| `profile.css` | 39 | 3 | Profile dark/green palette; first-pass migration partial |
 
 These counts must not be summed and described as repository-wide unique colors. A deduplicated repository inventory requires parsing every color syntax and resolving CSS cascade, variables, pseudo-states, SVG, and runtime styles.
 
@@ -29,7 +29,7 @@ These counts must not be summed and described as repository-wide unique colors. 
 | Upload Studio | Near-black | Mint | Violet/lavender creative controls; pink/red validation |
 | Profile | Near-black | Green | Blue secondary; red validation |
 
-Page mappings in `assets/colors/themes/page-mapping.css` record this observed direction. They are documentation tokens only and do not yet override page component styles.
+Page mappings in `assets/colors/themes/page-mapping.css` record this observed direction. Page-scoped component aliases now cover first-pass migrations in Admin, Live Users, Upload Studio, and Profile; homepage component migration remains pending.
 
 ## Migration groups
 
@@ -43,8 +43,8 @@ Page mappings in `assets/colors/themes/page-mapping.css` record this observed di
 
 ## Audit limitations
 
-- This was a source-text inventory, not a browser computed-style inspection.
+- This is a source-text inventory, not a browser computed-style inspection. Counts were refreshed after the latest stylesheet token migrations.
 - It does not prove that every literal is visible or active at runtime.
 - It does not include every CSS color grammar or colors created by JavaScript.
-- No global literal replacement was performed.
+- No global literal replacement was performed; page identity and existing color values were preserved through explicit aliases.
 - Contrast validation is limited to explicitly recorded foreground/background pairs in `DUCS-ACCESSIBILITY.md`.
