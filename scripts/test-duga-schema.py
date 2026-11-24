@@ -462,50 +462,99 @@ def main() -> int:
                          'human','human-2','revoked',10,9)"""
           ), should_fail=True)
 
-    # Optimistic concurrency prototype: only one writer can claim a state_version.
+    # CAS + conditional audit prototype. A unique transition token is stored on the
+    # request only when the expected state/version matches and the token is unused.
+    # The audit INSERT ... SELECT succeeds only for that exact token/version.
     insert_change("change-concurrency")
-    first_writer = db.execute(
-        """UPDATE duga_change_requests
-           SET status='analyzing', state_version=state_version+1, updated_at=2
-           WHERE id='change-concurrency' AND state_version=1 AND status='proposed'"""
-    )
-    if first_writer.rowcount != 1:
-        raise AssertionError("first optimistic writer should update exactly one row")
-    stale_writer = db.execute(
-        """UPDATE duga_change_requests
-           SET status='impact_review', state_version=state_version+1, updated_at=3
-           WHERE id='change-concurrency' AND state_version=1 AND status='proposed'"""
-    )
-    if stale_writer.rowcount != 0:
-        raise AssertionError("stale optimistic writer must update zero rows")
-    passed.append("optimistic state_version update rejects a stale second writer")
 
-    # SQLite transaction probe: a failed audit insert must roll back the state update.
-    db.commit()
-    db.execute("BEGIN")
+    def run_transition(change_id: str, expected_version: int, expected_status: str,
+                       next_status: str, token: str, event_id: str,
+                       *, invalid_actor: bool = False) -> tuple[int, int]:
+        db.commit()
+        db.execute("BEGIN")
+        try:
+            update = db.execute(
+                """UPDATE duga_change_requests
+                   SET status=?, state_version=state_version+1,
+                       last_transition_id=?, updated_at=updated_at+1
+                   WHERE id=? AND state_version=? AND status=?
+                     AND NOT EXISTS (
+                       SELECT 1 FROM duga_audit_events WHERE transition_id=?
+                     )""",
+                (next_status, token, change_id, expected_version,
+                 expected_status, token),
+            )
+            actor_type = "human"
+            actor_user_id = None if invalid_actor else "human-1"
+            audit = db.execute(
+                """INSERT INTO duga_audit_events
+                   (id,aggregate_type,aggregate_id,event_type,actor_type,
+                    actor_user_id,payload_json,transition_id,created_at)
+                   SELECT ?, 'change_request', id, 'state_transition', ?,
+                          ?, '{}', ?, updated_at
+                   FROM duga_change_requests
+                   WHERE id=? AND state_version=? AND last_transition_id=?
+                     AND NOT EXISTS (
+                       SELECT 1 FROM duga_audit_events WHERE transition_id=?
+                     )""",
+                (event_id, actor_type, actor_user_id, token, change_id,
+                 expected_version + 1, token, token),
+            )
+            db.commit()
+            return update.rowcount, audit.rowcount
+        except sqlite3.IntegrityError:
+            db.rollback()
+            raise
+
+    changed, audited = run_transition(
+        "change-concurrency", 1, "proposed", "analyzing",
+        "transition-token-1", "event-transition-1"
+    )
+    if (changed, audited) != (1, 1):
+        raise AssertionError(f"successful transition should update+audit once: {(changed, audited)}")
+    passed.append("CAS transition creates exactly one audit event for its unique token")
+
+    changed, audited = run_transition(
+        "change-concurrency", 1, "proposed", "impact_review",
+        "transition-token-stale", "event-transition-stale"
+    )
+    if (changed, audited) != (0, 0):
+        raise AssertionError(f"stale writer must update zero rows and create no audit: {(changed, audited)}")
+    passed.append("stale writer updates zero rows and creates no audit event")
+
+    changed, audited = run_transition(
+        "change-concurrency", 1, "proposed", "impact_review",
+        "transition-token-1", "event-transition-replay"
+    )
+    if (changed, audited) != (0, 0):
+        raise AssertionError(f"replayed transition token must be rejected: {(changed, audited)}")
+    passed.append("replayed transition token cannot update state or duplicate audit")
+
+    changed, audited = run_transition(
+        "change-concurrency", 2, "analyzing", "impact_review",
+        "transition-token-1", "event-transition-token-reuse"
+    )
+    if (changed, audited) != (0, 0):
+        raise AssertionError(f"reused token on a later state must be rejected: {(changed, audited)}")
+    passed.append("previously used transition token cannot be reused for another state change")
+
+    # If the audit INSERT fails, the surrounding transaction must roll back the CAS update.
     try:
-        db.execute(
-            """UPDATE duga_change_requests
-               SET status='impact_review', state_version=state_version+1, updated_at=3
-               WHERE id='change-concurrency' AND state_version=2 AND status='analyzing'"""
-        )
-        db.execute(
-            """INSERT INTO duga_audit_events
-               (id,aggregate_type,aggregate_id,event_type,actor_type,
-                payload_json,created_at)
-               VALUES ('event-invalid-actor','change_request','change-concurrency',
-                       'test','human','{}',3)"""
+        run_transition(
+            "change-concurrency", 2, "analyzing", "impact_review",
+            "transition-token-invalid-audit", "event-invalid-actor",
+            invalid_actor=True
         )
     except sqlite3.IntegrityError:
-        db.rollback()
+        pass
     else:
-        raise AssertionError("invalid audit actor should abort the transaction")
+        raise AssertionError("invalid audit actor should abort the transition transaction")
     rollback_state = db.execute(
-        "SELECT status,state_version FROM duga_change_requests WHERE id='change-concurrency'"
+        "SELECT status,state_version,last_transition_id FROM duga_change_requests WHERE id='change-concurrency'"
     ).fetchone()
-    if rollback_state != ("analyzing", 2):
+    if rollback_state != ("analyzing", 2, "transition-token-1"):
         raise AssertionError(f"state update was not rolled back with failed audit: {rollback_state}")
-    passed.append("failed audit insert rolls back state update in local SQLite transaction")
+    passed.append("failed audit insert rolls back CAS update and preserves prior transition token")
 
     # Schema-level boundary: the SQL enum permits any listed status; legal transition
     # order, stale-commit invalidation and actor/assignment authorization belong to API logic.
