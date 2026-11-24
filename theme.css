@@ -801,3 +801,13 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
 @media(prefers-reduced-motion:reduce){
  .home-page .yt-sidebar,.home-page .sidebar-backdrop,.home-page .profile-drawer{transition:none!important}
 }
+
+
+/* Global mobile universal drawer width — shared by every page using theme.css.
+   Preserve drawer height, padding, position, animation and all inner dimensions. */
+@media(max-width:760px){
+ .yt-sidebar{
+  width:min(205px,72vw)!important;
+  max-width:min(205px,72vw)!important;
+ }
+}
