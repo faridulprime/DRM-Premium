@@ -4,7 +4,11 @@
  */
 (function(){
  "use strict";
- const DURATION=700,EASING="cubic-bezier(.16,1,.3,1)";
+ const rootStyle=getComputedStyle(document.documentElement);
+ const readMs=(name,fallback)=>{const value=rootStyle.getPropertyValue(name).trim();const parsed=parseFloat(value);return Number.isFinite(parsed)?(value.endsWith("s")&&!value.endsWith("ms")?parsed*1000:parsed):fallback;};
+ const DURATION=readMs("--dume-drawer-duration",700);
+ const OPACITY_DURATION=readMs("--dume-drawer-opacity-duration",520);
+ const EASING=rootStyle.getPropertyValue("--dume-drawer-easing").trim()||"cubic-bezier(.16,1,.3,1)";
  const REDUCED=window.matchMedia("(prefers-reduced-motion: reduce)");
  const jobs=new WeakMap();
  function mobile(){return window.matchMedia("(max-width:760px)").matches;}
@@ -58,6 +62,6 @@
    jobs.set(sidebar,{timer});
   }
  }
- window.DRMMotion=Object.freeze({drawer,config:Object.freeze({drawerDuration:DURATION,drawerEasing:EASING})});
+ window.DRMMotion=Object.freeze({drawer,config:Object.freeze({drawerDuration:DURATION,drawerOpacityDuration:OPACITY_DURATION,drawerEasing:EASING})});
  window.addEventListener("resize",()=>{if(!mobile())document.querySelectorAll(".yt-sidebar.dume-mobile-drawer").forEach(sidebar=>{clearJob(sidebar);sidebar.classList.remove("mobile-open","dume-mobile-drawer");clearInline(sidebar);document.body.classList.remove("drawer-open");});});
 })();
