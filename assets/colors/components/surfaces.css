@@ -20,4 +20,15 @@
   --ducs-live-text-secondary: #aaa;
   --ducs-live-text-muted: #777;
   --ducs-live-text-subtle: #858585;
+  --ducs-live-dialog-bg: #171717;
+  --ducs-live-dialog-header-bg: #191919;
+  --ducs-live-profile-bg: #1d1d1d;
+  --ducs-live-avatar-bg: #292929;
+  --ducs-live-action-bg: #171717;
+  --ducs-live-action-hover-bg: #202020;
+  --ducs-live-tab-active-bg: #2a1919;
+  --ducs-live-tab-count-bg: #292929;
+  --ducs-live-restricted-row-bg: #151515;
+  --ducs-live-restricted-row-hover-bg: #1d1919;
+  --ducs-live-activity-track-bg: #2b2b2b;
 }
