@@ -1,6 +1,6 @@
 # DRM Universal Color System (DUCS)
-Version: 0.2.2 — Token foundation + source audit + component token modules + shared shell aliases
-Status: Token foundation, page mappings, per-file source inventory, dependency registry, and shared shell root palette aliases are in place. Component migration and full contrast validation remain in progress.
+Version: 0.2.3 — Primitive-to-semantic token normalization
+Status: Token foundation, page mappings, per-file source inventory, dependency registry, component alias modules, and shared shell root palette aliases are in place. Component migration and full contrast validation remain in progress.
 
 ## Purpose
 DUCS centralizes color decisions for DRM Premium. It separates raw palette values from semantic meaning and component implementation so color changes can be reviewed across their dependencies.
