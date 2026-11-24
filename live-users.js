@@ -6,6 +6,7 @@ function setLiveMenu(open){
  const isOpen=Boolean(open),mobile=window.matchMedia("(max-width:760px)").matches;
  clearTimeout(liveMenuCloseTimer);
  liveSidebar.classList.remove("mobile-open");
+ void liveSidebar.offsetWidth;
  document.body.classList.remove("sidebar-open","drawer-open");
  if(liveSidebarBackdrop){liveSidebarBackdrop.classList.remove("is-closing");if(isOpen&&mobile)liveSidebarBackdrop.hidden=false;}
  if(isOpen){
