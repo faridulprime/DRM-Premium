@@ -1,39 +1,34 @@
 -- DUGA Preview D1 preflight diagnostics
 -- READ ONLY: SELECT statements only. No schema or data changes.
 -- Run against the PREVIEW D1 database only.
--- Execute each SELECT separately in the Cloudflare D1 Console.
+-- IMPORTANT: paste and execute ONE numbered query at a time.
 -- Do not run against Production.
 
--- 1) Confirm database engine/runtime and inspect all tables/views.
-SELECT sqlite_version() AS sqlite_version;
+-- Query 1: list all existing tables and views.
 SELECT type, name, tbl_name, sql
 FROM sqlite_master
 WHERE type IN ('table','view')
 ORDER BY type, name;
 
--- 2) Inspect indexes and triggers already present.
+-- Query 2: inspect existing indexes and triggers.
 SELECT type, name, tbl_name, sql
 FROM sqlite_master
 WHERE type IN ('index','trigger')
 ORDER BY type, tbl_name, name;
 
--- 3) Locate any migration-history table by its actual name.
--- Do not assume a migration table exists or infer applied migrations from filenames.
+-- Query 3: discover the actual migration-history table, if present.
 SELECT name, sql
 FROM sqlite_master
 WHERE type='table'
   AND (lower(name) LIKE '%migration%' OR lower(name) LIKE '%meta%')
 ORDER BY name;
 
--- 4) Inspect the current application users table shape if it exists.
+-- Query 4: inspect the application users table definition, if present.
 SELECT name, sql
 FROM sqlite_master
 WHERE type='table' AND name='users';
 
--- 5) Inspect columns for users. An empty result means the table is absent.
-PRAGMA table_info('users');
-
--- 6) Check whether any DUGA objects already exist (expected to return zero rows before first install).
+-- Query 5: check for any existing DUGA objects.
 SELECT type, name, tbl_name, sql
 FROM sqlite_master
 WHERE name LIKE 'duga_%'
