@@ -4,6 +4,7 @@ Target review branch: duga-foundation-review
 Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## DUGA foundation completed
+- Added SQL JSON value-shape constraints (arrays for affected systems/paths; objects for evidence, results, audit and job payloads) plus negative tests for wrong container types and malformed JSON.
 - Isolated governance foundation from unrelated application/Admin changes on a branch based directly on `main`.
 - Added specification, implementation plan, repository baseline and continuity documentation.
 - Added role, ownership, system registry, dependency baseline and governance policy metadata.
