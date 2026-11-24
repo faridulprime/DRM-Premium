@@ -24,3 +24,7 @@ Target branch: feature/full-admin-panel
 - No DUGA migration has been applied.
 - No DUGA API or Control Center exists.
 - No AI service credentials or automatic DACE execution exist.
+
+
+## Preview D1 preflight handoff
+A read-only diagnostic script is available at `governance/schemas/d1-preview-preflight.sql`. Run each SELECT separately in the Cloudflare D1 Console against the Preview database only. Share the outputs for the SQLite version, sqlite_master table/index/trigger listings, migration/meta table discovery, and `PRAGMA table_info('users')`. Do not execute the schema draft or any migration yet. The script contains SELECT/PRAGMA inspection only and makes no database changes.
