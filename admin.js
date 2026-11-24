@@ -65,6 +65,7 @@ let adminMenuCloseTimer=null;
 function openAdminMenu(open){
  const isOpen=Boolean(open),backdrop=$("#adminSidebarBackdrop"),sidebar=$("#adminSidebar");
  clearTimeout(adminMenuCloseTimer);
+ if(window.matchMedia("(max-width:760px)").matches&&window.DRMMotion){window.DRMMotion.drawer({sidebar,backdrop,toggle:$("#adminMenuToggle"),open:isOpen});return;}
  if(sidebar){sidebar.classList.remove("mobile-open");void sidebar.offsetWidth;}
  document.body.classList.toggle("sidebar-open",isOpen);
  if(sidebar&&isOpen&&window.matchMedia("(max-width:760px)").matches)sidebar.classList.add("mobile-open");
