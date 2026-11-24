@@ -69,3 +69,17 @@ Run the migrations once per database in the documented order: `0001`, `0002`, `0
 ## Site identity
 
 The public-facing product name is DRM- Premium. The current UI still has a few legacy FRAME labels that will be updated in the public-site redesign.
+
+## Governance foundation (DUGA)
+
+DUGA is being introduced as a separate governance layer. Its initial Foundation scope is documentation and version-controlled governance metadata only; it does not replace the existing Owner/Admin/User authorization or become a runtime dependency of the public website.
+
+- [DUGA architecture](docs/DUGA-SPEC.md)
+- [DUGA implementation plan](docs/DUGA-IMPLEMENTATION-PLAN.md)
+- [Repository audit baseline](docs/DUGA-REPOSITORY-BASELINE.md)
+- [System registry](governance/registry/systems.json)
+- [Ownership and roles](governance/ownership/)
+- [Dependency baseline](governance/dependencies/systems.json)
+- [AI onboarding entry point](docs/AI-CONTINUITY/MASTER-ONBOARDING.md)
+
+The D1 governance schema, APIs, Control Center UI and executable Deep Cleaner are not implemented by this foundation stage. Keep Preview and Production databases isolated; do not apply a governance migration to Production without a separately approved change.
