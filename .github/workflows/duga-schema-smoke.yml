@@ -39,3 +39,4 @@ jobs:
         run: |
           python scripts/test-duga-schema.py
           python scripts/validate-duga-registries.py
+          python scripts/test-duga-validator.py
