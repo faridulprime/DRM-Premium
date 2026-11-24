@@ -30,4 +30,11 @@
   --ducs-shell-create-hover-bg: #263747;
   --ducs-shell-sidebar-link-hover-bg: #272727;
   --ducs-shell-logout-hover-bg: #272727;
+
+  /* Profile avatar and save actions. */
+  --ducs-profile-upload-bg: #1c3225;
+  --ducs-profile-upload-border: #4a7057;
+  --ducs-profile-save-bg: rgba(131, 239, 165, .13);
+  --ducs-profile-save-hover-bg: rgba(131, 239, 165, .22);
+  --ducs-profile-save-border: #83efa5;
 }
