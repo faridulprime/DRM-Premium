@@ -46,4 +46,6 @@
   --ducs-home-header-field-placeholder: #393633;
   --ducs-home-editor-field-border: #a8b9cc;
   --ducs-home-builder-field-border: #cbd5df;
+  --ducs-home-register-field-border: #383838;
+  --ducs-home-register-focus-ring: rgba(255,255,255,.045);
 }
