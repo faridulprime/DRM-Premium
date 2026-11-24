@@ -18,18 +18,18 @@ Run this plan only against a newly created, disposable D1 database with no produ
 ## 1. Prepare a disposable test database
 
 1. Create a new D1 database through the Cloudflare dashboard or Wrangler, explicitly named for disposable DUGA acceptance testing.
-2. Apply only the existing application schema needed to provide the `users` parent table, using a reviewed copy of the app schema in this disposable database.
-3. Create one or more clearly synthetic test users through the disposable database's known application schema. Do not guess the required columns in `users`.
-4. Inspect the disposable database's migration history and confirm the application schema is the expected baseline.
-5. Save the database name/ID, SQLite version, schema baseline and test timestamp with the test results.
+2. This database was confirmed empty except for Cloudflare's internal `_cf_KV` table. Do not import the application's real users schema or data.
+3. Use the isolated test fixture `scripts/duga-d1-disposable-acceptance-fixture.sql`. It creates only a minimal synthetic `users(id)` parent table and then applies the reviewed DUGA schema draft.
+4. The fixture is test-only and must be run only after visually verifying the exact database name and ID in the Cloudflare dashboard. It must never be run against Production or shared Preview.
+5. Save the database name/ID, SQLite version, fixture commit, schema baseline and test timestamp with the test results.
 
 If a clean disposable database cannot be provisioned, stop. Do not substitute Preview or Production.
 
 ## 2. Apply the DUGA schema draft manually
 
-Use the exact contents of `governance/schemas/d1-operational-schema.sql` from the reviewed commit. It is a design draft, not a migration.
+Use `scripts/duga-d1-disposable-acceptance-fixture.sql` from the review branch. It contains a minimal synthetic `users(id)` parent followed by the exact reviewed contents of `governance/schemas/d1-operational-schema.sql`.
 
-- Apply it only to the disposable database.
+- Apply it only to the verified disposable database.
 - Record whether each CREATE TABLE, CREATE INDEX and CREATE TRIGGER statement succeeds.
 - If any statement fails, stop and preserve the exact error and database state for diagnosis.
 - Do not convert the draft into `migrations/0009_...` during this test.
