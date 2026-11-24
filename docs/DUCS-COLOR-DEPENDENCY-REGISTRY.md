@@ -1,4 +1,4 @@
-# DUCS Color Dependency Registry — v0.2.1
+# DUCS Color Dependency Registry — v0.2.2
 
 This registry links page/component color responsibilities to semantic tokens and source stylesheets. It is a migration map, not a claim that every listed component has already been converted.
 
@@ -9,7 +9,7 @@ This registry links page/component color responsibilities to semantic tokens and
 | Shared shell and navigation | `theme.css` | `--ducs-page-*`, `--ducs-bg-*`, `--ducs-surface-*`, `--ducs-text-*`, `--ducs-border-*`, `--ducs-icon-*` | High |
 | Homepage content and cards | `styles.css`, `theme.css` | `--ducs-card-*`, `--ducs-action-*`, `--ducs-status-*`, page accent tokens | High |
 | Admin dashboard and forms | `admin.css`, `theme.css`, `live-users.css` | button, field, badge, status, table, dialog tokens | High |
-| Live Users presence and restrictions | `live-users.css` | status success/danger/warning, badge, surface, border, overlay tokens | High |
+| Live Users presence and restrictions | `live-users.css` | `--ducs-live-*` surface, field, status, border, and overlay aliases; remaining status/badge tokens | High (partial migration) |
 | Upload Studio editor and preview | `upload-studio.css` | creative page tokens, field, button, card, status, progress tokens | High |
 | Profile and avatar setup | `profile.css` | profile page tokens, field, action, status, avatar surface tokens | Medium |
 | Motion overlays and backdrops | `theme.css`, page stylesheets | `--ducs-overlay-*`, state tokens | Medium |
@@ -30,6 +30,8 @@ This registry links page/component color responsibilities to semantic tokens and
 - Initial page palette mapping: added as descriptive CSS custom properties.
 - Per-file source inventory: added.
 - Shared shell root palette alias migration: complete; individual shared shell components still pending.
-- Component token aliases are now separated into `components/buttons.css`, `fields.css`, `badges.css`, `surfaces.css`, and `feedback.css`; page CSS consumers remain pending.
-- Button, field, badge, card, dialog, table, chart, and notification migrations: pending.
+- Component token aliases are separated into `components/buttons.css`, `fields.css`, `badges.css`, `surfaces.css`, and `feedback.css`.
+- Live Users first-pass migration: page/panel surface, search-field, hover/active surface, overlay, online state, and restriction-trigger color aliases are consumed by `live-users.css`; exact legacy values are retained.
+- Live Users: surfaces, search field, online badge and restriction-trigger colors partially migrated.
+- Remaining drawer/dialog internals, shared shell components, Admin forms, homepage cards, Upload Studio, Profile, tables, charts, and notifications: pending.
 - Visual regression and full contrast audit: pending.
