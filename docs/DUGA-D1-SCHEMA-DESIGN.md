@@ -93,3 +93,11 @@ All endpoints are proposals. No route is live as a result of this document.
 
 ## 10. Explicit non-goals
 This document does not create a migration, API, UI, AI credential system, executable DACE, production deployment or database change. Those require a separate reviewed implementation change.
+
+
+## 11. Local SQL prototype review — 2026-11-25
+The schema draft was syntax-tested in a local SQLite 3.46.1 in-memory database with a minimal users parent table. Eight DUGA tables, 16 indexes and two append-only audit triggers were created successfully. Behavioral probes passed for duplicate Platform Owner prevention, invalid human/AI actor combinations, audit UPDATE/DELETE rejection, referenced-user deletion restriction and malformed JSON rejection.
+
+The first probe exposed a role-kind/scope gap: the original draft did not prevent an AI principal from being assigned a human-only role. The SQL draft was tightened with CHECK constraints matching governance/ownership/roles.json: platform-owner, governance-manager and system-owner are human roles; ai-maintainer and independent-ai-auditor are AI roles; platform-wide roles use platform scope and system roles use system scope. Follow-up probes passed for AI-as-platform-owner rejection, wrong-scope AI maintainer rejection, human-as-AI-auditor rejection and a valid system-scoped AI maintainer.
+
+Limitations: this was a local SQLite syntax/constraint test, not a Cloudflare D1 test. It does not validate Cloudflare's deployed SQLite runtime, D1 foreign-key settings, D1 batch semantics, migration history, API authorization, or regression compatibility with the live Preview database. No D1 database was accessed or modified.
