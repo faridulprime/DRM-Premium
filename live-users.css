@@ -274,3 +274,11 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
  .live-layout{padding-inline:8px}
  .live-heading{padding-inline:12px}
 }
+
+
+/* Render stored account profile photos while keeping initials as a fallback. */
+.live-avatar{isolation:isolate}
+.live-avatar img{position:absolute;inset:0;z-index:1;display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;background:#303030}
+.live-presence-dot{z-index:2}
+.live-drawer-avatar{position:relative;overflow:hidden;isolation:isolate}
+.live-drawer-avatar img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;border-radius:50%;background:#292929}
