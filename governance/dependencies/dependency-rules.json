@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    "Every dependency edge must include type and evidence.",
+    "Distinguish runtime-import, asset-reference, data-contract, boundary-coordination, and governance-documentation edges.",
+    "Never infer a runtime dependency from an ownership-boundary statement alone.",
+    "Unknown or unverified edges must be labelled unknown rather than guessed.",
+    "A file ownership change requires impact review of all known consumers.",
+    "Dependency inventory is incomplete until static references and relevant runtime evidence have been assessed."
+  ]
+}
