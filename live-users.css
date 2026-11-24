@@ -192,3 +192,29 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-role.role-badge{padding:2px 7px;font-size:9px;letter-spacing:.015em}
 .live-role.role-badge svg{flex:none}
 .live-drawer-chip.role-badge{padding:5px 8px;font-size:9px}
+
+
+/* Mobile Live Users: fluid panel and compact, non-overflowing topbar. */
+@media(max-width:760px){
+ body.live-users-page,body.live-users-page.sidebar-open{width:100%;max-width:100%;padding:58px 0 0!important;overflow-x:clip}
+ .live-topbar{left:0!important;right:0!important;width:100%;height:58px!important;min-height:58px!important;flex-wrap:nowrap!important;padding:0 10px!important;gap:8px!important}
+ .live-topbar .brand{min-width:0;gap:5px}
+ .live-topbar .brand-word{font-size:14px!important}
+ .live-topbar .brand-admin-suffix{font-size:10px!important;padding:2px 4px}
+ .live-topbar .live-back-link{flex:0 1 auto;min-width:0;margin-left:auto;font-size:10px;white-space:nowrap}
+ .live-layout{display:block;width:100%;max-width:100%;min-height:0;margin:0;padding:16px 10px 24px}
+ .live-panel{width:100%;min-width:0;min-height:min(620px,calc(100dvh - 100px));max-height:none}
+ .live-heading{padding:18px 14px 14px}
+ .live-title-line{gap:7px;flex-wrap:wrap}
+ .live-title-line h1{font-size:21px}
+ .live-banned-trigger{font-size:10px;padding:5px 8px}
+ .live-search{margin-inline:12px}
+ .live-list-meta{padding-inline:14px}
+ .live-list{min-width:0}
+ .live-user-drawer,.live-restrictions-modal{left:50%!important;top:50%!important;width:min(460px,calc(100vw - 24px));max-height:88dvh}
+}
+@media(max-width:360px){
+ .live-topbar .brand-admin-suffix{display:none}
+ .live-topbar .live-back-link{font-size:9px}
+ .live-title-line h1{font-size:19px}
+}
