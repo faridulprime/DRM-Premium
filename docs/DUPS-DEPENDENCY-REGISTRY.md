@@ -50,6 +50,12 @@ These totals are lexical declaration counts, not a claim that 60 distinct compon
 - Stacking-context inspection and browser visual validation: pending.
 - Keyboard, zoom, mobile safe-area, and RTL checks: pending.
 
+## Phase 1 migration note — shared shell stacking
+
+The first consumer migration is intentionally limited to stacking order in `theme.css`. It replaces audited z-index literals with DUPS layer tokens while preserving their original numeric fallback values. This includes the page header, category bar, desktop and mobile sidebar, sidebar backdrop, mobile homepage header/sidebar/backdrop, and Profile drawer/backdrop. Position modes and inset coordinates remain unchanged in this phase. No layout, color, or motion declarations were changed as part of this migration.
+
+This is a source-level migration only. Actual stacking-context behavior still requires browser inspection because z-index is scoped by ancestor stacking contexts.
+
 ## Migration rule
 
 Do not globally replace numeric z-index or offset values. For each component family: inspect the selector and ancestor stacking contexts, establish the intended containing block, map only semantically equivalent values, preserve rendered behavior, and validate all consuming pages.
