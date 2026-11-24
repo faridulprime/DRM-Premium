@@ -655,3 +655,14 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
 /* Final typography pass: shared header controls */
 .topbar .yt-create-button{font-size:13px}
 .topbar .brand-admin-suffix{font-size:12px}
+
+
+/* Universal account-role badge system: role colors are semantic, not page-status colors. */
+.role-badge,.dash-role.role-badge,.pro-badge.role-badge,.live-role.role-badge,.live-drawer-chip.role-badge,.studio-role-badge.role-badge{
+ display:inline-flex;align-items:center;justify-content:center;gap:6px;width:max-content;max-width:100%;
+ padding:4px 8px;border:1px solid transparent;border-radius:999px;font-size:11px;line-height:1.2;
+ font-weight:650;letter-spacing:.035em;white-space:nowrap;text-shadow:none;box-shadow:none;
+}
+.role-badge--owner{color:#d8b4fe!important;background:rgba(168,85,247,.14)!important;border-color:rgba(192,132,252,.42)!important}
+.role-badge--admin{color:#86efac!important;background:rgba(34,197,94,.12)!important;border-color:rgba(74,222,128,.38)!important}
+.role-badge--member{color:#f4f6fa!important;background:rgba(255,255,255,.075)!important;border-color:rgba(255,255,255,.28)!important}
