@@ -51,13 +51,6 @@
     <a class="side-link" href="#about"><span class="side-icon">ⓘ</span><span>About</span></a>
     <a class="side-link" id="sidebarUpload" href="/upload-studio.html" hidden><span class="side-icon">＋</span><span>Upload</span></a>
   </div>
-  <div class="sidebar-logout-area" id="sidebarLogoutArea" hidden>
-    <p class="sidebar-logout-status" id="sidebarLogoutStatus" role="status" aria-live="polite"></p>
-    <button class="sidebar-logout-button" id="sidebarLogoutButton" type="button">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
-      <span>Logout</span>
-    </button>
-  </div>
 </aside>
 <div id="profileDrawerBackdrop" class="profile-drawer-backdrop" hidden></div>
 <aside id="profileDrawer" class="profile-drawer" aria-label="Profile menu" aria-hidden="true">
@@ -75,6 +68,13 @@
   <div class="profile-drawer-detail"><span>EMAIL</span><p id="drawerEmail">—</p></div>
  </section>
  <div class="profile-drawer-footer"><span>DRM– Premium</span><span>ACCOUNT PROFILE</span></div>
+ <div class="sidebar-logout-area profile-drawer-logout-area" id="sidebarLogoutArea" hidden>
+  <p class="sidebar-logout-status" id="sidebarLogoutStatus" role="status" aria-live="polite"></p>
+  <button class="sidebar-logout-button profile-drawer-logout-button" id="sidebarLogoutButton" type="button">
+   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
+   <span>Logout</span>
+  </button>
+ </div>
 </aside>
 <nav class="category-bar" aria-label="ভিডিও ক্যাটাগরি"><div id="categoryTabs" class="category-tabs"><button class="category-chip active" type="button" data-category="all">All</button></div></nav> 
 <main id="home">
