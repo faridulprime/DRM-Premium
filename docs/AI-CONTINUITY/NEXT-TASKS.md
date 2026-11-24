@@ -10,7 +10,7 @@ Target branch: feature/full-admin-panel
 - API authorization and route contract draft (not implemented).
 
 ## Next implementation sequence
-1. Review D1 design, especially append-only audit behavior, role assignment scope, state transitions and AI principal attribution.
+1. Review D1 design, especially append-only audit behavior, role assignment scope, state transitions and AI principal attribution. Local SQLite syntax/constraint probes passed; see docs/DUGA-D1-SCHEMA-DESIGN.md.
 2. Confirm actual Preview D1 applied migration history; do not infer from migration filenames.
 3. Create a disposable Preview D1 database or verified backup before testing a candidate migration.
 4. Convert the approved SQL draft into a uniquely named additive migration only after review.
