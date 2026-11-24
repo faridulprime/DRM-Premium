@@ -21,6 +21,14 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 - Closed the known CAS/audit gap at the design and local-test level: request rows store `last_transition_id`; audit rows store a unique nullable `transition_id`; conditional `INSERT ... SELECT` appends only for the exact successful state version. Local SQLite tests cover success, stale writer, replay, token reuse and audit failure rollback.
 - Cloudflare Pages automatically published a branch Preview. This does not modify D1 and is not a Production deployment.
 
+## Disposable D1 acceptance — next external step
+
+- The CAS + conditional audit token pattern is now specified in `docs/DUGA-CAS-AUDIT-PATTERN.md` and locally tested.
+- The D1 acceptance plan has been updated to test success, stale writer, replay, token reuse, audit-failure rollback and two competing writers on an isolated D1 database.
+- No Cloudflare D1 tools are connected to this session; no database or Worker has been created/deployed.
+- Required: user provisions a newly created disposable D1 database (not existing Preview or Production), confirms its database name/ID and supplies the reviewed `users` schema baseline or a synthetic test-user ID. Then bind it only to a separate acceptance Worker and execute the plan.
+- Do not create billable resources, change Pages bindings, deploy a worker, apply a migration or use shared Preview/Production as a substitute.
+
 ## Immediate blockers / required evidence
 1. D1 acceptance has not been run. A newly created disposable D1 database and explicit authorization to create/use that resource are required; do not substitute shared Preview or Production.
 2. The API concurrency contract has a known unresolved edge case: a zero-row conditional UPDATE is not a SQL error, so a later audit INSERT in the same transactional batch may still execute. Do not assume batch transactionality solves this.
