@@ -49,12 +49,16 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 A state transition must be a compare-and-swap operation, not a read-then-unconditional-write:
 - Read `status`, `state_version` and `implementation_commit_sha`.
 - Validate the transition matrix, active actor assignment, risk gates and commit-bound evidence.
-- Update with `WHERE id = ? AND state_version = ? AND status = ?`, incrementing `state_version`.
-- Require one changed row. If zero rows changed, return a conflict and do not append an accepted/approved event. Cloudflare documents each D1 statement result with `meta.changes`; inspect the conditional UPDATE's result entry, not aggregate batch totals.
-- Insert the audit event in the same D1 batch/transaction as the state update. A failed audit insert must roll back the state change.
+- Generate a fresh, cryptographically random transition token on the trusted server. Never accept the token from the browser.
+- Execute a conditional UPDATE that checks `id`, expected `state_version`, expected `status`, and that the token has never appeared in `duga_audit_events.transition_id`. The update increments `state_version` and stores the token in `duga_change_requests.last_transition_id`.
+- In the same D1 batch, use `INSERT ... SELECT` to create the audit event only when the request row now has that exact token and incremented version, and no audit row already has the token.
+- Require the conditional UPDATE's individual `meta.changes` to equal 1 and the audit INSERT's individual `meta.changes` to equal 1 before reporting success. Zero means conflict/replay; do not report success.
+- A unique partial index on non-null audit `transition_id` prevents duplicate audit events for a token. If the audit INSERT fails, D1 batch transactionality must roll back the state update.
 - Treat evidence rows as immutable history. If `implementation_commit_sha` changes, all prior review, approval and validation evidence is stale until re-recorded against the new commit.
 
-The local SQLite test suite models a stale second writer and verifies rollback when an audit insert fails. Cloudflare's current D1 docs state that `batch()` is transactional and rolls back the sequence on statement failure. A disposable-Preview test remains necessary for this schema's concrete statement results and exactly-one-row detection. D1's documented `D1Result.meta.changes` is the row-change count for each `run()`/`batch()` statement result. References: https://developers.cloudflare.com/d1/worker-api/d1-database/ and https://developers.cloudflare.com/d1/worker-api/return-object/.
+The reason for the conditional audit INSERT is important: a zero-row UPDATE is not itself a SQL error. Transactional batch behavior alone does not stop a later unconditional INSERT. The proposed token pattern is documented in `docs/DUGA-CAS-AUDIT-PATTERN.md` and modeled by local SQLite tests for success, stale writer, replay, token reuse and audit-failure rollback. These local tests are not Cloudflare D1 evidence. The exact D1 statement results, concurrency serialization and rollback behavior still require the disposable-D1 acceptance plan.
+
+References: https://developers.cloudflare.com/d1/worker-api/d1-database/ and https://developers.cloudflare.com/d1/worker-api/return-object/.
 
 ## Security invariants
 - Never accept a browser-supplied role, approver identity, AI identity, implementation SHA or risk downgrade as authoritative.
@@ -62,7 +66,7 @@ The local SQLite test suite models a stale second writer and verifies rollback w
 - Validate Git refs canonically and verify both source and target branches; do not rely on rejecting only the literal `main`.
 - A changed implementation commit invalidates earlier review/approval/validation gates.
 - Use optimistic state_version and conditional UPDATE for state transitions.
-- The conditional UPDATE and audit-event INSERT must execute in one D1 batch/transaction; require exactly one changed request row, and return a conflict without recording success if the version/status predicate matches zero rows. Cloudflare documents batch execution as transactional with rollback on any failed statement; verify the exact D1 result metadata used for the row-count check in disposable Preview.
+- The conditional UPDATE and token-guarded audit INSERT must execute in one D1 batch/transaction. Require one changed request row and one inserted audit row; the unique transition token blocks replay and stale attempts must create no audit event. Verify D1 result metadata and rollback behavior in disposable D1.
 - Before accepting a change, compare the current implementation commit with every required review, approval and successful validation commit. A mismatch makes that evidence stale even though the historical row remains stored.
 - Enforce actor/reviewer separation in application logic and, where practical, database triggers.
 - Keep audit actor references under ON DELETE RESTRICT.
