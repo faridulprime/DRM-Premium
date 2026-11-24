@@ -6,4 +6,18 @@
   --ducs-tooltip-bg: var(--ducs-surface-raised);
   --ducs-tooltip-text: var(--ducs-text-primary);
   --ducs-dialog-backdrop: var(--ducs-overlay-scrim);
+
+  /* Live Users graphite surfaces — exact legacy values preserved. */
+  --ducs-live-page-bg: #0d0d0d;
+  --ducs-live-surface: #101010;
+  --ducs-live-surface-raised: #171717;
+  --ducs-live-surface-hover: #1c1c1c;
+  --ducs-live-surface-active: #202020;
+  --ducs-live-border: #292929;
+  --ducs-live-border-strong: #383838;
+  --ducs-live-overlay: rgba(0, 0, 0, .58);
+  --ducs-live-text: #ededed;
+  --ducs-live-text-secondary: #aaa;
+  --ducs-live-text-muted: #777;
+  --ducs-live-text-subtle: #858585;
 }
