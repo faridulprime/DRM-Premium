@@ -3,8 +3,8 @@
 body.home-page {
   --ducs-page-bg: var(--ducs-neutral-950);
   --ducs-page-surface: var(--ducs-neutral-900);
-  --ducs-page-text: var(--ducs-neutral-100);
-  --ducs-page-muted: var(--ducs-neutral-400);
+  --ducs-page-text: var(--ducs-neutral-75);
+  --ducs-page-muted: var(--ducs-neutral-450);
   --ducs-page-border: var(--ducs-neutral-800);
   --ducs-page-accent: var(--ducs-brand-blue-400);
   --ducs-page-brand-accent: #3ea6ff;
@@ -26,8 +26,8 @@ body.admin-dashboard-state {
 body.live-users-page {
   --ducs-page-bg: var(--ducs-neutral-975);
   --ducs-page-surface: var(--ducs-neutral-900);
-  --ducs-page-text: var(--ducs-neutral-100);
-  --ducs-page-muted: var(--ducs-neutral-400);
+  --ducs-page-text: var(--ducs-neutral-75);
+  --ducs-page-muted: var(--ducs-neutral-450);
   --ducs-page-border: #303030;
   --ducs-page-accent: #3ea6ff;
   --ducs-page-brand-accent: #3ea6ff;
