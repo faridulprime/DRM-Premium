@@ -96,6 +96,11 @@
   --ducs-profile-topbar-bg: rgba(13, 13, 13, .9);
   --ducs-profile-topbar-border: #242424;
   --ducs-profile-card-shadow: #0005;
+  --ducs-profile-muted: #929292;
+  --ducs-profile-heading: #f3f3f3;
+  --ducs-profile-card-border: #303030;
+  --ducs-profile-avatar-border: #444;
+  --ducs-profile-label: #d8d8d8;
 
   /* Upload Studio graphite creator workspace. */
   --ducs-upload-page-bg: #0d0d0d;
