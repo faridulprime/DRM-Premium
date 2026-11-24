@@ -46,4 +46,11 @@
   --ducs-shell-admin-badge-bg: rgba(131, 239, 165, .10);
   --ducs-shell-admin-badge-border: rgba(131, 239, 165, .2);
   --ducs-shell-category-chip-active-text: #0f0f0f;
+
+  /* Profile identity and action text. */
+  --ducs-profile-brand-text: #f1f1f1;
+  --ducs-profile-brand-accent: #8dbbfa;
+  --ducs-profile-avatar-text: #c8d3df;
+  --ducs-profile-upload-text: #a9f3bd;
+  --ducs-profile-save-text: #a5f2bd;
 }
