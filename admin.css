@@ -224,3 +224,37 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .admin-main .panel,.admin-main .gate-panel,.admin-main .overview-panel{padding:13px 11px}
  .admin-main .overview-metric strong{font-size:22px}
 }
+
+
+/* Admin mobile header: single identity badge and a full-width usable search row. */
+@media(max-width:760px){
+ body.admin-gate-state,body.admin-dashboard-state{padding:108px 0 0!important}
+ .admin-topbar{
+  display:grid!important;
+  grid-template-columns:44px minmax(0,1fr);
+  grid-template-rows:48px 44px;
+  align-content:start;align-items:center;
+  gap:7px 9px!important;
+  width:100%;height:auto!important;min-height:106px!important;
+  padding:6px 10px 8px!important;
+  box-sizing:border-box;overflow:visible;
+ }
+ .admin-topbar>#adminMenuToggle{grid-column:1;grid-row:1}
+ .admin-topbar>.brand{grid-column:2;grid-row:1;min-width:0;max-width:100%}
+ .admin-topbar .brand-word{font-size:15px!important;white-space:nowrap}
+ .admin-topbar .brand-admin-suffix{display:inline-flex!important}
+ .admin-topbar>#adminHeaderAccount{display:none!important}
+ .admin-topbar .admin-search{
+  grid-column:1/-1;grid-row:2;order:initial!important;
+  display:flex!important;flex:0 0 auto!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  height:44px!important;min-height:44px!important;margin:0!important;
+ }
+ .admin-topbar .admin-search input{display:block!important;flex:1 1 auto;min-width:0;width:100%;font-size:16px!important;padding:0 12px}
+ .admin-topbar .admin-search button{display:grid!important;flex:0 0 44px!important;width:44px!important;min-width:44px;height:44px}
+ .admin-category-bar{top:106px!important;left:0!important;right:0!important}
+}
+@media(max-width:380px){
+ .admin-topbar{grid-template-columns:42px minmax(0,1fr);padding-inline:8px!important}
+ .admin-topbar .brand-word{font-size:14px!important}
+}
