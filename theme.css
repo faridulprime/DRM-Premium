@@ -829,3 +829,20 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
 @media(max-width:760px) and (prefers-reduced-motion:reduce){
  .yt-sidebar.mobile-open{animation:none!important}
 }
+
+
+/* One shared mobile entrance animation for every universal drawer state.
+   Pages use either .drawer-open or .sidebar-open; both must trigger identical motion. */
+@media(max-width:760px){
+ body.drawer-open .yt-sidebar,
+ body.sidebar-open .yt-sidebar,
+ .yt-sidebar.mobile-open{
+  animation:mobileUniversalDrawerEnter 700ms cubic-bezier(.16,1,.3,1) both!important;
+  will-change:transform,opacity;
+ }
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){
+ body.drawer-open .yt-sidebar,
+ body.sidebar-open .yt-sidebar,
+ .yt-sidebar.mobile-open{animation:none!important}
+}
