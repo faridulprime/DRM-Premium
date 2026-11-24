@@ -64,4 +64,26 @@
   --ducs-admin-login-button-bg: #242424;
   --ducs-admin-login-button-text: #eee;
   --ducs-admin-login-button-hover-bg: #303030;
+
+  /* Shared shell surfaces — exact existing theme.css colors preserved. */
+  --ducs-shell-header-bg: #0f0f0f;
+  --ducs-shell-header-border: #202020;
+  --ducs-shell-sidebar-bg: #0f0f0f;
+  --ducs-shell-category-bg: #0f0f0f;
+  --ducs-shell-category-border: #202020;
+  --ducs-shell-control-hover-bg: #272727;
+  --ducs-shell-control-active-bg: #3a3a3a;
+  --ducs-shell-search-bg: #121212;
+  --ducs-shell-search-border: #303030;
+  --ducs-shell-search-action-bg: #222;
+  --ducs-shell-search-action-hover-bg: #303030;
+  --ducs-shell-auth-field-bg: #121212;
+  --ducs-shell-auth-field-focus-bg: #161616;
+  --ducs-shell-status-bg: #272727;
+  --ducs-shell-status-border: #444;
+  --ducs-shell-category-chip-bg: #272727;
+  --ducs-shell-category-chip-hover-bg: #3f3f3f;
+  --ducs-shell-category-chip-active-bg: #f1f1f1;
+  --ducs-shell-logout-divider: #303030;
+  --ducs-shell-logout-hover-bg: #272727;
 }
