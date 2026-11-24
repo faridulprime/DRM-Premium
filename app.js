@@ -148,18 +148,25 @@ function openAccountMenu(open){
  const sidebar=$("#ytSidebar"),backdrop=$("#sidebarBackdrop"),toggle=$("#menuToggle");if(!sidebar||!toggle)return;
  const mobile=window.matchMedia("(max-width: 760px)").matches,state=Boolean(open);
  clearTimeout(accountMenuCloseTimer);
+ /* Match Admin's state transition: reset to the closed frame, force layout,
+    then apply the same sidebar-open trigger before adding the mobile overlay state. */
  sidebar.classList.remove("mobile-open");
+ document.body.classList.remove("drawer-open");
  void sidebar.offsetWidth;
- document.body.classList.remove("drawer-open","sidebar-open");
- if(backdrop){backdrop.classList.remove("is-closing");if(state&&mobile)backdrop.hidden=false;}
- if(state){
-  if(mobile){sidebar.classList.add("mobile-open");document.body.classList.add("drawer-open");}
-  else document.body.classList.add("sidebar-open");
- }else if(backdrop&&!backdrop.hidden){
+ document.body.classList.toggle("sidebar-open",state);
+ if(backdrop){
+  backdrop.classList.remove("is-closing");
+  if(state&&mobile){backdrop.hidden=false;backdrop.style.opacity="0";void backdrop.offsetWidth;backdrop.style.opacity="";}
+ }
+ if(state&&mobile){
+  document.body.classList.add("drawer-open");
+  sidebar.classList.add("mobile-open");
+ }else if(!state&&backdrop&&!backdrop.hidden){
   backdrop.classList.add("is-closing");
   accountMenuCloseTimer=setTimeout(()=>{backdrop.hidden=true;backdrop.classList.remove("is-closing");},720);
  }
- toggle.setAttribute("aria-expanded",String(state));toggle.setAttribute("aria-label",state?"মেনু বন্ধ করুন":"মেনু খুলুন");
+ toggle.setAttribute("aria-expanded",String(state));
+ toggle.setAttribute("aria-label",state?"মেনু বন্ধ করুন":"মেনু খুলুন");
 }
 let suspensionPoll=null,suspensionClock=null,suspensionExpiry=0,suspensionStarted=0;
 function renderSuspensionClock(){
