@@ -63,9 +63,11 @@ $("#categoryForm").onsubmit=async e=>{e.preventDefault();const name=new FormData
 $("#settingsForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={};for(const el of f.elements)if(el.name)body[el.name]=el.type==="checkbox"?(el.checked?"true":"false"):el.value;try{await api("admin/settings",{method:"PUT",body:JSON.stringify(body)});await refresh();notice("ওয়েবসাইটের সেটিংস সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
 let adminMenuCloseTimer=null;
 function openAdminMenu(open){
- const isOpen=Boolean(open),backdrop=$("#adminSidebarBackdrop");
+ const isOpen=Boolean(open),backdrop=$("#adminSidebarBackdrop"),sidebar=$("#adminSidebar");
  clearTimeout(adminMenuCloseTimer);
+ if(sidebar){sidebar.classList.remove("mobile-open");void sidebar.offsetWidth;}
  document.body.classList.toggle("sidebar-open",isOpen);
+ if(sidebar&&isOpen&&window.matchMedia("(max-width:760px)").matches)sidebar.classList.add("mobile-open");
  $("#adminMenuToggle").setAttribute("aria-expanded",String(isOpen));
  $("#adminMenuToggle").setAttribute("aria-label",isOpen?"মেনু বন্ধ করুন":"মেনু খুলুন");
  if(backdrop){
