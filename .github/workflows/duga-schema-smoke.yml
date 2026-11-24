@@ -6,6 +6,9 @@ on:
       - feature/full-admin-panel
     paths:
       - "governance/schemas/d1-operational-schema.sql"
+      - "governance/ownership/roles.json"
+      - "governance/dependencies/systems.json"
+      - "governance/dependencies/dependency-rules.json"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-registries.py"
       - "scripts/validate-duga-registries.py"
