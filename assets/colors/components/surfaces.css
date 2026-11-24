@@ -119,6 +119,9 @@
 
   /* Homepage editorial content surfaces. */
   --ducs-home-page-bg: #f5f0e9;
+  --ducs-home-page-border: #d9d1c7;
+  --ducs-home-status-border: #cfc7bd;
+  --ducs-home-secondary-border: #77716a;
   --ducs-home-header-bg: rgba(249, 245, 239, .97);
   --ducs-home-hero-bg: #f8f3ec;
   --ducs-home-card-bg: #fffdfa;
