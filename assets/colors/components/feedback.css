@@ -24,4 +24,8 @@
   --ducs-profile-status-success: #a8d9b3;
   --ducs-profile-status-error: #ff9b9b;
   --ducs-profile-field-focus-ring: #83efa510;
+
+  /* Upload Studio validation and overlays. */
+  --ducs-upload-notice-error: #f0aaaa;
+  --ducs-upload-dialog-scrim: #000b;
 }
