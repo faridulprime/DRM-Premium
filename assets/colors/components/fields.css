@@ -26,4 +26,11 @@
   --ducs-shell-auth-field-focus-border: #8ab4f8;
   --ducs-shell-auth-field-icon: #aaa;
   --ducs-shell-auth-placeholder: #aaa;
+
+  /* Profile form fields. */
+  --ducs-profile-field-bg: #0c0c0c;
+  --ducs-profile-field-text: #eee;
+  --ducs-profile-field-border: #383838;
+  --ducs-profile-field-focus-border: #718c7a;
+  --ducs-profile-field-placeholder: #666;
 }
