@@ -1,0 +1,46 @@
+name: DUGA schema smoke test
+
+on:
+  push:
+    branches:
+      - feature/full-admin-panel
+    paths:
+      - "governance/schemas/d1-operational-schema.sql"
+      - "governance/ownership/roles.json"
+      - "governance/dependencies/systems.json"
+      - "governance/dependencies/dependency-rules.json"
+      - "scripts/test-duga-schema.py"
+      - "scripts/validate-duga-registries.py"
+      - ".github/workflows/duga-schema-smoke.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "governance/schemas/d1-operational-schema.sql"
+      - "governance/ownership/roles.json"
+      - "governance/dependencies/systems.json"
+      - "governance/dependencies/dependency-rules.json"
+      - "scripts/test-duga-schema.py"
+      - "scripts/validate-duga-registries.py"
+      - ".github/workflows/duga-schema-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sqlite-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run local schema smoke tests
+        run: |
+          python scripts/test-duga-schema.py
+          python scripts/validate-duga-registries.py
