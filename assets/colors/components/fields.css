@@ -16,6 +16,7 @@
   /* Admin dashboard fields — legacy colors preserved. */
   --ducs-admin-field-border: #3f3f3f;
   --ducs-admin-field-bg: #121212;
+  --ducs-admin-login-label: #aaa;
   --ducs-admin-login-field-border: #303030;
   --ducs-admin-login-focus-border: #555;
 }
