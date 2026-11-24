@@ -32,7 +32,7 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 ## 5. Integrity and constraints
 - Use TEXT UUIDs for externally referenced records.
 - Use integer Unix epoch seconds consistently, matching existing API patterns.
-- Use CHECK constraints for enumerations, non-empty identifiers and JSON validity where supported.
+- Use CHECK constraints for enumerations, trimmed non-empty identifiers/required text and JSON syntax validity where supported; reject whitespace-only rollback plans, principals and evidence identifiers.
 - Use foreign keys to existing users for human identities; use ON DELETE RESTRICT for governance actors/approvers so deleting an account cannot erase accountability history.
 - Use XOR CHECK constraints for human vs AI actor identity.
 - Use scoped unique indexes for active assignments; enforce at most one active Platform Owner and one active human System Owner per system. Revoked assignments remain as history and permit replacement.
@@ -112,6 +112,7 @@ The schema was reviewed against the state-machine and authorization requirements
 ### SQL-level checks now covered by local probes
 - Active assignment cardinality: at most one active Platform Owner globally and one active human System Owner per system; revocation permits reassignment.
 - Temporal consistency: assignment revocation ordering, validation queued/running/completed timestamp shapes, job lease/status consistency, successful job result requirement, and update timestamp ordering.
+- Required text/identity values reject whitespace-only strings, including rollback plan and AI principal IDs.
 - Change request rejects unknown risk values, invalid human/AI requester combinations and the literal `main` source branch.
 - Review rows reject mismatched reviewer type and review type (for example, an AI principal cannot submit a `human_review`).
 - Approval rows reject role labels outside `system-owner` and `platform-owner`.
