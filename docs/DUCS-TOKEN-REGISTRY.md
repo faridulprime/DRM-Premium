@@ -3,10 +3,10 @@
 ## Primitive tokens
 | Family | Tokens |
 |---|---|
-| Neutral | `--ducs-neutral-0`, `--ducs-neutral-50`, `--ducs-neutral-75`, `--ducs-neutral-100`, `--ducs-neutral-200/300/400/450/500/600/700/800/850/900/925/940/950/975` |
-| Brand | `--ducs-brand-blue-400/500`, `--ducs-brand-red-500`, `--ducs-brand-mint-400`, `--ducs-brand-violet-400`, `--ducs-brand-indigo-500`, `--ducs-brand-gold-400`, `--ducs-brand-steel-400`, `--ducs-brand-rose-400`, `--ducs-brand-lavender-50` |
+| Neutral | `--ducs-neutral-0`, `--ducs-neutral-50`, `--ducs-neutral-75`, `--ducs-neutral-100`, `--ducs-neutral-200/300/400/450/500/600/650/700/800/850/900/925/940/950/975` |
+| Brand | `--ducs-brand-blue-300/400/500`, `--ducs-brand-red-500`, `--ducs-brand-mint-400`, `--ducs-brand-violet-400`, `--ducs-brand-indigo-500`, `--ducs-brand-gold-400`, `--ducs-brand-steel-400`, `--ducs-brand-rose-400`, `--ducs-brand-lavender-50` |
 | Status palette | `--ducs-green-400/450/500`, `--ducs-yellow-400`, `--ducs-orange-400`, `--ducs-red-350/400/450/500`, `--ducs-blue-400`, `--ducs-purple-400` |
-| Transparency | `--ducs-alpha-black-*`, `--ducs-alpha-white-*` |
+| Transparency | `--ducs-alpha-black-*`, `--ducs-alpha-white-*`, `--ducs-alpha-{success,warning,danger,info}-12`, `--ducs-ink-on-primary` |
 
 ## Semantic tokens
 Background: `--ducs-bg-canvas`, `--ducs-bg-subtle`.
