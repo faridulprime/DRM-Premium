@@ -45,4 +45,15 @@
   --ducs-live-header-gradient-end: #121212;
   --ducs-live-profile-gradient-start: #1d1d1d;
   --ducs-live-profile-gradient-end: #151515;
+
+  /* Admin dashboard surfaces and data visualization — legacy colors preserved. */
+  --ducs-admin-row-bg: #141414;
+  --ducs-admin-metric-gradient-start: #191919;
+  --ducs-admin-metric-gradient-end: #131313;
+  --ducs-admin-card-bg: #151515;
+  --ducs-admin-progress-track: #303030;
+  --ducs-admin-progress-start: #6f9ed8;
+  --ducs-admin-progress-end: #a9c9ef;
+  --ducs-admin-row-divider: rgba(255, 255, 255, .055);
+  --ducs-admin-activity-dot: #8cb8f2;
 }
