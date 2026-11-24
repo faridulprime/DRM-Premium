@@ -23,12 +23,14 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 4. Check current user role is Owner for initial governance management.
 5. Load the desired-state policy/registry from a pinned, verified source revision or deployment-bundled snapshot.
 6. Validate request schema, allowed scope, risk and state transition on server.
-7. Derive actor identity from the authenticated session; never trust actor identity from request JSON.
-8. Check independent reviewer is not the implementer.
-9. Check human approver is authorized for the scope and risk level.
-10. Verify review, approval and validation records all reference the same implementation commit.
-11. Persist state transition and audit event atomically where possible.
-12. Return minimum necessary data; paginate audit and findings endpoints.
+7. Parse and validate the canonical Git source ref; reject the default/protected branch and independently verify the PR base branch. A literal string check against `main` is insufficient.
+8. Derive actor identity from the authenticated session; never trust actor identity from request JSON.
+9. Resolve the actor's current active assignment and exact scope from the pinned registry for every authorization decision; revocation must take effect immediately.
+10. Check independent reviewer is not the implementer.
+11. Check human approver's active assignment, scope and risk-specific authority; high/critical changes require Platform Owner approval.
+12. Verify review, approval and validation records all reference the same implementation commit.
+13. Persist state transition and audit event atomically where possible.
+14. Return minimum necessary data; paginate audit and findings endpoints.
 
 ## Proposed route contracts
 - GET /api/governance/overview — Owner-only operational summary.
@@ -44,6 +46,8 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 
 ## Security invariants
 - Never accept a browser-supplied role, approver identity, AI identity, implementation SHA or risk downgrade as authoritative.
+- The SQL approval-role enum is not proof of authorization; verify active assignment and scope against the pinned registry.
+- Validate Git refs canonically and verify both source and target branches; do not rely on rejecting only the literal `main`.
 - A changed implementation commit invalidates earlier review/approval/validation gates.
 - Use optimistic state_version and conditional UPDATE for state transitions.
 - Enforce actor/reviewer separation in application logic and, where practical, database triggers.
