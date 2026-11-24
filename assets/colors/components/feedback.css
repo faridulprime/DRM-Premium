@@ -4,4 +4,9 @@
   --ducs-notice-warning: var(--ducs-status-warning);
   --ducs-notice-danger: var(--ducs-status-danger);
   --ducs-notice-info: var(--ducs-status-info);
+
+  /* Live Users transient notice. */
+  --ducs-live-notice-bg: #191919;
+  --ducs-live-notice-text: #ccc;
+  --ducs-live-notice-border: #343434;
 }
