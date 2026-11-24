@@ -58,3 +58,18 @@ body.profile-page{margin:0;min-height:100vh;background:radial-gradient(ellipse a
 .upload-button,.remove-avatar{font-size:13px}
 .profile-field>span{font-size:14px}
 .profile-status{font-size:13px}
+
+
+/* Mobile Profile: protect the form and header from narrow-screen overflow. */
+@media(max-width:600px){
+ .profile-topbar{width:100%;min-width:0;height:auto;min-height:58px;gap:10px;padding:10px 12px}
+ .profile-brand{min-width:0;font-size:14px}
+ .profile-brand svg{width:25px;height:25px}
+ .profile-back{flex:0 0 auto;font-size:12px}
+ .profile-shell{width:calc(100% - 24px);min-width:0;margin:24px auto 40px}
+ .profile-card{min-width:0;padding:16px 13px}
+ .profile-fields{grid-template-columns:minmax(0,1fr)}
+ .profile-field.full{grid-column:auto}
+ .profile-footer{align-items:stretch;flex-direction:column}
+ .save-profile{width:100%}
+}
