@@ -62,3 +62,8 @@ These references are for coordinate/anchor placement only. They do not replace G
 
 ## Governance
 New tokens require a semantic name, a single owner, an intended use, and a dependency entry where they are consumed. Avoid duplicate aliases and arbitrary per-component z-index values. Document exceptions rather than silently expanding the scale.
+
+
+## Audited component layer aliases (v0.2.0)
+
+The token file also includes component-specific aliases for shared shell, Profile, Live Users, visual editor/site builder, suspension/profile-completion overlays, and Upload Studio. These aliases intentionally retain legacy numeric values. They are compatibility mappings, not a mandate that unrelated components share the same layer. See `DUPS-DEPENDENCY-REGISTRY.md` for migrated scope and limitations.
