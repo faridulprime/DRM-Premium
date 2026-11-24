@@ -23,7 +23,7 @@ CREATE TABLE duga_assignments (
          (role_id IN ('system-owner','ai-maintainer','independent-ai-auditor') AND scope_type='system') OR
          role_id='read-only-observer'),
   CHECK ((subject_type='human' AND user_id IS NOT NULL AND principal_id IS NULL) OR (subject_type='ai' AND user_id IS NULL AND principal_id IS NOT NULL AND length(principal_id)>0)),
-  CHECK ((status='active' AND revoked_at IS NULL) OR (status='revoked' AND revoked_at IS NOT NULL))
+  CHECK ((status='active' AND revoked_at IS NULL) OR (status='revoked' AND revoked_at IS NOT NULL AND revoked_at>=created_at))
 );
 CREATE UNIQUE INDEX uq_duga_assignment_human_active
   ON duga_assignments(scope_type,ifnull(scope_id,''),role_id,user_id)
@@ -67,7 +67,8 @@ CREATE TABLE duga_change_requests (
   CHECK ((requested_by_type='human' AND requested_by_user_id IS NOT NULL AND requested_by_principal_id IS NULL) OR (requested_by_type='ai' AND requested_by_user_id IS NULL AND requested_by_principal_id IS NOT NULL)),
   CHECK ((implementer_type IS NULL AND implementer_user_id IS NULL AND implementer_principal_id IS NULL) OR
          (implementer_type='human' AND implementer_user_id IS NOT NULL AND implementer_principal_id IS NULL) OR
-         (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL))
+         (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL)),
+  CHECK (updated_at>=created_at)
 );
 CREATE INDEX idx_duga_changes_status_updated ON duga_change_requests(status,updated_at DESC);
 CREATE INDEX idx_duga_changes_created ON duga_change_requests(created_at DESC);
@@ -110,7 +111,14 @@ CREATE TABLE duga_validation_runs (
   results_json TEXT NOT NULL CHECK (json_valid(results_json)),
   started_at INTEGER,
   completed_at INTEGER,
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  CHECK ((started_at IS NULL AND completed_at IS NULL) OR
+         (started_at IS NOT NULL AND (completed_at IS NULL OR completed_at>=started_at))),
+  CHECK ((status='queued' AND started_at IS NULL AND completed_at IS NULL) OR
+         (status='running' AND started_at IS NOT NULL AND completed_at IS NULL) OR
+         (status IN ('passed','failed') AND started_at IS NOT NULL AND completed_at IS NOT NULL) OR
+         (status='cancelled' AND ((started_at IS NULL AND completed_at IS NULL) OR
+                                  (started_at IS NOT NULL AND completed_at IS NOT NULL))))
 );
 CREATE INDEX idx_duga_validation_change_time ON duga_validation_runs(change_request_id,created_at DESC);
 CREATE INDEX idx_duga_validation_status ON duga_validation_runs(status,created_at);
@@ -153,7 +161,9 @@ CREATE TABLE duga_analysis_findings (
   status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','under_review','accepted','dismissed','quarantined')),
   created_at INTEGER NOT NULL,
   reviewed_at INTEGER,
-  reviewed_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT
+  reviewed_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
+  CHECK ((reviewed_at IS NULL AND reviewed_by_user_id IS NULL) OR
+         (reviewed_at IS NOT NULL AND reviewed_by_user_id IS NOT NULL AND reviewed_at>=created_at))
 );
 CREATE INDEX idx_duga_findings_status_time ON duga_analysis_findings(status,created_at DESC);
 CREATE INDEX idx_duga_findings_file_commit ON duga_analysis_findings(file_path,repository_commit_sha);
@@ -168,6 +178,11 @@ CREATE TABLE duga_jobs (
   available_at INTEGER NOT NULL,
   lease_expires_at INTEGER,
   created_at INTEGER NOT NULL,
-  updated_at INTEGER NOT NULL
+  updated_at INTEGER NOT NULL,
+  CHECK (updated_at>=created_at),
+  CHECK ((status='queued' AND lease_expires_at IS NULL) OR
+         (status='running' AND lease_expires_at IS NOT NULL) OR
+         (status IN ('succeeded','failed','cancelled') AND lease_expires_at IS NULL)),
+  CHECK (status<>'succeeded' OR result_json IS NOT NULL)
 );
 CREATE INDEX idx_duga_jobs_queue ON duga_jobs(status,available_at);
