@@ -29,6 +29,6 @@ This registry links page/component color responsibilities to semantic tokens and
 - Token foundation: added.
 - Initial page palette mapping: added as descriptive CSS custom properties.
 - Per-file source inventory: added.
-- Shared shell component migration: pending.
+- Shared shell root palette alias migration: complete; individual shared shell components still pending.
 - Button, field, badge, card, dialog, table, chart, and notification migrations: pending.
 - Visual regression and full contrast audit: pending.
