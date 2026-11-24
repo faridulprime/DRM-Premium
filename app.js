@@ -148,6 +148,7 @@ function openAccountMenu(open){
  const sidebar=$("#ytSidebar"),backdrop=$("#sidebarBackdrop"),toggle=$("#menuToggle");if(!sidebar||!toggle)return;
  const mobile=window.matchMedia("(max-width: 760px)").matches,state=Boolean(open);
  clearTimeout(accountMenuCloseTimer);
+ if(mobile&&window.DRMMotion){window.DRMMotion.drawer({sidebar,backdrop,toggle,open:state});return;}
  /* Match Admin's state transition: reset to the closed frame, force layout,
     then apply the same sidebar-open trigger before adding the mobile overlay state. */
  sidebar.classList.remove("mobile-open");
