@@ -112,6 +112,35 @@ def main() -> int:
         should_fail=True,
     )
 
+    check(
+        "valid active system-owner",
+        lambda: insert_assignment(
+            "assignment-system-owner", "system", "DUSS",
+            "system-owner", "human", user_id="human-1"
+        ),
+        should_fail=False,
+    )
+    check(
+        "second active system-owner for same system blocked",
+        lambda: insert_assignment(
+            "assignment-second-system-owner", "system", "DUSS",
+            "system-owner", "human", user_id="human-2"
+        ),
+        should_fail=True,
+    )
+    db.execute(
+        "UPDATE duga_assignments SET status='revoked', revoked_at=2 "
+        "WHERE id='assignment-system-owner'"
+    )
+    check(
+        "revoked system-owner permits replacement",
+        lambda: insert_assignment(
+            "assignment-replacement-system-owner", "system", "DUSS",
+            "system-owner", "human", user_id="human-2"
+        ),
+        should_fail=False,
+    )
+
     db.execute(
         """INSERT INTO duga_audit_events
            (id,aggregate_type,aggregate_id,event_type,actor_type,
