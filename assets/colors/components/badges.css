@@ -98,4 +98,7 @@
   --ducs-shell-role-member-bg: rgba(255,255,255,.075);
   --ducs-shell-role-member-border: rgba(255,255,255,.28);
 
+  --ducs-shell-profile-menu-text: #e8edf5;
+  --ducs-shell-profile-drawer-text: #eef2f7;
+  --ducs-shell-profile-drawer-name-muted: #8995a4;
 }
