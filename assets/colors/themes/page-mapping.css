@@ -1,4 +1,4 @@
-/* DUCS page identity mappings. These tokens document existing page palettes;
+/* DUCS page identity mappings. Tokens record current visual direction;
    they intentionally do not restyle page selectors during the foundation phase. */
 body.home-page {
   --ducs-page-bg: #0f0f0f;
@@ -7,6 +7,9 @@ body.home-page {
   --ducs-page-muted: #aaa;
   --ducs-page-border: #303030;
   --ducs-page-accent: #3ea6ff;
+  --ducs-page-brand-accent: #3ea6ff;
+  --ducs-page-status-success: #83efa5;
+  --ducs-page-highlight: #c7a97b;
 }
 body.admin-gate-state,
 body.admin-dashboard-state {
@@ -16,6 +19,9 @@ body.admin-dashboard-state {
   --ducs-page-muted: #aaa;
   --ducs-page-border: #303030;
   --ducs-page-accent: #3ea6ff;
+  --ducs-page-brand-accent: #3ea6ff;
+  --ducs-page-status-success: #83efa5;
+  --ducs-page-status-danger: #ff9292;
 }
 body.live-users-page {
   --ducs-page-bg: #0d0d0d;
@@ -24,6 +30,10 @@ body.live-users-page {
   --ducs-page-muted: #929292;
   --ducs-page-border: #303030;
   --ducs-page-accent: #3ea6ff;
+  --ducs-page-brand-accent: #3ea6ff;
+  --ducs-page-status-success: #35bd72;
+  --ducs-page-status-danger: #ef8383;
+  --ducs-page-status-warning: #e1bd8d;
 }
 body.upload-studio-page {
   --ducs-page-bg: #0d0d0d;
@@ -32,6 +42,13 @@ body.upload-studio-page {
   --ducs-page-muted: #929292;
   --ducs-page-border: #303030;
   --ducs-page-accent: #7ce2bd;
+  --ducs-page-brand-accent: #a58cff;
+  --ducs-page-status-success: #83efa5;
+  --ducs-page-status-danger: #ffb8c0;
+  --ducs-page-creative-primary: #a58cff;
+  --ducs-page-creative-secondary: #5b62d9;
+  --ducs-page-creative-tertiary: #7ce2bd;
+  --ducs-page-creative-text: #f3f0ff;
 }
 body.profile-page {
   --ducs-page-bg: #0d0d0d;
@@ -40,4 +57,7 @@ body.profile-page {
   --ducs-page-muted: #929292;
   --ducs-page-border: #303030;
   --ducs-page-accent: #83efa5;
+  --ducs-page-brand-accent: #83efa5;
+  --ducs-page-status-success: #83efa5;
+  --ducs-page-status-danger: #ff9b9b;
 }
