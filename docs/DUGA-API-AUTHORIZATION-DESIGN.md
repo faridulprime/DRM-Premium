@@ -54,7 +54,7 @@ A state transition must be a compare-and-swap operation, not a read-then-uncondi
 - Insert the audit event in the same D1 batch/transaction as the state update. A failed audit insert must roll back the state change.
 - Treat evidence rows as immutable history. If `implementation_commit_sha` changes, all prior review, approval and validation evidence is stale until re-recorded against the new commit.
 
-The local SQLite test suite now models a stale second writer and verifies rollback when an audit insert fails. These are SQLite behavior probes only; D1 batch atomicity and affected-row semantics remain a mandatory disposable-Preview acceptance test.
+The local SQLite test suite models a stale second writer and verifies rollback when an audit insert fails. Cloudflare's current D1 docs state that `batch()` is transactional and rolls back the sequence on statement failure. A disposable-Preview test remains necessary for this schema's concrete statement results and exactly-one-row detection. Reference: https://developers.cloudflare.com/d1/worker-api/d1-database/.
 
 ## Security invariants
 - Never accept a browser-supplied role, approver identity, AI identity, implementation SHA or risk downgrade as authoritative.
@@ -62,7 +62,7 @@ The local SQLite test suite now models a stale second writer and verifies rollba
 - Validate Git refs canonically and verify both source and target branches; do not rely on rejecting only the literal `main`.
 - A changed implementation commit invalidates earlier review/approval/validation gates.
 - Use optimistic state_version and conditional UPDATE for state transitions.
-- The conditional UPDATE and audit-event INSERT must execute in one D1 batch/transaction; require exactly one changed request row, and return a conflict without recording success if the version/status predicate matches zero rows.
+- The conditional UPDATE and audit-event INSERT must execute in one D1 batch/transaction; require exactly one changed request row, and return a conflict without recording success if the version/status predicate matches zero rows. Cloudflare documents batch execution as transactional with rollback on any failed statement; verify the exact D1 result metadata used for the row-count check in disposable Preview.
 - Before accepting a change, compare the current implementation commit with every required review, approval and successful validation commit. A mismatch makes that evidence stale even though the historical row remains stored.
 - Enforce actor/reviewer separation in application logic and, where practical, database triggers.
 - Keep audit actor references under ON DELETE RESTRICT.
