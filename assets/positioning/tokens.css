@@ -50,6 +50,7 @@
   /* Audited shared-shell and profile overlay layers.
      These aliases preserve the existing numeric stacking order. */
   --dups-layer-category-bar: 90;
+  --dups-layer-sidebar: 95;
   --dups-layer-page-header: 100;
   --dups-layer-header-status: 110;
   --dups-layer-sidebar-backdrop: 110;
