@@ -58,4 +58,8 @@
   --ducs-home-editor-button-border: #8ca6c0;
   --ducs-home-builder-button-bg: #e9eff5;
   --ducs-home-builder-button-border: #c8d3df;
+  --ducs-home-register-action-bg: rgba(131,239,165,.12);
+  --ducs-home-register-action-hover: rgba(131,239,165,.2);
+  --ducs-home-profilebar-action-bg: rgba(131,239,165,.14);
+  --ducs-home-profilebar-action-hover: rgba(131,239,165,.23);
 }
