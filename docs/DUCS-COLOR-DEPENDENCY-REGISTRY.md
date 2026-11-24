@@ -1,4 +1,4 @@
-# DUCS Color Dependency Registry — v0.2.9
+# DUCS Color Dependency Registry — v0.3.0
 
 This registry links page/component color responsibilities to semantic tokens and source stylesheets. It is a migration map, not a claim that every listed component has already been converted.
 
@@ -7,7 +7,7 @@ This registry links page/component color responsibilities to semantic tokens and
 | Dependency domain | Primary stylesheet(s) | DUCS token family | Priority |
 |---|---|---|---|
 | Shared shell and navigation | `theme.css` | `--ducs-page-*`, `--ducs-bg-*`, `--ducs-surface-*`, `--ducs-text-*`, `--ducs-border-*`, `--ducs-icon-*` | High |
-| Homepage content and cards | `styles.css`, `theme.css` | `--ducs-card-*`, `--ducs-action-*`, `--ducs-status-*`, page accent tokens | High |
+| Homepage content and cards | `styles.css`, `theme.css` | `--ducs-home-*`, `--ducs-card-*`, `--ducs-action-*`, `--ducs-status-*` | High (core first-pass migration) |
 | Admin dashboard and forms | `admin.css`, `theme.css`, `live-users.css` | `--ducs-admin-*` button, field, badge, status, surface, feedback, and login tokens; shared header, search/auth controls, category navigation, sidebar, and logout states now consume `--ducs-shell-*` aliases | High |
 | Live Users presence and restrictions | `live-users.css` | `--ducs-live-*` surface, field, status, border, dialog, action, chart, and overlay aliases; remaining decorative tokens | High (partial migration) |
 | Upload Studio editor and preview | `upload-studio.css` | `--ducs-upload-*` graphite workspace, field, action, preview, dialog, and feedback tokens | High (first-pass migration) |
@@ -36,6 +36,6 @@ This registry links page/component color responsibilities to semantic tokens and
 - Admin: dashboard buttons, fields, data rows, overview cards/metrics, progress indicators, activity markers, owner badge, feedback states, and login controls consume `--ducs-admin-*` aliases. Admin shared header, search/auth controls, category navigation, sidebar, brand badge, and logout states consume `--ducs-shell-*` aliases; remaining shell/component colors are pending.
 - Profile first-pass migration: page header, card, avatar surface, dividers, form fields and focus states, upload/save actions, identity accents, and status feedback consume `--ducs-profile-*` aliases. Decorative background gradient and remaining minor literals are not fully inventoried.
 - Upload Studio first-pass migration: creator workspace page/panel surfaces, primary form controls and focus states, tab/action states, preview/list surfaces, publish controls, dialog, and error notice consume `--ducs-upload-*` aliases. The underlying legacy stylesheet still contains dormant base palette declarations and some decorative literals; full literal cleanup is pending.
-- Homepage content/cards and the visual-editor/site-builder color system: pending.
+- Homepage core page/header, hero, cards, navigation, account field, and action consumers now use `--ducs-home-*` aliases. Visual-editor/site-builder, suspension, profile-completion overlays, and decorative homepage colors remain pending.
 - Remaining shared shell decorative colors, Admin ancillary states, Upload Studio decorative/base legacy declarations, Profile decorative gradients and minor literals, and residual Live Users micro-states: pending.
 - Full foreground/background contrast matrix, responsive state screenshots, and visual regression: pending.
