@@ -220,15 +220,38 @@ async function handle(req,env){
   if(user.role!=="owner")return fail("শুধু Owner Governance API ব্যবহার করতে পারবেন।",403);
   if(p.length===2&&p[1]==="health"){
    if(m!=="GET")return fail("Method not allowed.",405);
-   let probe,tables;try{
+   const expected={
+    duga_assignments:{columns:["id","scope_type","scope_id","role_id","subject_type","user_id","principal_id","status","assigned_by_user_id","created_at","revoked_at"],indexes:["uq_duga_assignment_human_active","uq_duga_assignment_ai_active","idx_duga_assignments_subject"],triggers:[]},
+    duga_change_requests:{columns:["id","title","summary","rationale","status","risk_level","affected_systems_json","affected_paths_json","rollback_plan","requested_by_type","requested_by_user_id","requested_by_principal_id","source_branch","base_commit_sha","policy_commit_sha","implementer_type","implementer_user_id","implementer_principal_id","implementation_commit_sha","state_version","created_at","updated_at"],indexes:["idx_duga_changes_status_updated","idx_duga_changes_created"],triggers:[]},
+    duga_reviews:{columns:["id","change_request_id","review_type","reviewer_type","reviewer_user_id","reviewer_principal_id","decision","reviewed_commit_sha","evidence_json","created_at"],indexes:["idx_duga_reviews_change_time"],triggers:["duga_review_no_implementer_self_audit"]},
+    duga_approvals:{columns:["id","change_request_id","approver_user_id","approver_role","decision","approved_commit_sha","rationale","created_at"],indexes:["idx_duga_approvals_change_time"],triggers:[]},
+    duga_validation_runs:{columns:["id","change_request_id","commit_sha","status","validator","validator_version","results_json","started_at","completed_at","created_at"],indexes:["idx_duga_validation_change_time","idx_duga_validation_status"],triggers:[]},
+    duga_audit_events:{columns:["id","aggregate_type","aggregate_id","event_type","actor_type","actor_user_id","actor_principal_id","actor_system_id","payload_json","policy_commit_sha","created_at"],indexes:["idx_duga_audit_aggregate_time","idx_duga_audit_actor_time","idx_duga_audit_time"],triggers:["duga_audit_no_update","duga_audit_no_delete"]},
+    duga_analysis_findings:{columns:["id","analyzer_version","repository_commit_sha","file_path","symbol","classification","confidence","evidence_json","status","created_at","reviewed_at","reviewed_by_user_id"],indexes:["idx_duga_findings_status_time","idx_duga_findings_file_commit"],triggers:[]},
+    duga_jobs:{columns:["id","job_type","status","input_json","result_json","attempts","available_at","lease_expires_at","created_at","updated_at"],indexes:["idx_duga_jobs_queue"],triggers:[]}
+   };
+   let probe,objects;try{
     probe=await env.DB.prepare("SELECT 1 AS ok").first();
     if(Number(probe?.ok)!==1)return fail("Governance database probe failed.",503);
-    tables=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'duga_%'").all();
+    objects=await env.DB.prepare("SELECT type,name,tbl_name FROM sqlite_master WHERE name LIKE 'duga_%' OR name LIKE 'idx_duga_%' OR name LIKE 'uq_duga_%'").all();
    }catch{return fail("Governance database/schema probe failed.",503)}
-   const expected=["duga_assignments","duga_change_requests","duga_reviews","duga_approvals","duga_validation_runs","duga_audit_events","duga_analysis_findings","duga_jobs"];
-   const found=[...new Set((tables.results||[]).map(row=>String(row.name||"")).filter(name=>expected.includes(name)))].sort();
-   const schemaStatus=found.length===0?"not_installed":found.length===expected.length?"ready":"partial";
-   return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaTables:found,expectedSchemaTables:expected.length,access:"owner"});
+   const rows=objects.results||[],tableNames=new Set(rows.filter(x=>x.type==="table").map(x=>x.name));
+   const schemaTables=Object.keys(expected).filter(name=>tableNames.has(name));
+   const missing={tables:[],columns:[],indexes:[],triggers:[]};
+   for(const [table,spec] of Object.entries(expected)){
+    if(!tableNames.has(table)){missing.tables.push(table);continue}
+    let info;try{info=await env.DB.prepare("PRAGMA table_info("+table+")").all()}catch{return fail("Governance schema inspection failed.",503)}
+    const cols=new Set((info.results||[]).map(x=>x.name));
+    for(const col of spec.columns)if(!cols.has(col))missing.columns.push(table+"."+col);
+    const tableObjects=new Set(rows.filter(x=>x.tbl_name===table).map(x=>x.name));
+    for(const name of spec.indexes)if(!tableObjects.has(name))missing.indexes.push(name);
+    for(const name of spec.triggers)if(!rows.some(x=>x.type==="trigger"&&x.name===name))missing.triggers.push(name);
+   }
+   const expectedCount=Object.keys(expected).length;
+   const complete=missing.tables.length===0&&missing.columns.length===0&&missing.indexes.length===0&&missing.triggers.length===0;
+   const absent=schemaTables.length===0;
+   const schemaStatus=complete?"ready":absent?"not_installed":"partial";
+   return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaTables,expectedSchemaTables:expectedCount,missing,access:"owner"});
   }
   return fail("Governance route not found.",404);
  }
