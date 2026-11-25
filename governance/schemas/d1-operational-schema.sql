@@ -246,17 +246,7 @@ BEGIN
  'commit_sha',NEW.commit_sha,'validator',NEW.validator),
  COALESCE(NEW.completed_at,NEW.started_at,NEW.created_at));
 END;
-CREATE TRIGGER duga_finding_review_audit AFTER UPDATE ON duga_analysis_findings
-WHEN OLD.status<>NEW.status
-BEGIN
- INSERT INTO duga_audit_events
- (id,aggregate_type,aggregate_id,event_type,actor_type,actor_user_id,payload_json,created_at)
- VALUES ('finding-review:'||NEW.id||':'||NEW.state_version,'finding',NEW.id,
- 'finding.'||NEW.status,'human',NEW.reviewed_by_user_id,
- json_object('previous_status',OLD.status,'status',NEW.status,
- 'state_version',NEW.state_version,'repository_commit_sha',NEW.repository_commit_sha,
- 'file_path',NEW.file_path),NEW.reviewed_at);
-END;
+
 
 CREATE TABLE duga_analysis_findings (
   id TEXT PRIMARY KEY,
@@ -277,6 +267,18 @@ CREATE TABLE duga_analysis_findings (
 );
 CREATE INDEX idx_duga_findings_status_time ON duga_analysis_findings(status,created_at DESC);
 CREATE INDEX idx_duga_findings_file_commit ON duga_analysis_findings(file_path,repository_commit_sha);
+
+CREATE TRIGGER duga_finding_review_audit AFTER UPDATE ON duga_analysis_findings
+WHEN OLD.status<>NEW.status
+BEGIN
+ INSERT INTO duga_audit_events
+ (id,aggregate_type,aggregate_id,event_type,actor_type,actor_user_id,payload_json,created_at)
+ VALUES ('finding-review:'||NEW.id||':'||NEW.state_version,'finding',NEW.id,
+ 'finding.'||NEW.status,'human',NEW.reviewed_by_user_id,
+ json_object('previous_status',OLD.status,'status',NEW.status,
+ 'state_version',NEW.state_version,'repository_commit_sha',NEW.repository_commit_sha,
+ 'file_path',NEW.file_path),NEW.reviewed_at);
+END;
 
 CREATE TRIGGER duga_assignments_update_guard
 BEFORE UPDATE ON duga_assignments
