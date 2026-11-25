@@ -40,3 +40,9 @@ Verified commit: documentation update follows disposable D1 Worker acceptance; s
 - `main` and Production D1 remain untouched.
 - PR #4 remains draft and must not be merged without explicit authorization and completed review.
 - Production merge and deployment remain separate approvals.
+
+
+## API security and lifecycle design update — 2026-11-25
+- Added `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` as a proposed contract. It defines the initial Owner-session trust boundary, future scoped assignment checks, AI/validation identity boundary, risk approval gates, commit-bound evidence staleness, guarded implementation SHA updates, candidate state-transition matrix and required security/regression tests.
+- The transition matrix is explicitly awaiting Owner review; blocked-state resumability, rejected/cancelled terminal semantics and rework edges are not approved policy yet.
+- API integration remains NO-GO for Preview write endpoints. No DUGA API runtime code, migration, Preview binding, Production resource or application runtime code was changed.
