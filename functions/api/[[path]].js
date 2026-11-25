@@ -261,7 +261,7 @@ async function handle(req,env){
    const limit=Number(rawLimit),status=u.searchParams.get("status")||"",q=u.searchParams.get("q")||"",cursor=u.searchParams.get("cursor")||"";
    const allowedStatuses=new Set(["proposed","analyzing","impact_review","awaiting_ai_audit","awaiting_human_approval","approved","implementing","validating","final_review","accepted","rejected","cancelled","blocked"]);
    if(status&&!allowedStatuses.has(status))return fail("Invalid change request status filter.",400);
-   if(q.length>120||/[\\u0000-\\u001f]/.test(q))return fail("Search query is invalid or too long.",400);
+   if(q.length>120||[...q].some(ch=>ch.charCodeAt(0)<32))return fail("Search query is invalid or too long.",400);
    let cursorTime=null,cursorId=null;
    if(cursor){
     try{
