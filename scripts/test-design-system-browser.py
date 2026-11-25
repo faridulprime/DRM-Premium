@@ -348,7 +348,12 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                       right: innerWidth - rect.right
                     };
                   };
-                  return {zero, header: measure(header), category: measure(category)};
+                  return {
+                    zero,
+                    header: measure(header),
+                    category: measure(category),
+                    headerBottom: header ? header.getBoundingClientRect().bottom : null
+                  };
                 }"""
             )
             for label in ("header", "category"):
@@ -359,8 +364,9 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 try:
                     if geometry["position"] != "fixed":
                         fail(f"{name}/{viewport_name}: shared {label} is no longer fixed-positioned ({geometry})")
-                    if any(abs(geometry[key] - shell_edges["zero"]) > 1 for key in ("top", "left", "right")):
-                        fail(f"{name}/{viewport_name}: shared {label} viewport-edge geometry differs from the DUPS zero-offset token ({geometry}, expected={shell_edges['zero']})")
+                    expected_top = shell_edges["zero"] if label == "header" else shell_edges["headerBottom"]
+                    if abs(geometry["top"] - expected_top) > 1 or abs(geometry["left"] - shell_edges["zero"]) > 1 or abs(geometry["right"] - shell_edges["zero"]) > 1:
+                        fail(f"{name}/{viewport_name}: shared {label} viewport-edge geometry differs from the DUPS anchors ({geometry}, expectedTop={expected_top}, zero={shell_edges['zero']})")
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: shared {label} DUPS edge geometry could not be resolved ({geometry})")
         if name != "profile":
