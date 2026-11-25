@@ -34,7 +34,16 @@ DUMC provides one canonical classification model for the Movies section. It sepa
 5. One canonical movie record and media identity; virtual folders do not duplicate files.
 6. Stable IDs are used for future API/database relationships.
 
-## Implementation boundary
-The current application stores videos with one category string and has no folder table, folder API, movie metadata model, or many-to-many media relationships. The current release therefore provides a browsable, versioned taxonomy catalog only. The Upload Studio folder picker remains disabled to avoid pretending that a selected folder is persisted.
+## Implemented on `feature/full-admin-panel`
 
-Persistent folders, folder assignment, original/dubbed audio variants, subtitle assets and movie records require a reviewed D1 migration and authenticated Owner/Admin API. No migration or database write is included in this commit.
+- Versioned taxonomy: `assets/dumc/taxonomy.json`, 12 top-level sections and 226 stable folder IDs.
+- Additive D1 migration: `migrations/0009_dumc_movie_library.sql`. It creates folder, canonical movie metadata, many-to-many classification, audio-track reference and subtitle-reference tables; seeds the taxonomy; and backfills one metadata row per existing video without guessing missing metadata.
+- Authenticated Owner/Admin APIs: `GET/POST /api/admin/dumc/folders`, `PATCH/DELETE /api/admin/dumc/folders/:id`, `GET /api/admin/dumc/movies`, `GET/PUT /api/admin/dumc/movies/:videoId`, `PUT /api/admin/dumc/movies/:videoId/folders`, and audio/subtitle reference creation/deletion routes.
+- Upload Studio includes a searchable folder explorer, custom-folder creation, movie metadata editor, multi-select Genre/Dubbed/Subtitle/Collection classification, audio/subtitle reference registration, and optional folder assignment when creating a video.
+- The migration inventory is updated. A dedicated GitHub Actions workflow runs SQLite migration tests, migration-inventory validation and JavaScript syntax checks.
+
+## Important execution boundary
+
+The migration file is committed but has **not** been applied to any D1 database. The repository manifest is documentation-only; Wrangler migrations are not configured and it does not identify applied database history. The Upload Studio falls back to the static taxonomy until the D1 schema is installed. No Preview or Production deployment has been performed.
+
+Audio/subtitle APIs register references to an existing `movies/...` asset key or an external HTTPS URL. They do not upload media bytes; a dedicated DUMC media bucket binding and upload pipeline still need to be configured and tested. No external asset is fetched by the API.
