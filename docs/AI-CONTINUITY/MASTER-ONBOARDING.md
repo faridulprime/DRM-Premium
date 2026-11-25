@@ -42,8 +42,10 @@ These documents do not grant GitHub, Cloudflare, database or other service permi
 ## Verified repository work — 2026-11-25
 - Added `scripts/validate-governance.mjs` to check governance JSON parsing, unique system/role IDs, role references, dependency references, page assets and declared source paths.
 - Added `scripts/validate-migration-inventory.mjs` to verify the migration manifest against SQL files, contiguous fresh-database order, dependency ordering, duplicate-prefix notes and the DUGA draft safety header.
+- Tightened the DUGA SQL draft: role assignments now require a human assigning user; finding review timestamps and reviewers must be paired; only running jobs may hold a lease.
 - Updated `migrations/manifest.json` so both files in each duplicate numeric prefix (`0004` and `0007`) explicitly document the collision.
-- Updated `.github/workflows/duga-governance.yml` to run both static validators for relevant pull requests and pushes, plus manual dispatch.
-- GitHub Actions run `45639433488` for commit `a2290abae3ae09a982a1ee1c841ed7d9a51b7542` completed successfully. Both governance metadata and D1 migration inventory validation steps passed.
+- Updated `.github/workflows/duga-governance.yml` to run both static validators and the in-memory SQLite schema regression suite for relevant pull requests and pushes, plus manual dispatch.
+- Extended `scripts/test-duga-schema.py` with regression probes for assignment actor requirements, finding review metadata pairing and job lease invariants. The suite uses only in-memory SQLite.
+- GitHub Actions run `45640093138` for commit `5fabdc7f87be13dd723e6291b9283a0d5023c575` completed successfully. Governance metadata validation, migration inventory validation and the in-memory SQLite schema regression suite all passed.
 - This remains repository-only validation. No D1 migration was applied, no Cloudflare Pages deployment was performed, and Production was not modified.
 - Next safe step: inspect the remaining DUGA schema constraints and reconcile the actual Preview D1 migration history and backup before proposing an executable migration. Do not infer applied state from filenames or the manifest.
