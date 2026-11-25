@@ -229,6 +229,43 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     f"{name}/{viewport_name}: DUPS header layer could not be resolved "
                     f"(computed={metrics['headerZIndex']!r}, token={expected_layer!r})"
                 )
+        if name == "live-users":
+            restriction_layer = page.evaluate(
+                """() => {
+                  const modal = document.querySelector(".live-restrictions-modal");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!modal) return {missing: true};
+                  const style = getComputedStyle(modal);
+                  const rect = modal.getBoundingClientRect();
+                  return {
+                    position: style.position,
+                    zIndex: style.zIndex,
+                    top: style.top,
+                    left: style.left,
+                    centerX: rect.left + rect.width / 2,
+                    centerY: rect.top + rect.height / 2,
+                    viewportCenterX: innerWidth / 2,
+                    viewportCenterY: innerHeight / 2,
+                    layerToken: root.getPropertyValue("--dups-layer-live-drawer").trim(),
+                    centerToken: root.getPropertyValue("--dups-viewport-center").trim()
+                  };
+                }"""
+            )
+            if restriction_layer.get("missing"):
+                fail(f"{name}/{viewport_name}: Restricted Users modal element is missing")
+            else:
+                try:
+                    if restriction_layer["position"] != "fixed":
+                        fail(f"{name}/{viewport_name}: Restricted Users modal is not fixed-positioned ({restriction_layer})")
+                    if float(restriction_layer["zIndex"]) != float(restriction_layer["layerToken"]):
+                        fail(f"{name}/{viewport_name}: Restricted Users modal z-index does not match DUPS drawer token ({restriction_layer})")
+                    if abs(restriction_layer["centerX"] - restriction_layer["viewportCenterX"]) > 2 or abs(restriction_layer["centerY"] - restriction_layer["viewportCenterY"]) > 2:
+                        fail(f"{name}/{viewport_name}: Restricted Users modal is not viewport-centered ({restriction_layer})")
+                    if restriction_layer["centerToken"] != "50%":
+                        fail(f"{name}/{viewport_name}: DUPS viewport-center token changed unexpectedly ({restriction_layer})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: Restricted Users modal DUPS layer/placement could not be resolved ({restriction_layer})")
+
         if metrics["documentWidth"] > width + 1:
             fail(
                 f"{name}/{viewport_name}: horizontal document overflow "
