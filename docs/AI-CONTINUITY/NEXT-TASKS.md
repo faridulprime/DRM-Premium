@@ -109,3 +109,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - DUPS targeted browser coverage expanded and passed in run #45677961245: mobile Homepage login-status anchor gap/right offset and Live Users sticky dialog-header layer, alongside previous Homepage overlays, Builder inspector and Restricted Users modal checks. Continue with evidence-led inventory and containing-block/stacking-context review; do not infer full DUPS completion.
 
 - Responsive Builder inspector geometry is now verified relative to the revealed fixed Website Builder shell, including desktop/tablet and mobile top offsets; Chromium run #45678321298 passed. This remains static-page geometry validation, not full Builder interaction testing.
+
+- Live Users closing smoke pseudo-elements now have a browser assertion for their local DUPS z-index tokens; run #45678490915 passed. Continue scanning remaining literal offsets and local stacking layers with selector/containing-block evidence.
