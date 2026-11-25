@@ -6,6 +6,7 @@ on:
       - feature/full-admin-panel
     paths:
       - "assets/sizing/tokens.css"
+      - "assets/sizing/touch-targets.css"
       - "theme.css"
       - "styles.css"
       - "admin.css"
@@ -25,6 +26,7 @@ on:
       - main
     paths:
       - "assets/sizing/tokens.css"
+      - "assets/sizing/touch-targets.css"
       - "theme.css"
       - "styles.css"
       - "admin.css"

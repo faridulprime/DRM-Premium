@@ -80,10 +80,12 @@ def check_balanced_braces(path: str, source: str) -> None:
 
 def main() -> int:
     tokens = read("assets/sizing/tokens.css")
-    if not tokens.startswith("/* DRM Universal Sizing System (DUSS) — v0.7.0"):
-        fail("DUSS token stylesheet header is not versioned v0.7.0")
+    if not tokens.startswith("/* DRM Universal Sizing System (DUSS) — v0.8.0"):
+        fail("DUSS token stylesheet header is not versioned v0.8.0")
     if "DUSS v0.7 — audited component variants and icon slots." not in tokens:
         fail("DUSS v0.7 component-variant section marker is missing")
+    if "DUSS v0.8 — 44px interactive-target consumer foundation" not in tokens:
+        fail("DUSS v0.8 interactive-target marker is missing")
     token_values = {
         "--duss-icon-size-nav-menu": "1.5rem",
         "--duss-icon-size-search-default": "1.3125rem",
@@ -108,9 +110,11 @@ def main() -> int:
     }
     for name, value in token_values.items():
         check_token(tokens, name, value)
+    check_token(tokens, "--duss-touch-target-min", "2.75rem")
 
     source_files = {
         "assets/sizing/tokens.css": tokens,
+        "assets/sizing/touch-targets.css": read("assets/sizing/touch-targets.css"),
         "theme.css": read("theme.css"),
         "styles.css": read("styles.css"),
         "live-users.css": read("live-users.css"),
@@ -146,6 +150,14 @@ def main() -> int:
         fail(f"Token/consumer registry mismatch; missing consumers={missing}, unknown consumers={extra}")
     for name, path in consumers.items():
         check_reference(source_files[path], name, path)
+    check_reference(
+        source_files["assets/sizing/touch-targets.css"],
+        "--duss-touch-target-min",
+        "assets/sizing/touch-targets.css",
+    )
+    live_users_js = read("live-users.js")
+    if 'class="live-error-link"' not in live_users_js:
+        fail("Live Users fallback dashboard link is missing its DUSS touch-target class")
 
     check_selector_icon_token(
         source_files["admin.css"], ".admin-topbar .admin-search svg",
@@ -221,18 +233,21 @@ def main() -> int:
             html,
             flags=re.IGNORECASE,
         )
-        if match != ["duss-07"]:
-            fail(f"{path}: expected one DUSS duss-07 stylesheet link, found {match}")
+        if match != ["duss-08"]:
+            fail(f"{path}: expected one DUSS duss-08 stylesheet link, found {match}")
+        touch_link = 'href="/assets/sizing/touch-targets.css?v=duss-08"'
+        if html.count(touch_link) != 1:
+            fail(f"{path}: expected one DUSS touch-target duss-08 stylesheet link")
 
     spec = read("docs/DUSS-SPEC.md")
-    if "Version: 0.7.0" not in spec or "Phase 7 implementation update" not in spec:
-        fail("DUSS specification is not aligned with the v0.7 icon-sizing migration")
+    if "Version: 0.8.0" not in spec or "Phase 8 implementation update" not in spec:
+        fail("DUSS specification is not aligned with the v0.8 touch-target migration")
 
     print(
         f"PASS: {len(token_values)} icon/slot tokens, {len(consumers)} selector references, "
         "all audited duplicate overrides, profile-banner and Live Users drawer variants, "
-        "mobile nav slot, prior badge/button tokens, 7 CSS brace checks, "
-        "5 page cache keys, and DUSS v0.7 documentation."
+        "mobile nav slot, prior badge/button tokens, 8 CSS brace checks, "
+        "the 44px touch-target contract, 5 page cache keys, and DUSS v0.8 documentation."
     )
     print("NOTE: Static source verification only; no browser geometry is inferred.")
     return 0

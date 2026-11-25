@@ -1,4 +1,4 @@
-/* DRM Universal Sizing System (DUSS) — v0.7.0
+/* DRM Universal Sizing System (DUSS) — v0.8.0
  * Semantic sizing tokens are introduced incrementally. Component geometry
  * remains unchanged unless an audited selector explicitly consumes a token.
  */
@@ -333,3 +333,5 @@
   --duss-icon-slot-size-live-drawer-action: 1.4375rem;
   --duss-icon-size-live-drawer-action: 0.75rem;
 }
+
+/* DUSS v0.8 — 44px interactive-target consumer foundation (touch-targets.css). */

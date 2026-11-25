@@ -57,3 +57,9 @@
   display:inline-flex;
   align-items:center;
 }
+
+.live-error-link {
+  display:inline-flex;
+  align-items:center;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
