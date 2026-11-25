@@ -188,8 +188,9 @@ async function handle(req,env){
  if(p[0]==="dumc"&&p[1]==="browse"&&m==="GET"){
   const folderId=(u.searchParams.get("folder_id")||"").trim().slice(0,120)||null;
   const searchTerm=(u.searchParams.get("q")||"").trim().slice(0,100);
-  const limit=Math.min(60,Math.max(1,Number(u.searchParams.get("limit")||36)));
-  const offset=Math.max(0,Number(u.searchParams.get("offset")||0));
+  const requestedLimit=Number(u.searchParams.get("limit")||36),requestedOffset=Number(u.searchParams.get("offset")||0);
+  const limit=Number.isFinite(requestedLimit)?Math.min(60,Math.max(1,Math.floor(requestedLimit))):36;
+  const offset=Number.isFinite(requestedOffset)?Math.min(1000000,Math.max(0,Math.floor(requestedOffset))):0;
   try{
    const folders=await env.DB.prepare(`SELECT f.id,f.parent_id,f.name,f.description,f.kind,f.sort_order,
     (SELECT COUNT(DISTINCT v.id) FROM videos v
@@ -208,6 +209,7 @@ async function handle(req,env){
      FROM videos v LEFT JOIN dumc_movies dm ON dm.video_id=v.id WHERE v.published=1`;
    const binds=[];
    if(searchTerm){movieSql+=" AND lower(v.title||' '||coalesce(v.description,'')||' '||coalesce(v.category,'')) LIKE ?";binds.push("%"+searchTerm.toLowerCase()+"%");}
+   if(folderId==="ARCHIVED")return fail("Archived movies are not available in public browsing.",404);
    if(folderId==="FEATURED"){movieSql+=" AND v.featured=1";}
    else if(folderId==="UNCLASSIFIED"){movieSql+=" AND (dm.video_id IS NULL OR (dm.original_language_folder_id IS NULL AND dm.industry_folder_id IS NULL AND dm.production_country_folder_id IS NULL AND NOT EXISTS(SELECT 1 FROM dumc_movie_folder_assignments a WHERE a.video_id=v.id)))";}
    else if(/^YEAR_[0-9]{4}$/.test(folderId)){movieSql+=" AND dm.release_year=?";binds.push(Number(folderId.slice(5)));}
