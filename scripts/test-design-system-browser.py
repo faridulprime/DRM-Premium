@@ -873,6 +873,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const contracts = [
                     ["site-builder", "#siteBuilder", "--dups-layer-site-builder"],
                     ["suspension-screen", "#accountSuspensionScreen", "--dups-layer-suspension-screen"],
+                    ["suspension-grain", ".suspension-grain", null],
                     ["profile-bar-backdrop", "#profileBarBackdrop", "--dups-layer-profile-complete-backdrop"],
                     ["profile-complete-bar", "#profileCompleteBar", "--dups-layer-profile-complete-bar"]
                   ];
@@ -885,9 +886,12 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                       name,
                       position: style.position,
                       zIndex: style.zIndex,
-                      token: root.getPropertyValue(token).trim(),
+                      token: token ? root.getPropertyValue(token).trim() : null,
                       top: style.top,
+                      right: style.right,
+                      bottom: style.bottom,
                       left: style.left,
+                      expectedZero: parseFloat(root.getPropertyValue("--dups-offset-0")),
                       anchorTopToken: style.getPropertyValue("--dups-anchor-profile-complete-top").trim(),
                       anchorCenterToken: style.getPropertyValue("--dups-anchor-profile-complete-center").trim(),
                       backdropInsets: name === "profile-bar-backdrop"
@@ -903,8 +907,11 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 try:
                     if layer["position"] != "fixed":
                         fail(f"{name}/{viewport_name}: {layer['name']} is not fixed-positioned ({layer})")
-                    if float(layer["zIndex"]) != float(layer["token"]):
+                    if layer["token"] is not None and float(layer["zIndex"]) != float(layer["token"]):
                         fail(f"{name}/{viewport_name}: {layer['name']} z-index does not match its DUPS token ({layer})")
+                    if layer["name"] in ("site-builder", "suspension-screen", "suspension-grain"):
+                        if any(abs(float(layer[edge].replace("px", "")) - layer["expectedZero"]) > 1 for edge in ("top", "right", "bottom", "left")):
+                            fail(f"{name}/{viewport_name}: {layer['name']} full-viewport edges differ from the DUPS zero-offset token ({layer})")
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: {layer['name']} DUPS layer could not be resolved ({layer})")
             try:
