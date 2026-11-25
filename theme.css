@@ -236,7 +236,7 @@ footer span+span{margin-left:12px;font-size:13px;font-weight:400}
 .player-info h2{margin-bottom:5px}
 .player-info p{color:#aaa;line-height:1.6}
 /* Keep owner-only editing tools and the Builder functional, but visually separate. */
-.visual-editor-toggle{position:fixed;z-index:var(--dups-layer-visual-editor, 990);top:auto;left:auto;right:14px;bottom:14px;width:28px;height:28px;display:grid;place-items:center;padding:0;border:1px solid #444;border-radius:50%;background:#272727;color:#f1f1f1;font-size:16px;line-height:1;cursor:pointer;box-shadow:none;}
+.visual-editor-toggle{position:fixed;z-index:var(--dups-layer-visual-editor, 990);top:auto;left:auto;right:var(--dups-anchor-visual-editor-edge, 14px);bottom:var(--dups-anchor-visual-editor-edge, 14px);width:28px;height:28px;display:grid;place-items:center;padding:0;border:1px solid #444;border-radius:50%;background:#272727;color:#f1f1f1;font-size:16px;line-height:1;cursor:pointer;box-shadow:none;}
 .visual-editor-panel{background:#181818!important;color:#eee!important;border:1px solid #444!important;border-radius:12px!important;box-shadow:0 12px 32px #0008!important}
 .visual-editor-panel input,.visual-editor-panel textarea{background:#0f0f0f!important;color:#eee!important;border-color:#444!important}
 @media(max-width:1100px){
@@ -289,7 +289,7 @@ footer span+span{margin-left:12px;font-size:13px;font-weight:400}
 }
 
 @media(max-width:600px){
- .visual-editor-toggle{right:12px;bottom:12px;width:27px;height:27px;font-size:15px}
+ .visual-editor-toggle{right:var(--dups-anchor-visual-editor-edge-compact, 12px);bottom:var(--dups-anchor-visual-editor-edge-compact, 12px);width:27px;height:27px;font-size:15px}
 }
 
 /* Authenticated account action pinned to the bottom of the navigation drawer */
