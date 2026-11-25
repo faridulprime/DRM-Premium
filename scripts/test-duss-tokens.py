@@ -73,6 +73,7 @@ def main() -> int:
         check_token(tokens, name, value)
 
     source_files = {
+        "assets/sizing/tokens.css": tokens,
         "theme.css": read("theme.css"),
         "styles.css": read("styles.css"),
         "live-users.css": read("live-users.css"),
@@ -142,7 +143,7 @@ def main() -> int:
 
     print(
         "PASS: 14 icon tokens, 14 selector references, prior badge/button tokens, "
-        "6 CSS brace checks, 5 page cache keys, and DUSS v0.6 documentation."
+        "7 CSS brace checks, 5 page cache keys, and DUSS v0.6 documentation."
     )
     print("NOTE: Static source verification only; no browser geometry is inferred.")
     return 0
