@@ -10,7 +10,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 2. Native 200% browser zoom has not been tested; the 720px viewport is only a layout-width proxy. Long Bengali/Latin strings and real user-font/zoom settings still need dedicated stress cases.
 3. Review SVG/glyph optical alignment using rendered screenshots; do not infer optical equivalence from CSS dimensions.
 4. Continue DUSS audit for remaining page-specific buttons, badges, cards/grids, tables, pagination, dialogs, toast and tooltip after mapping all consumers.
-5. Expand DUCS contrast checks beyond the four representative pairs and test state pairs, overlays and forced-colors.
+5. DUCS contrast calculation engine is now covered by 16 unit tests; 98 source-level candidate pairs are registered (93 meet thresholds, five boundary pairs need contextual review). Continue adding justified component/state pairs, overlay contexts and forced-colors browser checks.
 6. Expand DUPS beyond current header/drawer stacking assertions to positioned components, stacking contexts, anchors and collision fallbacks.
 7. Expand DUME beyond the shared mobile drawer controller to Profile, Live Users modal effects, Site Builder and dialogs; add rapid open/close and resize-during-transition tests.
 
