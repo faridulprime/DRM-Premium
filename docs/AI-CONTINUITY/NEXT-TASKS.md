@@ -105,3 +105,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Remaining DUPS work: audit other positioned elements and ancestor stacking contexts; inspect real anchor relationships and collision/fallback behavior; validate safe-area, native zoom and dynamic overlay interactions. Do not infer full positioning-system completion from this targeted migration.
 
 - DUPS targeted follow-up passed: Homepage fixed overlay token/stack checks, responsive Website Builder inspector positioning/layer checks, and Live Users Restricted Users modal center/layer checks are covered by Chromium run #45677034569. Remaining DUPS tasks are the wider positioned-selector/ancestor-context inventory, real anchor collision/fallback behavior, safe-area and native zoom validation.
+
+- DUPS targeted browser coverage expanded and passed in run #45677961245: mobile Homepage login-status anchor gap/right offset and Live Users sticky dialog-header layer, alongside previous Homepage overlays, Builder inspector and Restricted Users modal checks. Continue with evidence-led inventory and containing-block/stacking-context review; do not infer full DUPS completion.
