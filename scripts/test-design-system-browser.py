@@ -288,6 +288,26 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 f"filtered, contained, or will-change ancestors "
                 f"({metrics['fixedAncestorIssues']})"
             )
+        if name == "live-users" and width <= 760:
+            live_header = page.evaluate(
+                """() => {
+                  const element = document.querySelector(".live-topbar");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!element) return {missing: true};
+                  const style = getComputedStyle(element);
+                  const rect = element.getBoundingClientRect();
+                  return {
+                    position: style.position,
+                    left: rect.left,
+                    right: innerWidth - rect.right,
+                    expectedZero: parseFloat(root.getPropertyValue("--dups-offset-0"))
+                  };
+                }"""
+            )
+            if live_header.get("missing"):
+                fail(f"{name}/{viewport_name}: Live Users compact topbar is missing")
+            elif live_header["position"] != "fixed" or any(abs(live_header[key] - live_header["expectedZero"]) > 1 for key in ("left", "right")):
+                fail(f"{name}/{viewport_name}: Live Users compact topbar horizontal edges differ from DUPS zero-offset token ({live_header})")
         if name == "upload-studio" and width > 760:
             studio_sidebar = page.evaluate(
                 """() => {
