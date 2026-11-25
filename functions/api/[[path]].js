@@ -233,6 +233,11 @@ async function handle(req,env){
     duga_analysis_findings:{columns:["id","analyzer_version","repository_commit_sha","file_path","symbol","classification","confidence","evidence_json","status","created_at","reviewed_at","reviewed_by_user_id"],indexes:["idx_duga_findings_status_time","idx_duga_findings_file_commit"],triggers:[]},
     duga_jobs:{columns:["id","job_type","status","input_json","result_json","attempts","available_at","lease_expires_at","created_at","updated_at"],indexes:["idx_duga_jobs_queue"],triggers:[]}
    };
+   const triggerMarkers={
+    duga_review_no_implementer_self_audit:["BEFORE INSERT ON duga_reviews","NEW.reviewer_principal_id","Implementer cannot independently audit"],
+    duga_audit_no_update:["BEFORE UPDATE ON duga_audit_events","DUGA audit events are append-only"],
+    duga_audit_no_delete:["BEFORE DELETE ON duga_audit_events","DUGA audit events are append-only"]
+   };
    let probe,objects;try{
     probe=await env.DB.prepare("SELECT 1 AS ok").first();
     if(Number(probe?.ok)!==1)return fail("Governance database probe failed.",503);
@@ -248,13 +253,18 @@ async function handle(req,env){
     for(const col of spec.columns)if(!cols.has(col))missing.columns.push(table+"."+col);
     const tableObjects=new Set(rows.filter(x=>x.tbl_name===table).map(x=>x.name));
     for(const name of spec.indexes)if(!tableObjects.has(name))missing.indexes.push(name);
-    for(const name of spec.triggers)if(!rows.some(x=>x.type==="trigger"&&x.name===name&&x.tbl_name===table))missing.triggers.push(name);
+    for(const name of spec.triggers){
+     const trigger=rows.find(x=>x.type==="trigger"&&x.name===name&&x.tbl_name===table);
+     const markers=triggerMarkers[name]||[];
+     const definition=String(trigger?.sql||"").toUpperCase();
+     if(!trigger||markers.some(marker=>!definition.includes(marker.toUpperCase())))missing.triggers.push(name);
+    }
    }
    const expectedCount=Object.keys(expected).length;
    const complete=missing.tables.length===0&&missing.columns.length===0&&missing.indexes.length===0&&missing.triggers.length===0;
    const absent=schemaTables.length===0;
    const schemaStatus=complete?"ready":absent?"not_installed":"partial";
-   return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaVerification:"presence-only",schemaTables,expectedSchemaTables:expectedCount,missing,access:"owner"});
+   return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaVerification:"presence-and-critical-trigger-markers",schemaTables,expectedSchemaTables:expectedCount,missing,access:"owner"});
   }
   if(p.length===2&&p[1]==="overview"&&m==="GET"){
    let changes,findings,jobs,assignments;
