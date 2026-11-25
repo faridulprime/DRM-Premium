@@ -229,6 +229,47 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     f"{name}/{viewport_name}: DUPS header layer could not be resolved "
                     f"(computed={metrics['headerZIndex']!r}, token={expected_layer!r})"
                 )
+        if name == "homepage":
+            homepage_layers = page.evaluate(
+                """() => {
+                  const root = getComputedStyle(document.documentElement);
+                  const contracts = [
+                    ["site-builder", "#siteBuilder", "--dups-layer-site-builder"],
+                    ["suspension-screen", "#accountSuspensionScreen", "--dups-layer-suspension-screen"],
+                    ["profile-bar-backdrop", "#profileBarBackdrop", "--dups-layer-profile-complete-backdrop"],
+                    ["profile-complete-bar", "#profileCompleteBar", "--dups-layer-profile-complete-bar"]
+                  ];
+                  return contracts.map(([name, selector, token]) => {
+                    const element = document.querySelector(selector);
+                    if (!element) return {name, missing: true};
+                    const style = getComputedStyle(element);
+                    return {
+                      name,
+                      position: style.position,
+                      zIndex: style.zIndex,
+                      token: root.getPropertyValue(token).trim()
+                    };
+                  });
+                }"""
+            )
+            for layer in homepage_layers:
+                if layer.get("missing"):
+                    fail(f"{name}/{viewport_name}: DUPS overlay element {layer['name']} is missing")
+                    continue
+                try:
+                    if layer["position"] != "fixed":
+                        fail(f"{name}/{viewport_name}: {layer['name']} is not fixed-positioned ({layer})")
+                    if float(layer["zIndex"]) != float(layer["token"]):
+                        fail(f"{name}/{viewport_name}: {layer['name']} z-index does not match its DUPS token ({layer})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: {layer['name']} DUPS layer could not be resolved ({layer})")
+            try:
+                layers_by_name = {layer["name"]: float(layer["zIndex"]) for layer in homepage_layers if not layer.get("missing")}
+                if layers_by_name.get("profile-complete-bar", 0) <= layers_by_name.get("profile-bar-backdrop", 0):
+                    fail(f"{name}/{viewport_name}: profile completion bar must stack above its backdrop ({layers_by_name})")
+            except (TypeError, ValueError, KeyError):
+                fail(f"{name}/{viewport_name}: profile completion overlay stack could not be compared ({homepage_layers})")
+
         if name == "live-users":
             restriction_layer = page.evaluate(
                 """() => {
