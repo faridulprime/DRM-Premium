@@ -191,6 +191,11 @@ def main() -> int:
             SET status='validating',updated_at=8
             WHERE id='change-self-audit'"""),
           should_fail=True)
+    check("implementing cannot enter validating without an implementation commit",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET status='validating',state_version=8,updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
     check("non-status update cannot increment state version",
           lambda: db.execute("""UPDATE duga_change_requests
             SET rationale='changed',state_version=8,updated_at=8
