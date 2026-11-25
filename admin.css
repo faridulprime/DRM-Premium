@@ -171,7 +171,7 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
 
 
 /* Admin dashboard role chip follows the shared semantic role palette. */
-.dash-role.role-badge{padding:7px 11px;font-size:11px;letter-spacing:.08em}
+.dash-role.role-badge{padding:var(--duss-role-badge-dashboard-padding-y, 7px) var(--duss-role-badge-dashboard-padding-x, 11px);font-size:var(--duss-role-badge-dashboard-font-size, 11px);letter-spacing:var(--duss-role-badge-dashboard-letter-spacing, .08em)}
 
 
 /* Mobile Admin: prevent header/search and dashboard grids from exceeding viewport. */
@@ -209,7 +209,7 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .admin-main button,.admin-main .primary,.admin-main .outline,.admin-main .delete{min-height:42px;font-size:13px}
  .admin-main input:not([type=checkbox]),.admin-main select,.admin-main textarea{min-height:44px;max-width:100%;font-size:16px}
  .admin-main textarea{min-height:100px}
- .admin-main .role-badge{min-height:22px;padding:3px 7px;font-size:11px;line-height:1.2}
+ .admin-main .role-badge{min-height:var(--duss-role-badge-mobile-min-height, 22px);padding:var(--duss-role-badge-mobile-padding-y, 3px) var(--duss-role-badge-mobile-padding-x, 7px);font-size:var(--duss-role-badge-mobile-font-size, 11px);line-height:var(--duss-role-badge-line-height, 1.2)}
  .admin-main .panel,.admin-main .gate-panel,.admin-main .overview-panel{padding:15px 13px;border-radius:12px}
  .admin-main .overview-metric{min-height:94px;padding:13px}
  .admin-main .overview-metric strong{font-size:24px}
