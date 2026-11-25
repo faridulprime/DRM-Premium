@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "docs/DUGA-API-AUTHORIZATION-DESIGN.md"
+      - "docs/DUGA-API-INTEGRATION-READINESS.md"
       - "docs/DUGA-D1-SCHEMA-DESIGN.md"
       - "docs/DUGA-IMPLEMENTATION-PLAN.md"
       - "README.md"
@@ -13,6 +14,7 @@ on:
       - "docs/AI-CONTINUITY/**"
       - "scripts/validate-governance.mjs"
       - "scripts/validate-registry-schema.mjs"
+      - "scripts/test-registry-validator.mjs"
       - "scripts/validate-migration-inventory.mjs"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-schema-structure.py"
