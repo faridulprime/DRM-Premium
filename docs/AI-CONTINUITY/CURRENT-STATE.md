@@ -104,3 +104,11 @@ Verification date: 2026-11-25
 
 
 - Migrated the closing Live Users drawer `::before` pseudo-element's remaining literal z-index 5 to the existing `--dups-layer-live-effect` token. Chromium run [#45678490915](https://github.com/faridulprime/DRM-Premium/actions/runs/45678490915) passed computed z-index checks for both closing pseudo-elements against the base/top tokens, alongside the full existing browser suite.
+
+
+## DUPS visual-editor anchor follow-up — 2026-11-26
+
+- Added semantic anchor tokens for the base visual-editor toggle, panel top/left, and the active theme's desktop/compact floating-toggle edge clearance.
+- Migrated the corresponding declarations in `styles.css` and `theme.css` without changing coordinates: panel 56px/12px, desktop toggle edge 14px, compact edge 12px; existing z-index tokens are unchanged.
+- Expanded the Chromium browser audit to reveal the static hidden editor controls and verify computed fixed positioning, token-resolved geometry, and both existing local stacking layers at all Homepage viewport checks.
+- This is static geometry validation only; authenticated editor interaction, collision/fallback behavior, and native zoom remain unverified.
