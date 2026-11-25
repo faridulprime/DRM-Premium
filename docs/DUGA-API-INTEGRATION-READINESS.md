@@ -1,30 +1,24 @@
 # DUGA API Integration Readiness Audit
 
 Version: 0.1.0
-Status: Static source review; no runtime API changes
+Status: Updated static implementation/readiness audit
 Branch: `feature/full-admin-panel`
-Reviewed: 2026-11-25
-Baseline at start of review: `542d4fc95db50a48f607a0728335a9e1bae78af7`
+Reviewed: 2026-11-26
+Baseline at start of original review: `542d4fc95db50a48f607a0728335a9e1bae78af7`
 
 ## 1. Executive decision
 
-**DUGA API implementation is not ready to be enabled against the current Preview D1 database.**
+**The Owner-only DUGA read API is implemented and mock-tested on the feature branch. DUGA write API and any shared Preview/Production migration remain NO-GO.**
 
-The existing application has a suitable starting point for a separately gated Owner-only API:
-- one Pages Functions catch-all router at `functions/api/[[path]].js`;
-- server-side session lookup from the HttpOnly `frame_admin_session` cookie;
-- a server-derived user record with `id`, `email`, `username` and `role`;
-- a global same-origin check and JSON content-type requirement for non-GET requests;
-- Owner-only checks already used by existing management operations.
+The current branch includes read-only Owner endpoints for health, overview, change list/detail, audit and findings. The health route checks the expected eight DUGA tables, required columns, named indexes, required triggers and selected critical trigger SQL markers. Handler tests use mocked D1. The operational schema remains a draft and has not been applied to Cloudflare D1.
 
-However:
-- no `/api/governance/*` endpoint is implemented;
-- the DUGA operational schema remains a design draft and has not been applied;
-- no trusted AI service-authentication mechanism exists;
-- the migration history for Preview is not recorded in the inspected schema;
-- D1 transactional and foreign-key behavior for the proposed governance workflow has not been tested in Cloudflare D1.
+Outstanding release gates include:
+- disposable Cloudflare D1 acceptance of batch atomicity, CAS concurrency, audit-failure rollback and foreign-key behavior;
+- verified target database identity, migration ledger, backup and recovery procedure;
+- trusted AI reviewer and validation-runner identity designs;
+- independent security review and explicit owner authorization for any mutation work.
 
-Therefore this audit recommends an implementation sequence, not immediate endpoint activation.
+The feature-branch health check is targeted structural verification only. It does not establish live Preview schema readiness or full SQL equivalence.
 
 ## 2. Existing request pipeline observed
 
@@ -204,14 +198,14 @@ Only after the Owner-only workflow is secure:
 | Existing session authentication source identified | PASS |
 | Existing server-side Owner check pattern identified | PASS |
 | Global same-origin mutation guard identified | PASS |
-| Dedicated Governance routes exist | NO |
-| DUGA operational tables exist in Preview | NO evidence; not present in supplied inventory |
+| Owner-only read-only Governance routes exist on feature branch | YES; handler-level mocked tests pass |
+| DUGA operational tables exist in Preview | Not verified; no live D1 inspection was performed |
 | Preview migration history verified | NO |
 | Trusted AI service identity exists | NO |
 | D1 atomic batch behavior verified for DUGA | NO |
 | Full schema equivalence certified | NO |
 
-**Decision: NO-GO for DUGA write endpoints or migration rollout.**
+**Decision: NO-GO for DUGA write endpoints and all shared Preview/Production migration rollout.**
 
 Allowed next work:
 - static code review;
@@ -220,7 +214,17 @@ Allowed next work:
 - disposable-database tests;
 - documentation and security test planning.
 
-No database, Production environment, `main` branch, or existing runtime code was modified during this audit.
+No database, Production environment, `main` branch, or shared Preview runtime was modified during this audit.
+
+## 11. Feature-branch implementation update — 2026-11-26
+
+The following read-only endpoints are implemented in `functions/api/[[path]].js` and covered by the mocked handler suite: `GET /api/governance/health`, `/overview`, `/changes`, `/changes/:id`, `/audit`, and `/findings`. All are Owner-only. No governance write route is implemented.
+
+The health route now requires all four `duga_change_requests` lifecycle triggers and both blocked-state metadata columns. Missing the transition-audit trigger or `block_reason_code` column is covered by regression tests and returns `schema: partial`.
+
+CI on the latest branch head `277f7aaf1752abe0c0ea478289e81c1611d555c1` passed in [run #45673820027](https://github.com/faridulprime/DRM-Premium/actions/runs/45673820027). This includes JavaScript syntax, mocked Owner-only health API tests, registry validators, static migration inventory, in-memory SQLite schema smoke tests and structural validation. It does not test a live D1 database or deployed Pages runtime.
+
+The DUGA write contract is documented in `docs/DUGA-API-WRITE-CONTRACT.md`. The next runtime gate is a separately approved disposable D1 test environment. Do not run migration 0009 or enable write routes until D1 atomicity, CAS, rollback, migration history and backup/recovery have been independently verified.
 
 ## 11. Safe local schema test harness — 2026-11-25
 
