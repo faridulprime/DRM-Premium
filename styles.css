@@ -50,7 +50,7 @@ body.visual-editor-active{cursor:crosshair}
 .sb-live-edit-overlay:active{cursor:crosshair}
 
 /* Public account registration — Live Users graphite modal language. */
-.register-dialog{position:fixed;inset:var(--dups-offset-0, 0);margin:auto;width:min(460px,calc(100vw - 28px));max-width:none;max-height:min(86dvh,760px);overflow:auto;padding:0;border:1px solid var(--ducs-home-register-border, #383838);border-radius:12px;background:linear-gradient(155deg,var(--ducs-home-register-bg-start, #171717) 0%,var(--ducs-home-register-bg-mid, #101010) 48%,var(--ducs-home-register-bg-end, #0d0d0d) 100%);color:var(--ducs-home-register-text, #ededed);box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035)}
+.register-dialog{position:fixed;inset:var(--dups-offset-0, 0);z-index:var(--dups-layer-register-dialog, 1001);margin:auto;width:min(460px,calc(100vw - 28px));max-width:none;max-height:min(86dvh,760px);overflow:auto;padding:0;border:1px solid var(--ducs-home-register-border, #383838);border-radius:12px;background:linear-gradient(155deg,var(--ducs-home-register-bg-start, #171717) 0%,var(--ducs-home-register-bg-mid, #101010) 48%,var(--ducs-home-register-bg-end, #0d0d0d) 100%);color:var(--ducs-home-register-text, #ededed);box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.035)}
 .register-dialog[open]{animation:registerModalEnter .32s ease-out both}
 .register-dialog::backdrop{background:rgba(0,0,0,.58);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 @keyframes registerModalEnter{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
