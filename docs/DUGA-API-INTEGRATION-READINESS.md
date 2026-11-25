@@ -233,3 +233,12 @@ python scripts/test-duga-schema.py
 ```
 
 This is a local test harness only. It neither connects to Cloudflare nor changes Preview/Production. The harness is intended as an early regression check before a separate disposable D1 test is designed and approved.
+
+
+## 12. Security/lifecycle design follow-up — 2026-11-25
+
+Added `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` as a proposed contract, not runtime implementation. It consolidates the initial Owner-session-only trust boundary, future scoped assignment checks, AI/validation service identity boundary, risk/approval gates, commit-bound evidence staleness, guarded implementation-SHA updates, transition-service algorithm, and required security/regression tests.
+
+The document includes an explicit candidate old-state → new-state matrix. This matrix is not yet approved policy. In particular, Owner review is required for blocked-state resumability, terminal rejected/cancelled behavior, and rework transitions. No write endpoint should be implemented until these decisions are confirmed and the other no-go conditions are cleared.
+
+The existing NO-GO decision for Preview write endpoints remains unchanged. No API, migration, Preview binding, Production resource or runtime code was changed.
