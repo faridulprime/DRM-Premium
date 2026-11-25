@@ -26,12 +26,15 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## DUGA review track — Draft PR #4
 
+0. Latest feature-branch DUGA CI run #45651462886 passed, including 12 negative-case registry validator regression tests. Registry publication remains blocked on verified Pages build/output settings and asset binding; the inspected 139-path branch tree has no build manifest or Wrangler/Pages config, and Dashboard settings are unavailable through this repository connection.
+
 0. DUGA workflow action upgrade verified: review-branch runs #251/#252 and #254/#255 plus feature-branch run #253 passed; no D1 execution is part of this change.
 1. Obtain independent third-party review of the SQL schema, lifecycle transitions, authorization policy and CAS/audit design.
 2. Run full revised-schema acceptance against a fresh disposable D1 after the parent-change-request and AI-review constraints; the older Worker PASS does not cover these later schema additions.
 3. Reconcile the actual shared Preview D1 migration history and repository migration sequence, including duplicate `0004` and `0007` prefixes.
 4. Verify complete Preview schema/index/trigger inventory and preserve a verified backup/recovery plan.
 5. Design/test trusted Git provenance and AI/validation service identity before any service write endpoints.
+6. Before publishing the canonical registry, obtain the Pages project build command/output directory, Functions routing behavior and exact asset binding from Cloudflare Dashboard; then implement and test a static-asset or Owner-only read-only publication path.
 6. Test the Pages catch-all router/session integration and existing application regressions before proposing DUGA API runtime integration.
 
 ## Not authorized / not implemented
