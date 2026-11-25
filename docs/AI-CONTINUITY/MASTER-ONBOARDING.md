@@ -31,5 +31,5 @@ DCP coordinates governance and does not override subsystem ownership.
 ## Evidence discipline
 Separate implemented, partially implemented, planned, unknown and tested states. Treat static source checks as static checks only. Do not infer runtime behavior from token presence or file names.
 
-## Access limitations
+## Governance metadata validation\nRun `node scripts/validate-governance.mjs` from the repository root after changing the system registry, ownership roles or dependency baseline. This is a static repository check only; it does not validate D1, API authorization, browser behavior or deployment.\n\n## Access limitations
 These documents do not grant GitHub, Cloudflare, database or other service permissions. A new AI account needs access granted independently by the project owner.
