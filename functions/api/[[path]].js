@@ -32,7 +32,8 @@ function validateBuilderDocument(doc){
 }
 const DEFAULT_SETTINGS={site_name:"FRAME",hero_eyebrow:"EDITOR'S PICK",hero_title:"",hero_description:"",library_eyebrow:"DISCOVER",library_title:"ভিডিও লাইব্রেরি",footer_text:"একটি ব্যক্তিগত ভিডিও লাইব্রেরি",hero_image:"https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=85",accent_color:"#e50914"};
 const json=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff",...headers}});
-const fail=(message,status=400)=>json({error:message},status);
+const fail=(message,status=400)=>json({error:message},status);\nfunction safeJsonArray(value){try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[]}catch{return []}}
+
 const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 const un64=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
 async function hash(s){return b64(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))}
@@ -252,6 +253,37 @@ async function handle(req,env){
    const absent=schemaTables.length===0;
    const schemaStatus=complete?"ready":absent?"not_installed":"partial";
    return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaTables,expectedSchemaTables:expectedCount,missing,access:"owner"});
+  }
+  if(p.length===2&&p[1]==="changes"&&m==="GET"){
+   const rawLimit=u.searchParams.get("limit")||"25";
+   if(!/^(?:[1-9]|[1-4][0-9]|50)$/.test(rawLimit))return fail("limit must be an integer from 1 to 50.",400);
+   const limit=Number(rawLimit),status=u.searchParams.get("status")||"",q=u.searchParams.get("q")||"",cursor=u.searchParams.get("cursor")||"";
+   const allowedStatuses=new Set(["proposed","analyzing","impact_review","awaiting_ai_audit","awaiting_human_approval","approved","implementing","validating","final_review","accepted","rejected","cancelled","blocked"]);
+   if(status&&!allowedStatuses.has(status))return fail("Invalid change request status filter.",400);
+   if(q.length>120||/[\\u0000-\\u001f]/.test(q))return fail("Search query is invalid or too long.",400);
+   let cursorTime=null,cursorId=null;
+   if(cursor){
+    try{
+     const decoded=new TextDecoder().decode(un64(cursor));
+     const split=decoded.indexOf(":");
+     if(split<1)throw new Error("bad cursor");
+     cursorTime=Number(decoded.slice(0,split));cursorId=decoded.slice(split+1);
+     if(!Number.isSafeInteger(cursorTime)||cursorTime<0||!/^[-A-Za-z0-9_:.]{1,100}$/.test(cursorId))throw new Error("bad cursor");
+    }catch{return fail("Invalid pagination cursor.",400)}
+   }
+   const where=[],args=[];
+   if(status){where.push("status=?");args.push(status)}
+   if(q){where.push("(title LIKE ? ESCAPE '\\\\' OR summary LIKE ? ESCAPE '\\\\')");const term="%"+q.replace(/[\\\\%_]/g,"\\\\  return fail("Governance route not found.",404);
+ }
+
+ if(p[0]==="builder"){")+"%";args.push(term,term)}
+   if(cursorTime!==null){where.push("(created_at<? OR (created_at=? AND id<?))");args.push(cursorTime,cursorTime,cursorId)}
+   const sql="SELECT id,title,summary,status,risk_level,affected_systems_json,affected_paths_json,requested_by_type,requested_by_user_id,requested_by_principal_id,source_branch,base_commit_sha,policy_commit_sha,implementer_type,implementer_user_id,implementer_principal_id,implementation_commit_sha,state_version,created_at,updated_at FROM duga_change_requests"+(where.length?" WHERE "+where.join(" AND "):"")+" ORDER BY created_at DESC,id DESC LIMIT ?";
+   args.push(limit+1);
+   let result;try{result=await env.DB.prepare(sql).bind(...args).all()}catch{return fail("Change request storage is unavailable; verify the DUGA schema is installed.",503)}
+   const rows=result.results||[],hasMore=rows.length>limit,items=rows.slice(0,limit);
+   const last=items[items.length-1],nextCursor=hasMore&&last?b64(new TextEncoder().encode(String(last.created_at)+":"+last.id)):null;
+   return json({ok:true,items:items.map(row=>({...row,affected_systems:safeJsonArray(row.affected_systems_json),affected_paths:safeJsonArray(row.affected_paths_json)})),page:{limit,hasMore,nextCursor}});
   }
   return fail("Governance route not found.",404);
  }
