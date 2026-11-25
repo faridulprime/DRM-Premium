@@ -68,7 +68,8 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 ## Preview D1 preflight handoff
 A read-only diagnostic script is available at `governance/schemas/d1-preview-preflight.sql`. Run each SELECT/PRAGMA separately in the Cloudflare D1 Console against Preview only. Share the SQLite version, sqlite_master table/index/trigger listings, migration/meta table discovery and `PRAGMA table_info('users')` output. Do not execute the schema draft or any migration in a shared Preview database.
 
-## Owner decision recorded — 2026-11-25
-- Selected option B: `blocked` is resumable, not terminal.
-- Unblocking must be an explicit authorized operation with a non-empty rationale and evidence that the blocking condition is cleared. It must use CAS + an append-only audit event, retain the prior state in immutable block-event provenance, and re-evaluate all gates before selecting a safe resume stage.
-- This is a policy/design decision only; no runtime code or schema migration has been implemented.
+## Owner decisions and technical review — 2026-11-25
+- Approved: `blocked` is resumable; `rejected` and `cancelled` are terminal; renewed attempts require a new linked Change Request with independent evidence/approvals and preserved original history.
+- Unblocking must be an explicit authorized operation with a non-empty rationale and evidence that the blocking condition is cleared. It must use CAS + an append-only audit event, retain prior state in immutable block-event provenance, and re-evaluate all gates before selecting a safe resume stage.
+- Internal consistency review corrected duplicate matrix rows, aligned DUGA-SPEC/schema design with the approved lifecycle, added immutable predecessor linkage for renewed requests, and prohibited AI audit rows from recording terminal rejection. Local SQLite coverage added; Cloudflare D1 behavior remains unverified.
+- This is a policy/design decision only; no runtime code or schema migration has been implemented. A separate independent reviewer and Preview migration-history reconciliation remain required.
