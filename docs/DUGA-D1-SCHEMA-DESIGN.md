@@ -130,3 +130,8 @@ The structural regression validator additionally checks the ordered columns of a
 The draft's approval record now references the exact human assignment used for authorization and snapshots its scope plus the request's policy commit SHA. A BEFORE INSERT trigger requires that assignment to be active, human, owned by the approver, role-matched, scope-matched and applicable to the change's affected systems; it also requires the recorded policy revision to match the change request. Platform Owner approvals require the platform-wide assignment; System Owner approvals require a system-scoped assignment covering an affected system. Approval rows reject UPDATE and DELETE; later assignment revocation does not rewrite historical approval evidence.
 
 This is database-level consistency evidence, not a replacement for server-side session authentication, trusted actor derivation, or policy evaluation. The trigger cannot establish that the API obtained the approver identity from a trusted session. The scope model also assumes affected_systems_json contains canonical system IDs.
+
+
+## 21. Validation-run lifecycle invariants
+
+`duga_validation_runs` now constrains timestamps by status: queued runs have neither start nor completion time; running runs require a start and forbid completion; passed/failed runs require both timestamps with completion not earlier than start; cancelled runs require completion and, if execution started, completion cannot precede start. A cancellation before execution is represented by a null start and non-null completion. These checks validate row consistency only; they do not prove runner identity, commit provenance, or that results were genuinely produced by a trusted CI runner.
