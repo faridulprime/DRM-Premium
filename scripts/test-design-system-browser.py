@@ -200,12 +200,51 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const rect = el.getBoundingClientRect();
                   return rect.width <= 0 || rect.height <= 0;
                 }).length
+,                fixedAncestorIssues: [...document.querySelectorAll("body *")].flatMap((el) => {
+                  const style = getComputedStyle(el);
+                  if (!["fixed", "sticky"].includes(style.position)) return [];
+                  const visible = typeof el.checkVisibility === "function"
+                    ? el.checkVisibility({checkOpacity: true, checkVisibilityCSS: true})
+                    : !el.closest("[hidden]") && style.display !== "none" && style.visibility !== "hidden";
+                  if (!visible) return [];
+                  const offenders = [];
+                  let ancestor = el.parentElement;
+                  while (ancestor && ancestor !== document.documentElement) {
+                    const parentStyle = getComputedStyle(ancestor);
+                    const contain = parentStyle.contain.split(/\\s+/);
+                    const willChange = parentStyle.willChange.split(/,\\s*/);
+                    if (parentStyle.transform !== "none" || parentStyle.perspective !== "none"
+                      || parentStyle.filter !== "none" || parentStyle.backdropFilter !== "none"
+                      || contain.some(value => ["paint", "layout", "strict", "content"].includes(value))
+                      || willChange.some(value => ["transform", "perspective", "filter"].includes(value))) {
+                      offenders.push({
+                        tag: ancestor.tagName.toLowerCase(),
+                        id: ancestor.id || "",
+                        className: typeof ancestor.className === "string" ? ancestor.className.slice(0, 60) : ""
+                      });
+                    }
+                    ancestor = ancestor.parentElement;
+                  }
+                  return offenders.length ? [{
+                    tag: el.tagName.toLowerCase(),
+                    id: el.id || "",
+                    className: typeof el.className === "string" ? el.className.slice(0, 60) : "",
+                    position: style.position,
+                    ancestors: offenders
+                  }] : [];
+                }).slice(0, 8)
               };
             }"""
         )
 
         if metrics["bodyTextLength"] == 0:
             fail(f"{name}/{viewport_name}: body contains no visible text")
+        if metrics["fixedAncestorIssues"]:
+            fail(
+                f"{name}/{viewport_name}: visible fixed/sticky elements have transformed, "
+                f"filtered, contained, or will-change ancestors "
+                f"({metrics['fixedAncestorIssues']})"
+            )
         if metrics["headerHeight"] <= 0:
             fail(f"{name}/{viewport_name}: visible header geometry could not be measured")
         if name != "profile":
