@@ -93,7 +93,7 @@ try {
   if (!/^--.*DRAFT/im.test(draft) || !/^--.*DESIGN ONLY\. NOT A MIGRATION\. DO NOT EXECUTE\./m.test(draft)) {
     errors.push(`${draftPath}: design-only safety header is missing`);
   }
-  if (/^\\s*CREATE TABLE\\s+IF NOT EXISTS\\s+duga_/im.test(draft)) {
+  if (/^\s*CREATE TABLE\s+IF NOT EXISTS\s+duga_/im.test(draft)) {
     errors.push(`${draftPath}: do not silently convert design draft to executable migration syntax`);
   }
   if (await stat(path.join(root, "migrations/0009_duga_governance_foundation.sql")).then(() => true).catch(() => false)) {
