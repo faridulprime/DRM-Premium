@@ -32,5 +32,7 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Test contrast parser and WCAG math edge cases
+        run: python scripts/test-ducs-contrast-unit.py
       - name: Audit registered DUCS contrast pairs
         run: python scripts/test-ducs-contrast.py
