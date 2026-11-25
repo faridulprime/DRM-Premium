@@ -224,3 +224,8 @@ The compact shared Category Bar and compact Homepage Category Bar horizontal vie
 
 
 The header login-status regression now resolves its desktop right-edge expectation from `--dups-offset-0` and its compact expectation from `--dups-offset-2`. This keeps the test coupled to the actual token values while preserving the current 0px/8px geometry.
+
+
+## Full-viewport overlay tokenization — 2026-11-26
+
+Four Homepage full-viewport surfaces now reuse the existing DUPS zero-offset primitive: Website Builder shell, public registration dialog, account suspension screen, and suspension grain layer. Their existing fixed positioning, dialog centering, stacking order, and visibility behavior are preserved. The browser audit now asserts the computed four-edge coverage of the shell and suspension surfaces against the token; final verification of this addition is pending.
