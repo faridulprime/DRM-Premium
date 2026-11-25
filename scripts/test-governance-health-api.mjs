@@ -29,7 +29,7 @@ const schemaSpec = {
 function tokenHash(token) {
   return createHash("sha256").update(token).digest("base64url");
 }
-function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, failChangeDetail = false, failAudit = false, failFindings = false, failOverview = false, overviewRows = {}, findingRows = [], auditRows = [], changeRows = [], changeDetail = null, relatedRows = {}, tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
+function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, failChangeDetail = false, failAudit = false, failFindings = false, failOverview = false, overviewRows = {}, findingRows = [], auditRows = [], changeRows = [], changeDetail = null, relatedRows = {}, tables = [], completeSchema = false, omitColumn = null, misplaceTrigger = null, dbEnabled = true } = {}) {
   const users = new Map([
     [tokenHash("owner-token"), { id: "owner-1", email: "owner@example.test", username: "owner", role: "owner" }],
     [tokenHash("admin-token"), { id: "admin-1", email: "admin@example.test", username: "admin", role: "admin" }],
@@ -72,7 +72,7 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
               results.push({ type: "table", name: table, tbl_name: table });
               if (completeSchema) {
                 for (const name of schemaSpec[table]?.indexes || []) results.push({ type: "index", name, tbl_name: table });
-                for (const name of schemaSpec[table]?.triggers || []) results.push({ type: "trigger", name, tbl_name: table });
+                for (const name of schemaSpec[table]?.triggers || []) results.push({ type: "trigger", name, tbl_name: misplaceTrigger === name ? "duga_jobs" : table });
               }
             }
             return { results };
@@ -108,6 +108,17 @@ await test("Owner can read D1 health", async () => {
   assert.equal(body.expectedSchemaTables, 8);
   assert.equal(body.missing.tables.length, 8);
 });
+await test("Health rejects a required trigger attached to the wrong table", async () => {
+  const { response, body } = await call({ token: "owner-token", env: mockEnv({
+    tables: Object.keys(schemaSpec),
+    completeSchema: true,
+    misplaceTrigger: "duga_review_no_implementer_self_audit",
+  }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "partial");
+  assert.deepEqual(body.missing.triggers, ["duga_review_no_implementer_self_audit"]);
+});
+
 await test("Admin is explicitly forbidden", async () => {
   const { response } = await call({ token: "admin-token" });
   assert.equal(response.status, 403);
