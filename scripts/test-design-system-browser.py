@@ -254,6 +254,37 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: Builder inspector DUPS layer could not be resolved ({builder_inspector})")
 
+        if name == "homepage" and width <= 760:
+            header_status_anchor = page.evaluate(
+                """() => {
+                  const status = document.querySelector("#headerLoginStatus");
+                  const header = document.querySelector(".topbar");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!status || !header) return {missing: true};
+                  const style = getComputedStyle(status);
+                  return {
+                    position: style.position,
+                    top: parseFloat(style.top),
+                    right: parseFloat(style.right),
+                    headerHeight: header.getBoundingClientRect().height,
+                    gap: parseFloat(root.getPropertyValue("--dups-anchor-gap-status")) * (root.fontSize ? parseFloat(root.fontSize) : 16),
+                    offset: parseFloat(root.getPropertyValue("--dups-offset-2")) * (root.fontSize ? parseFloat(root.fontSize) : 16)
+                  };
+                }"""
+            )
+            if header_status_anchor.get("missing"):
+                fail(f"{name}/{viewport_name}: header login status anchor/header is missing")
+            else:
+                try:
+                    if header_status_anchor["position"] != "absolute":
+                        fail(f"{name}/{viewport_name}: header login status is not absolutely anchored ({header_status_anchor})")
+                    if abs(header_status_anchor["top"] - (header_status_anchor["headerHeight"] + header_status_anchor["gap"])) > 1:
+                        fail(f"{name}/{viewport_name}: header login status anchor gap differs from its DUPS token ({header_status_anchor})")
+                    if abs(header_status_anchor["right"] - header_status_anchor["offset"]) > 1:
+                        fail(f"{name}/{viewport_name}: header login status right offset differs from its DUPS token ({header_status_anchor})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: header login status anchor could not be resolved ({header_status_anchor})")
+
         if name == "homepage":
             homepage_layers = page.evaluate(
                 """() => {
