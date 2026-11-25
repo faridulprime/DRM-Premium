@@ -94,3 +94,8 @@ The existing `--dups-offset-2` (0.5rem; 8px at the default root size) supplies t
 | `--dups-layer-live-dialog-sticky-header` | 1 | Local stacking order for the sticky header inside the Live Users detail dialog |
 
 The alias preserves the existing component-local value and must not be interpreted as a global layer.
+
+
+## Live Users drawer closing-effect layers — 2026-11-26
+
+The closing drawer's lower smoke pseudo-element now consumes the existing `--dups-layer-live-effect` token (5), while its upper pseudo-element already consumes `--dups-layer-live-effect-top` (6). These are component-local layers within the drawer's isolated effect context.
