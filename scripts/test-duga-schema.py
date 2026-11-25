@@ -214,8 +214,35 @@ def main() -> int:
             """INSERT INTO duga_validation_runs
                (id,change_request_id,commit_sha,status,validator,results_json,
                 started_at,completed_at,created_at)
-               VALUES (?, 'change-self-audit','commit-1',?,'ci','{}',?,?,10)""",
-            (run_id, status, started, completed),
+               VALUES (?, 'change-self-audit','commit-1','queued','ci','{}',NULL,NULL,10)""",
+            (run_id,),
+        )
+        if status == "queued":
+            if started is not None or completed is not None:
+                db.execute(
+                    "UPDATE duga_validation_runs SET started_at=?,completed_at=? WHERE id=?",
+                    (started, completed, run_id),
+                )
+            return
+        if status == "running":
+            db.execute(
+                "UPDATE duga_validation_runs SET status='running',started_at=? WHERE id=?",
+                (started, run_id),
+            )
+            return
+        if status == "cancelled" and started is None:
+            db.execute(
+                "UPDATE duga_validation_runs SET status='cancelled',completed_at=? WHERE id=?",
+                (completed, run_id),
+            )
+            return
+        db.execute(
+            "UPDATE duga_validation_runs SET status='running',started_at=? WHERE id=?",
+            (started, run_id),
+        )
+        db.execute(
+            "UPDATE duga_validation_runs SET status=?,completed_at=? WHERE id=?",
+            (status, completed, run_id),
         )
 
     check("queued validation has no execution timestamps",
