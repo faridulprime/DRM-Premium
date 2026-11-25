@@ -56,7 +56,7 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 
 ### F-04 — Fenced job lease design
 - Added lease_owner, lease_token, lease_generation to the DUGA job draft. Claim/reclaim increments attempts and generation together; heartbeat retains identity; terminal transitions clear the lease.
-- Added a transition guard and unique active-token index; tests cover reclaim, stale-token heartbeat/completion, generation skipping and completion.
+- Added a transition guard and unique active-token index; tests cover reclaim, stale-token heartbeat/completion, generation skipping, immutable job input and result-publication timing.
 - Required runtime semantics: atomic conditional UPDATE for claim/reclaim; every heartbeat/completion must match job ID, running status, token, generation and unexpired lease. A zero-row update means stale worker.
 - Cloudflare D1 docs explicitly guarantee D1Database.batch() is transactional; the proposed claim itself should remain one conditional statement, avoiding read-then-write races. Cloudflare documents D1 write results through meta.changes (and empty results for UPDATE in run()); this design therefore avoids assuming UPDATE RETURNING support. No D1 runtime or concurrent-worker test has been run.
 
