@@ -586,6 +586,33 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     except (TypeError, ValueError, KeyError):
                         fail(f"{name}/{viewport_name}: Category Bar anchor token could not be resolved ({state})")
 
+            drawer_clearance = page.evaluate(
+                """() => {
+                  const bar = document.querySelector(".category-bar");
+                  if (!bar) return {missing: true};
+                  const wasOpen = document.body.classList.contains("profile-drawer-open");
+                  document.body.classList.add("profile-drawer-open");
+                  const style = getComputedStyle(bar);
+                  const result = {
+                    position: style.position,
+                    right: parseFloat(style.right),
+                    token: parseFloat(style.getPropertyValue("--dups-anchor-profile-drawer-clearance"))
+                  };
+                  if (!wasOpen) document.body.classList.remove("profile-drawer-open");
+                  return result;
+                }"""
+            )
+            if drawer_clearance.get("missing"):
+                fail(f"{name}/{viewport_name}: Category Bar is missing for Profile drawer clearance check")
+            else:
+                try:
+                    if drawer_clearance["position"] != "fixed":
+                        fail(f"{name}/{viewport_name}: Category Bar is not fixed during Profile drawer open ({drawer_clearance})")
+                    if abs(drawer_clearance["right"] - drawer_clearance["token"]) > 1:
+                        fail(f"{name}/{viewport_name}: Category Bar right clearance differs from its DUPS token ({drawer_clearance})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: Profile drawer Category Bar clearance token could not be resolved ({drawer_clearance})")
+
             homepage_layers = page.evaluate(
                 """() => {
                   const root = getComputedStyle(document.documentElement);
