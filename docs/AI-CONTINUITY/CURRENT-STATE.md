@@ -64,4 +64,7 @@ Verification date: 2026-11-25
 - Updated `scripts/test-duga-schema.py` with lifecycle adversarial cases and an exhaustive 29-allowed/127-rejected transition matrix; both schema test workflows passed.
 - Updated `scripts/validate-duga-schema-structure.py` with new columns, trigger and CHECK-expression expectations.
 - Updated the enforcement design and state-machine docs to reflect the actual draft behavior and limitations.
-- Next: execute both SQLite scripts against the exact branch head; fix failures; then inspect the API architecture for CAS/actor attribution. Do not create migration 0009 or touch Preview until the separate readiness/approval gates pass.
+- Added `docs/DUGA-API-WRITE-CONTRACT.md` covering session-derived actors, disabled untrusted AI/runner identities, named commands, CAS, atomic audit coupling, idempotency, concurrency, HTTP semantics and disposable-D1 acceptance gates. No write endpoint was added.
+- Hardened `GET /api/governance/health`: it now requires the four `duga_change_requests` lifecycle triggers and both blocked-state metadata columns. Mocked regressions assert missing transition-audit trigger and missing block-reason column return `schema: partial`.
+- The current CI run must validate the health-route change and documentation. D1 `batch()` atomicity / `changes()` coupling remain unverified; Governance write APIs and shared Preview/Production migration remain NO-GO.
+- Next: complete CI verification, then add exact D1 statement-semantics tests only in an explicitly approved disposable database after its identity, backup and migration history are verified. Do not create migration 0009 or touch shared Preview/Production.
