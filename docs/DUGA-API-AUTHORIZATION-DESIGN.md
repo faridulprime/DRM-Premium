@@ -88,3 +88,23 @@ The health route now checks the required column names via read-only `PRAGMA tabl
 ## 23. Read-only governance overview — 2026-11-25
 
 `GET /api/governance/overview` returns Owner-only aggregate counts grouped by status for change requests, analysis findings, jobs and assignments. It performs four read-only grouped-count queries in parallel, returns a generation timestamp, and exposes no individual records or mutation capability. Missing/unavailable DUGA tables fail closed with 503. Mocked handler tests cover counts, Owner authorization, GET-only behavior and query failure. This endpoint is not evidence that Preview D1 has the draft schema installed; live Preview data remains unverified.
+
+
+## 22. Change-request lifecycle schema-draft enforcement — 2026-11-26
+
+The feature-branch operational schema draft now includes database-level lifecycle enforcement for `duga_change_requests`:
+
+- New requests must begin as `proposed`, version 1, without an implementer or implementation commit, and with matching creation/update timestamps.
+- The database enforces the 29-edge transition allow-list, exact +1 `state_version` increments, terminal-state protection and physical-delete denial.
+- Request identity and all proposal content/scope fields (title, summary, rationale, risk, affected systems/paths, rollback plan, source branch, base commit and policy commit) are immutable after creation. Corrections require a successor request.
+- `blocked_from_status` and an enumerated `block_reason_code` are required when entering `blocked`; the only resume path is `impact_review`, or cancellation.
+- Implementer identity can be assigned only on `approved → implementing` and cannot later be replaced. The first implementation commit is write-once; changed-commit retries require a future attempt-history model or a successor request.
+- A database trigger appends a synthetic transition event with actor `system / duga-db-trigger`. This proves the database transition occurred, not who authenticated. A future API must add a separate actor-attributed audit event in the same D1 batch.
+
+Validation evidence: GitHub Actions passed on schema/test commit `5b3385546ec93d99c2b22bc5abb6070798b065e6`:
+- [DUGA Governance run #45672609492](https://github.com/faridulprime/DRM-Premium/actions/runs/45672609492)
+- [DUGA schema smoke run #45672609649](https://github.com/faridulprime/DRM-Premium/actions/runs/45672609649)
+
+The in-memory suite exercises all 29 allowed edges and rejects 127 unlisted source/target pairs. It also tests proposal immutability, stale expected-version updates returning zero changed rows, and atomic rollback when the audit insert is forced to fail. The structural validator checks the new columns, trigger operation/timing and selected CHECK-expression anchors.
+
+**Boundary:** this is schema-draft and local SQLite evidence only. No governance write route, migration, D1 operation or Preview/Production deployment was performed. The API remains NO-GO until migration history, backup/recovery, D1 batch semantics, trusted actor identity and separate approval gates are complete.
