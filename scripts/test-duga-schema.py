@@ -320,7 +320,7 @@ def main() -> int:
         ),
         should_fail=True,
     )
-    db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=5,revoked_by_user_id='human-1' WHERE id='assignment-system-owner'
+    db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=5,revoked_by_user_id='human-1' WHERE id='assignment-system-owner'")
     check("assignment grant automatically writes audit evidence",
           lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='assignment-grant:assignment-system-owner'"),
           should_fail=False)
