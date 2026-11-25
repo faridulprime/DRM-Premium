@@ -173,33 +173,6 @@ export default {
     if (request.method !== "POST") return json({ error: "POST required" }, 405);
     const url = new URL(request.url);
 
-    // TEMPORARY: unauthenticated fingerprint comparison for acceptance-secret diagnosis.
-    // Remove this route after the mismatch is identified.
-    if (url.pathname === "/_diag-secret") {
-      if (!env.ACCEPTANCE_SECRET) return json({ configured: false, matches: false, length: 0 });
-      let body;
-      try {
-        const raw = await request.text();
-        if (raw.length > 256) return json({ error: "Request too large" }, 413);
-        body = JSON.parse(raw);
-      } catch {
-        return json({ error: "Expected JSON body with sha256" }, 400);
-      }
-      if (typeof body?.sha256 !== "string" || !/^[a-f0-9]{64}$/i.test(body.sha256)) {
-        return json({ error: "Invalid sha256" }, 400);
-      }
-      const digest = await crypto.subtle.digest(
-        "SHA-256",
-        new TextEncoder().encode(env.ACCEPTANCE_SECRET)
-      );
-      const runtimeHash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
-      return json({
-        configured: true,
-        length: env.ACCEPTANCE_SECRET.length,
-        matches: runtimeHash === body.sha256.toLowerCase()
-      });
-    }
-
     const supplied = request.headers.get("authorization") ?? "";
     if (!env.ACCEPTANCE_SECRET || supplied !== `Bearer ${env.ACCEPTANCE_SECRET}`) {
       return json({ error: "Unauthorized" }, 401);
