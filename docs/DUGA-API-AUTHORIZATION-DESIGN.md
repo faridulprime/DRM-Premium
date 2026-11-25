@@ -108,3 +108,19 @@ Validation evidence: GitHub Actions passed on schema/test commit `28cbb5fa41da70
 The in-memory suite exercises all 29 allowed edges and rejects 127 unlisted source/target pairs. It also tests proposal immutability, stale expected-version updates returning zero changed rows, atomic rollback when the audit insert is forced to fail, and the non-empty implementation-commit requirement before validation. Structural-validator assertions for proposal-scope immutability and commit-before-validation passed on commit `223d81f3d8543616a6a21e2185416b8695af2bd1` in [DUGA Governance run #45672833627](https://github.com/faridulprime/DRM-Premium/actions/runs/45672833627).
 
 **Boundary:** this is schema-draft and local SQLite evidence only. No governance write route, migration, D1 operation or Preview/Production deployment was performed. The API remains NO-GO until migration history, backup/recovery, D1 batch semantics, trusted actor identity and separate approval gates are complete.
+
+
+## 24. Write contract and lifecycle-readiness hardening — 2026-11-26
+
+The detailed future mutation contract is now documented in `docs/DUGA-API-WRITE-CONTRACT.md`. It specifies session-derived human identity, disabled/untrusted AI and runner identities until separately designed, named commands rather than arbitrary status setters, exact-state/version CAS, atomic actor-attributed audit requirements, idempotency, concurrency handling, HTTP conflict semantics and disposable-D1 acceptance gates.
+
+No write route was added. D1 `batch()` atomicity and the proposed `changes()` coupling mechanism remain unverified; therefore the write API remains NO-GO.
+
+A code review found that `GET /api/governance/health` did not require any lifecycle trigger on `duga_change_requests`, and omitted `blocked_from_status` / `block_reason_code` from its expected columns. It could therefore return `schema: ready` while the core lifecycle enforcement was missing. The health contract now requires:
+- `duga_change_requests_insert_guard`
+- `duga_change_requests_update_guard`
+- `duga_change_requests_no_delete`
+- `duga_change_request_transition_audit`
+- both blocked-state metadata columns.
+
+The mocked health suite now explicitly tests a missing transition-audit trigger and a missing block-reason column; both must return `schema: partial`. These checks are targeted markers, not full schema equivalence or live D1 evidence.
