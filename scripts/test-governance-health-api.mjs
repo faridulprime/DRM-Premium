@@ -301,6 +301,7 @@ await test("Complete DUGA schema is reported ready", async () => {
   const { response, body } = await call({ token: "owner-token", env: mockEnv({ tables: expected, completeSchema: true }) });
   assert.equal(response.status, 200);
   assert.equal(body.schema, "ready");
+  assert.equal(body.schemaVerification, "presence-only");
   assert.equal(body.schemaTables.length, 8);
   assert.deepEqual(body.missing, { tables: [], columns: [], indexes: [], triggers: [] });
 });
