@@ -7,7 +7,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 ## Application: DUSS
 
 1. Verify the next run of `.github/workflows/duss-sizing-smoke.yml` after upgrading checkout/setup-python to v7; v0.7.0 source checks already passed in run #10.
-2. Perform browser screenshots and computed-style/bounding-box comparisons for Homepage, Admin, Live Users, Upload Studio and Profile.
+2. Perform browser screenshots and computed-style/bounding-box comparisons for Homepage, Admin, Live Users, Upload Studio and Profile; no browser-runner integration is currently available in this work session.
 3. Test mobile/tablet/desktop, 200% zoom, keyboard focus, touch targets and Bengali/Latin overflow.
 4. Review SVG/glyph optical alignment using rendered evidence; do not infer optical equivalence from CSS dimensions.
 5. Continue auditing remaining icon implementations and page-specific buttons/badges, cards/grids and dialogs/tables only after consumers and breakpoints are mapped.

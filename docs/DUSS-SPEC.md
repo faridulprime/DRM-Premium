@@ -170,6 +170,8 @@ Completed on `feature/full-admin-panel`:
 - Replaced later hardcoded `!important` search-icon overrides in the Homepage and Admin responsive cascade with the existing DUSS compact-search tokens; effective dimensions are unchanged.
 - Removed a superseded 25px Profile brand rule inside the same 600px media query after confirming a later 27px DUSS rule wins in the cascade.
 - Strengthened the static regression script to inspect every matching override block for the audited compact-search and Profile brand selectors, not merely find one token reference somewhere in the stylesheet.
+- Completed the Admin search token migration in both `admin.css` and `theme.css`, so an earlier stylesheet cannot retain a hardcoded duplicate.
+- Replaced the Homepage mobile sidebar icon-slot width and flex-basis with the existing navigation-size token, preserving the 24px slot.
 - Updated all five DUSS cache keys to `duss-07`.
 
 Validation boundary:

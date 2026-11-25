@@ -41,7 +41,7 @@ def check_reference(source: str, name: str, path: str) -> None:
 
 
 def check_selector_icon_token(
-    source: str, selector: str, token: str, expected_blocks: int = 1
+    source: str, selector: str, token: str, expected_blocks: int = 1, properties: tuple = ('width', 'height')
 ) -> None:
     pattern = re.compile(re.escape(selector) + r"\s*\{([^{}]*)\}")
     blocks = pattern.findall(source)
@@ -52,14 +52,14 @@ def check_selector_icon_token(
                 rf"(?:^|;)\s*{prop}\s*:\s*var\({re.escape(token)}\s*,",
                 block,
             )
-            for prop in ("width", "height")
+            for prop in properties
         )
         if has_dimensions:
             matching.append(block)
     if len(matching) != expected_blocks:
         fail(
             f"{selector}: expected {expected_blocks} block(s) using {token} "
-            f"for both width and height, found {len(matching)} of {len(blocks)}"
+            f"for the requested properties, found {len(matching)} of {len(blocks)}"
         )
 
 
@@ -129,6 +129,15 @@ def main() -> int:
     for name, path in consumers.items():
         check_reference(source_files[path], name, path)
 
+    check_selector_icon_token(
+        source_files["admin.css"], ".admin-topbar .admin-search svg",
+        "--duss-icon-size-admin-search-compact"
+    )
+    check_selector_icon_token(
+        source_files["theme.css"], ".home-page .side-icon",
+        "--duss-nav-icon-size", properties=("width", "flex-basis")
+    )
+
     # Every matching selector block in these variants must use the semantic token.
     check_selector_icon_token(
         source_files["theme.css"], ".home-page .yt-search svg",
@@ -197,7 +206,7 @@ def main() -> int:
         fail("DUSS specification is not aligned with the v0.7 icon-sizing migration")
 
     print(
-        "PASS: 16 icon tokens, 16 selector references, audited duplicate overrides, "
+        "PASS: 16 icon tokens, 16 selector references, all audited duplicate overrides and mobile nav slot, "
         "prior badge/button tokens, 7 CSS brace checks, 5 page cache keys, and DUSS v0.7 documentation."
     )
     print("NOTE: Static source verification only; no browser geometry is inferred.")

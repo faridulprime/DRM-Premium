@@ -778,7 +778,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .register-actions button{min-height:46px;font-size:14px}
  .home-page .yt-sidebar{width:min(320px,88vw);z-index:var(--dups-layer-home-sidebar-mobile, 300);top:0;padding:14px 12px 18px}
  .home-page .side-link{min-height:46px;height:auto;padding:10px 12px;gap:16px;font-size:14px}
- .home-page .side-icon{width:24px;flex-basis:24px;font-size:var(--duss-icon-size-sidebar-glyph-mobile, 19px)}
+ .home-page .side-icon{width:var(--duss-nav-icon-size, 24px);flex-basis:var(--duss-nav-icon-size, 24px);font-size:var(--duss-icon-size-sidebar-glyph-mobile, 19px)}
  .home-page .sidebar-heading{font-size:15px}
  .home-page.drawer-open .topbar{z-index:var(--dups-layer-page-header, 100)!important}
  .home-page.drawer-open .sidebar-backdrop:not([hidden]){z-index:var(--dups-layer-home-sidebar-backdrop, 290)!important}

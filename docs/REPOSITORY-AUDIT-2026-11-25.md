@@ -17,6 +17,7 @@ This is a source-level audit. It is not a browser test, penetration test, Cloudf
 - Updated the five DUSS stylesheet cache keys to `duss-07`.
 - Added `scripts/test-duss-tokens.py` and `.github/workflows/duss-sizing-smoke.yml` for static regression checks.
 - Tokenized the two remaining audited icon variants and the later hardcoded responsive search overrides; removed one superseded 25px Profile brand declaration.
+- Completed the Admin search token wiring in both `admin.css` and `theme.css`, and migrated the Homepage mobile sidebar's 24px icon slot to the existing navigation-size token.
 - Strengthened regression checks to require token references in every matching compact-search and Profile brand selector block.
 - Confirmed DUSS v0.7.0 GitHub Actions run #10 passed all static source checks.
 - Updated the DUSS workflow actions to current v7 majors after run #10 exposed a Node 20 deprecation/forced Node 24 warning.
