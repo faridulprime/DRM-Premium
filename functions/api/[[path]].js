@@ -208,7 +208,9 @@ async function handle(req,env){
      FROM videos v LEFT JOIN dumc_movies dm ON dm.video_id=v.id WHERE v.published=1`;
    const binds=[];
    if(searchTerm){movieSql+=" AND lower(v.title||' '||coalesce(v.description,'')||' '||coalesce(v.category,'')) LIKE ?";binds.push("%"+searchTerm.toLowerCase()+"%");}
-   if(folderId){
+   if(folderId==="FEATURED"){movieSql+=" AND v.featured=1";}
+   else if(folderId==="UNCLASSIFIED"){movieSql+=" AND (dm.video_id IS NULL OR (dm.original_language_folder_id IS NULL AND dm.industry_folder_id IS NULL AND dm.production_country_folder_id IS NULL AND NOT EXISTS(SELECT 1 FROM dumc_movie_folder_assignments a WHERE a.video_id=v.id)))";}
+   else if(folderId&&!["01_MOVIE_LIBRARY","ALL_MOVIES","DUMC"].includes(folderId)){
     movieSql+=` AND EXISTS(
      WITH RECURSIVE descendants(id) AS (
       SELECT id FROM dumc_folders WHERE id=? AND is_archived=0
