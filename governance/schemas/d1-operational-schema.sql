@@ -43,8 +43,8 @@ CREATE TABLE duga_change_requests (
   rationale TEXT NOT NULL DEFAULT '',
   status TEXT NOT NULL CHECK (status IN ('proposed','analyzing','impact_review','awaiting_ai_audit','awaiting_human_approval','approved','implementing','validating','final_review','accepted','rejected','cancelled','blocked')),
   risk_level TEXT NOT NULL CHECK (risk_level IN ('low','medium','high','critical')),
-  affected_systems_json TEXT NOT NULL CHECK (json_valid(affected_systems_json)),
-  affected_paths_json TEXT NOT NULL CHECK (json_valid(affected_paths_json)),
+  affected_systems_json TEXT NOT NULL CHECK (json_valid(affected_systems_json) AND json_type(affected_systems_json)='array'),
+  affected_paths_json TEXT NOT NULL CHECK (json_valid(affected_paths_json) AND json_type(affected_paths_json)='array'),
   rollback_plan TEXT NOT NULL,
   requested_by_type TEXT NOT NULL CHECK (requested_by_type IN ('human','ai')),
   requested_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
@@ -59,10 +59,10 @@ CREATE TABLE duga_change_requests (
   state_version INTEGER NOT NULL DEFAULT 1 CHECK (state_version>0),
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
-  CHECK ((requested_by_type='human' AND requested_by_user_id IS NOT NULL AND requested_by_principal_id IS NULL) OR (requested_by_type='ai' AND requested_by_user_id IS NULL AND requested_by_principal_id IS NOT NULL)),
+  CHECK ((requested_by_type='human' AND requested_by_user_id IS NOT NULL AND requested_by_principal_id IS NULL) OR (requested_by_type='ai' AND requested_by_user_id IS NULL AND requested_by_principal_id IS NOT NULL AND length(requested_by_principal_id)>0)),
   CHECK ((implementer_type IS NULL AND implementer_user_id IS NULL AND implementer_principal_id IS NULL) OR
          (implementer_type='human' AND implementer_user_id IS NOT NULL AND implementer_principal_id IS NULL) OR
-         (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL))
+         (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL AND length(implementer_principal_id)>0))
 );
 CREATE INDEX idx_duga_changes_status_updated ON duga_change_requests(status,updated_at DESC);
 CREATE INDEX idx_duga_changes_created ON duga_change_requests(created_at DESC);
@@ -79,7 +79,7 @@ CREATE TABLE duga_reviews (
   evidence_json TEXT NOT NULL CHECK (json_valid(evidence_json)),
   created_at INTEGER NOT NULL,
   CHECK ((reviewer_type='human' AND reviewer_user_id IS NOT NULL AND reviewer_principal_id IS NULL AND review_type='human_review') OR
-         (reviewer_type='ai' AND reviewer_user_id IS NULL AND reviewer_principal_id IS NOT NULL AND review_type='independent_ai_audit'))
+         (reviewer_type='ai' AND reviewer_user_id IS NULL AND reviewer_principal_id IS NOT NULL AND length(reviewer_principal_id)>0 AND review_type='independent_ai_audit'))
 );
 CREATE INDEX idx_duga_reviews_change_time ON duga_reviews(change_request_id,created_at DESC);
 
@@ -129,7 +129,7 @@ CREATE TABLE duga_audit_events (
   id TEXT PRIMARY KEY,
   aggregate_type TEXT NOT NULL CHECK (aggregate_type IN ('change_request','assignment','system','job','finding','platform')),
   aggregate_id TEXT NOT NULL,
-  event_type TEXT NOT NULL,
+  event_type TEXT NOT NULL CHECK (length(event_type)>0),
   actor_type TEXT NOT NULL CHECK (actor_type IN ('human','ai','system')),
   actor_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
   actor_principal_id TEXT,
@@ -138,8 +138,8 @@ CREATE TABLE duga_audit_events (
   policy_commit_sha TEXT,
   created_at INTEGER NOT NULL,
   CHECK ((actor_type='human' AND actor_user_id IS NOT NULL AND actor_principal_id IS NULL AND actor_system_id IS NULL) OR
-         (actor_type='ai' AND actor_user_id IS NULL AND actor_principal_id IS NOT NULL AND actor_system_id IS NULL) OR
-         (actor_type='system' AND actor_user_id IS NULL AND actor_principal_id IS NULL AND actor_system_id IS NOT NULL))
+         (actor_type='ai' AND actor_user_id IS NULL AND actor_principal_id IS NOT NULL AND length(actor_principal_id)>0 AND actor_system_id IS NULL) OR
+         (actor_type='system' AND actor_user_id IS NULL AND actor_principal_id IS NULL AND actor_system_id IS NOT NULL AND length(actor_system_id)>0))
 );
 CREATE INDEX idx_duga_audit_aggregate_time ON duga_audit_events(aggregate_type,aggregate_id,created_at DESC);
 CREATE INDEX idx_duga_audit_actor_time ON duga_audit_events(actor_type,actor_user_id,actor_principal_id,created_at DESC);
