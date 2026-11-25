@@ -65,6 +65,7 @@ Only these candidate transitions are allowed; all unlisted pairs are denied:
 | From | To | Required gate |
 |---|---|---|
 | proposed | analyzing | Proposal valid; systems/paths resolve against pinned registry |
+| proposed | blocked | Blocking condition prevents safe analysis; preserve `from_status=proposed` and reason |
 | proposed | cancelled | Authorized human cancellation with rationale |
 | analyzing | impact_review | Analysis evidence attached to current proposal revision |
 | analyzing | blocked | Blocking reason recorded |
@@ -80,6 +81,7 @@ Only these candidate transitions are allowed; all unlisted pairs are denied:
 | awaiting_human_approval | approved | Required human approver authorized for scope/risk; same implementation commit |
 | awaiting_human_approval | impact_review | Human reviewer requests changes; rationale recorded |
 | awaiting_human_approval | rejected | Authorized human rejection with rationale |
+| awaiting_human_approval | blocked | Blocking condition prevents safe approval; preserve prior state and reason |
 | awaiting_human_approval | cancelled | Authorized human cancellation with rationale |
 | approved | implementing | Approved commit/scope unchanged; implementer assigned and recorded |
 | approved | cancelled | Authorized human cancellation with rationale |
@@ -118,7 +120,7 @@ Candidate terminal and resumption semantics (Owner decision recorded: B — resu
 - A repeated block/unblock cycle creates new audit events; no historical event is edited or deleted. Concurrent unblock attempts must be protected by CAS and one-time transition tokens.
 - The unblock operation does not itself authorize implementation, merge, deployment or any other separately gated action.
 
-**Owner decisions recorded:** `blocked` is resumable (option B); `rejected` and `cancelled` are terminal, and any renewed attempt must be a new linked Change Request. The rework-edge semantics are now specified as a proposed design. The full matrix remains proposed and is not executable policy pending independent review and explicit Owner approval.
+**Owner decisions recorded (2026-11-25):** `blocked` is resumable; `rejected` and `cancelled` are terminal and renewed attempts require a new linked Change Request. The Owner approved the transition policy represented here. A consistency review against `DUGA-SPEC.md`, `DUGA-D1-SCHEMA-DESIGN.md` and the role definitions identified and closed missing block-entry edges from `proposed` and `awaiting_human_approval`. This is a reviewed design decision, not runtime enforcement; implementation remains gated on independent technical review, trusted identities, migration reconciliation and the other no-go conditions.
 
 ## 5. Risk and approval gates
 
@@ -202,7 +204,7 @@ Before any Preview write endpoint:
 ## 10. No-go conditions
 
 Do not implement or enable write endpoints until:
-1. Owner reviews the remaining proposed rework edges and approves the complete transition matrix; `blocked` resumability and new-linked-request semantics for rejected/cancelled are recorded decisions, but remain design-only until implementation review.
+1. Obtain independent technical review of the Owner-approved transition matrix and its implementation contract; all lifecycle decisions remain design-only until the security, schema, identity and migration no-go conditions are cleared.
 2. D1 migration is reconciled with Preview migration history and separately approved.
 3. Disposable D1 evidence is independently reviewed.
 4. Trusted Git ref/commit verification is specified and tested.
