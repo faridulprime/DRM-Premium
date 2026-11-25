@@ -379,40 +379,52 @@ CREATE UNIQUE INDEX uq_duga_jobs_active_lease_token
 CREATE TRIGGER duga_jobs_lease_transition_guard
 BEFORE UPDATE ON duga_jobs
 WHEN NOT (
-  (OLD.status='queued' AND NEW.status='running'
-    AND NEW.lease_generation=OLD.lease_generation+1
-    AND NEW.attempts=OLD.attempts+1
-    AND NEW.lease_owner IS NOT NULL AND length(NEW.lease_owner)>0
-    AND NEW.lease_token IS NOT NULL AND length(NEW.lease_token)>0
-    AND NEW.lease_expires_at IS NOT NULL)
-  OR
-  (OLD.status='running' AND NEW.status='running'
-    AND NEW.lease_generation=OLD.lease_generation
-    AND NEW.attempts=OLD.attempts
-    AND NEW.lease_owner=OLD.lease_owner
-    AND NEW.lease_token=OLD.lease_token
-    AND NEW.lease_expires_at>=OLD.lease_expires_at)
-  OR
-  (OLD.status='running' AND NEW.status='running'
-    AND NEW.lease_generation=OLD.lease_generation+1
-    AND NEW.attempts=OLD.attempts+1
-    AND NEW.lease_token<>OLD.lease_token
-    AND NEW.lease_owner IS NOT NULL AND length(NEW.lease_owner)>0
-    AND NEW.lease_token IS NOT NULL AND length(NEW.lease_token)>0
-    AND NEW.lease_expires_at IS NOT NULL)
-  OR
-  (OLD.status='running' AND NEW.status IN ('succeeded','failed','cancelled','queued')
-    AND NEW.lease_owner IS NULL AND NEW.lease_token IS NULL
-    AND NEW.lease_expires_at IS NULL
-    AND NEW.lease_generation=OLD.lease_generation
-    AND NEW.attempts=OLD.attempts)
-  OR
-  (OLD.status='queued' AND NEW.status='queued'
-    AND NEW.lease_owner IS NULL AND NEW.lease_token IS NULL
-    AND NEW.lease_expires_at IS NULL
-    AND NEW.lease_generation=OLD.lease_generation
-    AND NEW.attempts=OLD.attempts)
+  NEW.id=OLD.id
+  AND NEW.job_type=OLD.job_type
+  AND NEW.input_json=OLD.input_json
+  AND NEW.available_at=OLD.available_at
+  AND NEW.created_at=OLD.created_at
+  AND NEW.updated_at>=OLD.updated_at
+  AND (
+    (OLD.status='queued' AND NEW.status='running'
+      AND NEW.result_json IS OLD.result_json
+      AND NEW.lease_generation=OLD.lease_generation+1
+      AND NEW.attempts=OLD.attempts+1
+      AND NEW.lease_owner IS NOT NULL AND length(NEW.lease_owner)>0
+      AND NEW.lease_token IS NOT NULL AND length(NEW.lease_token)>0
+      AND NEW.lease_expires_at IS NOT NULL)
+    OR
+    (OLD.status='running' AND NEW.status='running'
+      AND NEW.result_json IS OLD.result_json
+      AND NEW.lease_generation=OLD.lease_generation
+      AND NEW.attempts=OLD.attempts
+      AND NEW.lease_owner=OLD.lease_owner
+      AND NEW.lease_token=OLD.lease_token
+      AND NEW.lease_expires_at>=OLD.lease_expires_at)
+    OR
+    (OLD.status='running' AND NEW.status='running'
+      AND NEW.result_json IS OLD.result_json
+      AND NEW.lease_generation=OLD.lease_generation+1
+      AND NEW.attempts=OLD.attempts+1
+      AND NEW.lease_token<>OLD.lease_token
+      AND NEW.lease_owner IS NOT NULL AND length(NEW.lease_owner)>0
+      AND NEW.lease_token IS NOT NULL AND length(NEW.lease_token)>0
+      AND NEW.lease_expires_at IS NOT NULL)
+    OR
+    (OLD.status='running' AND NEW.status IN ('succeeded','failed','cancelled','queued')
+      AND NEW.lease_owner IS NULL AND NEW.lease_token IS NULL
+      AND NEW.lease_expires_at IS NULL
+      AND NEW.lease_generation=OLD.lease_generation
+      AND NEW.attempts=OLD.attempts)
+    OR
+    (OLD.status='queued' AND NEW.status='queued'
+      AND NEW.result_json IS OLD.result_json
+      AND NEW.lease_owner IS NULL AND NEW.lease_token IS NULL
+      AND NEW.lease_expires_at IS NULL
+      AND NEW.lease_generation=OLD.lease_generation
+      AND NEW.attempts=OLD.attempts)
+  )
 )
 BEGIN
-  SELECT RAISE(ABORT,'Invalid DUGA job lease transition');
+  SELECT RAISE(ABORT,'Invalid DUGA job lease transition or immutable job identity mutation');
 END;
