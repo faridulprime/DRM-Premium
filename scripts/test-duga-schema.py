@@ -45,6 +45,12 @@ def main() -> int:
             raise AssertionError(f"{name}: invalid operation was accepted")
         passed.append(name)
 
+    def require_audit_event(event_id: str) -> None:
+        if db.execute(
+            "SELECT 1 FROM duga_audit_events WHERE id=?", (event_id,)
+        ).fetchone() is None:
+            raise AssertionError(f"missing generated audit event: {event_id}")
+
     def insert_assignment(
         assignment_id: str,
         scope_type: str,
@@ -255,10 +261,10 @@ def main() -> int:
           lambda: db.execute("UPDATE duga_validation_runs SET results_json='{}' WHERE id='validation-queued'"),
           should_fail=True)
     check("validation transition audit records queued-to-running",
-          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='validation-transition:validation-queued:running'"),
+          lambda: require_audit_event("validation-transition:validation-queued:running"),
           should_fail=False)
     check("validation transition audit records terminal result",
-          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='validation-transition:validation-queued:passed'"),
+          lambda: require_audit_event("validation-transition:validation-queued:passed"),
           should_fail=False)
     check("cancelled validation completion cannot precede start",
           lambda: insert_validation("validation-bad-cancel-order","cancelled",12,11),
@@ -322,10 +328,10 @@ def main() -> int:
     )
     db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=5,revoked_by_user_id='human-1' WHERE id='assignment-system-owner'")
     check("assignment grant automatically writes audit evidence",
-          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='assignment-grant:assignment-system-owner'"),
+          lambda: require_audit_event("assignment-grant:assignment-system-owner"),
           should_fail=False)
     check("assignment revocation automatically writes audit evidence",
-          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='assignment-revoke:assignment-system-owner'"),
+          lambda: require_audit_event("assignment-revoke:assignment-system-owner"),
           should_fail=False)
     check("assignment cannot be silently edited after grant",
           lambda: db.execute("UPDATE duga_assignments SET role_id='platform-owner' WHERE id='assignment-human-owner'"),
@@ -367,7 +373,7 @@ def main() -> int:
             WHERE id='finding-review' AND status='open' AND state_version=1"""),
           should_fail=False)
     check("finding review transition is audited",
-          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='finding-review:finding-review:2'"),
+          lambda: require_audit_event("finding-review:finding-review:2"),
           should_fail=False)
     check("finding analyzer evidence cannot be altered during review",
           lambda: db.execute("UPDATE duga_analysis_findings SET evidence_json='{}' WHERE id='finding-review'"),
