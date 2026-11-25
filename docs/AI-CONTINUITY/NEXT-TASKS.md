@@ -127,4 +127,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 
 - Homepage hero corner decoration and full-bleed `::before` overlay now consume zero-inset DUPS tokens; Chromium checks the relative containing block and absolute edge geometry.
 - Website Builder responsive inspector now consumes DUPS top/right/bottom anchors (66px/0/34px, compact top 112px); Chromium compares resolved token offsets against the fixed shell containing block at the existing viewport matrix.
-- Admin Category Bar's duplicate late `theme.css` override now consumes the existing state-scoped DUPS top token; Chromium checks its computed fixed top against the token. Continue the remaining fixed/absolute selector audit with DOM-backed checks.
+- Admin Category Bar's final late `theme.css` override now sets and consumes the state-scoped DUPS top token; Chromium checks its computed fixed top against the token.
+- Profile drawer Category Bar displacement now consumes a DUPS clearance token (390px desktop, 0px compact); Chromium toggles the drawer-open state and checks computed right offset against the token across the Homepage viewport matrix. Continue the remaining fixed/absolute selector audit with DOM-backed checks.
