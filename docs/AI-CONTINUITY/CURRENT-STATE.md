@@ -22,7 +22,7 @@ Verification date: 2026-11-25
 ## Existing subsystem status
 
 - DUME 0.2.0: shared mobile drawer controller integrated on four pages; broader motion migration and browser validation pending.
-- DUSS 0.6.0: foundation, selected form/profile geometry, public shell geometry, role badges, Admin action buttons and selected SVG/glyph icon dimensions migrated to semantic tokens. The current icon migration preserves source dimensions; visual/optical equivalence is not established without browser rendering.
+- DUSS 0.7.0: foundation, selected form/profile geometry, public shell geometry, role badges, Admin action buttons and 16 audited SVG/glyph icon dimensions migrated to semantic tokens. Two missed icon variants and later hardcoded responsive search overrides were corrected; source dimensions of effective components remain unchanged. Visual/optical equivalence is not established without browser rendering.
 - DUPS 0.3.0: token foundation and selected positioning/layer migrations; browser validation pending.
 - DUCS 0.3.1: token foundation and partial page/component migration; residual literals, full computed-style audit, browser regression and complete contrast validation remain.
 
@@ -34,13 +34,13 @@ Verification date: 2026-11-25
 
 ## Validation status
 
-- DUSS v0.6 token and selector wiring has been checked from GitHub source. A static regression script and dedicated workflow were added; a successful run for that workflow has not been confirmed.
+- DUSS v0.6 static workflow run #9 passed after adding the version-header regression. DUSS v0.7.0 adds expanded selector-block checks; its CI run is pending at this commit.
 - Browser screenshots, computed dimensions, keyboard/touch checks, 200% zoom and Bengali/Latin overflow tests have not been run.
 - The source audit does not establish Cloudflare edge configuration or Production runtime behavior.
 
 ## Next direction
 
-1. Verify the DUSS smoke workflow result and fix any failures.
+1. Verify the DUSS v0.7.0 smoke workflow result and inspect its logs.
 2. Perform browser-based sizing and interaction validation before further geometry changes.
 3. Continue with icon optical review, then remaining page-specific controls, cards/grids and dialogs.
 4. Review public presence/analytics rate limiting after checking the Cloudflare edge configuration.

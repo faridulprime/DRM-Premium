@@ -11,11 +11,13 @@ This is a source-level audit. It is not a browser test, penetration test, Cloudf
 
 ## Work completed in this continuation
 
-- Advanced DUSS from v0.5.0 to v0.6.0.
+- Advanced DUSS from v0.5.0 through v0.7.0.
 - Corrected the token stylesheet's stale version header and added a regression assertion so its marker must match DUSS v0.6.0.
-- Added 14 semantic icon-size tokens and migrated their audited selector consumers without intentionally changing their current CSS dimensions.
-- Updated the five DUSS stylesheet cache keys to `duss-06`.
-- Added `scripts/test-duss-tokens.py` and `.github/workflows/duss-sizing-smoke.yml` for future static regression checks.
+- Added 16 semantic icon-size tokens and migrated their audited selector consumers without intentionally changing effective CSS dimensions.
+- Updated the five DUSS stylesheet cache keys to `duss-07`.
+- Added `scripts/test-duss-tokens.py` and `.github/workflows/duss-sizing-smoke.yml` for static regression checks.
+- Tokenized the two remaining audited icon variants and the later hardcoded responsive search overrides; removed one superseded 25px Profile brand declaration.
+- Strengthened regression checks to require token references in every matching compact-search and Profile brand selector block.
 - Added confirmation prompts to both the legacy visual-style save/reset actions and the Builder's direct live-style save action.
 - Clarified the Builder's draft/live-style distinction in the UI and README.
 
@@ -58,7 +60,7 @@ Review the Pages/Cloudflare edge rules and measure expected write volume before 
 
 ### F-03 — DUSS migration is source-level only
 
-DUSS v0.6.0 centralizes selected role-badge, Admin action-button, and SVG/glyph icon dimensions. The icon migration intentionally preserves current CSS dimensions. It does not claim optical equivalence or establish rendered visual alignment.
+DUSS v0.7.0 centralizes selected role-badge, Admin action-button, and 16 SVG/glyph icon dimensions. The latest source audit added the 11px Live Users role glyph and 15px Profile drawer logout glyph, and removed hardcoded duplicate search-icon overrides. The icon migration intentionally preserves current CSS dimensions. It does not claim optical equivalence or establish rendered visual alignment.
 
 **Outstanding validation**
 - Run and inspect the dedicated DUSS GitHub Actions result.

@@ -40,6 +40,29 @@ def check_reference(source: str, name: str, path: str) -> None:
         fail(f"{path}: missing semantic reference to {name}")
 
 
+def check_selector_icon_token(
+    source: str, selector: str, token: str, expected_blocks: int = 1
+) -> None:
+    pattern = re.compile(re.escape(selector) + r"\s*\{([^{}]*)\}")
+    blocks = pattern.findall(source)
+    matching = []
+    for block in blocks:
+        has_dimensions = all(
+            re.search(
+                rf"(?:^|;)\s*{prop}\s*:\s*var\({re.escape(token)}\s*,",
+                block,
+            )
+            for prop in ("width", "height")
+        )
+        if has_dimensions:
+            matching.append(block)
+    if len(matching) != expected_blocks:
+        fail(
+            f"{selector}: expected {expected_blocks} block(s) using {token} "
+            f"for both width and height, found {len(matching)} of {len(blocks)}"
+        )
+
+
 def check_balanced_braces(path: str, source: str) -> None:
     # Strip comments and quoted strings before checking block delimiters.
     source = re.sub(r"/\*.*?\*/", "", source, flags=re.DOTALL)
@@ -53,8 +76,8 @@ def check_balanced_braces(path: str, source: str) -> None:
 
 def main() -> int:
     tokens = read("assets/sizing/tokens.css")
-    if not tokens.startswith("/* DRM Universal Sizing System (DUSS) — v0.6.0"):
-        fail("DUSS token stylesheet header is not versioned v0.6.0")
+    if not tokens.startswith("/* DRM Universal Sizing System (DUSS) — v0.7.0"):
+        fail("DUSS token stylesheet header is not versioned v0.7.0")
     token_values = {
         "--duss-icon-size-nav-menu": "1.5rem",
         "--duss-icon-size-search-default": "1.3125rem",
@@ -70,6 +93,8 @@ def main() -> int:
         "--duss-icon-size-profile-brand": "1.875rem",
         "--duss-icon-size-profile-brand-mobile": "1.6875rem",
         "--duss-icon-size-field-glyph": "0.9375rem",
+        "--duss-icon-size-live-role": "0.6875rem",
+        "--duss-icon-size-profile-drawer-logout": "0.9375rem",
     }
     for name, value in token_values.items():
         check_token(tokens, name, value)
@@ -98,9 +123,37 @@ def main() -> int:
         "--duss-icon-size-profile-brand": "profile.css",
         "--duss-icon-size-profile-brand-mobile": "profile.css",
         "--duss-icon-size-field-glyph": "styles.css",
+        "--duss-icon-size-live-role": "live-users.css",
+        "--duss-icon-size-profile-drawer-logout": "theme.css",
     }
     for name, path in consumers.items():
         check_reference(source_files[path], name, path)
+
+    # Every matching selector block in these variants must use the semantic token.
+    check_selector_icon_token(
+        source_files["theme.css"], ".home-page .yt-search svg",
+        "--duss-icon-size-home-search-compact", expected_blocks=2
+    )
+    check_selector_icon_token(
+        source_files["theme.css"], ".admin-topbar .admin-search svg",
+        "--duss-icon-size-admin-search-compact", expected_blocks=2
+    )
+    check_selector_icon_token(
+        source_files["theme.css"], ".profile-drawer .profile-drawer-logout-button svg",
+        "--duss-icon-size-profile-drawer-logout"
+    )
+    check_selector_icon_token(
+        source_files["live-users.css"], ".live-role svg",
+        "--duss-icon-size-live-role"
+    )
+    check_selector_icon_token(
+        source_files["profile.css"], ".profile-brand svg",
+        "--duss-icon-size-profile-brand"
+    )
+    check_selector_icon_token(
+        source_files["profile.css"], ".profile-brand svg",
+        "--duss-icon-size-profile-brand-mobile"
+    )
 
     # Guard the previous migrations while this audit advances.
     legacy_families = {
@@ -136,16 +189,16 @@ def main() -> int:
             html,
             flags=re.IGNORECASE,
         )
-        if match != ["duss-06"]:
-            fail(f"{path}: expected one DUSS duss-06 stylesheet link, found {match}")
+        if match != ["duss-07"]:
+            fail(f"{path}: expected one DUSS duss-07 stylesheet link, found {match}")
 
     spec = read("docs/DUSS-SPEC.md")
-    if "Version: 0.6.0" not in spec or "Phase 6 implementation update" not in spec:
-        fail("DUSS specification is not aligned with the v0.6 icon-sizing migration")
+    if "Version: 0.7.0" not in spec or "Phase 7 implementation update" not in spec:
+        fail("DUSS specification is not aligned with the v0.7 icon-sizing migration")
 
     print(
-        "PASS: 14 icon tokens, 14 selector references, prior badge/button tokens, "
-        "7 CSS brace checks, 5 page cache keys, and DUSS v0.6 documentation."
+        "PASS: 16 icon tokens, 16 selector references, audited duplicate overrides, "
+        "prior badge/button tokens, 7 CSS brace checks, 5 page cache keys, and DUSS v0.7 documentation."
     )
     print("NOTE: Static source verification only; no browser geometry is inferred.")
     return 0

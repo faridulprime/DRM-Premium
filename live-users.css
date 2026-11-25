@@ -34,7 +34,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-user-copy{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
 .live-username{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:600;line-height:1.15}
 .live-role{display:flex;align-items:center;gap:5px;color:var(--ducs-live-role-text);font-size:9px;line-height:1.1}
-.live-role svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.6}
+.live-role svg{width:var(--duss-icon-size-live-role, 11px);height:var(--duss-icon-size-live-role, 11px);stroke:currentColor;fill:none;stroke-width:1.6}
 .live-row-arrow{color:var(--ducs-live-row-arrow);font-size:15px;opacity:0;transition:opacity .12s}.live-user-row:hover .live-row-arrow{opacity:1}
 .live-group+.live-group{margin-top:7px}.live-group-heading{display:flex;align-items:center;gap:8px;padding:9px 10px 5px;color:var(--ducs-live-group-heading);font-size:9px;font-weight:700;letter-spacing:.12em}.live-group-heading:after{content:"";height:1px;flex:1;background:var(--ducs-live-avatar-bg, #292929)}
 .live-state{padding:25px 12px;text-align:center;color:var(--ducs-live-state-text);font-size:12px}.live-state.error{color:var(--ducs-live-state-error)}

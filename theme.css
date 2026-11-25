@@ -1013,7 +1013,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  }
  .home-page .yt-search input{flex:1 1 auto!important;min-width:0!important;width:0!important;padding:0 9px!important;font-size:12px!important}
  .home-page .yt-search button{flex:0 0 32px!important;width:32px!important;min-width:32px!important;height:30px!important;border-radius:0 8px 8px 0!important}
- .home-page .yt-search svg{width:15px!important;height:15px!important}
+ .home-page .yt-search svg{width:var(--duss-icon-size-home-search-compact, 15px)!important;height:var(--duss-icon-size-home-search-compact, 15px)!important}
  .home-page .topbar .account-controls:has(#profileMenuToggle:not([hidden])){
   display:flex!important;grid-column:3!important;grid-row:1!important;
   justify-self:end!important;align-self:center!important;margin:0!important;
@@ -1049,7 +1049,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  }
  .admin-topbar .admin-search input{display:block!important;flex:1 1 auto!important;min-width:0!important;width:0!important;font-size:13px!important;padding:0 10px!important}
  .admin-topbar .admin-search button{display:grid!important;flex:0 0 36px!important;width:36px!important;min-width:36px!important;height:34px!important}
- .admin-topbar .admin-search svg{width:16px!important;height:16px!important}
+ .admin-topbar .admin-search svg{width:var(--duss-icon-size-admin-search-compact, 16px)!important;height:var(--duss-icon-size-admin-search-compact, 16px)!important}
  .admin-category-bar{top:86px!important}
 }
 /* Homepage uses the same body state as Admin so the exact drawer transition is shared. */
@@ -1125,9 +1125,9 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  outline-offset:3px!important;
 }
 .profile-drawer .profile-drawer-logout-button svg{
- width:15px!important;
- height:15px!important;
- flex:0 0 15px!important;
+ width:var(--duss-icon-size-profile-drawer-logout, 15px)!important;
+ height:var(--duss-icon-size-profile-drawer-logout, 15px)!important;
+ flex:0 0 var(--duss-icon-size-profile-drawer-logout, 15px)!important;
  fill:none!important;
  stroke:currentColor!important;
  stroke-width:1.8!important;

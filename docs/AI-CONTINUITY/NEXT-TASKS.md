@@ -6,11 +6,11 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Application: DUSS
 
-1. Confirm the GitHub Actions result for `.github/workflows/duss-sizing-smoke.yml`; it runs `scripts/test-duss-tokens.py` on relevant branch pushes and PR changes.
+1. Inspect the latest GitHub Actions run for `.github/workflows/duss-sizing-smoke.yml` after the v0.7.0 expanded selector-block checks; earlier v0.6 run #9 passed.
 2. Perform browser screenshots and computed-style/bounding-box comparisons for Homepage, Admin, Live Users, Upload Studio and Profile.
 3. Test mobile/tablet/desktop, 200% zoom, keyboard focus, touch targets and Bengali/Latin overflow.
 4. Review SVG/glyph optical alignment using rendered evidence; do not infer optical equivalence from CSS dimensions.
-5. Continue tokenizing remaining audited icons, page-specific buttons/badges, cards/grids and dialogs/tables only after consumers and breakpoints are mapped.
+5. Continue auditing remaining icon implementations and page-specific buttons/badges, cards/grids and dialogs/tables only after consumers and breakpoints are mapped.
 
 ## Application: API and Website Builder review
 

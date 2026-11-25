@@ -1,4 +1,4 @@
-/* DRM Universal Sizing System (DUSS) — v0.6.0
+/* DRM Universal Sizing System (DUSS) — v0.7.0
  * Semantic sizing tokens are introduced incrementally. Component geometry
  * remains unchanged unless an audited selector explicitly consumes a token.
  */
@@ -324,4 +324,7 @@
   --duss-icon-size-profile-brand: 1.875rem;
   --duss-icon-size-profile-brand-mobile: 1.6875rem;
   --duss-icon-size-field-glyph: 0.9375rem;
+  /* Legacy component exceptions retained until a visual redesign is approved. */
+  --duss-icon-size-live-role: 0.6875rem;
+  --duss-icon-size-profile-drawer-logout: 0.9375rem;
 }

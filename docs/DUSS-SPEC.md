@@ -1,6 +1,6 @@
 # DRM Universal Sizing System (DUSS)
-Version: 0.6.0 — Role badge, Admin action-button, and audited icon sizing migration
-Status: Core token foundation, selected form/profile geometry, public shell, role badges, Admin action-button geometry, and selected SVG/glyph icon sizes migrated to semantic tokens
+Version: 0.7.0 — Expanded audited icon variants and override coverage
+Status: Core token foundation, selected form/profile geometry, public shell, role badges, Admin action-button geometry, and 16 audited SVG/glyph icon sizes migrated to semantic tokens
 
 ## Purpose and boundaries
 DUSS centralizes sizing for typography, icons, spacing, controls, layout, surfaces, and responsive behavior. DUME continues to own motion and animation. DUSS does not redesign colors or visual themes.
@@ -98,7 +98,7 @@ Completed on `feature/full-admin-panel`:
 The following are not yet fully migrated and must not be marked complete:
 - Header and navigation dimensions across the public site and admin shell.
 - Sidebar/drawer geometry and menu item sizing.
-- Icon sizing and optical alignment across SVG, icon-font, and inline icon implementations.
+- Remaining icon variants and optical alignment across SVG, icon-font, and inline icon implementations.
 - Button variants, badges, status pills, and touch-target audit.
 - Cards, grids, page gutters, modal/drawer widths, tables, pagination, toast, tooltip, and progress indicators.
 - Responsive behavior and density modes across every page.
@@ -162,3 +162,16 @@ Completed on `feature/full-admin-panel`:
 Validation:
 - Static token-reference and cache-key checks are added in `scripts/test-duss-tokens.py` and a dedicated GitHub Actions workflow.
 - Browser screenshots, computed bounding boxes, keyboard/touch interaction, zoom and Bengali/Latin text layout remain separate runtime checks.
+
+## Phase 7 implementation update — 2026-11-25
+
+Completed on `feature/full-admin-panel`:
+- Added two component-specific icon tokens for the Live Users role-badge SVG (11px legacy exception) and Homepage Profile drawer logout SVG (15px).
+- Replaced later hardcoded `!important` search-icon overrides in the Homepage and Admin responsive cascade with the existing DUSS compact-search tokens; effective dimensions are unchanged.
+- Removed a superseded 25px Profile brand rule inside the same 600px media query after confirming a later 27px DUSS rule wins in the cascade.
+- Strengthened the static regression script to inspect every matching override block for the audited compact-search and Profile brand selectors, not merely find one token reference somewhere in the stylesheet.
+- Updated all five DUSS cache keys to `duss-07`.
+
+Validation boundary:
+- CSS source dimensions remain unchanged for effective components. The 25px declaration was unreachable because the later same-breakpoint rule sets 27px.
+- Static CI can confirm token wiring and selector block coverage, but cannot prove browser-computed layout, touch behavior, localization fit, or optical alignment.
