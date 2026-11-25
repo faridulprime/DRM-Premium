@@ -114,3 +114,8 @@ Chromium run #45678321298 passed the expanded check that reveals the hidden stat
 ### Live Users drawer effect pseudo-layer browser acceptance — 2026-11-26
 
 Chromium run #45678490915 passed the computed z-index checks for the closing drawer `::before` and `::after` pseudo-elements against `--dups-layer-live-effect` and `--dups-layer-live-effect-top`. The same run passed all 35 page/viewport checks and existing DUME drawer lifecycle checks. This validates token agreement, not visual effect quality.
+
+
+### Visual editor fixed-anchor migration — 2026-11-26
+
+The base visual-editor toggle and panel now consume semantic DUPS anchor tokens. The active Homepage theme override consumes desktop (14px) and compact (12px) edge tokens for the fixed toggle. A Chromium assertion reveals the static hidden toggle/panel and verifies computed fixed positioning, top/left/right/bottom geometry, and existing local z-index token agreement at the existing Homepage viewport set. Numeric coordinates and stacking order are preserved. This does not validate the editor's authenticated interaction flow, dynamic collision handling, or every route where the editor may be mounted.
