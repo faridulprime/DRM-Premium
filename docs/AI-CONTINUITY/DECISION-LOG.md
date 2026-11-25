@@ -48,6 +48,6 @@ Rationale:
 
 Consequences:
 - These defaults are documented in `docs/DUGA-CHANGE-REQUEST-ENFORCEMENT-DESIGN.md`.
-- The database-draft implementation is present on `feature/full-admin-panel`; GitHub Actions passed both the in-memory SQLite smoke suite and structural validator on commit `d0d21d774689417624d75cd255f9f7e2f4485966` (runs #45672305048 and #45672305053). The smoke suite covers 29 allowed edges and 127 rejected source/target pairs. Proposal content and scope fields are frozen after creation; this hardening passed both GitHub Actions workflows on commit `dcad51424e55655d122bbd68dcd7d8fa424740b0` (runs #45672441564 and #45672441619).
+- The database-draft implementation is present on `feature/full-admin-panel`; GitHub Actions passed both the in-memory SQLite smoke suite and structural validator on commit `d0d21d774689417624d75cd255f9f7e2f4485966` (runs #45672305048 and #45672305053). The smoke suite covers 29 allowed edges and 127 rejected source/target pairs. Proposal content and scope fields are frozen after creation; this hardening passed both GitHub Actions workflows on commit `5b3385546ec93d99c2b22bc5abb6070798b065e6` (runs #45672609492 and #45672609649). The test suite also covers stale-version zero-row behavior and rollback when the audit insert fails.
 - The database-generated audit actor `duga-db-trigger` is synthetic and must not be presented as authenticated user attribution.
 - No migration, D1 operation, write API or deployment is authorized by this ADR.
