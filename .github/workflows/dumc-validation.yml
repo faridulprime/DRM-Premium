@@ -16,6 +16,9 @@ on:
   pull_request:
     paths:
       - "assets/dumc/**"
+      - "upload-studio.html"
+      - "upload-studio.js"
+      - "dumc-manager.js"
       - "migrations/0009_dumc_movie_library.sql"
       - "migrations/manifest.json"
       - "functions/api/[[path]].js"
