@@ -71,7 +71,7 @@ Require:
 ### UPDATE guard
 
 For every update:
-- `id`, requester identity, creation timestamp, initial source/base context and initial policy binding are immutable unless a separately designed versioned revalidation event exists.
+- `id`, requester identity, creation timestamp, source/base/policy bindings, title, summary, rationale, risk classification, affected systems/paths and rollback plan are immutable after creation. Corrections require a successor request so approval scope cannot silently drift.
 - A status change must be an allowed edge.
 - A status change must increment `state_version` by exactly one.
 - A non-status update must not change `state_version`; preferably restrict non-status updates to a small explicit allow-list.
@@ -146,7 +146,7 @@ When the design is accepted:
 - Insert with non-1 state version or pre-populated implementer/commit fails.
 - Every allowed graph edge succeeds structurally and every unlisted source/target pair fails (29 allowed + 127 rejected matrix cases in the in-memory smoke suite).
 - Version unchanged, skipped or decremented on a transition fails.
-- Requester, identity, creation time, source branch, base commit or policy SHA mutation fails.
+- Requester identity, creation time, source branch, base commit, policy SHA, title, summary, rationale, risk, affected systems/paths or rollback-plan mutation fails.
 - Any update to accepted/rejected/cancelled fails.
 - Any physical delete fails.
 - Block without reason/previous-state metadata fails.
@@ -176,4 +176,4 @@ This design's schema-draft phase is ready for local/CI validation. API implement
 
 ## 11. Explicit non-actions
 
-The operational schema draft, smoke-test definitions and structural-validator expectations were changed on the feature branch. Both local SQLite scripts passed in GitHub Actions against commit `d0d21d774689417624d75cd255f9f7e2f4485966` (runs #45672305048 and #45672305053). No D1 database was read or written. No migration was created or executed. No write API was added. No Preview or Production deployment occurred. This document does not authorize any of those actions.
+The operational schema draft, smoke-test definitions and structural-validator expectations were changed on the feature branch. Both local SQLite scripts passed in GitHub Actions against commit `d0d21d774689417624d75cd255f9f7e2f4485966` (runs #45672305048 and #45672305053). A further hardening update now freezes all proposal content/scope fields after creation; its CI rerun is pending. No D1 database was read or written. No migration was created or executed. No write API was added. No Preview or Production deployment occurred. This document does not authorize any of those actions.
