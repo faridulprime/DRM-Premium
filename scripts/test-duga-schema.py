@@ -57,8 +57,8 @@ def main() -> int:
         db.execute(
             """INSERT INTO duga_assignments
                (id,scope_type,scope_id,role_id,subject_type,user_id,
-                principal_id,status,created_at)
-               VALUES (?,?,?,?,?,?,?,'active',1)""",
+                principal_id,status,assigned_by_user_id,created_at)
+               VALUES (?,?,?,?,?,?,?,'active','human-1',1)""",
             (assignment_id, scope_type, scope_id, role_id, subject_type,
              user_id, principal_id),
         )
@@ -103,6 +103,44 @@ def main() -> int:
         ),
         should_fail=False,
     )
+    check(
+        "finding review metadata must be paired",
+        lambda: db.execute(
+            """INSERT INTO duga_analysis_findings
+               (id,analyzer_version,repository_commit_sha,file_path,classification,
+                confidence,evidence_json,status,created_at,reviewed_at)
+               VALUES ('finding-unpaired','1','abc','src/a.js','A',0.9,'[]','open',1,2)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "queued job cannot retain a lease",
+        lambda: db.execute(
+            """INSERT INTO duga_jobs
+               (id,job_type,status,input_json,available_at,lease_expires_at,created_at,updated_at)
+               VALUES ('job-queued-lease','validation','queued','{}',1,99,1,1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "running job requires a lease",
+        lambda: db.execute(
+            """INSERT INTO duga_jobs
+               (id,job_type,status,input_json,available_at,created_at,updated_at)
+               VALUES ('job-running-no-lease','validation','running','{}',1,1,1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "running job with lease accepted",
+        lambda: db.execute(
+            """INSERT INTO duga_jobs
+               (id,job_type,status,input_json,available_at,lease_expires_at,created_at,updated_at)
+               VALUES ('job-running-lease','validation','running','{}',1,99,1,1)"""
+        ),
+        should_fail=False,
+    )
+
     check(
         "duplicate active platform-owner blocked",
         lambda: insert_assignment(
