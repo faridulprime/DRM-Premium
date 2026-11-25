@@ -243,10 +243,66 @@ CREATE TABLE duga_jobs (
   result_json TEXT CHECK (result_json IS NULL OR json_valid(result_json)),
   attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts>=0),
   available_at INTEGER NOT NULL,
+  lease_owner TEXT,
+  lease_token TEXT,
+  lease_generation INTEGER NOT NULL DEFAULT 0 CHECK (lease_generation>=0),
   lease_expires_at INTEGER,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
-  CHECK ((status='running' AND lease_expires_at IS NOT NULL) OR
-         (status<>'running' AND lease_expires_at IS NULL))
+  CHECK (
+    (status='running' AND lease_owner IS NOT NULL AND length(lease_owner)>0
+      AND lease_token IS NOT NULL AND length(lease_token)>0
+      AND lease_generation>0 AND lease_expires_at IS NOT NULL)
+    OR
+    (status<>'running' AND lease_owner IS NULL AND lease_token IS NULL
+      AND lease_expires_at IS NULL)
+  )
 );
 CREATE INDEX idx_duga_jobs_queue ON duga_jobs(status,available_at);
+CREATE UNIQUE INDEX uq_duga_jobs_active_lease_token
+  ON duga_jobs(lease_token) WHERE status='running';
+
+-- Every claim/reclaim advances both attempt count and fencing generation.
+-- Heartbeats retain the current lease identity; completion/release clears it.
+-- The API must still use a conditional UPDATE matching token, generation and
+-- unexpired lease; this trigger is a database-level consistency backstop.
+CREATE TRIGGER duga_jobs_lease_transition_guard
+BEFORE UPDATE ON duga_jobs
+WHEN NOT (
+  (OLD.status='queued' AND NEW.status='running'
+    AND NEW.lease_generation=OLD.lease_generation+1
+    AND NEW.attempts=OLD.attempts+1
+    AND NEW.lease_owner IS NOT NULL AND length(NEW.lease_owner)>0
+    AND NEW.lease_token IS NOT NULL AND length(NEW.lease_token)>0
+    AND NEW.lease_expires_at IS NOT NULL)
+  OR
+  (OLD.status='running' AND NEW.status='running'
+    AND NEW.lease_generation=OLD.lease_generation
+    AND NEW.attempts=OLD.attempts
+    AND NEW.lease_owner=OLD.lease_owner
+    AND NEW.lease_token=OLD.lease_token
+    AND NEW.lease_expires_at>=OLD.lease_expires_at)
+  OR
+  (OLD.status='running' AND NEW.status='running'
+    AND NEW.lease_generation=OLD.lease_generation+1
+    AND NEW.attempts=OLD.attempts+1
+    AND NEW.lease_token<>OLD.lease_token
+    AND NEW.lease_owner IS NOT NULL AND length(NEW.lease_owner)>0
+    AND NEW.lease_token IS NOT NULL AND length(NEW.lease_token)>0
+    AND NEW.lease_expires_at IS NOT NULL)
+  OR
+  (OLD.status='running' AND NEW.status IN ('succeeded','failed','cancelled','queued')
+    AND NEW.lease_owner IS NULL AND NEW.lease_token IS NULL
+    AND NEW.lease_expires_at IS NULL
+    AND NEW.lease_generation=OLD.lease_generation
+    AND NEW.attempts=OLD.attempts)
+  OR
+  (OLD.status='queued' AND NEW.status='queued'
+    AND NEW.lease_owner IS NULL AND NEW.lease_token IS NULL
+    AND NEW.lease_expires_at IS NULL
+    AND NEW.lease_generation=OLD.lease_generation
+    AND NEW.attempts=OLD.attempts)
+)
+BEGIN
+  SELECT RAISE(ABORT,'Invalid DUGA job lease transition');
+END;
