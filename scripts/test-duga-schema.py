@@ -202,6 +202,53 @@ def main() -> int:
         should_fail=True,
     )
 
+    # Validation-run lifecycle: queued, running and terminal states.
+    def insert_validation(run_id, status, started, completed):
+        db.execute(
+            """INSERT INTO duga_validation_runs
+               (id,change_request_id,commit_sha,status,validator,results_json,
+                started_at,completed_at,created_at)
+               VALUES (?, 'change-self-audit','commit-1',?,'ci','{}',?,?,10)""",
+            (run_id, status, started, completed),
+        )
+
+    check("queued validation has no execution timestamps",
+          lambda: insert_validation("validation-queued","queued",None,None),
+          should_fail=False)
+    check("running validation has start but no completion",
+          lambda: insert_validation("validation-running","running",11,None),
+          should_fail=False)
+    check("passed validation requires ordered timestamps",
+          lambda: insert_validation("validation-passed","passed",11,12),
+          should_fail=False)
+    check("failed validation requires ordered timestamps",
+          lambda: insert_validation("validation-failed","failed",11,12),
+          should_fail=False)
+    check("cancelled queued validation records completion",
+          lambda: insert_validation("validation-cancelled-queued","cancelled",None,12),
+          should_fail=False)
+    check("cancelled running validation records ordered completion",
+          lambda: insert_validation("validation-cancelled-running","cancelled",11,12),
+          should_fail=False)
+    check("queued validation cannot have a start time",
+          lambda: insert_validation("validation-bad-queued","queued",11,None),
+          should_fail=True)
+    check("running validation requires a start time",
+          lambda: insert_validation("validation-bad-running","running",None,None),
+          should_fail=True)
+    check("passed validation requires completion",
+          lambda: insert_validation("validation-bad-passed","passed",11,None),
+          should_fail=True)
+    check("failed validation cannot complete before start",
+          lambda: insert_validation("validation-bad-failed","failed",12,11),
+          should_fail=True)
+    check("cancelled validation requires completion",
+          lambda: insert_validation("validation-bad-cancelled","cancelled",11,None),
+          should_fail=True)
+    check("cancelled validation completion cannot precede start",
+          lambda: insert_validation("validation-bad-cancel-order","cancelled",12,11),
+          should_fail=True)
+
     insert_assignment(
         "assignment-system-owner", "system", "DUSS",
         "system-owner", "human", user_id="human-2"
