@@ -242,6 +242,13 @@ def main() -> int:
         should_fail=True,
     )
     check(
+        "referenced human key update restricted",
+        lambda: db.execute(
+            "UPDATE users SET id='human-1-renamed' WHERE id='human-1'"
+        ),
+        should_fail=True,
+    )
+    check(
         "referenced human deletion restricted",
         lambda: db.execute("DELETE FROM users WHERE id='human-1'"),
         should_fail=True,
