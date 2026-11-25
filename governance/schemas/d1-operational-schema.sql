@@ -83,6 +83,15 @@ CREATE TABLE duga_reviews (
 );
 CREATE INDEX idx_duga_reviews_change_time ON duga_reviews(change_request_id,created_at DESC);
 
+-- Reviews are immutable evidence. Corrections must be represented by a new
+-- review record with explicit provenance, not silent mutation or deletion.
+CREATE TRIGGER duga_reviews_no_update
+BEFORE UPDATE ON duga_reviews
+BEGIN SELECT RAISE(ABORT,'DUGA reviews are immutable evidence'); END;
+CREATE TRIGGER duga_reviews_no_delete
+BEFORE DELETE ON duga_reviews
+BEGIN SELECT RAISE(ABORT,'DUGA reviews are immutable evidence'); END;
+
 CREATE TRIGGER duga_review_no_implementer_self_audit
 BEFORE INSERT ON duga_reviews
 WHEN NEW.review_type='independent_ai_audit'
