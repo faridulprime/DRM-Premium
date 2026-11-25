@@ -369,6 +369,49 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                         fail(f"{name}/{viewport_name}: shared {label} viewport-edge geometry differs from the DUPS anchors ({geometry}, expectedTop={expected_top}, zero={shell_edges['zero']})")
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: shared {label} DUPS edge geometry could not be resolved ({geometry})")
+        if name == "homepage":
+            drawer_edges = page.evaluate(
+                """() => {
+                  const drawer = document.querySelector(".profile-drawer");
+                  const backdrop = document.querySelector(".profile-drawer-backdrop");
+                  const root = getComputedStyle(document.documentElement);
+                  const zero = parseFloat(root.getPropertyValue("--dups-offset-0"));
+                  if (!drawer || !backdrop) return {missing: true};
+                  const drawerStyle = getComputedStyle(drawer);
+                  const drawerResult = {
+                    position: drawerStyle.position,
+                    top: parseFloat(drawerStyle.top),
+                    right: parseFloat(drawerStyle.right),
+                    bottom: parseFloat(drawerStyle.bottom)
+                  };
+                  const wasHidden = backdrop.hidden;
+                  backdrop.hidden = false;
+                  const backdropStyle = getComputedStyle(backdrop);
+                  const backdropResult = {
+                    position: backdropStyle.position,
+                    top: parseFloat(backdropStyle.top),
+                    right: parseFloat(backdropStyle.right),
+                    bottom: parseFloat(backdropStyle.bottom),
+                    left: parseFloat(backdropStyle.left)
+                  };
+                  backdrop.hidden = wasHidden;
+                  return {zero, drawer: drawerResult, backdrop: backdropResult};
+                }"""
+            )
+            if drawer_edges.get("missing"):
+                fail(f"{name}/{viewport_name}: Profile drawer or backdrop is missing")
+            else:
+                try:
+                    drawer = drawer_edges["drawer"]
+                    if drawer["position"] != "fixed" or any(abs(drawer[key] - drawer_edges["zero"]) > 1 for key in ("top", "right", "bottom")):
+                        fail(f"{name}/{viewport_name}: Profile drawer fixed viewport-edge anchors differ from the DUPS zero-offset token ({drawer_edges})")
+                    if width <= 760:
+                        backdrop = drawer_edges["backdrop"]
+                        if backdrop["position"] != "fixed" or any(abs(backdrop[key] - drawer_edges["zero"]) > 1 for key in ("top", "right", "bottom", "left")):
+                            fail(f"{name}/{viewport_name}: compact Profile drawer backdrop does not fill the viewport using the DUPS zero-offset token ({drawer_edges})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: Profile drawer/backdrop DUPS geometry could not be resolved ({drawer_edges})")
+
         if name != "profile":
             expected_layer = (
                 metrics["tokens"]["dupsLiveHeader"]
