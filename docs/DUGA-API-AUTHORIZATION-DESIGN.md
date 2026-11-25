@@ -101,10 +101,10 @@ The feature-branch operational schema draft now includes database-level lifecycl
 - Implementer identity can be assigned only on `approved → implementing` and cannot later be replaced. The first implementation commit is write-once; changed-commit retries require a future attempt-history model or a successor request.
 - A database trigger appends a synthetic transition event with actor `system / duga-db-trigger`. This proves the database transition occurred, not who authenticated. A future API must add a separate actor-attributed audit event in the same D1 batch.
 
-Validation evidence: GitHub Actions passed on schema/test commit `5b3385546ec93d99c2b22bc5abb6070798b065e6`:
-- [DUGA Governance run #45672609492](https://github.com/faridulprime/DRM-Premium/actions/runs/45672609492)
-- [DUGA schema smoke run #45672609649](https://github.com/faridulprime/DRM-Premium/actions/runs/45672609649)
+Validation evidence: GitHub Actions passed on schema/test commit `28cbb5fa41da702f1e32258520084561476e2e59`:
+- [DUGA Governance run #45672777605](https://github.com/faridulprime/DRM-Premium/actions/runs/45672777605)
+- [DUGA schema smoke run #45672777617](https://github.com/faridulprime/DRM-Premium/actions/runs/45672777617)
 
-The in-memory suite exercises all 29 allowed edges and rejects 127 unlisted source/target pairs. It also tests proposal immutability, stale expected-version updates returning zero changed rows, and atomic rollback when the audit insert is forced to fail. The structural validator checks the new columns, trigger operation/timing and selected CHECK-expression anchors.
+The in-memory suite exercises all 29 allowed edges and rejects 127 unlisted source/target pairs. It also tests proposal immutability, stale expected-version updates returning zero changed rows, atomic rollback when the audit insert is forced to fail, and the non-empty implementation-commit requirement before validation. Structural-validator assertions for proposal-scope immutability and commit-before-validation passed on commit `223d81f3d8543616a6a21e2185416b8695af2bd1` in [DUGA Governance run #45672833627](https://github.com/faridulprime/DRM-Premium/actions/runs/45672833627).
 
 **Boundary:** this is schema-draft and local SQLite evidence only. No governance write route, migration, D1 operation or Preview/Production deployment was performed. The API remains NO-GO until migration history, backup/recovery, D1 batch semantics, trusted actor identity and separate approval gates are complete.
