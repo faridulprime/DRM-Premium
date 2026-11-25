@@ -176,11 +176,23 @@ def main() -> int:
             if not expected.issubset(actual):
                 fail(f"{table} missing foreign keys: {sorted(expected-actual)}")
 
-        # The draft deliberately uses RESTRICT for every FK; reject accidental cascades.
+        # The reviewed draft deliberately uses ON DELETE RESTRICT and leaves
+        # ON UPDATE at SQLite's explicit NO ACTION default. Verify both actions
+        # so a future cascade or SET NULL change cannot pass silently.
         for table in EXPECTED_COLUMNS:
             for fk in db.execute(f'PRAGMA foreign_key_list("{table}")'):
-                if str(fk[6]).upper() != "RESTRICT":
-                    fail(f"{table}.{fk[3]} has unsafe/unreviewed ON DELETE action: {fk[6]}")
+                on_update = str(fk[5]).upper()
+                on_delete = str(fk[6]).upper()
+                if on_update != "NO ACTION":
+                    fail(
+                        f"{table}.{fk[3]} has unreviewed ON UPDATE action: "
+                        f"expected=NO ACTION, actual={on_update}"
+                    )
+                if on_delete != "RESTRICT":
+                    fail(
+                        f"{table}.{fk[3]} has unsafe/unreviewed ON DELETE action: "
+                        f"expected=RESTRICT, actual={on_delete}"
+                    )
 
         expected_fk_counts = {
             "duga_assignments": 2, "duga_change_requests": 2,
