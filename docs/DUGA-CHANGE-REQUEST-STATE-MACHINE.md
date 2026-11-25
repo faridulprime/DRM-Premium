@@ -69,7 +69,7 @@ A future schema revision should consider:
 
 1. INSERT guard: implemented in the draft; every request begins in `proposed`, with `state_version=1`, no implementer/commit, and matching creation/update timestamps.
 2. UPDATE guard: implemented in the draft; status changes follow the allow-list and increment `state_version` exactly once.
-3. Immutable identity: implemented for request ID, requester identity, creation time, source branch, base commit and policy SHA.
+3. Immutable identity and proposal scope: implemented for request ID, requester identity, creation time, source branch, base commit, policy SHA, title, summary, rationale, risk, affected systems/paths and rollback plan. A correction must use a successor request.
 4. Commit binding: implementer is assigned only on `approved → implementing`; the implementation commit is write-once after it is recorded. The current draft has no attempt-history table, so a retry with a changed commit is not supported; use a successor request until that model is designed.
 5. Terminal-state guard: implemented for accepted/rejected/cancelled. Corrections require a successor request.
 6. Audit: implemented as an append-only database-generated transition event. Its actor is `duga-db-trigger`, not the authenticated actor; API actor attribution remains mandatory.
@@ -123,4 +123,4 @@ Do not rely on read-then-write authorization without compare-and-swap. Do not ac
 - Test the new schema in SQLite, then disposable D1, then Preview D1/runtime.
 - Keep Production untouched absent separate explicit authorization.
 
-The feature-branch operational schema draft and in-memory test/validator definitions now include lifecycle enforcement. Both the in-memory SQLite smoke suite and deep structural validator passed GitHub Actions on commit `d0d21d774689417624d75cd255f9f7e2f4485966` (runs [#45672305048](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305048) and [#45672305053](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305053)). The smoke suite covers all 29 allowed lifecycle edges and rejects 127 other source/target pairs. No API write route, OIDC flow, migration, Preview D1 access, or deployment was performed.
+The feature-branch operational schema draft and in-memory test/validator definitions now include lifecycle enforcement. Both the in-memory SQLite smoke suite and deep structural validator passed GitHub Actions on commit `d0d21d774689417624d75cd255f9f7e2f4485966` (runs [#45672305048](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305048) and [#45672305053](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305053)). The smoke suite covers all 29 allowed lifecycle edges and rejects 127 other source/target pairs. A subsequent hardening change freezes all proposal payload/scope fields after creation; its CI rerun is pending. No API write route, OIDC flow, migration, Preview D1 access, or deployment was performed.
