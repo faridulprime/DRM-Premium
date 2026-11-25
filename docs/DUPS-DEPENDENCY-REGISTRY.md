@@ -210,3 +210,8 @@ The compact shared Category Bar and compact Homepage Category Bar now consume `-
 
 
 The desktop header login-status browser assertion now reads its expected right-edge coordinate from `--dups-offset-0`; the compact rule continues to read `--dups-offset-2`. This ensures both responsive variants are checked against the actual token definitions rather than a duplicated literal expectation.
+
+
+### Full-viewport overlay edge primitive — 2026-11-26
+
+The Homepage Website Builder shell, public registration dialog, account suspension screen, and its fixed grain layer now consume `--dups-offset-0` for full-viewport coverage. Browser regression coverage checks all four computed edges for the shell and suspension surfaces at every existing Homepage viewport. The registration dialog keeps its native centering behavior; no layer or visibility semantics were changed. The new browser assertions are awaiting their own completed Chromium run.
