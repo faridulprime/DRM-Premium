@@ -53,6 +53,8 @@ def check_balanced_braces(path: str, source: str) -> None:
 
 def main() -> int:
     tokens = read("assets/sizing/tokens.css")
+    if not tokens.startswith("/* DRM Universal Sizing System (DUSS) — v0.6.0"):
+        fail("DUSS token stylesheet header is not versioned v0.6.0")
     token_values = {
         "--duss-icon-size-nav-menu": "1.5rem",
         "--duss-icon-size-search-default": "1.3125rem",
