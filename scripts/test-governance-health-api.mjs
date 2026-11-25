@@ -316,6 +316,16 @@ await test("Missing D1 binding returns 503", async () => {
   assert.equal(response.status, 503);
 });
 
+await test("All paginated governance routes reject oversized cursors before decoding", async () => {
+  const cursor = "A".repeat(257);
+  const changes = await call({ token: "owner-token", path: "/api/governance/changes?cursor=" + cursor });
+  const findings = await call({ token: "owner-token", path: "/api/governance/findings?cursor=" + cursor });
+  const audit = await call({ token: "owner-token", path: "/api/governance/audit?cursor=" + cursor });
+  assert.equal(changes.response.status, 400);
+  assert.equal(findings.response.status, 400);
+  assert.equal(audit.response.status, 400);
+});
+ 
 console.log("DUGA health, read-only change, findings, overview and audit API tests: PASS");
 for (const name of tests) console.log("PASS: " + name);
 console.log("LIMITATION: mocked D1 and local handler only; no live Cloudflare Pages deployment tested.");
