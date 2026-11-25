@@ -208,3 +208,7 @@ The fixed shared header now uses the DUPS zero-offset primitive for its viewport
 ## Profile drawer and navigation edge anchors — 2026-11-26
 
 The shared sidebar and Profile drawer now use the DUPS zero-offset primitive for their viewport-edge coordinates. The desktop sidebar retains its header-relative top offset; compact Homepage navigation retains its existing zero top anchor. The compact Profile drawer backdrop uses the same primitive for all four viewport edges. Browser assertions cover the corresponding fixed geometry without changing widths, breakpoints, visibility, transitions or stacking order.
+
+## Live Users drawer backdrop viewport-edge anchor — 2026-11-26
+
+The Live Users drawer backdrop now consumes the shared DUPS zero-offset primitive for all four viewport insets. Its fixed positioning, stacking layer, visual treatment and shared overlay lifecycle are preserved. The dynamic browser fixture checks its computed viewport-edge geometry while the drawer is open; this source/test addition remains pending a confirmed Chromium workflow result.
