@@ -84,3 +84,8 @@ The inspector's responsive absolute-positioning layer now uses `--dups-layer-bui
 ### Homepage overlay and responsive inspector browser acceptance — 2026-11-26
 
 Chromium run #45677034569 passed the added Homepage fixed-layer/token checks for the Website Builder, suspension screen and profile-completion overlay pair, plus the responsive Builder inspector's absolute-positioning/token checks at widths up to 900 CSS px. The Live Users Restricted Users modal checks also pass in the same browser suite. This remains a curated set of components, not a complete DUPS inventory.
+
+
+### Mobile Homepage header-status anchor — 2026-11-26
+
+The header login status uses the existing DUPS anchor-gap and logical offset tokens for its mobile absolute position: 4px below the header and 8px from the right edge at the default root size. The Chromium audit verifies computed absolute positioning and both offsets against the token values on the existing Homepage mobile viewport checks. The containing block remains the fixed Homepage header; no general-purpose popover engine or collision fallback is implied.
