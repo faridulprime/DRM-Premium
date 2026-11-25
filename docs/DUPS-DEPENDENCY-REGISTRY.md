@@ -189,3 +189,8 @@ The mobile fixed `.studio-global-topbar` now uses the existing `--dups-offset-0`
 ### Shared shell viewport-edge anchors — 2026-11-26
 
 The shared fixed `.topbar` now consumes `--dups-offset-0` for top/left/right. The fixed `.category-bar` consumes the same zero primitive for left/right while retaining its DUSS header-height top anchor. The mobile shared sidebar consumes the zero primitive for top/bottom, and the mobile sidebar backdrop uses it for all four insets. Existing fixed positioning, dimensions, responsive overrides and layer aliases are preserved. The Chromium audit now checks the Homepage header's zero top/left/right edges and the Category Bar's left/right edges plus alignment directly beneath the rendered header across all seven viewport widths. The assertion is limited to the static Homepage shell fixture.
+
+
+### Profile drawer and navigation viewport-edge anchors — 2026-11-26
+
+The shared desktop sidebar's left/bottom edges, compact Homepage sidebar's top edge, Profile drawer's top/right/bottom edges and compact Profile drawer backdrop's full-viewport inset now reuse `--dups-offset-0`. Existing fixed positioning, drawer width, desktop header-relative sidebar top, compact breakpoints and layer tokens are preserved. The Chromium Homepage viewport matrix now checks the Profile drawer's fixed edge geometry, sidebar left/bottom edges, compact sidebar top edge, and compact backdrop's four rendered edges. The assertion is source-level test coverage only until a new Chromium workflow run is confirmed.
