@@ -29,19 +29,20 @@ Verification date: 2026-11-25
 ## Application code audit findings
 
 - Website Builder JSON document changes are draft-only; `/api/builder/state` reports `publishEnabled: false`. Separate `Save website style` and legacy visual-editor actions write `settings.visual_editor_config`, which the homepage reads and applies. Confirmation prompts and clearer UI text were added so these live-style writes are not confused with the JSON draft.
-- Public `POST /api/presence` and `POST /api/analytics/event` routes write to D1 without login. No route-local per-IP limiter is visible in the inspected catch-all API code. Cloudflare edge/WAF rate-limit configuration was not inspected, so this remains a resource-abuse review item rather than a confirmed exploitable vulnerability.
+- Public `POST /api/presence` and `POST /api/analytics/event` routes write to D1 without login. A signed-in heartbeat executes four D1 statements; a guest heartbeat executes two; frontend heartbeats run every 30 seconds. Analytics inserts one row per accepted event without route-local per-IP metering or deduplication. The global Origin check is a CSRF/origin gate, not a rate limit. The API checks declared Content-Length (20 KB) but does not measure streamed body bytes. Registration OTP has separate per-IP/per-email controls, not shared by these routes. No Cloudflare edge/WAF configuration was inspected and no analytics-retention path was found in the catch-all API source; therefore this is an unverified resource-abuse risk, not a confirmed exploit. Full detail: `docs/PUBLIC-API-RESOURCE-ABUSE-REVIEW.md`.
 - No governance runtime service is required to render the public website.
 
 ## Validation status
 
-- DUSS v0.6 static workflow run #9 passed after adding the version-header regression. DUSS v0.7.0 adds expanded selector-block checks; its CI run is pending at this commit.
+- DUSS v0.7.0 workflow run #10 passed: 16 icon tokens/references, compact override coverage, prior badge/button tokens, seven CSS brace checks and five page cache keys. This is static source verification only. The workflow now uses actions/checkout@v7 and actions/setup-python@v7; the next run must confirm the action upgrade.
 - Browser screenshots, computed dimensions, keyboard/touch checks, 200% zoom and Bengali/Latin overflow tests have not been run.
 - The source audit does not establish Cloudflare edge configuration or Production runtime behavior.
 
 ## Next direction
 
-1. Verify the DUSS v0.7.0 smoke workflow result and inspect its logs.
-2. Perform browser-based sizing and interaction validation before further geometry changes.
+1. Verify the DUSS workflow after its v7 action upgrade.
+2. Perform browser-based sizing and interaction validation before further geometry changes; no rendered-browser test has been run.
 3. Continue with icon optical review, then remaining page-specific controls, cards/grids and dialogs.
-4. Review public presence/analytics rate limiting after checking the Cloudflare edge configuration.
+4. Inspect Cloudflare edge rate-limits and establish normal heartbeat volume for public presence/analytics before designing quotas.
+5. Define analytics deduplication and retention before any runtime or D1 changes.
 5. Keep DUGA's revised-schema disposable D1 acceptance, independent review and Preview migration reconciliation on its separate review track.

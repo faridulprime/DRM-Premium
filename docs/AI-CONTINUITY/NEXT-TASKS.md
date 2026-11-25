@@ -6,7 +6,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Application: DUSS
 
-1. Inspect the latest GitHub Actions run for `.github/workflows/duss-sizing-smoke.yml` after the v0.7.0 expanded selector-block checks; earlier v0.6 run #9 passed.
+1. Verify the next run of `.github/workflows/duss-sizing-smoke.yml` after upgrading checkout/setup-python to v7; v0.7.0 source checks already passed in run #10.
 2. Perform browser screenshots and computed-style/bounding-box comparisons for Homepage, Admin, Live Users, Upload Studio and Profile.
 3. Test mobile/tablet/desktop, 200% zoom, keyboard focus, touch targets and Bengali/Latin overflow.
 4. Review SVG/glyph optical alignment using rendered evidence; do not infer optical equivalence from CSS dimensions.
@@ -14,10 +14,13 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Application: API and Website Builder review
 
-1. Inspect Cloudflare WAF/rate-limit/edge rules for unauthenticated `POST /api/presence` and `POST /api/analytics/event`; these routes write to D1 and no route-local per-IP limiter was found in the source audit.
-2. If edge protections are absent or insufficient, design bounded, privacy-preserving route controls and tests before changing runtime behavior.
-3. Maintain a clear separation between the unpublished Builder JSON document (`/api/builder/draft`) and live style settings (`/api/builder/style`, legacy `/api/admin/settings`).
-4. Add application regression tests for authentication, registration OTP, role management, presence, analytics, profile images and Builder style/draft flows.
+1. Inspect the actual Cloudflare edge/WAF/rate-limit rules for unauthenticated `POST /api/presence` and `POST /api/analytics/event`; repository source does not include this account configuration.
+2. Measure legitimate 30-second heartbeat and tab-event traffic before selecting endpoint-specific limits; avoid blocking users behind shared NATs.
+3. Define privacy-preserving analytics event deduplication and retention/aggregation rules. No analytics cleanup path was found in the inspected Pages catch-all API source.
+4. Review the 20 KB `Content-Length` guard in `readBody(req)`; it does not measure actual streamed body bytes when the header is absent or inaccurate.
+5. If edge protections are absent or insufficient, design bounded controls and route-level regression tests before changing runtime behavior.
+6. Maintain the separation between unpublished Builder JSON (`/api/builder/draft`) and separately persisted live style settings (`/api/builder/style`, legacy `/api/admin/settings`).
+7. Add application regression tests for authentication, registration OTP, role management, presence, analytics, profile images and Builder style/draft flows.
 
 ## DUGA review track — Draft PR #4
 
