@@ -66,3 +66,9 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Assignment grant/revoke, validation transitions and finding review changes generate audit rows in the same database statement through triggers. Inserts must start in the correct initial state; assignment and validation evidence cannot be deleted.
 - Validation audit actor is the database label duga-db-trigger, not an authenticated runner identity. API trusted-session derivation, CAS enforcement, runner provenance and result authenticity remain open runtime requirements.
 - Tests and structural validator extended for the selected rules. This remains in-memory SQLite only; Preview D1 is untouched.
+
+
+### Trusted Git provenance and validation identity — design contract
+- Added `docs/DUGA-TRUSTED-PROVENANCE.md` to define repository/commit/ref/PR/workflow-run/attempt/validator/artifact evidence and authenticated validation-service identity.
+- Separates provider-verified Git/workflow evidence from caller-supplied metadata, D1 actor labels, and worker lease ownership. Requires fail-closed behavior, OIDC claim validation, replay protection, immutable commit checkout, and fencing at completion.
+- Design only: no OIDC credentials, webhook, worker/API, schema migration, Preview D1 operation or deployment is implemented. Next: independent security review; confirm GitHub/Cloudflare OIDC integration; then design evidence columns and tests only after Preview migration-history and backup preflight.
