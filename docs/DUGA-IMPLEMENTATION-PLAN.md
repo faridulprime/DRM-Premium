@@ -2,7 +2,7 @@
 Version: 1.0.0
 Target repository: faridulprime/DRM-Premium
 Target branch: feature/full-admin-panel
-Scope: Phase 0–4 (Phase 3 partial; Phase 4 initial foothold only)
+Scope: Phase 0–4 (Phase 3 partial; Phase 4 read-only API foundation)
 
 ## Current verified progress — 2026-11-25
 
@@ -12,7 +12,7 @@ Scope: Phase 0–4 (Phase 3 partial; Phase 4 initial foothold only)
 | 1 — Architecture and policy | Complete | DUGA specification, role model, lifecycle and authorization design are versioned. |
 | 2 — Git governance foundation | Complete | Registry, ownership, dependencies and static validation pass in CI. |
 | 3 — D1 schema and migration design / Preview testing | Partially complete | Draft schema, migration inventory validator and in-memory SQLite regression suite pass. Preview D1 history and backup are not verified; no migration has been applied. |
-| 4 — Permission and authorization APIs | Started, minimal | Owner-only `GET /api/governance/health` exists; syntax and mocked handler-level authorization/schema-readiness tests pass. Full D1-backed governance endpoints and live Preview authorization tests remain. |
+| 4 — Permission and authorization APIs | Partially implemented | Owner-only read-only `GET /api/governance/health`, `GET /api/governance/changes` (filtered/keyset-paginated list), and `GET /api/governance/changes/:id` (bounded related records) exist. Syntax, Owner authorization, input validation, pagination and mocked D1 tests pass in CI. Live Preview D1 and deployed runtime tests remain. |
 | 5 — Change, approval and review operations | Not started | Requires the operational schema and full API authorization layer. |
 | 6 — Complete DACP handover pack | Not started | Expand continuity and recovery artifacts after implementation stabilizes. |
 | 7 — Security review, automated validation and Preview acceptance | Partially enabled, not complete | Static CI, mocked API tests and in-memory SQLite checks exist; Preview acceptance and live D1/runtime security tests remain. |
