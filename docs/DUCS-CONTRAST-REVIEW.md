@@ -54,3 +54,9 @@ They are not automatically changed. Their visual boundary may be partly communic
 ### Scope and validation limits
 
 The registered candidate audit resolves the explicit token pairs and checks their color math. It is not a full computed-style or pixel-level WCAG audit. Alpha/gradient endpoints, dynamic states, image/texture backgrounds, actual browser compositing, forced-colors, and all runtime overrides still need dedicated validation. A passing source audit must not be described as WCAG certification.
+
+## Automated validation result — 2026-11-25
+
+The DUCS contrast workflow run #2 passed on commit `4d9e87971447cd2363e8e655046043873ed7f794`: [run #2](https://github.com/faridulprime/DRM-Premium/actions/runs/45631187748). The result was 93/98 explicit candidate pairs meeting their registered thresholds, with the five non-text boundary pairs listed above remaining for contextual review.
+
+The subsequent design-system browser audit run #16 passed on commit `13b7132c865d8ca04c627be37fc9337d5eb108a0`: [run #16](https://github.com/faridulprime/DRM-Premium/actions/runs/45633016197). It verifies the representative rendered contrast pairs and the responsive/rendered design-system states described in the browser audit specification. It does not turn the source-level candidate registry into a full runtime WCAG audit.

@@ -110,7 +110,7 @@ A component is considered migrated only when:
 - Verified DUSS/DUPS/DUCS stylesheet and semantic-token loading, horizontal overflow, zero-geometry visible controls, first keyboard focus visibility, and representative DUCS contrast pairings (primary text/canvas, secondary text/canvas, action/canvas, border/canvas).
 - DUME mobile drawer open/close and cleanup passed on Homepage, Admin, Live Users and Upload Studio under both normal and reduced-motion preferences; the 760/761px desktop/mobile boundary passed. The run exposed and led to correction of an Admin mobile-menu toggle state bug.
 - DUPS computed header stacking values are checked against the page-header, Homepage/Upload Studio mobile-header, and Live Users header layer tokens for the applicable pages and widths.
-- The audit reports, but does not fail on, interactive targets smaller than 44px. Several remain and need a deliberate DUSS touch-target review; the visible logo links are included in this observation. No blanket size increase was made.
+- The early run #4 audit reported small targets before DUSS v0.8 touch-target integration. The later run #11 and run #16 browser audits report zero visible interactive targets below 44px in the sampled page/viewport states. This result is scoped to the controls rendered in those tests; it does not claim every generated or dynamic control has been enumerated.
 - Scope is local static-site rendering, not deployed Cloudflare Pages or Pages Functions. No D1, authentication, edge, or Production behavior is exercised. The 720px case is not native browser zoom. This is not a full WCAG certification or visual/optical approval.
 
 ## DUPS overlay stacking validation — 2026-11-25
@@ -122,3 +122,9 @@ Browser audit run #4 had already checked the computed page-header layer against 
 Browser audit run #11 passed on commit `c423ea1fe0e35459d279f40bf444afa69fcd4c53`: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803). It verifies computed page-header z-index values against the DUPS header tokens and, after opening mobile drawers, verifies the computed sidebar/backdrop/header values and page-specific stacking order on Homepage, Admin, Live Users and Upload Studio.
 
 This is limited to the tested header/drawer layers and their active rendered cascade. It does not validate every positioned element, every stacking context, anchored tooltip/popover collision handling, native zoom, safe-area layout, or all pages' overlay interactions.
+
+## Expanded browser acceptance — 2026-11-25
+
+The latest browser audit run #16 passed on commit `13b7132c865d8ca04c627be37fc9337d5eb108a0`: [run #16](https://github.com/faridulprime/DRM-Premium/actions/runs/45633016197). It retains the earlier computed header/sidebar/backdrop z-index checks and DUME drawer lifecycle checks, and reports no sub-44px visible targets in its sampled states.
+
+DUPS validation remains deliberately scoped: it checks the shared page headers and four mobile drawer/backdrop stacks, not all positioned selectors, all containing-block contexts, popover/tooltip collision handling, native zoom, or every overlay interaction.

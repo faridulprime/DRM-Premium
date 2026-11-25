@@ -1,6 +1,6 @@
 # DRM Universal Color System (DUCS)
 Version: 0.3.2 — explicit contrast candidate audit and text-token remediation
-Status: Token foundation, page mappings, source inventory, dependency registry and component aliases are in place. First-pass component migrations exist across all five pages. Chromium validates token loading and representative semantic contrast pairings. A source-level audit covers 98 explicit foreground/background candidates; seven text-token values were remediated and five non-text boundary candidates remain under contextual review. Residual literal cleanup, computed-style contrast coverage and theme/forced-colors validation remain pending.
+Status: Token foundation, page mappings, source inventory, dependency registry and component aliases are in place. First-pass component migrations exist across all five pages. A source-level audit covers 98 explicit foreground/background candidates: 93 meet their selected thresholds after seven text-token value adjustments; five non-text boundary candidates remain under contextual review. Chromium validates representative semantic contrast pairings and the five principal pages across seven viewport widths. Residual literal cleanup, full computed-style contrast coverage and theme/forced-colors validation remain pending.
 
 ## Purpose
 DUCS centralizes color decisions for DRM Premium. It separates raw palette values from semantic meaning and component implementation so color changes can be reviewed across their dependencies.
@@ -92,3 +92,11 @@ This is a representative sample, not a full DUCS contrast audit. It does not mea
 ## Explicit contrast audit and first remediation — 2026-11-25
 
 The registered source-level contrast review is maintained in `DUCS-CONTRAST-REVIEW.md`. Its 98 explicit token pairs are diagnostic candidates, not a complete selector/runtime inventory. Seven text-role token values were adjusted to satisfy their registered 4.5:1 candidate targets. Five non-text border candidates remain review-only pending inspection of the actual rendered component boundaries. Do not infer full WCAG conformance from the source-level candidate count or ratios.
+
+## Contrast candidate and browser acceptance update — 2026-11-25
+
+The registered source audit passed as a workflow in run #2 on commit `4d9e87971447cd2363e8e655046043873ed7f794`: [DUCS contrast audit run #2](https://github.com/faridulprime/DRM-Premium/actions/runs/45631187748). It evaluates 98 explicit source-level foreground/background candidates; 93 meet their selected threshold and five non-text border candidates remain review-only. Seven text-role token values were updated and the exact previous/new values and ratios are recorded in `DUCS-CONTRAST-REVIEW.md`.
+
+Browser audit run #16 also passed on commit `13b7132c865d8ca04c627be37fc9337d5eb108a0`: [design-system browser audit run #16](https://github.com/faridulprime/DRM-Premium/actions/runs/45633016197). That browser run includes representative semantic contrast samples for the five principal pages, not all 98 candidates or all computed runtime foreground/background states.
+
+Neither the source candidate audit nor the representative browser samples constitute full WCAG conformance certification. The five non-text boundary candidates, gradient/image-backed contexts, dynamic states and forced-colors still require contextual validation.

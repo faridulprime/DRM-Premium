@@ -1,6 +1,6 @@
 # DRM Universal Motion Engine (DUME)
-Version: 0.2.0 — Shared mobile drawer controller token integration
-Status: Shared mobile drawer controller and CSS timing tokens are integrated on four pages. Normal/reduced-motion open/close lifecycle, cleanup and the 760/761px boundary passed browser checks on those pages; other motion families and Profile remain outside this controller migration.
+Version: 0.2.1 — Responsive drawer lifecycle and token-duration validation
+Status: Shared mobile drawer controller and CSS timing tokens are integrated on Homepage, Admin, Live Users and Upload Studio. Chromium validates normal/reduced-motion open/close, rapid-toggle recovery, resize cleanup across the 760px breakpoint, ARIA/backdrop state, and transform/opacity timing against DUME tokens. Other motion families and Profile remain outside this controller migration.
 
 ## Purpose
 DUME centralizes interaction motion: transition duration, easing, animation sequencing, reduced-motion behavior, and motion state orchestration. It does not own element dimensions, coordinate placement, or colors.
@@ -38,10 +38,10 @@ The controller reads the duration and easing from computed root custom propertie
 A component is migrated only when timing and easing are tokenized, state changes remain correct under rapid interaction, reduced motion is respected, keyboard interaction is preserved, and desktop/mobile behavior is validated in a browser.
 
 ## Remaining work and limitations
-- Only the shared mobile universal drawer controller is currently centralized.
-- Profile drawer, Live Users drawers/modals, Site Builder, dialogs, and other page-specific animations still contain local motion rules.
-- The controller's resize transition from mobile to desktop and rapid open/close sequences require browser interaction testing.
-- No browser visual, keyboard, or reduced-motion test was run as part of this source migration.
+- Only the shared mobile universal sidebar-drawer controller is centralized; this is not a migration of every motion family.
+- Profile drawer, Live Users user drawers/modals and cinematic effects, Site Builder, dialogs, and other page-specific animations still contain local motion rules.
+- Browser validation covers the four integrated pages and the listed lifecycle states. It does not provide a visual/optical approval of every animation or native browser-zoom validation.
+- Broader keyboard review, visual frame-by-frame review, and motion consistency review across the remaining local animation families remain pending.
 
 ## Browser validation update — 2026-11-25
 
@@ -58,3 +58,15 @@ A component is migrated only when timing and easing are tokenized, state changes
 Browser audit run #11 passed on commit `c423ea1fe0e35459d279f40bf444afa69fcd4c53`: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803). The test covers mobile drawer open/close, backdrop visibility, post-close cleanup and reduced-motion duration on Homepage, Admin, Live Users and Upload Studio, plus desktop-side menu behavior at 761px.
 
 The test does not establish that every animation/transition in DRM is centralized in DUME. Profile drawer, Live Users modal effects, Site Builder, dialogs and other local motion remain separate migration candidates. Rapid viewport resize while a drawer is open and broader keyboard/visual animation review remain pending.
+
+## Browser lifecycle acceptance — DUME v0.2.1 — 2026-11-25
+
+Browser audit run #16 passed on commit `13b7132c865d8ca04c627be37fc9337d5eb108a0`: [run #16](https://github.com/faridulprime/DRM-Premium/actions/runs/45633016197).
+
+The Chromium audit checks Homepage, Admin, Live Users and Upload Studio for:
+- Normal and reduced-motion drawer open/close, backdrop visibility and post-close cleanup.
+- Rapid open/close recovery without stale close timers.
+- Mobile-to-desktop resize cleanup at the 760/761px boundary, including `aria-expanded`, body classes, sidebar classes and backdrop state; it then reopens and closes the drawer after returning to mobile.
+- Computed transform and opacity transition durations against `--dume-drawer-duration` and `--dume-drawer-opacity-duration`.
+
+The controller now uses the opacity-duration token rather than a hard-coded 520ms value. This acceptance applies to the tested shared sidebar drawer states only; it is not evidence that every page animation is centralized in DUME.
