@@ -80,3 +80,10 @@ Verification date: 2026-11-25
 - Expanded the source-backed registry with Live Users admin/restricted drawer-role gradient endpoints, active restriction-tab text, back-link hover text and drawer-action hover text. The 106-pair audit now reports 101/106 meeting thresholds; the same five boundary findings remain. The expansion passed [run #45675604695](https://github.com/faridulprime/DRM-Premium/actions/runs/45675604695).
 - Updated DUCS contrast/accessibility documentation and next-task tracking. No color token values or page styling were changed in this pass.
 - Remaining: verify the latest docs-triggered CI, review the five boundary pairs in rendered component context, and add remaining page-state/overlay/forced-colors checks. Do not call the source-level audit a full WCAG conformance test.
+
+
+## DUPS targeted positioning audit — 2026-11-26
+
+- Replaced the Restricted Users modal's literal `z-index: 120` with the existing `--dups-layer-live-drawer` token; numeric behavior is preserved.
+- Extended the Chromium design-system browser audit to verify computed fixed positioning, modal z-index/token agreement, and viewport-center geometry at all seven existing viewport widths.
+- Validation is pending the workflow run for the resulting commit. This is a targeted modal check, not full stacking-context, anchor-collision, or deployed-environment validation.
