@@ -230,10 +230,10 @@ def main() -> int:
                 "json_type(affected_systems_json)='array'",
                 "json_type(affected_paths_json)='array'",
                 "requested_by_type='human' and requested_by_user_id is not null and requested_by_principal_id is null",
-                "requested_by_type='ai' and requested_by_user_id is null and requested_by_principal_id is not null",
+                "requested_by_type='ai' and requested_by_user_id is null and requested_by_principal_id is not null and length(requested_by_principal_id)>0",
                 "implementer_type='human' and implementer_user_id is not null and implementer_principal_id is null",
-                "implementer_type='ai' and implementer_user_id is null and implementer_principal_id is not null",
-                "source_branch<>'main'",
+                "implementer_type='ai' and implementer_user_id is null and implementer_principal_id is not null and length(implementer_principal_id)>0",
+                "length(source_branch)>0 and source_branch<>'main'",
                 "state_version>0",
             ],
             "duga_reviews": [
@@ -243,8 +243,8 @@ def main() -> int:
             "duga_audit_events": [
                 "length(event_type)>0",
                 "actor_type='human' and actor_user_id is not null and actor_principal_id is null and actor_system_id is null",
-                "actor_type='ai' and actor_user_id is null and actor_principal_id is not null and actor_system_id is null",
-                "actor_type='system' and actor_user_id is null and actor_principal_id is null and actor_system_id is not null",
+                "actor_type='ai' and actor_user_id is null and actor_principal_id is not null and length(actor_principal_id)>0 and actor_system_id is null",
+                "actor_type='system' and actor_user_id is null and actor_principal_id is null and actor_system_id is not null and length(actor_system_id)>0",
             ],
             "duga_analysis_findings": [
                 "confidence>=0 and confidence<=1",
