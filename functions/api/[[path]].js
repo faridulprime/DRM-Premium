@@ -273,7 +273,16 @@ async function handle(req,env){
    }
    const where=[],args=[];
    if(status){where.push("status=?");args.push(status)}
-   if(q){where.push("(title LIKE ? ESCAPE '\\\\' OR summary LIKE ? ESCAPE '\\\\')");const term="%"+q.replace(/[\\\\%_]/g,"\\\\  return fail("Governance route not found.",404);
+   if(q){where.push("(title LIKE ? OR summary LIKE ?)");const term="%"+q+"%";args.push(term,term)}
+   if(cursorTime!==null){where.push("(created_at<? OR (created_at=? AND id<?))");args.push(cursorTime,cursorTime,cursorId)}
+   const sql="SELECT id,title,summary,status,risk_level,affected_systems_json,affected_paths_json,requested_by_type,requested_by_user_id,requested_by_principal_id,source_branch,base_commit_sha,policy_commit_sha,implementer_type,implementer_user_id,implementer_principal_id,implementation_commit_sha,state_version,created_at,updated_at FROM duga_change_requests"+(where.length?" WHERE "+where.join(" AND "):"")+" ORDER BY created_at DESC,id DESC LIMIT ?";
+   args.push(limit+1);
+   let result;try{result=await env.DB.prepare(sql).bind(...args).all()}catch{return fail("Change request storage is unavailable; verify the DUGA schema is installed.",503)}
+   const rows=result.results||[],hasMore=rows.length>limit,items=rows.slice(0,limit);
+   const last=items[items.length-1],nextCursor=hasMore&&last?b64(new TextEncoder().encode(String(last.created_at)+":"+last.id)):null;
+   return json({ok:true,items:items.map(row=>({...row,affected_systems:safeJsonArray(row.affected_systems_json),affected_paths:safeJsonArray(row.affected_paths_json)})),page:{limit,hasMore,nextCursor}});
+  }
+  return fail("Governance route not found.",404);
  }
 
  if(p[0]==="builder"){")+"%";args.push(term,term)}
