@@ -141,6 +141,7 @@ Validation:
 Completed on `feature/full-admin-panel`:
 - Added semantic tokens for Admin primary/outline actions, compact actions, row actions, and their mobile minimum heights.
 - Migrated the corresponding audited geometry in `admin.css` while retaining the existing 10×16px, 8×13px, 8×12px, 42px, and 38px values.
+- Preserved the separate 13px mobile action-label size with its own token; row-action buttons retain the more specific 14px label size.
 - Kept color, border, interaction, and page composition rules outside DUSS ownership.
 - Bumped the sizing stylesheet cache key to `duss-05` on all five consuming pages.
 
