@@ -124,3 +124,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Registration dialog close-control (17px/18px) and Live Users presence-dot (-1px/-1px) micro-anchors tokenized with computed Chromium checks. Continue remaining positioned selectors after validating their real containing blocks and lifecycle.
 
 - Website Builder dynamic live-edit overlay now uses `--dups-offset-0` and a dedicated local layer-20 token; a DOM fixture checks relative/isolation containing block, absolute full-edge coverage and z-index. Next inspect the remaining fixed-shell and micro-positioned selectors where actual runtime DOM can be reproduced safely.
+
+- Homepage hero corner decoration and full-bleed `::before` overlay now consume zero-inset DUPS tokens; Chromium checks the relative containing block and absolute edge geometry. Continue the remaining fixed/absolute selector audit with DOM-backed checks.

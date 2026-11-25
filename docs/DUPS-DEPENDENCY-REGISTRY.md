@@ -153,3 +153,8 @@ The compact/mobile rule retains its existing 10px left and right insets through 
 ### Website Builder live-edit overlay migration — 2026-11-26
 
 The dynamically created `.sb-live-edit-overlay` now uses the zero-offset primitive for its full-wrapper inset and a dedicated local layer token (20). The actual parent selector remains a positioned, isolated wrapper. Chromium verifies the wrapper context, absolute fill geometry and computed layer using a DOM fixture that matches the runtime class structure; iframe pointer/event integration remains outside this static audit.
+
+
+### Homepage hero decorative-anchor migration — 2026-11-26
+
+The hero corner decoration and its `::before` overlay now use zero-inset DUPS tokens. Their existing relative/absolute containing-block relationship and geometry are preserved. Chromium verifies the hero positioning context, zero corner offsets and full pseudo-element coverage across the Homepage viewport matrix.

@@ -60,6 +60,10 @@
   /* Live Users presence indicator micro-anchor. */
   --dups-anchor-live-presence-edge: -1px;
 
+  /* Homepage hero decorative anchors. */
+  --dups-anchor-hero-corner-edge: var(--dups-offset-0);
+  --dups-anchor-hero-overlay-inset: var(--dups-offset-0);
+
   /* Registration dialog close-control anchor. */
   --dups-anchor-register-close-top: 17px;
   --dups-anchor-register-close-right: 18px;

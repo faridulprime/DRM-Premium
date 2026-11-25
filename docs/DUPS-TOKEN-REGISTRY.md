@@ -165,3 +165,13 @@ The migration preserves existing values. Chromium opens the static registration 
 | `--dups-layer-builder-live-overlay` | 20 | Local interaction layer above the Website Builder preview iframe |
 
 The overlay keeps a zero inset via `--dups-offset-0` and remains absolutely positioned within `.sb-live-preview-wrap` (`position: relative; isolation: isolate`). Chromium builds a matching wrapper fixture and checks the containing block, full-edge coverage and local layer. This validates CSS composition, not the iframe preview's full event lifecycle.
+
+
+## Homepage hero decorative anchors — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-anchor-hero-corner-edge` | 0 | Bottom/right edge placement for the hero corner decoration |
+| `--dups-anchor-hero-overlay-inset` | 0 | Full-containing-block inset for the hero pseudo-element overlay |
+
+The hero remains the relative containing block; both decorative elements remain absolute. Chromium checks the computed containing-block relationship, corner edge coordinates and full pseudo-element coverage at every Homepage viewport.

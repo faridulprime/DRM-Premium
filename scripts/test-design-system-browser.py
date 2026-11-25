@@ -370,6 +370,40 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     fail(f"{name}/{viewport_name}: header login status anchor could not be resolved ({header_status_anchor})")
 
         if name == "homepage":
+            hero_anchor = page.evaluate(
+                """() => {
+                  const hero = document.querySelector(".hero-visual");
+                  const corner = document.querySelector(".hero-corner");
+                  if (!hero || !corner) return {missing: true};
+                  const heroStyle = getComputedStyle(hero);
+                  const cornerStyle = getComputedStyle(corner);
+                  const overlayStyle = getComputedStyle(hero, "::before");
+                  const root = getComputedStyle(document.documentElement);
+                  return {
+                    heroPosition: heroStyle.position,
+                    cornerPosition: cornerStyle.position,
+                    cornerRight: parseFloat(cornerStyle.right),
+                    cornerBottom: parseFloat(cornerStyle.bottom),
+                    expectedCorner: parseFloat(root.getPropertyValue("--dups-anchor-hero-corner-edge")),
+                    overlayPosition: overlayStyle.position,
+                    overlayInsets: [overlayStyle.top, overlayStyle.right, overlayStyle.bottom, overlayStyle.left],
+                    expectedInset: parseFloat(root.getPropertyValue("--dups-anchor-hero-overlay-inset"))
+                  };
+                }"""
+            )
+            if hero_anchor.get("missing"):
+                fail(f"{name}/{viewport_name}: Homepage hero or corner decoration is missing")
+            else:
+                try:
+                    if hero_anchor["heroPosition"] != "relative" or hero_anchor["cornerPosition"] != "absolute" or hero_anchor["overlayPosition"] != "absolute":
+                        fail(f"{name}/{viewport_name}: Homepage hero anchor positioning context changed ({hero_anchor})")
+                    if abs(hero_anchor["cornerRight"] - hero_anchor["expectedCorner"]) > 1 or abs(hero_anchor["cornerBottom"] - hero_anchor["expectedCorner"]) > 1:
+                        fail(f"{name}/{viewport_name}: Homepage hero corner offsets differ from DUPS token ({hero_anchor})")
+                    if any(abs(float(value.replace("px", "")) - hero_anchor["expectedInset"]) > 1 for value in hero_anchor["overlayInsets"]):
+                        fail(f"{name}/{viewport_name}: Homepage hero overlay no longer fills its containing block ({hero_anchor})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: Homepage hero anchor geometry could not be resolved ({hero_anchor})")
+
             builder_live_overlay = page.evaluate(
                 """() => {
                   const wrap = document.createElement("div");
