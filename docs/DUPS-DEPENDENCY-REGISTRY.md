@@ -135,3 +135,8 @@ Migrated all 13 numeric Homepage Category Bar top declarations in `theme.css` to
 
 
 The compact/mobile 66px override exists in both the base stylesheet and the later Homepage theme layer. Both declarations now set and consume the same DUPS anchor token, preserving cascade precedence and the original computed position.
+
+
+### Live Users notice anchor migration — 2026-11-26
+
+The fixed Live Users status notice now consumes semantic DUPS tokens for its 50% horizontal anchor and 18px bottom clearance. The existing horizontal centering transform and local z-index 140 are unchanged. Chromium verifies computed geometry and layer at all existing Live Users desktop, tablet, mobile, narrow and breakpoint viewport checks. This validates static rendering, not the authenticated notice lifecycle or timing.

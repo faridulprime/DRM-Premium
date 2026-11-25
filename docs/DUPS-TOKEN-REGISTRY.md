@@ -133,3 +133,13 @@ The values preserve the existing fixed overlay geometry. Chromium checks the com
 | `--dups-anchor-category-bar-top` | Desktop: DUSS header height; mobile: DUSS mobile header height | Shared fixed Category Bar top coordinate |
 
 Homepage state selectors override this token for the existing guest, login-form, profile-menu and narrow-viewport header arrangements. Admin mobile Category Bar selectors also use the token with their existing 86px coordinate. The Chromium audit toggles the static Homepage header controls through three supported visibility states and checks computed fixed positioning/top against the active token at each mobile viewport. Existing coordinates are preserved.
+
+
+## Live Users notice anchor — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-anchor-live-notice-center` | 50% | Horizontal viewport-center anchor for the fixed live notice |
+| `--dups-anchor-live-notice-bottom` | 18px | Bottom viewport clearance for the fixed live notice |
+
+The existing translateX(-50%) centering behavior and local layer 140 are retained. Chromium checks computed fixed positioning, viewport-center coordinate, bottom clearance and layer at every Live Users viewport.

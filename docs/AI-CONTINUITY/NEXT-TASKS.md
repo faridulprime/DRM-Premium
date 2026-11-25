@@ -118,3 +118,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Profile Completion overlay now has tokenized 74px top, 50% viewport-center and zero-inset backdrop anchors, with computed Chromium geometry/coverage checks. Next: batch the remaining Category Bar responsive state offsets into explicit state-scoped DUPS anchor tokens and validate guest/signed-in/profile-menu states at their actual breakpoints.
 
 - Responsive Homepage/Admin Category Bar top offsets are now tokenized without changing their 13 existing Homepage state-specific coordinates or Admin's 86px mobile value. Chromium checks three Homepage header visibility states at each mobile viewport. Next: complete the wider positioned-selector/ancestor-context inventory and investigate remaining Builder live-edit overlay layer and any untested profile/safe-area cases.
+
+- Live Users fixed status notice now uses semantic DUPS center/bottom anchor tokens (50% / 18px); computed Chromium geometry and layer checks added across the existing viewport matrix. Continue with remaining absolute micro-anchors only where the live DOM/containing block is verified.

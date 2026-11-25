@@ -270,6 +270,42 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: Builder inspector DUPS layer/geometry could not be resolved ({builder_inspector})")
 
+        if name == "live-users":
+            live_notice_anchor = page.evaluate(
+                """() => {
+                  const notice = document.querySelector("#liveNotice");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!notice) return {missing: true};
+                  const style = getComputedStyle(notice);
+                  return {
+                    position: style.position,
+                    left: parseFloat(style.left),
+                    bottom: parseFloat(style.bottom),
+                    transform: style.transform,
+                    zIndex: parseFloat(style.zIndex),
+                    expectedCenter: parseFloat(root.getPropertyValue("--dups-anchor-live-notice-center")),
+                    expectedBottom: parseFloat(root.getPropertyValue("--dups-anchor-live-notice-bottom")),
+                    expectedZ: parseFloat(root.getPropertyValue("--dups-layer-live-notice"))
+                  };
+                }"""
+            )
+            if live_notice_anchor.get("missing"):
+                fail(f"{name}/{viewport_name}: Live Users notice element is missing")
+            else:
+                try:
+                    if live_notice_anchor["position"] != "fixed":
+                        fail(f"{name}/{viewport_name}: Live Users notice is not fixed-positioned ({live_notice_anchor})")
+                    if abs(live_notice_anchor["left"] - width * live_notice_anchor["expectedCenter"] / 100) > 1:
+                        fail(f"{name}/{viewport_name}: Live Users notice center anchor differs from its DUPS token ({live_notice_anchor})")
+                    if abs(live_notice_anchor["bottom"] - live_notice_anchor["expectedBottom"]) > 1:
+                        fail(f"{name}/{viewport_name}: Live Users notice bottom clearance differs from its DUPS token ({live_notice_anchor})")
+                    if float(live_notice_anchor["zIndex"]) != live_notice_anchor["expectedZ"]:
+                        fail(f"{name}/{viewport_name}: Live Users notice layer differs from its DUPS token ({live_notice_anchor})")
+                    if not live_notice_anchor["transform"].startswith("matrix(1, 0, 0, 1,"):
+                        fail(f"{name}/{viewport_name}: Live Users notice must retain its horizontal centering transform ({live_notice_anchor})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: Live Users notice anchor could not be resolved ({live_notice_anchor})")
+
         if name == "homepage" and width <= 760:
             header_status_anchor = page.evaluate(
                 """() => {

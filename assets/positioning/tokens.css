@@ -57,6 +57,10 @@
   --dups-anchor-visual-editor-edge: 0.875rem;
   --dups-anchor-visual-editor-edge-compact: var(--dups-offset-3);
 
+  /* Live Users fixed notice anchor. */
+  --dups-anchor-live-notice-center: 50%;
+  --dups-anchor-live-notice-bottom: 18px;
+
   /* Anchor relationship spacing. */
   --dups-anchor-gap-xs: 0.25rem;
   --dups-anchor-gap-status: var(--dups-anchor-gap-xs);
