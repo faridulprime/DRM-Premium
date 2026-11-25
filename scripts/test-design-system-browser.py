@@ -346,6 +346,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const header = document.querySelector(".topbar");
                   const root = getComputedStyle(document.documentElement);
                   if (!status || !header) return {missing: true};
+                  const previousText = status.textContent;
+                  status.textContent = "DUPS geometry fixture";
                   const style = getComputedStyle(status);
                   const compact = innerWidth <= 760;
                   const rootSize = parseFloat(root.fontSize) || 16;
@@ -359,16 +361,20 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const right = rightValue.endsWith("rem")
                     ? parseFloat(rightValue) * rootSize : parseFloat(rightValue);
                   const statusRect = status.getBoundingClientRect();
-                  const headerRect = header.getBoundingClientRect();
-                  return {
+                  const anchor = status.offsetParent || header;
+                  const anchorRect = anchor.getBoundingClientRect();
+                  const result = {
                     position: style.position,
-                    gap: statusRect.top - headerRect.bottom,
+                    gap: statusRect.top - anchorRect.bottom,
                     right: parseFloat(style.right),
                     zIndex: style.zIndex,
+                    anchorClass: anchor.className,
                     expectedGap: gap,
                     expectedRight: right,
                     expectedLayer: parseFloat(root.getPropertyValue("--dups-layer-header-status"))
                   };
+                  status.textContent = previousText;
+                  return result;
                 }"""
             )
             if header_status_anchor.get("missing"):
