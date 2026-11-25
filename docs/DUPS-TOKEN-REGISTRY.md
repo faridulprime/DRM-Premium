@@ -240,3 +240,6 @@ The shared desktop header login-status notice uses `--dups-offset-0` for its flu
 ## Full-viewport overlay edge primitive — 2026-11-26
 
 The Website Builder shell, public registration dialog, account suspension screen, and suspension grain layer now use `--dups-offset-0` for their four full-viewport edges. The browser audit compares the computed top/right/bottom/left coordinates of these surfaces with the zero-offset token. Existing positioning modes, centering, stacking layers, and overlay behavior are unchanged.
+
+
+The public registration dialog also consumes the zero-offset primitive on all four viewport edges while retaining its native dialog centering through `margin:auto`. Its computed geometry is included in the Homepage overlay browser contract.
