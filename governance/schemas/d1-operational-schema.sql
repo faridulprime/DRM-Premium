@@ -379,8 +379,7 @@ CREATE UNIQUE INDEX uq_duga_jobs_active_lease_token
 CREATE TRIGGER duga_jobs_lease_transition_guard
 BEFORE UPDATE ON duga_jobs
 WHEN NOT (
-  NEW.id=OLD.id
-  AND NEW.job_type=OLD.job_type
+  NEW.id=OLD.id AND NEW.job_type=OLD.job_type
   AND NEW.input_json=OLD.input_json
   AND NEW.available_at=OLD.available_at
   AND NEW.created_at=OLD.created_at
