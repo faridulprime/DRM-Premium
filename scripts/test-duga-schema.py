@@ -251,6 +251,15 @@ def main() -> int:
     check("cancelled validation requires completion",
           lambda: insert_validation("validation-bad-cancelled","cancelled",11,None),
           should_fail=True)
+    check("validation cannot be inserted already terminal",
+          lambda: db.execute("""INSERT INTO duga_validation_runs
+            (id,change_request_id,commit_sha,status,validator,results_json,
+             started_at,completed_at,created_at)
+            VALUES ('validation-forged-pass','change-self-audit','commit-1',
+                    'passed','ci','{}',11,12,10)"""), should_fail=True)
+    check("validation evidence cannot be deleted",
+          lambda: db.execute("DELETE FROM duga_validation_runs WHERE id='validation-passed'"),
+          should_fail=True)
     check("queued validation can start and is audited",
           lambda: db.execute("""UPDATE duga_validation_runs SET status='running',started_at=11
             WHERE id='validation-queued' AND status='queued'"""), should_fail=False)
@@ -336,6 +345,16 @@ def main() -> int:
     check("assignment cannot be silently edited after grant",
           lambda: db.execute("UPDATE duga_assignments SET role_id='platform-owner' WHERE id='assignment-human-owner'"),
           should_fail=True)
+    check("assignment cannot be inserted already revoked",
+          lambda: db.execute("""INSERT INTO duga_assignments
+            (id,scope_type,role_id,subject_type,user_id,status,assigned_by_user_id,
+             created_at,revoked_at,revoked_by_user_id)
+            VALUES ('assignment-pre-revoked','platform','platform-owner','human',
+                    'human-2','revoked','human-1',1,2,'human-1')"""),
+          should_fail=True)
+    check("assignment grant evidence cannot be deleted",
+          lambda: db.execute("DELETE FROM duga_assignments WHERE id='assignment-human-owner'"),
+          should_fail=True)
     check("assignment revocation requires revoker identity",
           lambda: db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=6 WHERE id='assignment-ai-maintainer'"),
           should_fail=True)
@@ -367,6 +386,12 @@ def main() -> int:
        (id,analyzer_version,repository_commit_sha,file_path,classification,
         confidence,evidence_json,status,created_at)
        VALUES ('finding-review','1','abc','src/a.js','A',0.9,'[]','open',1)""")
+    check("finding cannot be inserted pre-reviewed",
+          lambda: db.execute("""INSERT INTO duga_analysis_findings
+            (id,analyzer_version,repository_commit_sha,file_path,classification,
+             confidence,evidence_json,status,created_at,reviewed_at,reviewed_by_user_id)
+            VALUES ('finding-forged','1','abc','src/b.js','A',0.9,'[]',
+                    'accepted',1,2,'human-1')"""), should_fail=True)
     check("finding can enter review with version increment",
           lambda: db.execute("""UPDATE duga_analysis_findings SET status='under_review',
             reviewed_at=2,reviewed_by_user_id='human-1',state_version=2
@@ -616,7 +641,7 @@ def main() -> int:
         "SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'duga_%'"
     ).fetchone()[0]
 
-    if (table_count, trigger_count) != (8, 17):
+    if (table_count, trigger_count) != (8, 22):
         raise AssertionError(
             f"Unexpected schema object counts: tables={table_count}, triggers={trigger_count}"
         )
