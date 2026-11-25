@@ -50,3 +50,14 @@ Verification date: 2026-11-25
 4. Continue DUSS component-family audit for remaining buttons, badges, cards, grids, tables, pagination, dialogs, toast and tooltip; review icon optical alignment with rendered evidence.
 5. Inspect Cloudflare edge/WAF rate-limit configuration and measure legitimate heartbeat/event volume before changing public endpoint controls; the Cloudflare account settings are not accessible from this repository connection.
 6. Keep DUGA revised-schema disposable D1 acceptance, independent review and Preview migration reconciliation on its separate review track. These database/resource actions require owner approval and remain unperformed.
+
+
+## DUGA change-request enforcement design — 2026-11-25
+
+- Added `docs/DUGA-CHANGE-REQUEST-ENFORCEMENT-DESIGN.md` (design-only; no executable SQL or API write route).
+- The design recommends conservative lifecycle defaults: accepted/rejected/cancelled are terminal; blocked can resume only to an explicitly recorded eligible state; AI audit and human approval remain required before implementation; requester/approver and implementer/AI-auditor separation is enforced at the API policy layer.
+- It separates database-enforceable invariants (initial state, transition graph, version increments, immutable identity/commit bindings, terminal/delete guards) from trusted API duties (session/service authentication, scoped assignments, evidence provenance, compare-and-swap and actor attribution).
+- It explicitly rejects pretending that a trigger actor such as `duga-db-trigger` proves the authenticated human/service identity. The proposed API state update and actor-attributed audit insert must commit atomically.
+- The current state-machine schema gap remains unresolved in the operational SQL draft: no change-request lifecycle guards or automatic request-transition audit. No schema draft, migration, D1 database, API write route, Preview or Production was changed.
+- Latest design commit: `9d93e11fa326606caa5966ca4601f58de9c73978`.
+- Next: reconcile the design with the actual DUGA SQL draft and schema validators; add lifecycle invariants to the in-memory SQLite test design first. Then obtain fresh CI evidence. Shared Preview migration remains NO-GO until migration history and backup/recovery are verified and separate approval is granted.
