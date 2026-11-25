@@ -13,13 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "governance" / "schemas" / "d1-operational-schema.sql"
 
 EXPECTED_COLUMNS = {
-    "duga_assignments": "id scope_type scope_id role_id subject_type user_id principal_id status assigned_by_user_id created_at revoked_at".split(),
+    "duga_assignments": "id scope_type scope_id role_id subject_type user_id principal_id status assigned_by_user_id created_at revoked_at revoked_by_user_id".split(),
     "duga_change_requests": "id title summary rationale status risk_level affected_systems_json affected_paths_json rollback_plan requested_by_type requested_by_user_id requested_by_principal_id source_branch base_commit_sha policy_commit_sha implementer_type implementer_user_id implementer_principal_id implementation_commit_sha state_version created_at updated_at".split(),
     "duga_reviews": "id change_request_id review_type reviewer_type reviewer_user_id reviewer_principal_id decision reviewed_commit_sha evidence_json created_at".split(),
     "duga_approvals": "id change_request_id approver_user_id approver_role authorization_assignment_id authorization_scope_type authorization_scope_id policy_commit_sha decision approved_commit_sha rationale created_at".split(),
     "duga_validation_runs": "id change_request_id commit_sha status validator validator_version results_json started_at completed_at created_at".split(),
     "duga_audit_events": "id aggregate_type aggregate_id event_type actor_type actor_user_id actor_principal_id actor_system_id payload_json policy_commit_sha created_at".split(),
-    "duga_analysis_findings": "id analyzer_version repository_commit_sha file_path symbol classification confidence evidence_json status created_at reviewed_at reviewed_by_user_id".split(),
+    "duga_analysis_findings": "id analyzer_version repository_commit_sha file_path symbol classification confidence evidence_json status created_at reviewed_at reviewed_by_user_id state_version".split(),
     "duga_jobs": "id job_type status input_json result_json attempts available_at lease_owner lease_token lease_generation lease_expires_at created_at updated_at".split(),
 }
 
@@ -66,6 +66,8 @@ EXPECTED_INDEX_COLUMNS = {
 # Explicit critical column declarations: (SQLite declared type, NOT NULL flag, PK ordinal).
 EXPECTED_COLUMN_DECLARATIONS = {
     ("duga_assignments", "assigned_by_user_id"): ("TEXT", 1, 0),
+    ("duga_assignments", "revoked_by_user_id"): ("TEXT", 0, 0),
+    ("duga_analysis_findings", "state_version"): ("INTEGER", 1, 0),
     ("duga_assignments", "created_at"): ("INTEGER", 1, 0),
     ("duga_change_requests", "title"): ("TEXT", 1, 0),
     ("duga_change_requests", "affected_systems_json"): ("TEXT", 1, 0),
@@ -90,6 +92,14 @@ EXPECTED_TRIGGERS = {
     "duga_audit_no_update": ("duga_audit_events", "append-only"),
     "duga_audit_no_delete": ("duga_audit_events", "append-only"),
     "duga_jobs_lease_transition_guard": ("duga_jobs", "Invalid DUGA job lease transition"),
+    "duga_assignments_update_guard": ("duga_assignments", "revocation only"),
+    "duga_findings_update_guard": ("duga_analysis_findings", "finding review transition"),
+    "duga_findings_no_delete": ("duga_analysis_findings", "immutable"),
+    "duga_validation_runs_update_guard": ("duga_validation_runs", "validation-run transition"),
+    "duga_assignment_grant_audit": ("duga_assignments", "assignment.granted"),
+    "duga_assignment_revoke_audit": ("duga_assignments", "assignment.revoked"),
+    "duga_validation_transition_audit": ("duga_validation_runs", "validation."),
+    "duga_finding_review_audit": ("duga_analysis_findings", "finding."),
 }
 
 def fail(message: str) -> None:
@@ -169,6 +179,14 @@ def main() -> int:
             "duga_approvals_no_delete": ("before delete on duga_approvals", "raise(abort"),
             "duga_audit_no_update": ("before update on duga_audit_events", "raise(abort"),
             "duga_audit_no_delete": ("before delete on duga_audit_events", "raise(abort"),
+            "duga_assignments_update_guard": ("before update on duga_assignments", "raise(abort"),
+            "duga_findings_update_guard": ("before update on duga_analysis_findings", "raise(abort"),
+            "duga_findings_no_delete": ("before delete on duga_analysis_findings", "raise(abort"),
+            "duga_validation_runs_update_guard": ("before update on duga_validation_runs", "raise(abort"),
+            "duga_assignment_grant_audit": ("after insert on duga_assignments", "insert into duga_audit_events"),
+            "duga_assignment_revoke_audit": ("after update on duga_assignments", "insert into duga_audit_events"),
+            "duga_validation_transition_audit": ("after update on duga_validation_runs", "insert into duga_audit_events"),
+            "duga_finding_review_audit": ("after update on duga_analysis_findings", "insert into duga_audit_events"),
         }
         for name, fragments in trigger_requirements.items():
             sql = trigger_sql.get(name, "")
