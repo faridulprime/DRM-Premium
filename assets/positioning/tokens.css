@@ -123,6 +123,11 @@
   --dups-layer-studio-sidebar: 5;
   --dups-layer-studio-inspector: 2;
   --dups-layer-builder-inspector: 2;
+
+  /* Responsive Website Builder inspector anchors within its fixed shell. */
+  --dups-anchor-builder-inspector-top: 66px;
+  --dups-anchor-builder-inspector-right: var(--dups-offset-0);
+  --dups-anchor-builder-inspector-bottom: 34px;
   --dups-layer-builder-live-overlay: 20;
   --dups-layer-live-dialog-sticky-header: 1;
 }
