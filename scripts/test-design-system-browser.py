@@ -166,6 +166,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 tokens: {
                   duss: pick("--duss-header-height-desktop"),
                   dups: pick("--dups-layer-page-header"),
+                  dupsHomeHeaderMobile: pick("--dups-layer-home-header-mobile"),
+                  dupsLiveHeader: pick("--dups-layer-live-header"),
                   ducsBg: pick("--ducs-bg-canvas"),
                   ducsText: pick("--ducs-text-primary"),
                   ducsSecondary: pick("--ducs-text-secondary"),
@@ -199,6 +201,27 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             fail(f"{name}/{viewport_name}: body contains no visible text")
         if metrics["headerHeight"] <= 0:
             fail(f"{name}/{viewport_name}: visible header geometry could not be measured")
+        if name != "profile":
+            expected_layer = (
+                metrics["tokens"]["dupsLiveHeader"]
+                if name == "live-users"
+                else metrics["tokens"]["dupsHomeHeaderMobile"]
+                if name == "homepage" and width <= 760
+                else metrics["tokens"]["dups"]
+            )
+            try:
+                actual_layer = float(metrics["headerZIndex"])
+                expected_layer_value = float(expected_layer)
+                if actual_layer != expected_layer_value:
+                    fail(
+                        f"{name}/{viewport_name}: computed header z-index {actual_layer:g} "
+                        f"does not match DUPS layer token {expected_layer_value:g}"
+                    )
+            except (TypeError, ValueError):
+                fail(
+                    f"{name}/{viewport_name}: DUPS header layer could not be resolved "
+                    f"(computed={metrics['headerZIndex']!r}, token={expected_layer!r})"
+                )
         if metrics["documentWidth"] > width + 1:
             fail(
                 f"{name}/{viewport_name}: horizontal document overflow "
