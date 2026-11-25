@@ -11,6 +11,9 @@ Verification date: 2026-11-25
 
 ## DUGA
 
+- Latest verified feature-branch head: `d9a1845203a9b346b18b84a5c7a157a5c7579451` (2026-11-25). DUGA Governance CI run [#45651462886](https://github.com/faridulprime/DRM-Premium/actions/runs/45651462886) passed, including the registry schema/dependency validator and its 12 negative-case regression tests. This is repository CI evidence only.
+- Registry publication remains gated: the recursive 139-path branch tree contains no Pages build manifest/config (`package.json`, Wrangler config, `_routes.json`, Vite/Webpack config) or build workflow. Cloudflare Dashboard build settings and asset bindings remain unknown; do not assume an asset binding or publish endpoint.
+
 - DUGA architecture, roles, ownership, dependency metadata and policies are present on this branch.
 - D1 operational schema remains a design draft here. No DUGA API or separate Control Center is implemented in the website runtime.
 - A separate branch, `duga-foundation-review`, contains Draft PR #4 based on `main`; it is open and unmerged.
