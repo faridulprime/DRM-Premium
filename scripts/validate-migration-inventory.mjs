@@ -34,7 +34,7 @@ if (!Array.isArray(entries) || entries.length === 0) {
 
   const byName = new Map(entries.map((entry) => [entry.file, entry]));
   for (const entry of entries) {
-    if (typeof entry.file !== "string" || !/^\\d{4}_[a-z0-9_]+\\.sql$/.test(entry.file)) {
+    if (typeof entry.file !== "string" || !/^\d{4}_[a-z0-9_]+\.sql$/.test(entry.file)) {
       errors.push(`manifest: invalid migration filename ${String(entry.file)}`);
       continue;
     }
@@ -62,7 +62,7 @@ if (!Array.isArray(entries) || entries.length === 0) {
 
   try {
     const diskFiles = (await readdir(path.join(root, "migrations")))
-      .filter((name) => /^\\d{4}_.+\\.sql$/.test(name))
+      .filter((name) => /^\d{4}_.+\.sql$/.test(name))
       .sort();
     for (const name of diskFiles) if (!byName.has(name)) errors.push(`manifest: SQL migration missing from inventory: ${name}`);
     for (const name of names) if (!diskFiles.includes(name)) errors.push(`manifest: inventory references absent SQL file: ${name}`);
@@ -90,7 +90,7 @@ if (!Array.isArray(entries) || entries.length === 0) {
 const draftPath = "governance/schemas/d1-operational-schema.sql";
 try {
   const draft = await readFile(path.join(root, draftPath), "utf8");
-  if (!/^--.*DRAFT/im.test(draft) || !/^--.*DESIGN ONLY\\. NOT A MIGRATION\\. DO NOT EXECUTE\\./m.test(draft)) {
+  if (!/^--.*DRAFT/im.test(draft) || !/^--.*DESIGN ONLY\. NOT A MIGRATION\. DO NOT EXECUTE\./m.test(draft)) {
     errors.push(`${draftPath}: design-only safety header is missing`);
   }
   if (/^\\s*CREATE TABLE\\s+IF NOT EXISTS\\s+duga_/im.test(draft)) {
