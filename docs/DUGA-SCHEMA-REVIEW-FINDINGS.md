@@ -1,0 +1,71 @@
+# DUGA Draft Schema Review Findings
+
+Date: 2026-11-25
+Reviewed ref: `feature/full-admin-panel`
+Reviewed schema: `governance/schemas/d1-operational-schema.sql` (design-only draft v0.1.0)
+Status: Static design review; findings are not proof of an exploitable deployed system. The draft is not applied to D1.
+
+## Scope and limits
+
+This review inspected the SQL draft and its stated lifecycle/authorization design. It did not inspect the shared Preview D1 schema or migration ledger, execute a migration, test Cloudflare D1, or perform an independent third-party security audit. The existing API is read-only for governance routes; no governance write endpoint is implemented.
+
+## Findings
+
+### F-01 — Review self-audit protection only runs on INSERT
+
+**Evidence:** `duga_review_no_implementer_self_audit` is a `BEFORE INSERT ON duga_reviews` trigger. The table has no corresponding UPDATE guard.
+
+**Risk:** A row could be inserted with a valid independent reviewer and later updated so that `reviewer_principal_id` matches the AI implementer, while the insert-only trigger is not re-evaluated. The draft also has no review-row immutability trigger, so existing review evidence can be updated or deleted without a corresponding database-level block.
+
+**Recommendation:** Decide whether reviews are immutable evidence. If yes, add UPDATE/DELETE rejection triggers (corrections as new rows/events) and an UPDATE self-audit guard as defense in depth. Add regression cases for both UPDATE and DELETE. If amendments are required, model them as explicit superseding records with provenance rather than silent mutation.
+
+### F-02 — Approval records are mutable and lack database-level assignment binding
+
+**Evidence:** `duga_approvals` has no UPDATE/DELETE protection. `approver_user_id` is a foreign key to `users`, while `approver_role` is a caller-populated enum; no SQL constraint or trigger proves that the user held the stated active `system-owner` or `platform-owner` assignment for the relevant scope at approval time.
+
+**Risk:** The table alone cannot prove the approver was authorized, and stored approval evidence can be silently changed or removed. The design correctly requires API authorization, but database rows do not independently attest to it.
+
+**Recommendation:** Keep authorization derived server-side from a trusted session and active scoped assignment. Store a policy/assignment snapshot or immutable authorization evidence (including scope and policy revision) with the approval. Decide and enforce approval-record immutability; test role revocation/change and post-approval mutation behavior.
+
+### F-03 — Validation-run lifecycle has no timestamp/status consistency constraints
+
+**Evidence:** `duga_validation_runs` allows `queued`, `running`, `passed`, `failed`, and `cancelled`, with nullable `started_at` and `completed_at`, but no CHECK pairing these fields with status. Rows can represent a passed run with no completion time, or a queued run with completion metadata.
+
+**Risk:** Consumers may treat inconsistent or incomplete validation records as evidence that a commit passed.
+
+**Recommendation:** Define allowed timestamp invariants per status and encode them as CHECK constraints where practical; validate trusted runner identity and result provenance in the API. Add negative and positive tests for each lifecycle state.
+
+### F-04 — Job lease has no owner or fencing token
+
+**Evidence:** `duga_jobs` stores `lease_expires_at` but no lease owner, attempt-specific token, or monotonically increasing fencing generation.
+
+**Risk:** After a lease expires and another worker claims the job, a delayed prior worker may still attempt to publish a result. A timestamp alone cannot distinguish the current lease holder from a stale worker.
+
+**Recommendation:** Before implementing workers, design an atomic claim protocol with a unique lease token or monotonic generation. Require every heartbeat/completion write to match the current token/generation and status. Test expiry, reclaim, duplicate delivery, and stale-worker completion races.
+
+### F-05 — Operational evidence tables do not share the audit table's append-only protection
+
+**Evidence:** Only `duga_audit_events` has UPDATE/DELETE rejection triggers. Reviews, approvals, validation runs, assignments and findings have no comparable immutability or audited-transition enforcement in this draft.
+
+**Risk:** Audit events may say an approval/review/assignment occurred while the corresponding operational row is later changed or removed. An append-only audit log is not sufficient if the evidence it describes remains freely mutable.
+
+**Recommendation:** Classify each table/field as immutable evidence versus mutable operational state. Add append-only or explicit versioning/supersession semantics for evidence records; for mutable state, require versioned conditional updates and an audit event in the same transaction/batch where supported. Verify D1 batch atomicity before relying on it.
+
+## Positive controls already present
+
+- Human and AI identities are separated by CHECK constraints and human foreign keys.
+- Assignment role-kind and scope pairings are constrained.
+- Active assignment uniqueness and single active Platform Owner are indexed.
+- AI implementer cannot insert its own independent audit.
+- Audit events reject UPDATE and DELETE.
+- Human references use `ON DELETE RESTRICT`; validator checks FK update/delete actions.
+- Change requests have a positive `state_version` suitable for a future compare-and-swap API, although no write API currently uses it.
+
+## Required next steps
+
+1. Obtain an independent reviewer for SQL, API authorization, state machine, CAS, and audit semantics.
+2. Resolve F-01 through F-05 in the design before proposing an executable migration or write endpoints.
+3. Extend the schema regression tests and structural validator to cover the chosen invariants.
+4. Only after design review, test the revised draft on a fresh disposable D1. First verify the shared Preview migration history and backup; do not infer either from repository filenames or the manifest.
+5. Keep Production untouched and do not deploy or apply migrations without explicit authorization.
+
