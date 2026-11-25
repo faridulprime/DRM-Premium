@@ -3,6 +3,10 @@ name: DUGA Governance Metadata
 on:
   pull_request:
     paths:
+      - "docs/DUGA-API-AUTHORIZATION-DESIGN.md"
+      - "docs/DUGA-D1-SCHEMA-DESIGN.md"
+      - "docs/DUGA-IMPLEMENTATION-PLAN.md"
+      - "README.md"
       - "governance/**"
       - "migrations/**"
       - "docs/DUGA-SPEC.md"
@@ -18,6 +22,10 @@ on:
       - main
       - feature/full-admin-panel
     paths:
+      - "docs/DUGA-API-AUTHORIZATION-DESIGN.md"
+      - "docs/DUGA-D1-SCHEMA-DESIGN.md"
+      - "docs/DUGA-IMPLEMENTATION-PLAN.md"
+      - "README.md"
       - "governance/**"
       - "migrations/**"
       - "docs/DUGA-SPEC.md"
