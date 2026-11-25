@@ -232,3 +232,5 @@ body.upload-studio-page.sidebar-open{padding-left:240px!important}
 .dumc-storage-note strong{color:var(--text)}
 @media(max-width:900px){.dumc-layout{grid-template-columns:1fr}.dumc-detail-panel{position:static}}
 @media(max-width:600px){.dumc-intro,.dumc-tree-panel,.dumc-detail-panel{padding:14px}.dumc-toolbar{align-items:stretch}.dumc-toolbar button{flex:1}.dumc-brandline h3{font-size:18px}}
+
+.dumc-leaf .dumc-node-summary{width:100%;appearance:none;border:0;background:transparent;color:inherit;text-align:left;font:inherit}
