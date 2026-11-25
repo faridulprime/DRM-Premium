@@ -20,7 +20,7 @@ This is a source-level audit. It is not a browser test, penetration test, Cloudf
 - Tokenized the two remaining audited icon variants and the later hardcoded responsive search overrides; removed one superseded 25px Profile brand declaration.
 - Completed the Admin search token wiring in both `admin.css` and `theme.css`, and migrated the Homepage mobile sidebar's 24px icon slot to the existing navigation-size token.
 - Strengthened regression checks to require token references in every matching compact-search and Profile brand selector block.
-- Confirmed DUSS v0.7.0 GitHub Actions run #14 passed static source checks and dynamically reported 20 icon/slot tokens with 20 consumer references, plus all audited overrides and cache-key checks.
+- Confirmed DUSS v0.7.0 GitHub Actions runs #14 and #15 passed static source checks; run #15 also verifies the explicit v0.7 component-section marker. It reports 20 icon/slot tokens with 20 consumer references, plus all audited overrides and cache-key checks.
 - Updated the DUSS and DUGA workflow action versions to current v7 majors after Node 20 deprecation warnings; DUSS run #11 and DUGA runs #251–#253 verified their v7 action execution without the previous Node 20 warning.
 - Updated both DUGA schema-smoke workflow variants to checkout/setup-node/setup-python v7; the follow-up DUGA runs are pending.
 - Added confirmation prompts to both the legacy visual-style save/reset actions and the Builder's direct live-style save action.
@@ -84,7 +84,7 @@ DUSS v0.7.0 centralizes selected role-badge, Admin action-button, and 20 audited
 
 - DUGA review work is on `duga-foundation-review`, Draft PR #4, based on `main`.
 - PR #4 remains open, Draft, and unmerged.
-- After the DUGA workflow action upgrade, review-branch push run #251 (`45605522156`) and PR run #252 (`45605531276`) passed on `37f8e021793549478c0962c2eb22d7d621c048ba`; documentation-only follow-up run #254 (`45606013674`) passed on the current PR head `1b2bf55c157eddbed798b4cdbccc46c9b0c6be64`; feature-branch run #253 (`45605666896`) also passed on `9d82e249b8cac4b6627081a3526c9c97c3108271`. Worker syntax, schema SQLite, fixture parity, governance and malformed-input checks passed as applicable. The prior Node 20 action deprecation warning was absent. PR #4 remains open, Draft and unmerged.
+- After the DUGA workflow action upgrade, review-branch push run #251 (`45605522156`) and PR run #252 (`45605531276`) passed on `37f8e021793549478c0962c2eb22d7d621c048ba`; follow-up push run #254 (`45606013674`) and PR run #255 (`45606021392`) passed on current PR head `1b2bf55c157eddbed798b4cdbccc46c9b0c6be64`; feature-branch run #253 (`45605666896`) also passed on `9d82e249b8cac4b6627081a3526c9c97c3108271`. Worker syntax, schema SQLite, fixture parity, governance and malformed-input checks passed as applicable. The prior Node 20 action deprecation warning was absent. PR #4 remains open, Draft and unmerged.
 - PR #4 records an earlier authenticated disposable-D1 Worker acceptance PASS (run `53d70371-008c-46a0-8bc3-33522be990eb`) on the disposable database only.
 - The lifecycle review says the schema was subsequently extended with predecessor-link and AI-review constraints; revised-schema disposable D1 acceptance is still NOT RUN.
 - Shared Preview migration reconciliation, third-party independent review, trusted service identity, Git provenance, and application integration tests remain outstanding. DUGA Preview write readiness remains NO-GO.
@@ -93,10 +93,10 @@ DUSS v0.7.0 centralizes selected role-badge, Admin action-button, and 20 audited
 
 | Check | Result |
 |---|---|
-| DUSS token and selector source assertions | Run #14 passed with 20 icon/slot tokens and 20 consumer references, plus duplicate override, legacy token and CSS brace checks |
+| DUSS token and selector source assertions | Run #15 passed with 20 icon/slot tokens, 20 consumer references, v0.7 section marker and all audited duplicate override checks |
 | Five page cache keys | All five pages use `duss-07`; run #14 verified each |
-| DUSS GitHub Actions | Run #11 verified v7 actions without the previous Node 20 deprecation warning; run #14 verified expanded source checks |
-| DUGA GitHub Actions | Review runs #251/#252 and feature run #253 passed after v7 action upgrades; CI is local SQLite/syntax only |
+| DUSS GitHub Actions | Run #11 verified v7 actions without the previous Node 20 deprecation warning; run #15 verified 20-token source coverage and v0.7 section marker |
+| DUGA GitHub Actions | Review runs #251/#252 and #254/#255 plus feature run #253 passed after v7 action upgrades; CI is local SQLite/syntax only |
 | Browser screenshots / computed geometry | Not run |
 | JavaScript browser interaction regression | Not run |
 | Cloudflare edge/rate-limit configuration | Not inspected |
