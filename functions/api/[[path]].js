@@ -220,7 +220,7 @@ async function handle(req,env){
  // DUGA foundation health probe: authenticated Owner only; read-only and table-independent.
  if(p[0]==="governance"){
   if(user.role!=="owner")return fail("শুধু Owner Governance API ব্যবহার করতে পারবেন।",403);
-  if((p[1]==="health"||p[1]==="changes")&&m!=="GET")return fail("Method not allowed.",405);
+  if((p[1]==="health"||p[1]==="changes"||p[1]==="audit")&&m!=="GET")return fail("Method not allowed.",405);
   if(p.length===2&&p[1]==="health"){
    if(m!=="GET")return fail("Method not allowed.",405);
    const expected={
