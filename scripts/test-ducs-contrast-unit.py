@@ -48,24 +48,24 @@ class ColorParsingTests(unittest.TestCase):
 
 class TokenResolutionTests(unittest.TestCase):
     def test_resolves_nested_references(self):
-        tokens = {"--a": "var(--b)", "--b": "var(--c)", "--c": "#123456"}
-        self.assertEqual(audit.resolve_token("--a", tokens), "#123456")
+        tokens = {"--ducs-a": "var(--ducs-b)", "--ducs-b": "var(--ducs-c)", "--ducs-c": "#123456"}
+        self.assertEqual(audit.resolve_token("--ducs-a", tokens), "#123456")
 
     def test_uses_fallback_when_reference_is_missing(self):
-        tokens = {"--a": "var(--missing, #abcdef)"}
+        tokens = {"--ducs-a": "var(--ducs-missing, #abcdef)"}
         self.assertEqual(audit.resolve_token("--a", tokens), "#abcdef")
 
     def test_missing_reference_without_fallback_fails(self):
         with self.assertRaises(AssertionError):
-            audit.resolve_token("--a", {"--a": "var(--missing)"})
+            audit.resolve_token("--a", {"--ducs-a": "var(--ducs-missing)"})
 
     def test_circular_reference_fails(self):
-        tokens = {"--a": "var(--b)", "--b": "var(--a)"}
+        tokens = {"--ducs-a": "var(--ducs-b)", "--ducs-b": "var(--ducs-a)"}
         with self.assertRaises(AssertionError):
             audit.resolve_token("--a", tokens)
 
     def test_composite_var_expression_fails_closed(self):
-        tokens = {"--a": "linear-gradient(var(--b), var(--c))", "--b": "#000", "--c": "#fff"}
+        tokens = {"--ducs-a": "linear-gradient(var(--ducs-b), var(--ducs-c))", "--ducs-b": "#000", "--ducs-c": "#fff"}
         with self.assertRaises(AssertionError):
             audit.resolve_token("--a", tokens)
 
