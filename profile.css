@@ -3,7 +3,7 @@
 body.profile-page{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -20%,#20252a 0,transparent 48%),var(--profile-bg);color:var(--profile-text);font-family:'Space Grotesk','Hind Siliguri',sans-serif}
 .profile-topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,56px);border-bottom:1px solid var(--ducs-profile-topbar-border, #242424);background:var(--ducs-profile-topbar-bg, rgba(13,13,13,.9))}
 .profile-brand{display:flex;align-items:center;gap:9px;color:var(--ducs-profile-brand-text, #f1f1f1);text-decoration:none;font-size:16px;font-weight:700;letter-spacing:-.04em}
-.profile-brand svg{width:30px;height:30px;flex:none}.profile-brand b{color:var(--ducs-profile-brand-accent, #8dbbfa)}
+.profile-brand svg{width:var(--duss-icon-size-profile-brand, 30px);height:var(--duss-icon-size-profile-brand, 30px);flex:none}.profile-brand b{color:var(--ducs-profile-brand-accent, #8dbbfa)}
 .profile-back{color:#a6a6a6;text-decoration:none;font-size:12px}.profile-back:hover{color:var(--ducs-profile-brand-text, #fff)}
 .profile-shell{width:min(760px,calc(100% - 32px));margin:54px auto 70px}
 .profile-heading{margin-bottom:22px}.profile-eyebrow{margin:0 0 9px;color:var(--ducs-profile-muted, #858585);font-size:9px;font-weight:700;letter-spacing:.18em}
@@ -80,7 +80,7 @@ body.profile-page{margin:0;min-height:100vh;background:radial-gradient(ellipse a
  body.profile-page{font-size:14px;line-height:1.5}
  .profile-topbar{min-height:60px;padding:8px 12px;gap:8px}
  .profile-brand{font-size:15px;gap:7px}
- .profile-brand svg{width:27px;height:27px}
+ .profile-brand svg{width:var(--duss-icon-size-profile-brand-mobile, 27px);height:var(--duss-icon-size-profile-brand-mobile, 27px)}
  .profile-back{font-size:13px;min-height:40px;display:inline-flex;align-items:center}
  .profile-shell{width:calc(100% - 24px);margin:24px auto 36px}
  .profile-heading{margin-bottom:17px}
