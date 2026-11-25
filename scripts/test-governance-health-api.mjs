@@ -138,6 +138,17 @@ await test("Change request listing validates limit and status", async () => {
   assert.equal(a.response.status, 400);
   assert.equal(b.response.status, 400);
 });
+await test("Change request listing accepts a valid keyset cursor", async () => {
+  const cursor = Buffer.from("200:change-2").toString("base64url");
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/changes?limit=10&cursor=" + cursor });
+  assert.equal(response.status, 200);
+  assert.equal(body.page.hasMore, false);
+  assert.equal(body.page.nextCursor, null);
+});
+await test("Change request listing rejects control characters in search", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes?q=%00" });
+  assert.equal(response.status, 400);
+});
 await test("Change request listing rejects malformed cursor", async () => {
   const { response } = await call({ token: "owner-token", path: "/api/governance/changes?cursor=not-a-cursor" });
   assert.equal(response.status, 400);
