@@ -205,19 +205,56 @@ def main() -> int:
             if actual_count != expected_count:
                 fail(f"{table} foreign-key count mismatch: expected={expected_count}, actual={actual_count}")
 
-        # Critical CHECK constraints must remain present in the reviewed DDL.
-        ddl = {r[0]: (r[1] or "").lower() for r in db.execute(
-            "SELECT name,sql FROM sqlite_master WHERE type='table' AND name LIKE 'duga_%'"
-        )}
+        # Normalize whitespace before checking reviewed CHECK-expression anchors.
+        # These are targeted invariants, not a full SQL-expression equivalence proof.
+        ddl = {
+            r[0]: " ".join((r[1] or "").lower().split())
+            for r in db.execute(
+                "SELECT name,sql FROM sqlite_master WHERE type='table' AND name LIKE 'duga_%'"
+            )
+        }
         required_fragments = {
-            "duga_change_requests": ["json_type(affected_systems_json)='array'", "json_type(affected_paths_json)='array')"],
-            "duga_jobs": ["status='running' and lease_expires_at is not null", "status<>'running' and lease_expires_at is null"],
-            "duga_analysis_findings": ["reviewed_at is null and reviewed_by_user_id is null"],
-            "duga_audit_events": ["length(event_type)>0"],
+            "duga_assignments": [
+                "scope_type='platform' and scope_id is null",
+                "scope_type='system' and scope_id is not null and length(scope_id)>0",
+                "subject_type='human' and user_id is not null and principal_id is null",
+                "subject_type='ai' and user_id is null and principal_id is not null and length(principal_id)>0",
+                "status='active' and revoked_at is null",
+                "status='revoked' and revoked_at is not null",
+            ],
+            "duga_change_requests": [
+                "json_type(affected_systems_json)='array'",
+                "json_type(affected_paths_json)='array'",
+                "requested_by_type='human' and requested_by_user_id is not null and requested_by_principal_id is null",
+                "requested_by_type='ai' and requested_by_user_id is null and requested_by_principal_id is not null",
+                "source_branch<>'main'",
+                "state_version>0",
+            ],
+            "duga_reviews": [
+                "reviewer_type='human' and reviewer_user_id is not null and reviewer_principal_id is null",
+                "reviewer_type='ai' and reviewer_user_id is null and reviewer_principal_id is not null",
+            ],
+            "duga_audit_events": [
+                "length(event_type)>0",
+                "actor_type='human' and actor_user_id is not null and actor_principal_id is null and actor_system_id is null",
+                "actor_type='ai' and actor_user_id is null and actor_principal_id is not null and actor_system_id is null",
+                "actor_type='system' and actor_user_id is null and actor_principal_id is null and actor_system_id is not null",
+            ],
+            "duga_analysis_findings": [
+                "confidence>=0 and confidence<=1",
+                "reviewed_at is null and reviewed_by_user_id is null",
+                "reviewed_at is not null and reviewed_by_user_id is not null",
+            ],
+            "duga_jobs": [
+                "attempts>=0",
+                "status='running' and lease_expires_at is not null",
+                "status<>'running' and lease_expires_at is null",
+            ],
         }
         for table, fragments in required_fragments.items():
+            table_ddl = ddl.get(table, "")
             for fragment in fragments:
-                if fragment not in ddl[table]:
+                if " ".join(fragment.lower().split()) not in table_ddl:
                     fail(f"{table} missing critical CHECK fragment: {fragment}")
 
         print("DUGA deep schema validation: PASS")
