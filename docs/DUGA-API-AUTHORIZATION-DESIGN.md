@@ -123,4 +123,4 @@ A code review found that `GET /api/governance/health` did not require any lifecy
 - `duga_change_request_transition_audit`
 - both blocked-state metadata columns.
 
-The mocked health suite now explicitly tests a missing transition-audit trigger and a missing block-reason column; both must return `schema: partial`. These checks are targeted markers, not full schema equivalence or live D1 evidence.
+The mocked health suite now explicitly tests a missing transition-audit trigger and a missing block-reason column; both return `schema: partial`. The complete DUGA Governance CI workflow passed on commit `2481651798ef60c3793bfeafe81abff1cd9aeec6` ([run #45673718961](https://github.com/faridulprime/DRM-Premium/actions/runs/45673718961)), including handler syntax, mocked route tests, in-memory SQLite smoke tests and deep structural validation. These checks are targeted markers, not full schema equivalence or live D1 evidence.
