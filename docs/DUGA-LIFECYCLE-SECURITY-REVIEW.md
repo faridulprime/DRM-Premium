@@ -50,9 +50,8 @@ Updated proposal creation to accept an optional predecessor reference only when 
 10. Production separation: Production merge/deploy and Production D1 remain separate approvals. Nothing in this review authorizes them.
 
 ## Test evidence
-- The schema workflow previously passed on commit 9461243b6ee9d8e0af3e5c9f87df71418d485b48, which included the parent-link SQL trigger and local tests.
-- A newer PR workflow was observed running for the then-current head; verify its final conclusion before treating that head as CI-passed.
-- Local SQLite is not Cloudflare D1. The earlier disposable D1 Worker acceptance predates the parent-link and AI-review schema additions and does not cover them.
+- Final-head GitHub Actions push run 45525690960 and PR run 45525697913 both completed successfully for commit 4550ff668702f891cff8c159ede5f55eb18b5aa3. The sqlite-smoke-test job passed, including disposable Worker JavaScript syntax, local DUGA schema tests, registry validation and validator tests.
+- This CI is local SQLite/static validation only. It is not Cloudflare D1 acceptance. The earlier disposable D1 Worker acceptance predates the parent-link and AI-review schema additions and does not cover them.
 
 ## Decision
 The Owner-approved lifecycle policy is now internally more consistent across the inspected spec, API design and schema draft. DO NOT implement or enable Preview write endpoints yet. The next gates are third-party independent review, final-head CI, revised-schema disposable D1 acceptance, Preview migration-history reconciliation, and tested trusted identity/Git provenance/application integration.
