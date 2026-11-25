@@ -301,6 +301,31 @@ async function handle(req,env){
    }catch{return fail("Change request details are unavailable; verify the DUGA schema is installed.",503)}
    return json({ok:true,change:{...change,affected_systems:safeJsonArray(change.affected_systems_json),affected_paths:safeJsonArray(change.affected_paths_json)},...related,limits:{perRelatedCollection:50}});
   }
+  if(p.length===2&&p[1]==="audit"&&m==="GET"){
+   const rawLimit=u.searchParams.get("limit")||"25";
+   if(!/^(?:[1-9]|[1-4][0-9]|50)$/.test(rawLimit))return fail("limit must be an integer from 1 to 50.",400);
+   const limit=Number(rawLimit),aggregateType=u.searchParams.get("aggregate_type")||"",cursor=u.searchParams.get("cursor")||"";
+   const allowedAggregates=new Set(["change_request","assignment","system","job","finding","platform"]);
+   if(aggregateType&&!allowedAggregates.has(aggregateType))return fail("Invalid audit aggregate_type filter.",400);
+   let cursorTime=null,cursorId=null;
+   if(cursor){
+    try{
+     const decoded=new TextDecoder().decode(un64(cursor)),split=decoded.indexOf(":");
+     if(split<1)throw new Error("bad cursor");
+     cursorTime=Number(decoded.slice(0,split));cursorId=decoded.slice(split+1);
+     if(!Number.isSafeInteger(cursorTime)||cursorTime<0||!/^[-A-Za-z0-9_:.]{1,100}$/.test(cursorId))throw new Error("bad cursor");
+    }catch{return fail("Invalid audit pagination cursor.",400)}
+   }
+   const where=[],args=[];
+   if(aggregateType){where.push("aggregate_type=?");args.push(aggregateType)}
+   if(cursorTime!==null){where.push("(created_at<? OR (created_at=? AND id<?))");args.push(cursorTime,cursorTime,cursorId)}
+   const sql="SELECT id,aggregate_type,aggregate_id,event_type,actor_type,actor_user_id,actor_principal_id,actor_system_id,payload_json,policy_commit_sha,created_at FROM duga_audit_events"+(where.length?" WHERE "+where.join(" AND "):"")+" ORDER BY created_at DESC,id DESC LIMIT ?";
+   args.push(limit+1);
+   let result;try{result=await env.DB.prepare(sql).bind(...args).all()}catch{return fail("Audit event storage is unavailable; verify the DUGA schema is installed.",503)}
+   const rows=result.results||[],hasMore=rows.length>limit,items=rows.slice(0,limit),last=items[items.length-1];
+   const nextCursor=hasMore&&last?b64(new TextEncoder().encode(String(last.created_at)+":"+last.id)):null;
+   return json({ok:true,items,page:{limit,hasMore,nextCursor}});
+  }
   return fail("Governance route not found.",404);
  }
 
