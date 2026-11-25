@@ -95,6 +95,7 @@ The existing `--dups-offset-2` (0.5rem; 8px at the default root size) supplies t
 | Token | Value | Intent |
 |---|---:|---|
 | `--dups-layer-live-dialog-sticky-header` | 1 | Local stacking order for the sticky header inside the Live Users detail dialog |
+| `--dups-anchor-live-dialog-sticky-header-top` | 0 | Sticky top anchor for the Live Users detail-dialog header |
 
 The alias preserves the existing component-local value and must not be interpreted as a global layer.
 
