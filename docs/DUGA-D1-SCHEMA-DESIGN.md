@@ -117,3 +117,5 @@ The draft now requires affected-system and affected-path payloads to be JSON arr
 
 ## 19. Deep structural regression validator
 `scripts/validate-duga-schema-structure.py` loads the design draft into an in-memory SQLite database and checks exact table/column inventories, index presence plus uniqueness/partial flags, trigger presence/body markers, critical foreign-key relationships, and selected CHECK constraints. It is a regression guard for the draft—not a live D1 comparison or migration preflight. The health endpoint's required index inventory also includes the single-active-platform-owner uniqueness index.
+
+The structural regression validator additionally checks the ordered columns of all 16 indexes and explicit declared types/nullability for critical columns. These checks protect the draft against silent index-order and critical-column contract drift; they remain local SQLite draft checks, not a live Preview D1 inspection.
