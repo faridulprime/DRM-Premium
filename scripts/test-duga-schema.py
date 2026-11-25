@@ -497,6 +497,14 @@ def main() -> int:
           lease_token='token-queued',lease_generation=2,attempts=2,lease_expires_at=100
           WHERE id='job-lease' AND status='running'"""),
         should_fail=True)
+    check("heartbeat cannot mutate immutable job input",
+        lambda: db.execute("""UPDATE duga_jobs SET input_json='{"tampered":true}',
+          lease_expires_at=120,updated_at=2 WHERE id='job-lease' AND status='running'
+          AND lease_token='token-a' AND lease_generation=1"""), should_fail=True)
+    check("heartbeat cannot publish a result before terminal completion",
+        lambda: db.execute("""UPDATE duga_jobs SET result_json='{}',lease_expires_at=120,
+          updated_at=2 WHERE id='job-lease' AND status='running'
+          AND lease_token='token-a' AND lease_generation=1"""), should_fail=True)
     check("heartbeat preserves lease identity and generation",
         lambda: db.execute("""UPDATE duga_jobs SET lease_expires_at=120,updated_at=2
           WHERE id='job-lease' AND status='running' AND lease_token='token-a'
