@@ -31,7 +31,7 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 12. Return minimum necessary data; paginate audit and findings endpoints.
 
 ## Implemented initial route
-- GET /api/governance/health — authenticated Owner-only, read-only D1 connectivity and schema-readiness probe. It checks `SELECT 1`, then inspects `sqlite_master` for the eight expected DUGA tables and reports `not_installed`, `partial` or `ready`; it never mutates the database.
+- GET /api/governance/health — authenticated Owner-only, read-only D1 connectivity and schema-readiness probe. It checks `SELECT 1`, then inspects the eight expected DUGA tables, required columns, named indexes and required triggers. It reports `not_installed`, `partial` or `ready` and returns missing structural elements; it never mutates the database.
 
 ## Remaining proposed route contracts
 - GET /api/governance/overview — Owner-only operational summary.
@@ -63,3 +63,6 @@ The catch-all API now handles `GET /api/governance/health` after normal session 
 
 ## 17. DUGA schema readiness response
 The Owner health route reports `schema: not_installed` when none of the expected tables exist, `partial` when only some exist, and `ready` when all eight are present. This is a structural presence check only: it does not prove that table definitions, indexes, triggers, migration order or data integrity match the reviewed draft. A separate schema fingerprint/validation step is still required before declaring a Preview database accepted.
+
+## 18. Structural schema inspection boundary
+The health route now checks the required column names via read-only `PRAGMA table_info`, named index presence and required trigger presence via `sqlite_master`. A `ready` result means these named structural elements exist. It does not yet compare column types, nullability, CHECK/FK definitions, index column order/uniqueness, trigger SQL bodies, migration ledger or data integrity. Preview acceptance must still run a stronger schema-diff/fingerprint validator against a verified backup and migration history.
