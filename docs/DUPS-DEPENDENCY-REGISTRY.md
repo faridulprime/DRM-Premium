@@ -234,3 +234,8 @@ The registration dialog base rule now explicitly consumes `--dups-layer-register
 ### Homepage status and Upload Studio thumbnail overlay — 2026-11-26
 
 The Homepage login-status notice now consumes `--dups-offset-0` for its flush right anchor. Upload Studio's thumbnail play-overlay now consumes the same primitive for full thumbnail coverage. The browser regression suite creates a deterministic thumbnail fixture and verifies absolute positioning plus all four computed edges across the existing Upload Studio viewport matrix. Existing top offset, local z-index, thumbnail aspect ratio, and play-overlay centering remain unchanged; this new assertion awaits a completed run.
+
+
+### Upload Studio fixed sidebar anchors — 2026-11-26
+
+The desktop Upload Studio sidebar's fixed top/left/bottom anchors now consume the existing zero-offset primitive; its right edge remains `auto`, preserving intrinsic sidebar width. The browser regression suite checks the computed three-edge geometry at each desktop Upload Studio viewport. Compact off-canvas behavior and the existing sidebar stacking token are unchanged.
