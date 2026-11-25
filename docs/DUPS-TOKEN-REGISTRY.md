@@ -235,3 +235,8 @@ The compact shared Category Bar and compact Homepage Category Bar now reuse `--d
 
 
 The shared desktop header login-status notice uses `--dups-offset-0` for its flush right edge; the compact Homepage override continues to use `--dups-offset-2`. The browser assertion resolves the desktop expectation from the zero-offset token rather than hard-coding a numeric zero.
+
+
+## Full-viewport overlay edge primitive — 2026-11-26
+
+The Website Builder shell, public registration dialog, account suspension screen, and suspension grain layer now use `--dups-offset-0` for their four full-viewport edges. The browser audit compares the computed top/right/bottom/left coordinates of these surfaces with the zero-offset token. Existing positioning modes, centering, stacking layers, and overlay behavior are unchanged.
