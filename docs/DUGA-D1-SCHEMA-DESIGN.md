@@ -108,3 +108,6 @@ Limitations: this was a local SQLite syntax/constraint test, not a Cloudflare D1
 
 ## 12. Additional integrity hardening — 2026-11-25
 The draft now requires `assigned_by_user_id` for every role assignment and pairs `reviewed_at` with `reviewed_by_user_id` for findings. Job lease state is constrained so only running jobs can hold a lease expiry. These constraints reduce invalid states at rest; they do not replace Owner authorization, actor derivation or transition checks in the API.
+
+## 13. Independent auditor enforcement
+The D1 draft now includes a `BEFORE INSERT` trigger that rejects an independent AI audit when the reviewer principal matches the AI implementer principal recorded on that change. This is defense in depth only: the API must still derive the reviewer identity from a trusted execution context and validate the reviewed commit.
