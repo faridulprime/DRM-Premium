@@ -74,3 +74,11 @@ This update distinguishes the stronger body readers used by Builder draft PUT an
 The active Owner Admin-page cadence is source-estimated at approximately 11 D1 statements per 30 seconds (4 public presence + 2 admin presence + 5 Admin analytics) before other page actions. Live Users additionally polls its active-user list every 15 seconds. These are code-path counts, not Production traffic measurements. No retention/roll-up/deletion path for the analytics event history was found in the inspected repository.
 
 No runtime API handler, D1 schema, Cloudflare setting, binding, or database was changed in this follow-up.
+
+## Follow-up implementation — 2026-11-26
+
+The shared `readBody(req)` now consumes the request stream incrementally and rejects once the actual byte count exceeds 20,000 bytes. It retains the declared Content-Length fast rejection, but does not trust that header as the sole size control. Invalid UTF-8 and malformed JSON are rejected. The implementation is bounded to the existing 20 KB policy; the separate Builder and Profile body readers retain their route-specific limits.
+
+The governance API regression suite now sends streamed requests without a Content-Length header. It verifies that a valid small JSON body reaches the reserved-Owner validation path, while a body exceeding 20 KB is rejected before route validation or D1 access. CI must pass on the resulting branch head before this change is considered validated.
+
+This closes the source-level body-size gap for routes using the shared reader. It does not replace edge rate limiting, request concurrency controls, or deployed Cloudflare testing.
