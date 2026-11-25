@@ -380,7 +380,7 @@ def main() -> int:
         should_fail=False)
     check("duplicate active lease token rejected",
         lambda: db.execute("""UPDATE duga_jobs SET status='running',attempts=1,
-          lease_owner='worker-b',lease_token='token-queued',lease_generation=1,
+          lease_owner='worker-b',lease_token='token-queued',lease_generation=2,attempts=2,
           lease_expires_at=100 WHERE id='job-lease' AND status='running'"""),
         should_fail=True)
     db.execute(
