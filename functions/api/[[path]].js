@@ -254,7 +254,7 @@ async function handle(req,env){
    const complete=missing.tables.length===0&&missing.columns.length===0&&missing.indexes.length===0&&missing.triggers.length===0;
    const absent=schemaTables.length===0;
    const schemaStatus=complete?"ready":absent?"not_installed":"partial";
-   return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaTables,expectedSchemaTables:expectedCount,missing,access:"owner"});
+   return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaVerification:"presence-only",schemaTables,expectedSchemaTables:expectedCount,missing,access:"owner"});
   }
   if(p.length===2&&p[1]==="overview"&&m==="GET"){
    let changes,findings,jobs,assignments;
