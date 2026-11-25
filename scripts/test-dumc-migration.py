@@ -48,6 +48,8 @@ class DumcMigrationTests(unittest.TestCase):
         self.assertIn('params.set("folder_id",activeFolder)', home)
         self.assertIn('params.set("q",query)', home)
         self.assertIn("loadTaxonomyFallback", home)
+        self.assertIn('if(c.id==="ARCHIVED")continue', home)
+        self.assertIn('folderId==="ARCHIVED"', api)
         self.assertIn('Provide an HTTPS audio source URL', api)
         self.assertIn('Provide an HTTPS subtitle source URL', api)
         self.assertNotIn('asset_key=reference', (ROOT / "dumc-manager.js").read_text(encoding="utf-8"))
