@@ -72,7 +72,14 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
               results.push({ type: "table", name: table, tbl_name: table });
               if (completeSchema) {
                 for (const name of schemaSpec[table]?.indexes || []) results.push({ type: "index", name, tbl_name: table });
-                for (const name of schemaSpec[table]?.triggers || []) results.push({ type: "trigger", name, tbl_name: misplaceTrigger === name ? "duga_jobs" : table });
+                for (const name of schemaSpec[table]?.triggers || []) {
+                  const definitions = {
+                    duga_review_no_implementer_self_audit: "CREATE TRIGGER duga_review_no_implementer_self_audit BEFORE INSERT ON duga_reviews WHEN NEW.reviewer_principal_id IS NOT NULL BEGIN SELECT RAISE(ABORT,'Implementer cannot independently audit'); END",
+                    duga_audit_no_update: "CREATE TRIGGER duga_audit_no_update BEFORE UPDATE ON duga_audit_events BEGIN SELECT RAISE(ABORT,'DUGA audit events are append-only'); END",
+                    duga_audit_no_delete: "CREATE TRIGGER duga_audit_no_delete BEFORE DELETE ON duga_audit_events BEGIN SELECT RAISE(ABORT,'DUGA audit events are append-only'); END",
+                  };
+                  results.push({ type: "trigger", name, tbl_name: misplaceTrigger === name ? "duga_jobs" : table, sql: name === misplaceTrigger ? "CREATE TRIGGER altered_trigger" : definitions[name] });
+                }
               }
             }
             return { results };
@@ -108,6 +115,17 @@ await test("Owner can read D1 health", async () => {
   assert.equal(body.expectedSchemaTables, 8);
   assert.equal(body.missing.tables.length, 8);
 });
+await test("Health rejects a critical trigger with an incomplete definition", async () => {
+  const { response, body } = await call({ token: "owner-token", env: mockEnv({
+    tables: Object.keys(schemaSpec),
+    completeSchema: true,
+    misplaceTrigger: "duga_audit_no_delete",
+  }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "partial");
+  assert.deepEqual(body.missing.triggers, ["duga_audit_no_delete"]);
+});
+
 await test("Health rejects a required trigger attached to the wrong table", async () => {
   const { response, body } = await call({ token: "owner-token", env: mockEnv({
     tables: Object.keys(schemaSpec),
@@ -301,7 +319,7 @@ await test("Complete DUGA schema is reported ready", async () => {
   const { response, body } = await call({ token: "owner-token", env: mockEnv({ tables: expected, completeSchema: true }) });
   assert.equal(response.status, 200);
   assert.equal(body.schema, "ready");
-  assert.equal(body.schemaVerification, "presence-only");
+  assert.equal(body.schemaVerification, "presence-and-critical-trigger-markers");
   assert.equal(body.schemaTables.length, 8);
   assert.deepEqual(body.missing, { tables: [], columns: [], indexes: [], triggers: [] });
 });
