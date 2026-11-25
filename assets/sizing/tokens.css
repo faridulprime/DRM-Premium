@@ -324,6 +324,7 @@
   --duss-icon-size-profile-brand: 1.875rem;
   --duss-icon-size-profile-brand-mobile: 1.6875rem;
   --duss-icon-size-field-glyph: 0.9375rem;
+  /* DUSS v0.7 — audited component variants and icon slots. */
   /* Legacy component exceptions retained until a visual redesign is approved. */
   --duss-icon-size-live-role: 0.6875rem;
   --duss-icon-size-profile-drawer-logout: 0.9375rem;

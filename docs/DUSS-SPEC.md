@@ -173,6 +173,7 @@ Completed on `feature/full-admin-panel`:
 - Completed the Admin search token migration in both `admin.css` and `theme.css`, so an earlier stylesheet cannot retain a hardcoded duplicate.
 - Replaced the Homepage mobile sidebar icon-slot width and flex-basis with the existing navigation-size token, preserving the 24px slot.
 - Added separate desktop/mobile shield-icon tokens for the Homepage profile-completion banner (16px/14px).
+- Labeled the v0.7 component-variant token section explicitly and added a regression assertion for the section marker.
 - Added independent 23px action-symbol slot and 12px glyph tokens for Live Users' action drawer.
 - Updated all five DUSS cache keys to `duss-07`.
 

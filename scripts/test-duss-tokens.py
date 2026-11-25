@@ -82,6 +82,8 @@ def main() -> int:
     tokens = read("assets/sizing/tokens.css")
     if not tokens.startswith("/* DRM Universal Sizing System (DUSS) — v0.7.0"):
         fail("DUSS token stylesheet header is not versioned v0.7.0")
+    if "DUSS v0.7 — audited component variants and icon slots." not in tokens:
+        fail("DUSS v0.7 component-variant section marker is missing")
     token_values = {
         "--duss-icon-size-nav-menu": "1.5rem",
         "--duss-icon-size-search-default": "1.3125rem",
