@@ -22,13 +22,13 @@ body.admin-gate-state{padding-top:64px!important}
 .panel-head p{margin:0}
 .admin-main button{font:inherit;cursor:pointer}
 .admin-main .primary,.admin-main .outline,.admin-main .row-actions button{
- appearance:none;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:600;
+ appearance:none;border-radius:var(--duss-button-admin-radius, 999px);padding:var(--duss-button-admin-padding-y, 10px) var(--duss-button-admin-padding-x, 16px);font-size:var(--duss-button-admin-font-size, 14px);font-weight:var(--duss-button-admin-font-weight, 600);
 }
 .admin-main .primary{background:var(--surface-hover);border:1px solid var(--ducs-admin-button-border, #454545);color:var(--ink);box-shadow:none}
 .admin-main .primary:hover{background:var(--ducs-admin-button-hover-bg, #383838);border-color:var(--ducs-admin-button-hover-border, #555)}
 .admin-main .outline{background:transparent;border:1px solid var(--ducs-admin-outline-border, #444);color:var(--ink)}
 .admin-main .outline:hover{background:var(--surface-hover)}
-.admin-main .small{padding:8px 13px}
+.admin-main .small{padding:var(--duss-button-admin-small-padding-y, 8px) var(--duss-button-admin-small-padding-x, 13px)}
 .editor{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}
 .editor.single-column{grid-template-columns:1fr;max-width:460px}
 .editor label,.admin-main form label{display:grid;gap:8px;color:var(--ink);font-size:13px;font-weight:500}
@@ -47,7 +47,7 @@ body.admin-gate-state{padding-top:64px!important}
 .data-row strong{display:block;font-size:14px;font-weight:600}
 .data-row small{display:block;margin-top:5px;color:var(--muted);font-size:12px}
 .row-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.admin-main .row-actions button{padding:8px 12px;background:var(--ducs-admin-row-action-bg, #222);border:1px solid var(--ducs-admin-outline-border, #444);color:var(--ink)}
+.admin-main .row-actions button{padding:var(--duss-button-admin-row-padding-y, 8px) var(--duss-button-admin-row-padding-x, 12px);background:var(--ducs-admin-row-action-bg, #222);border:1px solid var(--ducs-admin-outline-border, #444);color:var(--ink)}
 .admin-main .row-actions button:hover{background:var(--ducs-admin-row-action-hover-bg, #333)}
 .admin-main .row-actions .delete{border-color:var(--ducs-admin-danger-border, #74383d);color:var(--ducs-admin-danger-text, #ffaaaa)}
 .admin-main .row-actions select{width:auto;min-width:100px}
@@ -143,7 +143,7 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
 
 
 /* Typography audit · admin dashboard, user directory and login */
-.admin-main .primary,.admin-main .outline,.admin-main .row-actions button{font-size:14px}
+.admin-main .primary,.admin-main .outline,.admin-main .row-actions button{font-size:var(--duss-button-admin-font-size, 14px)}
 .editor label,.admin-main form label{font-size:14px}
 .overview-metric span{font-size:13px}
 .overview-card h3{font-size:16px}
@@ -158,7 +158,7 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
 .admin-login-form input{font-size:16px}
 .admin-login-form button.primary{font-size:14px}
 @media(max-width:760px){
- .admin-main .primary,.admin-main .outline,.admin-main .row-actions button{font-size:14px}
+ .admin-main .primary,.admin-main .outline,.admin-main .row-actions button{font-size:var(--duss-button-admin-font-size, 14px)}
  .overview-metric span{font-size:12px}
  .overview-card-head p,.overview-heading p{font-size:13px}
 }
@@ -206,7 +206,7 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .admin-main h2{font-size:20px;line-height:1.3}
  .admin-main h3{font-size:16px;line-height:1.35}
  .admin-main p,.admin-main label,.admin-main .hint,.admin-main .muted{font-size:13px;line-height:1.55}
- .admin-main button,.admin-main .primary,.admin-main .outline,.admin-main .delete{min-height:42px;font-size:13px}
+ .admin-main button,.admin-main .primary,.admin-main .outline,.admin-main .delete{min-height:var(--duss-button-admin-mobile-min-height, 42px);font-size:13px}
  .admin-main input:not([type=checkbox]),.admin-main select,.admin-main textarea{min-height:44px;max-width:100%;font-size:16px}
  .admin-main textarea{min-height:100px}
  .admin-main .role-badge{min-height:var(--duss-role-badge-mobile-min-height, 22px);padding:var(--duss-role-badge-mobile-padding-y, 3px) var(--duss-role-badge-mobile-padding-x, 7px);font-size:var(--duss-role-badge-mobile-font-size, 11px);line-height:var(--duss-role-badge-line-height, 1.2)}
@@ -216,7 +216,7 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .admin-main .overview-metric span,.admin-main .overview-card p{font-size:12px}
  .admin-main .data-row{gap:9px;padding:12px 0}
  .admin-main .row-actions{gap:7px}
- .admin-main .row-actions button{min-height:38px}
+ .admin-main .row-actions button{min-height:var(--duss-button-admin-row-mobile-min-height, 38px)}
  .admin-main .overview-grid,.admin-main .overview-metrics{gap:9px}
 }
 @media(max-width:380px){
