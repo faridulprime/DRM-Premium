@@ -203,4 +203,4 @@ The compact header retains its existing 4px gap and 8px right inset through the 
 | `--dups-anchor-live-drawer-top-compact` | 50% | Compact viewport vertical center anchor |
 | `--dups-anchor-live-drawer-left-compact` | 50% | Compact viewport horizontal center anchor |
 
-The original desktop coordinates and the existing 700px compact centering breakpoint are preserved. Chromium opens the static drawer fixture and checks its rendered center against the expected viewport coordinates and existing local layer at every Live Users viewport.
+The original desktop coordinates and the effective 760px compact centering breakpoint are preserved. A later 760px rule overrides the earlier 700px drawer-only rule; the compact anchor tokens are now consumed by that final rule. Chromium opens the static drawer fixture and checks its rendered center against the expected viewport coordinates and existing local layer at every Live Users viewport.
