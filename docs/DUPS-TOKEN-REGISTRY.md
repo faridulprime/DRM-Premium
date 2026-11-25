@@ -219,3 +219,7 @@ The shared fixed header, Category Bar horizontal edges, compact navigation drawe
 ## Profile drawer and navigation edge anchors — 2026-11-26
 
 Reused `--dups-offset-0` for the shared sidebar's left/bottom anchors, compact Homepage sidebar top, Profile drawer top/right/bottom and compact Profile drawer backdrop inset. No new zero-value semantic tokens were added; header-relative sidebar placement remains owned by DUSS.
+
+## Live Users drawer backdrop viewport edges — 2026-11-26
+
+The fixed Live Users drawer backdrop now reuses `--dups-offset-0` for all four viewport insets. This avoids a duplicate zero-valued token; its fixed positioning, blur, opacity lifecycle and existing backdrop layer remain unchanged. The dynamic Chromium overlay fixture checks computed fixed edge coordinates against the zero-offset token while the drawer is open.
