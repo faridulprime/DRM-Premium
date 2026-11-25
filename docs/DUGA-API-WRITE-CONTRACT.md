@@ -196,6 +196,13 @@ Allowed work now: static review, route-contract refinement, mock/SQLite test des
 
 The current `duga_change_requests` insert guard enforces initial status/version/assignment invariants, but the health route's expected trigger list currently declares no triggers for `duga_change_requests`. The read-only health endpoint can therefore report a schema as `ready` while omitting the critical lifecycle triggers. Before any Preview readiness claim, add the three change-request trigger names and their critical SQL markers to the health contract and test that a missing or altered lifecycle trigger makes readiness fail closed. The health result must remain explicitly described as targeted structural verification, not full schema equivalence.
 
-## 12. Change history
+## 12. Validation evidence
+
+The read-only health-route hardening and its mocked regression suite passed the complete DUGA Governance workflow on commit `2481651798ef60c3793bfeafe81abff1cd9aeec6`: [GitHub Actions run #45673718961](https://github.com/faridulprime/DRM-Premium/actions/runs/45673718961). The run includes JavaScript syntax, Owner-only health API tests, registry validators, static migration inventory, in-memory SQLite schema smoke tests and deep structural schema validation. The health tests specifically verify that a missing change-request transition-audit trigger or missing `block_reason_code` column produces `schema: partial`.
+
+This CI run does not verify Cloudflare D1 batch semantics, live Preview schema, migrations or deployed runtime.
+
+## 13. Change history
 
 - 2026-11-26: Initial write contract created from the inspected Pages handler, API authorization design, operational schema draft and current DUGA readiness constraints.
+- 2026-11-26: Added health-readiness alignment requirements and recorded the passing mocked/SQLite CI run.
