@@ -407,7 +407,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 }"""
             )
             if drawer_edges.get("missing"):
-                fail(f"{name}/{viewport_name}: Profile drawer or backdrop is missing")
+                fail(f"{name}/{viewport_name}: Profile drawer, backdrop, or sidebar is missing")
             else:
                 try:
                     drawer = drawer_edges["drawer"]
