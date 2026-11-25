@@ -54,7 +54,7 @@ PRAGMA table_info('duga_audit_events');
 
 Acceptance:
 - All eight expected DUGA tables exist.
-- All expected DUGA indexes and the two audit append-only triggers exist.
+- All expected DUGA indexes, both audit append-only triggers, and the immutable predecessor-link trigger exist.
 - `PRAGMA foreign_key_check` returns no rows after valid fixtures.
 - The observed schema matches the reviewed draft; no unreviewed objects are introduced.
 
