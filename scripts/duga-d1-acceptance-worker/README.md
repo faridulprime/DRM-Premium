@@ -24,14 +24,25 @@ A single authenticated `POST /run` executes the proposed two-statement D1 batch 
 
 The Worker creates uniquely named synthetic change requests and one synthetic user row. Test rows and audit events are intentionally retained because the audit table is append-only. Repeated runs create fresh IDs.
 
-## Important limitation
+## Recorded owner-operated run and limitation
 
-This Worker source has not been deployed or run against D1 from this session. A successful local CI run is not D1 runtime evidence. No Cloudflare resource, binding, secret, or deployment has been changed by adding these files.
+Draft PR #4 records an owner-operated deployment and authenticated run on 2026-11-25:
+- Worker: `duga-d1-acceptance-disposable`
+- Pinned disposable D1 ID: `6d512429-34a3-498b-9430-45f11d382da9`
+- Run ID: `53d70371-008c-46a0-8bc3-33522be990eb`
+- Completion: `2026-11-25T01:04:19.420Z`
+- Recorded aggregate result: PASS
 
-## Manual deployment gate (owner-operated)
+The run was against the disposable database, not the Pages shared Preview or Production database. The assisting model did not operate the Cloudflare deployment or independently inspect the account; this is owner-operated evidence recorded in PR #4. The saved PowerShell output showed the aggregate PASS, not every nested per-case count.
 
-Do not proceed until the owner explicitly approves deploying this separate Worker to the pinned disposable D1 database. Never deploy through the existing Pages project.
+**This PASS predates the latest schema additions** for `parent_change_request_id`, its immutable-link trigger, and the AI-review terminal-rejection guard. It is not acceptance evidence for the current final schema. Re-run the full Worker suite against a freshly created disposable database using the current fixture before considering any shared Preview migration.
 
-After approval, use a separate Wrangler project directory and configure a strong one-off `ACCEPTANCE_SECRET` as a Worker secret. Never put that secret in source control or chat. Then deploy only this Worker and call `POST /run` with the matching bearer token. Save the full JSON response as acceptance evidence. Remove the Worker and its secret after evidence capture if the owner authorizes cleanup.
+No Cloudflare resource, binding, secret, or deployment was changed by the repository documentation/test-script updates in this continuation.
+
+## Repeat-run gate
+
+Before any redeployment, reconfirm the Worker name and pinned database ID in Cloudflare. Never point this Worker at the Pages Preview or Production D1 database, and never deploy it through the Pages project.
+
+Use a separate Wrangler project directory and a strong one-off `ACCEPTANCE_SECRET` stored only as a Worker secret. Never commit or share the secret. Call only authenticated `POST /run`, save the complete JSON response, and verify each nested case—not only the aggregate `pass`. Remove the Worker and its secret only when the owner authorizes cleanup.
 
 Do not treat this test Worker as production code or an authorization implementation.
