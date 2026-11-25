@@ -13,6 +13,9 @@ on:
       - "scripts/validate-duga-registries.py"
       - "scripts/test-duga-validator.py"
       - "scripts/duga-d1-acceptance-worker/**"
+      - "scripts/duga-d1-disposable-acceptance-fixture.sql"
+      - "scripts/duga-d1-disposable-acceptance-console.sql"
+      - "scripts/test-duga-fixture-sync.py"
       - ".github/workflows/duga-schema-smoke.yml"
   pull_request:
     branches:
@@ -22,6 +25,9 @@ on:
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-registries.py"
       - "scripts/duga-d1-acceptance-worker/**"
+      - "scripts/duga-d1-disposable-acceptance-fixture.sql"
+      - "scripts/duga-d1-disposable-acceptance-console.sql"
+      - "scripts/test-duga-fixture-sync.py"
       - ".github/workflows/duga-schema-smoke.yml"
   workflow_dispatch:
 
@@ -51,5 +57,6 @@ jobs:
       - name: Run local schema smoke tests
         run: |
           python scripts/test-duga-schema.py
+          python scripts/test-duga-fixture-sync.py
           python scripts/validate-duga-registries.py
           python scripts/test-duga-validator.py
