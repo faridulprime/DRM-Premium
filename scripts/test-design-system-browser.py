@@ -369,7 +369,11 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                       name,
                       position: style.position,
                       zIndex: style.zIndex,
-                      token: root.getPropertyValue(token).trim()
+                      token: root.getPropertyValue(token).trim(),
+                      top: style.top,
+                      left: style.left,
+                      backdropInsets: name === "profile-bar-backdrop"
+                        ? [style.top, style.right, style.bottom, style.left] : null
                     };
                   });
                 }"""
@@ -389,8 +393,18 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 layers_by_name = {layer["name"]: float(layer["zIndex"]) for layer in homepage_layers if not layer.get("missing")}
                 if layers_by_name.get("profile-complete-bar", 0) <= layers_by_name.get("profile-bar-backdrop", 0):
                     fail(f"{name}/{viewport_name}: profile completion bar must stack above its backdrop ({layers_by_name})")
-            except (TypeError, ValueError, KeyError):
-                fail(f"{name}/{viewport_name}: profile completion overlay stack could not be compared ({homepage_layers})")
+                profile_bar = next(layer for layer in homepage_layers if layer["name"] == "profile-complete-bar")
+                expected_top = float(page.evaluate("() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dups-anchor-profile-complete-top'))"))
+                expected_center = float(page.evaluate("() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dups-anchor-profile-complete-center'))"))
+                if abs(float(profile_bar["top"].replace("px", "")) - expected_top) > 1:
+                    fail(f"{name}/{viewport_name}: profile completion bar top offset differs from its DUPS token ({profile_bar})")
+                if abs(float(profile_bar["left"].replace("px", "")) - (width * expected_center / 100)) > 1:
+                    fail(f"{name}/{viewport_name}: profile completion bar center anchor differs from its DUPS token ({profile_bar})")
+                backdrop = next(layer for layer in homepage_layers if layer["name"] == "profile-bar-backdrop")
+                if any(abs(float(value.replace("px", ""))) > 1 for value in backdrop["backdropInsets"]):
+                    fail(f"{name}/{viewport_name}: profile completion backdrop must cover the full viewport ({backdrop})")
+            except (TypeError, ValueError, KeyError, StopIteration):
+                fail(f"{name}/{viewport_name}: profile completion overlay geometry/stack could not be compared ({homepage_layers})")
 
         if name == "live-users":
             closing_effect_layers = page.evaluate(
