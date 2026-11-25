@@ -146,3 +146,10 @@ The new Restricted Users modal assertions passed at all seven viewport widths in
 - Chromium run #45677034569 passed on commit `21eb5ce2ad9e1388955f8b6ad8223447c0d9b6f3`: [run #45677034569](https://github.com/faridulprime/DRM-Premium/actions/runs/45677034569).
 - The browser test checks the responsive inspector's computed absolute positioning and token-resolved layer at widths up to 900 CSS px. It also checks the Homepage Website Builder, suspension screen, profile-completion backdrop and profile-completion bar for fixed positioning and token-matched z-index, including bar-above-backdrop order.
 - The run passed all 35 existing page/viewport checks and the added Homepage/Live Users DUPS assertions. Native browser zoom, visual collision/fallback, full ancestor-context inventory and deployed behavior remain outside this audit.
+
+
+## Mobile Homepage login-status anchor acceptance — 2026-11-26
+
+- Replaced the status notice's literal 4px anchor gap and 8px right offset with `--dups-anchor-gap-status` and `--dups-offset-2`.
+- Added Chromium checks at existing Homepage viewports up to 760 CSS px for absolute positioning, computed header-relative gap and right-edge offset.
+- This validates the one known header/status relationship; it does not establish collision handling, viewport flipping, or general popover behavior.
