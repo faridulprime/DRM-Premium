@@ -160,3 +160,6 @@ The new Restricted Users modal assertions passed at all seven viewport widths in
 - Migrated the dialog header's component-local `z-index: 1` to `--dups-layer-live-dialog-sticky-header` without changing its value or sticky behavior.
 - Chromium checks verify computed sticky positioning and token agreement at the existing Live Users viewport widths.
 - This is a local dialog layer assertion, not a complete dialog scroll/interaction test or global overlay-order proof.
+
+
+The expanded Chromium suite passed in run #45677961245 on commit `d9953b483c21eaf2dd8ba0011c61d50cf9b5edf6`: [run #45677961245](https://github.com/faridulprime/DRM-Premium/actions/runs/45677961245). This includes the mobile Homepage header-status anchor gap/right offset and Live Users dialog sticky-header position/layer assertions, in addition to the previous Homepage overlays, responsive Builder inspector and Restricted Users modal checks. All 35 page/viewport checks and existing DUME lifecycle checks passed. Native browser zoom, visual collision/fallback and deployed behavior remain unverified.
