@@ -1,21 +1,21 @@
 # DUGA Change-Request Database Enforcement Design
 Version: 0.1.0
 Date: 2026-11-25
-Status: implementation design only — not executable SQL and not authorization to migrate a database.
+Status: implemented in the operational schema draft and in-memory test definitions; API enforcement, executed test evidence, migrations and deployment remain outstanding.
 
 ## 1. Purpose and boundary
 
-This design converts the reviewed state-machine contract into a database/API enforcement plan. It is intentionally limited to `duga_change_requests` lifecycle integrity. It does not implement write routes, alter the operational schema draft, create migration 0009, access D1, or deploy anything.
+This design records the database-draft enforcement for `duga_change_requests` and the remaining trusted API contract. It is intentionally limited to change-request lifecycle integrity. The operational schema draft and its local SQLite test/structure-validator definitions have been updated; no write route, migration 0009, D1 operation or deployment has been performed.
 
 Target branch for future implementation: `feature/full-admin-panel`. Production `main`, Production D1 and shared Preview D1 remain out of scope until their separate approval and readiness gates are met.
 
 ## 2. Verified starting point
 
-The current design draft contains 13 statuses, `state_version`, requester/implementer identity fields, base and implementation commit fields, policy commit binding, separate review/approval/validation tables, and an append-only audit table.
+The operational schema draft contains 13 statuses, `state_version`, requester/implementer identity fields, base and implementation commit fields, policy commit binding, separate review/approval/validation tables, and an append-only audit table. It now also contains `blocked_from_status` and `block_reason_code`, lifecycle INSERT/UPDATE/DELETE guards, and a transition-audit trigger.
 
-The current `duga_change_requests` draft has no lifecycle INSERT/UPDATE/DELETE guard and no automatic change-request transition audit. Existing review and approval evidence is immutable, and the draft already has selected authorization and evidence constraints. Those controls do not close the change-request lifecycle gap.
+The draft-level lifecycle gap is closed structurally: new requests must begin as `proposed` at version 1 with no implementer/commit; transitions follow an explicit allow-list and increment the version exactly once; requester and original source/base/policy bindings are immutable; terminal requests cannot be updated; requests cannot be physically deleted; and transitions create a database-generated audit event.
 
-The migration manifest describes only fresh-database ordering. It explicitly does not prove which migrations have been applied to any D1 database. The DUGA SQL file remains a design draft, not a migration.
+The migration manifest describes only fresh-database ordering. It does not prove which migrations have been applied to any D1 database. The SQL file remains a design draft, not an executable migration. The updated in-memory tests and structural validator have been authored but have not yet been executed in this session.
 
 ## 3. Conservative policy defaults recommended for the next implementation
 
@@ -24,8 +24,8 @@ These are proposed defaults to encode after review against the actual workflow; 
 | Policy question | Recommended default | Reason |
 |---|---|---|
 | `accepted`, `rejected`, `cancelled` | Permanently terminal | Preserve evidence; corrections create a linked successor request |
-| `blocked` | Resumable only to an explicitly recorded prior eligible state | Prevent arbitrary privilege/gate bypass |
-| Resume target | Record `blocked_from_status` plus stable `block_reason_code`; clear only on a successful authorized resume | Make the recovery path deterministic and auditable |
+| `blocked` | Resume only to `impact_review`, or cancel | Force fresh impact/evidence review instead of returning directly to an advanced gate |
+| Block metadata | Record the prior state in `blocked_from_status` plus an enumerated `block_reason_code`; clear both only on resume to `impact_review` or cancellation | Make recovery deterministic and auditable |
 | Approval revocation | No silent revocation or mutation of approval rows; use a new superseding request before implementation, and a new change request after implementation has begun | Preserve historical decision evidence |
 | AI audit | Required for every request that enters implementation | Keeps the stated independent-review model consistent |
 | Human approval | Required for every request that enters implementation; Platform Owner may approve all scopes, System Owner only affected system scopes | Avoid risk-tier bypasses until a reviewed risk matrix exists |
@@ -47,14 +47,14 @@ The database guard should enforce this graph, independent of API checks:
 - `implementing → validating | blocked`
 - `validating → final_review | implementing | blocked`
 - `final_review → accepted | implementing | blocked`
-- `blocked → recorded eligible resume target | cancelled`
+- `blocked → impact_review | cancelled`
 - `accepted`, `rejected`, `cancelled` → no transition
 
 The graph is necessary but not sufficient. A valid edge does not prove that the actor is authorized or that required evidence exists.
 
 ### Block/resume semantics
 
-A transition into `blocked` must preserve the immediately previous non-terminal state as `blocked_from_status`, require a stable `block_reason_code`, and emit an audit event. A resume must name exactly that recorded state, prove the block reason has been resolved, re-check current assignment and policy, and increment `state_version`. A blocked request may instead be cancelled by an authorized actor. No direct resume to `approved`, `implementing`, `validating` or `accepted` is allowed unless that was the exact recorded pre-block state and all gates are revalidated; in practice the initial policy should disallow resuming directly into implementation/finalization and require re-review.
+A transition into `blocked` must preserve the immediately previous state as `blocked_from_status` and require one enumerated `block_reason_code` (`security_review`, `missing_evidence`, `policy_changed`, `dependency_unavailable`, `scope_conflict`, `external_incident`, or `other`). The database permits only `blocked → impact_review` or `blocked → cancelled`; both paths clear the block metadata and increment `state_version`. The API must prove the reason is resolved and re-check current assignment, policy and evidence before resuming. This deliberately forces a fresh impact review and prevents direct resumption into approval or implementation.
 
 ## 5. Database invariants
 
@@ -77,7 +77,8 @@ For every update:
 - A non-status update must not change `state_version`; preferably restrict non-status updates to a small explicit allow-list.
 - `updated_at` must be monotonic and server assigned.
 - Once terminal, no update is allowed.
-- Implementation commit is write-once for an attempt. A retry must have an explicit attempt/evidence record; do not overwrite the old commit or its evidence.
+- Implementer identity may be assigned only on `approved → implementing` and cannot later be replaced.
+- The first implementation commit may be recorded only on `implementing → validating`; once present it is immutable. The current draft has no attempt-history table, so a changed commit cannot be used for a retry. A new commit requires a successor request until a separately reviewed attempt model is added.
 - A blocked transition/resume must obey the block metadata rules above.
 
 ### DELETE guard
@@ -86,9 +87,7 @@ Reject all physical deletion of change requests. Use cancellation or a linked su
 
 ### Atomic audit
 
-The API must derive the actor from the authenticated session or verified service principal and submit the conditional state update and audit insert in one D1 transactional batch. The audit payload must include old/new status, old/new version, reason code, actor reference, policy SHA, base/implementation SHA and evidence references.
-
-Do not claim that a trigger-generated `duga-db-trigger` actor identifies the human or service that authenticated. A SQLite trigger cannot independently derive the Cloudflare session principal. Database triggers may enforce transition integrity; the trusted API must supply attribution from verified authentication context. The batch must roll back if the audit insert fails.
+The schema trigger inserts a transactional database event for every status change. Its actor is explicitly `system / duga-db-trigger`; it proves the database transition occurred but does not identify the authenticated human or service. The future API must derive actor identity from the authenticated session/service principal and insert a separate actor-attributed audit event in the same D1 batch as the conditional state update. The batch must roll back if that API audit insert fails. Never treat the synthetic trigger actor as human/service attribution.
 
 ## 6. API compare-and-swap contract
 
@@ -119,11 +118,11 @@ A database trigger is defense in depth, not a substitute for these checks.
 | approved → implementing | Current approval and policy still valid; authorized implementer assignment; target branch not `main` |
 | implementing → validating | Immutable implementation commit and attempt record |
 | validating → final_review | Trusted validation run terminal and passed, exact commit match, verified runner provenance |
-| validating → implementing | Trusted validation run terminal and failed; new implementation attempt required |
+| validating → implementing | Trusted validation run terminal and failed; current draft supports only same-commit revalidation because it has no attempt-history table |
 | final_review → accepted | Human final review, all required gates current, exact commit/policy match, successful validation |
-| final_review → implementing | Review changes requested; new attempt and fresh validation required |
+| final_review → implementing | Review changes requested; current draft supports same-commit re-review only; a changed commit requires a successor request |
 | any eligible state → blocked | Authorized actor, stable reason code and audit evidence |
-| blocked → resume | Exact recorded resume target, reason resolved, fresh authorization and revalidation |
+| blocked → impact_review | Block reason resolved, fresh authorization and impact/evidence revalidation |
 
 JSON fields supplied by a caller are not proof. The API must verify provenance and record evidence in the dedicated tables.
 
@@ -131,8 +130,8 @@ JSON fields supplied by a caller are not proof. The API must verify provenance a
 
 When the design is accepted:
 1. Fetch and inspect the exact current schema draft, migration inventory, all relevant SQL files and validation scripts at the branch head.
-2. Add the minimum columns/tables needed for blocked-state metadata and explicit implementation attempts; update the schema structure validator and in-memory SQLite regression tests first.
-3. Add INSERT/UPDATE/DELETE guards and verify trigger ordering and D1-compatible SQLite syntax.
+2. The first draft-level increment is now present: block metadata columns, INSERT/UPDATE/DELETE guards, transition audit, schema validator expectations and in-memory adversarial test cases.
+3. Execute both Python validators locally/CI and fix every failure before designing a migration. A separate implementation-attempt table remains future work if multi-commit retries are required.
 4. Add API CAS + transactional audit behavior with mocked D1 tests, including audit failure rollback and concurrent stale-version cases.
 5. Generate an additive migration only after the draft is stable; never edit an already-applied migration.
 6. Run migration inventory and all schema validators; run in-memory SQLite adversarial tests.
@@ -151,7 +150,8 @@ When the design is accepted:
 - Any update to accepted/rejected/cancelled fails.
 - Any physical delete fails.
 - Block without reason/previous-state metadata fails.
-- Resume to a state other than the recorded target fails.
+- Blocked requests can resume only to `impact_review` or be cancelled; direct resume to `approved`/`implementing` fails.
+- Block metadata is required on entry to `blocked`, reason codes are enumerated, and metadata is cleared on exit.
 - Resume with unresolved reason or stale policy/assignment fails at API layer.
 - Same human requester/approver fails at API layer.
 - Implementer/AI auditor identity collision fails.
@@ -161,18 +161,19 @@ When the design is accepted:
 - Caller-forged actor ID or success flag is rejected/ignored.
 - Two concurrent transitions with the same expected version: one succeeds, one receives conflict.
 - Audit insertion failure rolls back the state transition.
-- Failed validation returns to implementation only through a new attempt; old validation remains immutable.
+- Implementation commit cannot be overwritten after it is recorded; changed-commit retries are not supported until an immutable attempt-history model is added.
+- Database-generated audit events are clearly attributed to `duga-db-trigger`; the API must separately record the authenticated actor.
 - All rejected operations leave request state/version and audit stream unchanged.
 
 ## 10. Exit criteria
 
-This design is ready to become a schema/API implementation task only when:
+This design's schema-draft phase is ready for local/CI validation. API implementation remains gated until:
 - The product workflow is reconciled with the transition graph.
 - The recommended policy defaults are accepted or explicitly amended.
-- Required schema additions are identified and tested in the in-memory validator.
-- Audit attribution and D1 transactional semantics are demonstrated in tests.
+- Both updated in-memory SQLite scripts pass against the exact branch-head schema.
+- API actor attribution, CAS and transactional audit rollback are implemented and tested.
 - The migration history/backup gate is separately completed before Preview operations.
 
 ## 11. Explicit non-actions
 
-No D1 database was read or written. No migration was created or executed. No write API was added. No Preview or Production deployment occurred. This document does not authorize any of those actions.
+The operational schema draft, smoke-test definitions and structural-validator expectations were changed on the feature branch. No test execution result is claimed yet. No D1 database was read or written. No migration was created or executed. No write API was added. No Preview or Production deployment occurred. This document does not authorize any of those actions.
