@@ -277,23 +277,36 @@ def main() -> int:
     )
 
     def insert_change(change_id: str, *, status: str = "proposed",
+                      parent_id: str | None = None,
                       risk: str = "medium", requester_type: str = "human",
                       requester_user: str | None = "human-1",
                       requester_principal: str | None = None,
                       branch: str = "feature/schema-test") -> None:
         db.execute(
             """INSERT INTO duga_change_requests
-               (id,title,summary,status,risk_level,affected_systems_json,
+               (id,parent_change_request_id,title,summary,status,risk_level,affected_systems_json,
                 affected_paths_json,rollback_plan,requested_by_type,
                 requested_by_user_id,requested_by_principal_id,source_branch,
                 policy_commit_sha,state_version,created_at,updated_at)
-               VALUES (?,?,?,?,?,'["DUSS"]','["src/test.js"]','revert commit',?,?,?,?,?,1,1,1)""",
-            (change_id, "Test change", "Lifecycle test", status, risk,
+               VALUES (?,?,?,?,?,?,'["DUSS"]','["src/test.js"]','revert commit',?,?,?,?,?,1,1,1)""",
+            (change_id, parent_id, "Test change", "Lifecycle test", status, risk,
              requester_type, requester_user, requester_principal, branch, "policy-sha"),
         )
 
     check("valid human change request", lambda: insert_change("change-1"),
           should_fail=False)
+    check("new request may link to an existing predecessor",
+          lambda: insert_change("change-followup", parent_id="change-1"),
+          should_fail=False)
+    check("linked request cannot reference a missing predecessor",
+          lambda: insert_change("change-orphan-followup", parent_id="missing-parent"),
+          should_fail=True)
+    check("linked request cannot reference itself",
+          lambda: insert_change("change-self-parent", parent_id="change-self-parent"),
+          should_fail=True)
+    check("linked request parent is immutable",
+          lambda: db.execute("UPDATE duga_change_requests SET parent_change_request_id='change-followup' WHERE id='change-1'"),
+          should_fail=True)
     check("known terminal state is accepted by the SQL enum",
           lambda: insert_change("change-bad-state", status="accepted"),
           should_fail=False)  # accepted is an allowed enum; transition authorization is API-owned.
@@ -331,6 +344,14 @@ def main() -> int:
            VALUES ('review-ai','change-1','independent_ai_audit','ai','auditor-x',
                    'approved','commit-a','{}',2)"""
     )
+    check("AI audit cannot make a terminal rejection decision",
+          lambda: db.execute(
+              """INSERT INTO duga_reviews
+                 (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
+                  decision,reviewed_commit_sha,evidence_json,created_at)
+                 VALUES ('review-ai-reject','change-1','independent_ai_audit','ai','auditor-x',
+                         'rejected','commit-a','{}',2)"""
+          ), should_fail=True)
     check("AI principal cannot submit human review",
           lambda: db.execute(
               """INSERT INTO duga_reviews
@@ -576,7 +597,7 @@ def main() -> int:
         "SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'duga_%'"
     ).fetchone()[0]
 
-    if (table_count, trigger_count) != (8, 2):
+    if (table_count, trigger_count) != (8, 3):
         raise AssertionError(
             f"Unexpected schema object counts: tables={table_count}, triggers={trigger_count}"
         )
