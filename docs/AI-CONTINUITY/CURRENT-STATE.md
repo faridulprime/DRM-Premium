@@ -11,16 +11,21 @@ Verification date: 2026-11-25
 
 ## DUGA
 
-- Latest verified feature-branch head: `d9a1845203a9b346b18b84a5c7a157a5c7579451` (2026-11-25). DUGA Governance CI run [#45651462886](https://github.com/faridulprime/DRM-Premium/actions/runs/45651462886) passed, including the registry schema/dependency validator and its 12 negative-case regression tests. This is repository CI evidence only.
-- Registry publication remains gated: the recursive 139-path branch tree contains no Pages build manifest/config (`package.json`, Wrangler config, `_routes.json`, Vite/Webpack config) or build workflow. Cloudflare Dashboard build settings and asset bindings remain unknown; do not assume an asset binding or publish endpoint.
-
-- DUGA architecture, roles, ownership, dependency metadata and policies are present on this branch.
-- D1 operational schema remains a design draft here. No DUGA API or separate Control Center is implemented in the website runtime.
-- A separate branch, `duga-foundation-review`, contains Draft PR #4 based on `main`; it is open and unmerged.
-- DUGA review PR #4 remains open, Draft, and unmerged, with latest head `1b2bf55c157eddbed798b4cdbccc46c9b0c6be64` (based on `main`). After workflow action upgrades, review-branch push run #251 and PR run #252 passed on head `37f8e021793549478c0962c2eb22d7d621c048ba`; follow-up push run #254 and PR run #255 both passed on current head `1b2bf55c157eddbed798b4cdbccc46c9b0c6be64`. Feature-branch run #253 passed on `9d82e249b8cac4b6627081a3526c9c97c3108271`. Local schema/registry/fixture and Worker syntax checks passed as applicable. No Node 20 action deprecation warning appeared in the v7 runs. This remains local CI evidence only, not Cloudflare D1 acceptance.
-- PR #4 records an earlier disposable-D1 Worker acceptance PASS (run `53d70371-008c-46a0-8bc3-33522be990eb`). The DUGA lifecycle review explicitly notes that the schema was subsequently extended with predecessor-link and AI-review constraints, and revised-schema disposable D1 acceptance has NOT RUN.
-- Shared Preview migration-history reconciliation, independent third-party review, trusted AI/validation identity, Git provenance and application integration tests remain outstanding. Preview migration and DUGA write endpoints remain NO-GO.
-- Human identity assignments remain unassigned. AI principal IDs are not credentials.
+- Current feature-branch head is being updated on `feature/full-admin-panel`; Production `main` remains untouched.
+- DUGA operational SQL remains a design draft, not an applied migration. No D1 database has been read or written in this workstream.
+- The change-request lifecycle draft now has:
+  - initial INSERT guard: `proposed`, `state_version=1`, no implementer/implementation commit, matching create/update timestamps;
+  - explicit transition allow-list and exact +1 state-version increments;
+  - immutable request ID, requester, creation time, source branch, base commit and policy commit bindings;
+  - terminal-state and physical-delete guards;
+  - blocked-state metadata with enumerated reason codes; resume is restricted to `impact_review` or cancellation;
+  - write-once implementer identity and implementation commit;
+  - append-only database transition audit event attributed to `system / duga-db-trigger` (not authenticated human/service attribution).
+- The in-memory SQLite smoke-test definitions and deep structural-validator expectations were updated. They have NOT yet been executed against the branch-head schema in this session; do not report a test pass.
+- Current schema limitation: there is no implementation-attempt history table. A changed implementation commit cannot be recorded as a retry; a new commit needs a successor request until a separately reviewed attempt model is added. Same-commit revalidation is the only safe retry interpretation.
+- API work remains outstanding: authenticated actor derivation, scoped role/assignment checks, evidence/provenance verification, compare-and-swap, and an actor-attributed audit insert in the same D1 batch. The trigger event is only a database fact and cannot identify the authenticated actor.
+- Revised-schema disposable D1 acceptance, independent security review, Preview migration-history reconciliation and backup/recovery checks remain outstanding. Shared Preview migration and DUGA write endpoints remain NO-GO.
+- No migration was created/executed; no Preview or Production deployment occurred.
 
 ## Existing subsystem status
 
@@ -52,12 +57,11 @@ Verification date: 2026-11-25
 6. Keep DUGA revised-schema disposable D1 acceptance, independent review and Preview migration reconciliation on its separate review track. These database/resource actions require owner approval and remain unperformed.
 
 
-## DUGA change-request enforcement design — 2026-11-25
+## DUGA change-request enforcement progress — 2026-11-26
 
-- Added `docs/DUGA-CHANGE-REQUEST-ENFORCEMENT-DESIGN.md` (design-only; no executable SQL or API write route).
-- The design recommends conservative lifecycle defaults: accepted/rejected/cancelled are terminal; blocked can resume only to an explicitly recorded eligible state; AI audit and human approval remain required before implementation; requester/approver and implementer/AI-auditor separation is enforced at the API policy layer.
-- It separates database-enforceable invariants (initial state, transition graph, version increments, immutable identity/commit bindings, terminal/delete guards) from trusted API duties (session/service authentication, scoped assignments, evidence provenance, compare-and-swap and actor attribution).
-- It explicitly rejects pretending that a trigger actor such as `duga-db-trigger` proves the authenticated human/service identity. The proposed API state update and actor-attributed audit insert must commit atomically.
-- The current state-machine schema gap remains unresolved in the operational SQL draft: no change-request lifecycle guards or automatic request-transition audit. No schema draft, migration, D1 database, API write route, Preview or Production was changed.
-- Latest design-reference commit: `a7af580562956fae34bfe3abbc7d3d396523c497` (DUGA spec now links the enforcement design).
-- Next: reconcile the design with the actual DUGA SQL draft and schema validators; add lifecycle invariants to the in-memory SQLite test design first. Then obtain fresh CI evidence. Shared Preview migration remains NO-GO until migration history and backup/recovery are verified and separate approval is granted.
+- Implemented draft-only lifecycle guards in `governance/schemas/d1-operational-schema.sql`.
+- Added blocked-state metadata and synthetic transition audit.
+- Updated `scripts/test-duga-schema.py` with lifecycle adversarial cases and updated the expected trigger inventory.
+- Updated `scripts/validate-duga-schema-structure.py` with new columns, trigger and CHECK-expression expectations.
+- Updated the enforcement design and state-machine docs to reflect the actual draft behavior and limitations.
+- Next: execute both SQLite scripts against the exact branch head; fix failures; then inspect the API architecture for CAS/actor attribution. Do not create migration 0009 or touch Preview until the separate readiness/approval gates pass.
