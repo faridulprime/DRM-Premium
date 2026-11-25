@@ -185,6 +185,47 @@ async function handle(req,env){
  if(p[0]==="auth"&&p[1]==="logout"&&m==="POST"){const t=cookieToken(req);if(t)await env.DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await hash(t)).run();return json({ok:true},200,{"set-cookie":clearCookie()})}
  const sessionUser=await getSession(req,env);if(sessionUser){const now=Math.floor(Date.now()/1000),restriction=await env.DB.prepare("SELECT restriction_type,expires_at,reason,created_at FROM user_restrictions WHERE user_id=? AND (expires_at IS NULL OR expires_at>?)").bind(sessionUser.id,now).first();if(restriction&&!(p[0]==="auth"&&p[1]==="access-state"))return json({error:"Account access is restricted.",restricted:true,restriction:{type:restriction.restriction_type,expiresAt:restriction.expires_at,reason:restriction.reason,createdAt:restriction.created_at}},423)}
 
+ if(p[0]==="dumc"&&p[1]==="browse"&&m==="GET"){
+  const folderId=(u.searchParams.get("folder_id")||"").trim().slice(0,120)||null;
+  const limit=Math.min(60,Math.max(1,Number(u.searchParams.get("limit")||36)));
+  const offset=Math.max(0,Number(u.searchParams.get("offset")||0));
+  try{
+   const folders=await env.DB.prepare(`SELECT f.id,f.parent_id,f.name,f.description,f.kind,f.sort_order,
+    (SELECT COUNT(DISTINCT v.id) FROM videos v
+      WHERE v.published=1 AND (
+       EXISTS(SELECT 1 FROM dumc_movies dm WHERE dm.video_id=v.id AND
+        (dm.original_language_folder_id=f.id OR dm.industry_folder_id=f.id OR dm.production_country_folder_id=f.id))
+       OR EXISTS(SELECT 1 FROM dumc_movie_folder_assignments a WHERE a.video_id=v.id AND a.folder_id=f.id)
+      )
+    ) AS movie_count
+    FROM dumc_folders f WHERE f.is_archived=0 ORDER BY f.parent_id,f.sort_order,f.name`).all();
+   const byId=new Map((folders.results||[]).map(x=>[x.id,{...x,children:[]}]));
+   const roots=[];
+   for(const node of byId.values()){if(node.parent_id&&byId.has(node.parent_id))byId.get(node.parent_id).children.push(node);else if(!node.parent_id)roots.push(node);}
+   let movieSql=`SELECT v.id,v.title,v.category,v.youtube_id,v.thumbnail_url,v.description,v.featured,v.created_at,
+      dm.original_language_folder_id,dm.industry_folder_id,dm.production_country_folder_id,dm.release_year
+     FROM videos v LEFT JOIN dumc_movies dm ON dm.video_id=v.id WHERE v.published=1`;
+   const binds=[];
+   if(folderId){
+    movieSql+=` AND EXISTS(
+     WITH RECURSIVE descendants(id) AS (
+      SELECT id FROM dumc_folders WHERE id=? AND is_archived=0
+      UNION ALL SELECT f.id FROM dumc_folders f JOIN descendants d ON f.parent_id=d.id WHERE f.is_archived=0
+     )
+     SELECT 1 WHERE
+      dm.original_language_folder_id IN (SELECT id FROM descendants)
+      OR dm.industry_folder_id IN (SELECT id FROM descendants)
+      OR dm.production_country_folder_id IN (SELECT id FROM descendants)
+      OR EXISTS(SELECT 1 FROM dumc_movie_folder_assignments a WHERE a.video_id=v.id AND a.folder_id IN (SELECT id FROM descendants))
+    )`;
+    binds.push(folderId);
+   }
+   movieSql+=" ORDER BY v.featured DESC,v.created_at DESC LIMIT ? OFFSET ?";
+   binds.push(limit,offset);
+   const movies=await env.DB.prepare(movieSql).bind(...binds).all();
+   return json({system:"DUMC",version:"1.0.0",folders:roots,movies:movies.results||[],folder_id:folderId,limit,offset});
+  }catch{return fail("DUMC database migration is not installed yet.",503)}
+ }
  if(p[0]==="videos"&&m==="GET"){const r=await env.DB.prepare("SELECT id,title,category,youtube_id,thumbnail_url,description,featured,published,created_at FROM videos WHERE published=1 ORDER BY featured DESC,sort_order ASC,created_at DESC").all();return json(r.results||[])}
  if(p[0]==="categories"&&m==="GET"){const r=await env.DB.prepare("SELECT id,name,sort_order FROM categories ORDER BY sort_order,name").all();return json(r.results||[])}
  if(p[0]==="settings"&&m==="GET")return json(await settings(env.DB));
