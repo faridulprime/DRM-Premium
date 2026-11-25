@@ -205,7 +205,6 @@ export default {
       return json({ error: "Unauthorized" }, 401);
     }
     if (!env.DB) return json({ error: "D1 binding DB is missing" }, 500);
-    const url = new URL(request.url);
     if (url.pathname !== "/run") return json({ error: "Not found" }, 404);
     try {
       const result = await runSuite(env.DB);
