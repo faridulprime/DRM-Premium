@@ -15,6 +15,12 @@ This review defines an explicit, repeatable registry of foreground/background to
 - Missing tokens, unsupported color syntax, conflicting declarations or unregistered translucent backgrounds fail the audit.
 - Below-target ratios are reported as review findings rather than automatically changing legacy colors.
 
+## Automated calculation-unit coverage
+
+The contrast workflow now runs `scripts/test-ducs-contrast-unit.py` before auditing the registered candidate pairs. These unit tests cover short/long HEX parsing, alpha channels, modern RGB percentage syntax, out-of-range and unsupported color rejection, nested token references, fallback resolution, missing references, circular/composite references, known WCAG black/white math, foreground alpha compositing, and the requirement for an explicit base behind translucent backgrounds.
+
+These tests validate the calculation engine and fail-closed parser behavior. They do not expand the curated pair registry, discover component states automatically, inspect computed browser styles, or establish WCAG conformance.
+
 ## Scope limits
 
 The pair registry is curated and explicit. It includes core semantic text/action roles, buttons, form placeholders, badges, Live Users, Admin, Profile, Upload Studio, Homepage and selected boundaries. It does not discover every CSS selector or actual runtime background. Images/textures, blend modes, complete gradients, dynamic custom colors, forced-colors, color-vision simulation, and all hover/disabled/loading states remain separate tasks. Confirm the rendered component context before changing a flagged token.
