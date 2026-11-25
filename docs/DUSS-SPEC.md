@@ -1,5 +1,5 @@
 # DRM Universal Sizing System (DUSS)
-Version: 0.7.0 — Expanded audited icon variants and override coverage
+Version: 0.8.0 — 44px interactive target baseline — Expanded audited icon variants and override coverage
 Status: Core token foundation, selected form/profile geometry, public shell, role badges, Admin action-button geometry, and 16 audited SVG/glyph icon sizes migrated to semantic tokens
 
 ## Purpose and boundaries
@@ -190,3 +190,10 @@ Validation boundary:
 - DUPS computed header stacking values are checked against the page-header, Homepage mobile-header, and Live Users header layer tokens for the applicable pages and widths.
 - The audit reports, but does not fail on, interactive targets smaller than 44px. Several remain and need a deliberate DUSS touch-target review; the visible logo links are included in this observation. No blanket size increase was made.
 - Scope is local static-site rendering, not deployed Cloudflare Pages or Pages Functions. No D1, authentication, edge, or Production behavior is exercised. The 720px case is not native browser zoom. This is not a full WCAG certification or visual/optical approval.
+
+## Phase 8 implementation update — 2026-11-25
+
+- Added `assets/sizing/touch-targets.css`, loaded after the page-specific stylesheets on Homepage, Admin, Live Users, Upload Studio and Profile.
+- The module consumes the existing `--duss-touch-target-min` (44px) token for primary menu triggers, brand/back links, search fields and buttons, the Live Users restriction action, profile save action, sidebar links and category chips.
+- Component icon and text sizes remain unchanged. Interactive control boxes are allowed to grow to the DUSS minimum; responsive header/search layout must still pass the browser overflow and viewport checks.
+- Updated the DUSS cache key to `duss-08` on all five pages. This is a consumer integration pass; it does not establish complete coverage of every dynamic dialog, generated action, or third-party control.

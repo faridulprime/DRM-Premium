@@ -1,0 +1,59 @@
+/* DRM Universal Sizing System — interactive target baseline
+ * Visual icon and text dimensions remain owned by their component tokens.
+ * This sheet is deliberately loaded after page styles so legacy component
+ * height overrides cannot shrink primary interactive hit areas below 44px.
+ */
+.topbar>.yt-menu-trigger,
+.live-topbar>.yt-menu-trigger,
+.studio-global-topbar>.yt-menu-trigger {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.topbar a.brand,
+.live-topbar a.brand,
+.studio-global-topbar a.brand,
+.profile-topbar a.profile-brand {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.profile-topbar .profile-back {
+  display:inline-flex!important;
+  align-items:center;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.yt-search,
+.admin-search,
+.live-search {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.yt-search input,
+.yt-search button,
+.live-search input {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.yt-search button {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  flex-basis:var(--duss-touch-target-min, 44px)!important;
+}
+
+.live-back-link {
+  display:inline-flex!important;
+  align-items:center;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.live-banned-trigger,
+.save-profile,
+.side-link,
+.category-chip {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.category-chip {
+  display:inline-flex;
+  align-items:center;
+}

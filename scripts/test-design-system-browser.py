@@ -130,6 +130,9 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             link_count = page.locator(f'link[rel="stylesheet"][href*="{asset}"]').count()
             if link_count != 1:
                 fail(f"{name}/{viewport_name}: expected one {system} stylesheet link, found {link_count}")
+        touch_link_count = page.locator('link[rel="stylesheet"][href*="/assets/sizing/touch-targets.css"]').count()
+        if touch_link_count != 1:
+            fail(f"{name}/{viewport_name}: expected one DUSS touch-target stylesheet link, found {touch_link_count}")
 
         if name != "profile":
             link_count = page.locator('link[rel="stylesheet"][href*="/assets/motion/motion.css"]').count()
