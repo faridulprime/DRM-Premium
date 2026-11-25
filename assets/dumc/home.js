@@ -3,7 +3,7 @@ const $=s=>document.querySelector(s),host=$("#dumcHomeGrid");
 if(!host)return;
 const labels={"02_LANGUAGE":"ভাষা","03_FILM_INDUSTRY":"ফিল্ম ইন্ডাস্ট্রি","04_DUBBED_MOVIES":"ডাবড মুভি","05_GENRES":"Genre","06_COUNTRIES":"দেশ","07_COLLECTIONS":"Collections","09_SUBTITLES":"সাবটাইটেল"};
 const visibleRoots=new Set(Object.keys(labels));
-let roots=[],activeRoot="",activeFolder="",movies=[],offset=0,query="",loading=false,hasMore=false;
+let roots=[],activeRoot="",activeFolder="",movies=[],offset=0,query="",loading=false,hasMore=false,searchTimer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
 function flatten(n,out=[]){for(const c of n.children||[]){out.push(c);flatten(c,out)}return out}
@@ -20,7 +20,7 @@ function renderSubcategories(){
  el.innerHTML=children.map(x=>'<button type="button" class="dumc-home-subchip'+(x.id===activeFolder?" active":"")+'" data-folder="'+esc(x.id)+'">'+esc(x.name)+' <span>'+Number(x.movie_count||0)+'</span></button>').join("");
 }
 function renderMovies(){
- const filtered=movies.filter(v=>(String(v.title||"")+" "+String(v.description||"")).toLowerCase().includes(query));
+ const filtered=movies;
  host.innerHTML=filtered.length?filtered.map(v=>'<article class="dumc-movie-card" data-movie-id="'+esc(v.id)+'"><button type="button" class="dumc-movie-open" data-movie-id="'+esc(v.id)+'" aria-label="Play '+esc(v.title)+'"><img src="'+esc(thumb(v))+'" alt="" loading="lazy" decoding="async"><span class="dumc-movie-play" aria-hidden="true">▶</span></button><div class="dumc-movie-copy"><h3>'+esc(v.title)+'</h3><p>'+esc(v.description||v.category||"মুভি দেখুন")+'</p>'+(v.release_year?'<small>'+esc(v.release_year)+'</small>':"")+'</div></article>').join(""):'<p class="empty dumc-empty">'+(query?"কোনো মিল পাওয়া যায়নি।":"এই ফোল্ডারে এখনো কোনো প্রকাশিত মুভি নেই।")+'</p>';
  $("#dumcHomeCount").textContent=movies.length.toLocaleString("bn-BD")+"টি মুভি";
  $("#dumcHomeMore").hidden=!hasMore||Boolean(query);
@@ -32,6 +32,7 @@ async function loadMovies(reset=true){
  try{
   const params=new URLSearchParams({limit:"36",offset:String(offset)});
   if(activeFolder)params.set("folder_id",activeFolder);
+  if(query)params.set("q",query);
   const res=await fetch("/api/dumc/browse?"+params.toString(),{credentials:"same-origin",cache:"no-store"});
   const data=await res.json().catch(()=>({}));
   if(!res.ok)throw new Error(data.error||"DUMC লাইব্রেরি লোড করা যায়নি।");
@@ -50,7 +51,7 @@ $("#dumcHomeSubcategories").addEventListener("click",e=>{
  const b=e.target.closest("[data-folder]");if(!b)return;
  activeFolder=b.dataset.folder;renderSubcategories();loadMovies(true);
 });
-$("#dumcHomeSearch").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();renderMovies()});
+$("#dumcHomeSearch").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadMovies(true),250)});
 $("#dumcHomeMore").addEventListener("click",()=>loadMovies(false));
 host.addEventListener("click",e=>{
  const b=e.target.closest("[data-movie-id]");if(!b)return;
