@@ -1,6 +1,6 @@
 # DUGA API & Authorization Design
 Version: 0.1.0
-Status: Owner-only read-only health, change-list, change-detail, findings-list and audit-list endpoints implemented and mocked-handler-tested; all governance write endpoints remain proposed.
+Status: Owner-only read-only health, overview, change-list, change-detail, findings-list and audit-list endpoints implemented and mocked-handler-tested; all governance write endpoints remain proposed.
 
 ## Existing API behavior observed
 The current API is implemented in one Cloudflare Pages catch-all file: `functions/api/[[path]].js`.
@@ -84,3 +84,7 @@ The health route now checks the required column names via read-only `PRAGMA tabl
 ## 22. Read-only analysis findings listing — 2026-11-25
 
 `GET /api/governance/findings` is implemented as an Owner-only read route. It supports a bounded page size (1–50), allow-listed finding status (`open`, `under_review`, `accepted`, `dismissed`, `quarantined`) and classification (`A`–`E`) filters, a bounded file/symbol/commit search term, and descending `(created_at,id)` keyset pagination. The response uses an explicit column allow-list and bound SQL parameters. Invalid filters/cursors return 400, non-GET requests return 405, and storage failures return 503. Mocked tests cover pagination, filters, authorization and error handling. Live Preview schema/data and runtime behavior remain unverified.
+
+## 23. Read-only governance overview — 2026-11-25
+
+`GET /api/governance/overview` returns Owner-only aggregate counts grouped by status for change requests, analysis findings, jobs and assignments. It performs four read-only grouped-count queries in parallel, returns a generation timestamp, and exposes no individual records or mutation capability. Missing/unavailable DUGA tables fail closed with 503. Mocked handler tests cover counts, Owner authorization, GET-only behavior and query failure. This endpoint is not evidence that Preview D1 has the draft schema installed; live Preview data remains unverified.
