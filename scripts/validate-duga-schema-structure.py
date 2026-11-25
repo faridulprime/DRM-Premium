@@ -92,6 +92,7 @@ EXPECTED_TRIGGERS = {
     "duga_audit_no_update": ("duga_audit_events", "append-only"),
     "duga_audit_no_delete": ("duga_audit_events", "append-only"),
     "duga_jobs_lease_transition_guard": ("duga_jobs", "immutable job identity mutation"),
+    "duga_jobs_insert_guard": ("duga_jobs", "begin queued without lease"),
     "duga_assignments_insert_guard": ("duga_assignments", "begin active"),
     "duga_assignments_no_delete": ("duga_assignments", "cannot be deleted"),
     "duga_assignments_update_guard": ("duga_assignments", "revocation only"),
