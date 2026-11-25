@@ -10,6 +10,7 @@ on:
       - "scripts/validate-governance.mjs"
       - "scripts/validate-migration-inventory.mjs"
       - "scripts/test-duga-schema.py"
+      - "scripts/test-governance-health-api.mjs"
       - "functions/api/**"
       - ".github/workflows/duga-governance.yml"
   push:
@@ -45,6 +46,8 @@ jobs:
       - name: Check API JavaScript syntax
         run: |
           node --check "functions/api/[[path]].js"
+      - name: Test Owner-only DUGA health API
+        run: node scripts/test-governance-health-api.mjs
       - name: Validate registry, ownership and dependencies
         run: node scripts/validate-governance.mjs
       - name: Validate D1 migration inventory (static only)
