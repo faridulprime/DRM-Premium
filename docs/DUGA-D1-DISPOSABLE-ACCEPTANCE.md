@@ -176,9 +176,57 @@ Authenticated disposable Worker acceptance (2026-11-25):
 - No production migration has been applied. No Production or shared Preview database was used; no live Pages binding was changed. PR #4 remains Draft and unmerged.
 
 
-## 9. Revised-schema run status — 2026-11-25
+## 9. Revised-schema D1 acceptance evidence — 2026-11-25
 
-- The disposable fixture was refreshed to match the current schema draft, including the self-referencing predecessor FK, self-link CHECK, immutable-parent trigger and AI-review rejection CHECK.
-- The previous database `drm-duga-acceptance-disposable` (`6d512429-34a3-498b-9430-45f11d382da9`) is an older-schema test database with retained synthetic rows. Do not treat it as revised-schema acceptance and do not overwrite/reseed it.
-- A newly created disposable database is required for the revised fixture and all probes. The existing Worker CAS/audit suite can be used only after its `DB` binding is explicitly pointed at that new disposable database; do not change the existing deployed Worker binding without checking the exact target.
-- Revised-schema D1 acceptance remains NOT RUN until the owner executes the fixture and probes against the new database. Production and shared Preview remain out of scope.
+Status: PARTIAL — revised-schema structural/constraint probes and the authenticated Cloudflare D1 CAS + audit Worker suite passed on the new disposable database. The complete checklist in sections 3–5 is not yet fully evidenced; see remaining gaps below. This is not Production or Preview acceptance.
+
+### Isolated environment
+
+- D1 database: `drm-duga-acceptance-v2-disposable`
+- D1 database ID: `716a4f20-25a5-4a59-9dd2-c764b193f385`
+- Worker: `duga-d1-acceptance-v2-disposable`
+- Worker URL: `https://duga-d1-acceptance-v2-disposable.faridulprime.workers.dev`
+- Worker D1 binding: `DB` → the D1 database ID above (confirmed in Wrangler deploy output).
+- Worker source path: `scripts/duga-d1-acceptance-worker/src/index.js`
+- Worker source blob SHA on `duga-foundation-review`: `faeff7eb8b2be5b2a97626b82ba05883b3b17841`
+- Schema blob SHA on `duga-foundation-review`: `650d03d1473c503becca3414f8dfa928d95daecf`
+- Fixture blob SHA on `duga-foundation-review`: `a48481c17be1c57736b2776bcef4bcdf025e3d87`
+- Worker deployment version used for the authenticated acceptance run: `544e2a39-16d3-4363-a42a-fcbad340b21e`
+- Run ID: `a330b683-c8e0-4187-a8b0-0adc961816fa`
+- Completion timestamp: `2026-11-25T09:13:59.408Z`
+- Authentication: POST-only diagnostic check reported `secretConfigured=true`, `authorizationBearerPresent=true`, both secret lengths 44, and `fingerprintMatch=true`. The diagnostic route was removed from the final Worker source; the final source exposes only the authenticated `POST /run` suite. No secret value or fingerprint is recorded here.
+
+### Revised schema and fixture observations
+
+- The disposable fixture was applied to the newly created D1 database; the reported inventory was 8 DUGA tables, 20 indexes and 3 triggers.
+- `PRAGMA foreign_key_check` returned no violation rows.
+- `duga_change_requests` includes `parent_change_request_id`, `state_version` and `last_transition_id`.
+- Verified revised lifecycle behavior: valid terminal predecessor/child linkage; missing-parent FK rejection; self-parent rejection; immutable parent-link update rejection.
+- Verified review boundary: AI `rejected` review rejected; AI `changes_requested`/approved and human rejected review cases behaved as expected.
+- JSON shape probes rejected malformed JSON and wrong top-level types for change-request arrays, review evidence, audit payload, validation results, analysis finding evidence, job input and job result.
+- A 12-case probe batch reported 12/12 passed, 0 failed, including malformed/wrong-type JSON cases and orphan-FK checks for review, approval and validation-run change-request references.
+- Append-only audit UPDATE and DELETE were both rejected; the original audit row remained.
+- Cloudflare D1 rejected `SELECT sqlite_version()` as an unauthorized function. Therefore the engine version is not recorded; this is a tooling limitation, not a schema test failure.
+
+### Authenticated CAS + audit Worker result
+
+The authenticated `POST /run` response returned `results.pass = true` (HTTP success). Captured nested results:
+
+- Success: `updateChanges=1`, `auditChanges=1`, `auditCountForToken=1`.
+- Stale expected version: `0/0`.
+- Replay: `0/0`.
+- Reuse of an already audited token: `0/0`.
+- Forced audit CHECK failure: batch rejected; row remained `status='proposed'`, `state_version=1`, `last_transition_id=null`.
+- Concurrent writers: exactly one `1/1` winner and one `0/0` loser; final row `status='analyzing'`, `state_version=2`; audit count `1`.
+- The Worker response explicitly states that only synthetic test rows and audit events are retained.
+
+### Remaining evidence gaps
+
+The overall D1 acceptance remains PARTIAL because the complete plan in sections 3–5 has not yet been evidenced in full:
+
+- The owner-operated 12-case probe batch did not include the assignment `user_id` / `assigned_by_user_id` orphan-FK cases or the review `reviewer_user_id` orphan-FK case.
+- The available record does not establish a fresh complete inventory of every expected index definition against the reviewed schema, nor every positive counterpart for each JSON probe.
+- The D1 SQLite version could not be queried through the available Console function.
+- The Worker runtime suite passed, but that alone does not satisfy every structural and FK checklist item above.
+
+Do not mark the full plan PASS until these gaps are closed and recorded. Do not create a production migration, change any application binding, implement state-changing API routes, merge PR #4, or deploy Production as a consequence of this evidence. No Production or shared Preview database was used; no live Pages binding was changed. PR #4 remains Draft and unmerged.
