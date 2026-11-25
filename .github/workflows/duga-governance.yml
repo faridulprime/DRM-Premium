@@ -22,6 +22,7 @@ on:
       - "docs/AI-CONTINUITY/**"
       - "scripts/validate-governance.mjs"
       - "scripts/validate-migration-inventory.mjs"
+      - "scripts/test-duga-schema.py"
       - ".github/workflows/duga-governance.yml"
   workflow_dispatch:
 
