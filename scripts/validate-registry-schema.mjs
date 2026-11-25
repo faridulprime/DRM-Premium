@@ -5,7 +5,7 @@ const schema=JSON.parse(await readFile('governance/registry/system-schema.json',
 const errors=[];
 const unique=a=>new Set(a).size===a.length;
 if(registry.authority!=='github-desired-state')errors.push('registry authority must be github-desired-state');
-if(!/^[0-9]+[.][0-9]+[.][0-9]+$/.test(registry.registryVersion||''))errors.push('invalid registryVersion');
+for(const field of ['schemaVersion','registryVersion'])if(!/^[0-9]+[.][0-9]+[.][0-9]+$/.test(registry[field]||''))errors.push('invalid '+field);
 const known=new Set((registry.systems||[]).map(s=>s.id));
 for(const s of registry.systems||[]){
  for(const k of schema.required||[])if(!Object.hasOwn(s,k))errors.push(s.id+' missing '+k);
@@ -15,9 +15,9 @@ for(const s of registry.systems||[]){
   if(r.type==='string'&&typeof v!=='string')errors.push(s.id+'.'+k+' must be string');
   if(r.type==='boolean'&&typeof v!=='boolean')errors.push(s.id+'.'+k+' must be boolean');
   if(r.type==='array'&&!Array.isArray(v))errors.push(s.id+'.'+k+' must be array');
-  if(typeof v==='string'&&r.pattern&&!new RegExp(r.pattern).test(v))errors.push(s.id+'.'+k+' invalid format');
+  if(typeof v==='string'){if(r.minLength&&v.length<r.minLength)errors.push(s.id+'.'+k+' too short');if(r.pattern&&!new RegExp(r.pattern).test(v))errors.push(s.id+'.'+k+' invalid format');}
   if(r.enum&&!r.enum.includes(v))errors.push(s.id+'.'+k+' invalid value');
-  if(Array.isArray(v)&&r.uniqueItems&&!unique(v))errors.push(s.id+'.'+k+' duplicates');
+  if(Array.isArray(v)){if(r.uniqueItems&&!unique(v))errors.push(s.id+'.'+k+' duplicates');for(const item of v){if(r.items?.type==='string'&&typeof item!=='string')errors.push(s.id+'.'+k+' item must be string');if(typeof item==='string'){if(r.items.minLength&&item.length<r.items.minLength)errors.push(s.id+'.'+k+' item too short');if(r.items.pattern&&!new RegExp(r.items.pattern).test(item))errors.push(s.id+'.'+k+' item invalid format');}}}
  }
  for(const d of s.dependencies||[])if(!known.has(d))errors.push(s.id+' unknown dependency '+d);
 }
