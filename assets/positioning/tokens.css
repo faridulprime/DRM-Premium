@@ -44,6 +44,9 @@
   /* Shared category-bar anchor; responsive/state overrides are consumer-scoped. */
   --dups-anchor-category-bar-top: var(--duss-header-height-desktop, 64px);
 
+  /* Profile drawer displacement of the fixed Category Bar. */
+  --dups-anchor-profile-drawer-clearance: 390px;
+
   /* Profile completion overlay anchors. */
   --dups-anchor-profile-complete-top: 74px;
   --dups-anchor-profile-complete-center: 50%;
