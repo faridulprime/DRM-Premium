@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { validateRegistry } from './validate-registry-schema.mjs';
+const registry=JSON.parse(await readFile('governance/registry/systems.json','utf8'));
+const schema=JSON.parse(await readFile('governance/registry/system-schema.json','utf8'));
+const clone=value=>structuredClone(value);
+const check=(mutate,expected)=>{const r=clone(registry),s=clone(schema);mutate(r,s);const errors=validateRegistry(r,s);assert(errors.some(error=>error.includes(expected)),'Expected '+expected+', got: '+errors.join('; '));};
+assert.deepEqual(validateRegistry(registry,schema),[],'committed registry must validate');
+assert(validateRegistry(null,schema).some(e=>e.includes('registry root')));
+assert(validateRegistry(registry,[]).some(e=>e.includes('schema root')));
+check(r=>{r.systems[1].id=r.systems[0].id;},'duplicate system IDs');
+check(r=>{r.systems[0].unexpected=true;},'unknown field unexpected');
+check(r=>{r.systems[0].runtimeCritical='yes';},'runtimeCritical must be boolean');
+check(r=>{r.systems[0].paths=['assets/',4];},'paths item must be string');
+check(r=>{r.systems[0].paths=['same/','same/'];},'paths duplicates');
+check(r=>{r.systems[0].dependencies=['MISSING'];},'unknown dependency MISSING');
+check(r=>{r.systems[0].dependencies=['DACP'];r.systems[5].dependencies=['DCP'];},'dependency cycle');
+check(r=>{r.lastReviewed='2026-02-30';},'lastReviewed must be a real');
+check(r=>{r.systems='not-an-array';},'systems must be a non-empty array');
+check((r,s)=>{s.properties.id.pattern='[';r.systems[0].id='BAD';},'id invalid format');
+check(r=>{r.systems[0]=null;},'must be an object');
+console.log('Registry validator regression tests passed (12 negative cases + committed fixture).');
