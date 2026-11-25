@@ -90,3 +90,10 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Added `docs/DUGA-CHANGE-REQUEST-STATE-MACHINE.md` documenting this gap, a conservative proposed transition graph, stage-specific authorization, database invariants, API CAS contract and adversarial regression cases.
 - Explicitly called out unresolved product/security decisions: blocked-state resume rules, terminal semantics, approval revocation/supersession, risk-based review gates, separation of duties and implementation-attempt history. No permissive transition fallback should be implemented before these are decided.
 - Design only: no route, migration, D1 mutation, OIDC flow or deployment. Next: review the state graph and policy decisions; only then design an isolated schema revision after Preview D1 migration-history and backup preflight.
+
+### DUGA human-session and machine-identity boundary
+- Inspected the actual Pages API session/auth path. Human session uses a 32-byte random token, SHA-256 token hash at rest, seven-day HttpOnly/Secure/SameSite=Strict cookie, server-side role lookup and expiry check; non-GET requests require exact same-origin Origin and JSON content type.
+- Current common admin gate accepts Owner/Admin, but Governance routes explicitly narrow access to Owner and remain GET-only. No DUGA service-principal/OIDC authentication or write route was found in the handler.
+- Added `docs/DUGA-IDENTITY-AUTHORIZATION-BOUNDARY.md` to separate human sessions, AI principals and validation/worker service identities; document current facts, proposed authorization matrix, mutation requirements and adversarial tests.
+- Explicit limitation: source-level review only, not live Pages validation or penetration test. No service credentials, OIDC verifier, endpoint, migration, D1 mutation or deployment.
+- Next: confirm Owner/Admin/System Owner/Platform Owner powers, separation-of-duties and re-authentication policy; confirm GitHub/Cloudflare workload identity design before implementing any write route.
