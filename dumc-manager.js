@@ -19,7 +19,7 @@ function renderTree(){
  }
  $("#dumcTree").innerHTML=nodeHTML(root)||'<div class="empty-state">No matching folders found.</div>';
  $("#dumcStats").innerHTML='<span><strong>'+(root.children||[]).length+'</strong> top-level sections</span><span><strong>'+count(root)+'</strong> total folders</span><span><strong>'+flatten(root).reduce((n,x)=>n+Number(x.movie_count||0),0)+'</strong> movie-folder links</span>';
- const opts='<option value="">Select DUMC folder…</option>'+flatten(root).filter(x=>x.id!=="DUMC").map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · '+esc(x.id)+'</option>').join("");
+ const validParents=["02_LANGUAGE","03_FILM_INDUSTRY","06_COUNTRIES","04_DUBBED_MOVIES","05_GENRES","07_COLLECTIONS","09_SUBTITLES","10_ARTWORK","11_METADATA"];const opts='<option value="">Select DUMC folder…</option>'+flatten(root).filter(x=>validParents.includes(parentOf(x.id))).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · '+esc(x.id)+'</option>').join("");
  if($("#folderSelect")){$("#folderSelect").innerHTML=opts;$("#folderSelect").disabled=!live;}
  if($("#newFolder")){$("#newFolder").disabled=!live;$("#newFolder").title=live?"Create a custom DUMC folder":"Apply migration 0009 to enable persistent folders";}
  if($("#dumcAddFolder"))$("#dumcAddFolder").disabled=!live;
