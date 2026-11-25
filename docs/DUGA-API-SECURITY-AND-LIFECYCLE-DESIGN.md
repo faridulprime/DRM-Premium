@@ -96,7 +96,7 @@ Only these candidate transitions are allowed; all unlisted pairs are denied:
 | final_review | blocked | Blocking reason recorded |
 
 Candidate terminal and resumption semantics (Owner decision recorded: B — resumable):
-- `accepted`, `rejected`, and `cancelled` are terminal. Reopening requires a new linked change request.
+- `accepted`, `rejected`, and `cancelled` are terminal. A rejected or cancelled request is never reopened or reset in place. Any renewed attempt must be created as a new Change Request linked to the original request through an immutable parent/supersedes reference; the new request receives its own state version, evidence, approvals and audit history. The original decision, rationale and events remain unchanged. A linked request does not inherit approval, review, validation or implementation authorization from its predecessor.
 - `blocked` is a resumable hold state, not a terminal state. It may leave `blocked` only through an explicit, authorized `unblock` operation after the blocking condition is demonstrably cleared.
 - On entry to `blocked`, preserve the exact prior workflow state in the immutable block audit event (for example, `from_status`) together with a non-empty blocking reason, blocking condition, actor and timestamp. Do not rely on a mutable client-supplied resume target.
 - On unblock, derive the candidate resume state from the latest valid block event. Require an authorized human Owner, a non-empty unblock rationale, evidence that the blocking condition is cleared, a fresh state-version compare-and-swap, and an append-only audit event in the same atomic D1 batch.
@@ -104,7 +104,7 @@ Candidate terminal and resumption semantics (Owner decision recorded: B — resu
 - A repeated block/unblock cycle creates new audit events; no historical event is edited or deleted. Concurrent unblock attempts must be protected by CAS and one-time transition tokens.
 - The unblock operation does not itself authorize implementation, merge, deployment or any other separately gated action.
 
-**Owner review remaining:** confirm whether rejected/cancelled requests require a new linked request and whether the proposed rework edges are correct. The resumable-block decision is now recorded as approved by the Owner; the full matrix remains proposed until remaining decisions and implementation review are complete.
+**Owner decisions recorded:** `blocked` is resumable (option B); `rejected` and `cancelled` are terminal, and any renewed attempt must be a new linked Change Request. The proposed rework edges still require Owner review; therefore the full matrix remains proposed and is not executable policy.
 
 ## 5. Risk and approval gates
 
@@ -188,7 +188,7 @@ Before any Preview write endpoint:
 ## 10. No-go conditions
 
 Do not implement or enable write endpoints until:
-1. Owner approves remaining transition-matrix semantics (rejected/cancelled reopening and rework edges); resumable `blocked` handling has been selected, but its implementation contract still requires review.
+1. Owner reviews the remaining proposed rework edges and approves the complete transition matrix; `blocked` resumability and new-linked-request semantics for rejected/cancelled are recorded decisions, but remain design-only until implementation review.
 2. D1 migration is reconciled with Preview migration history and separately approved.
 3. Disposable D1 evidence is independently reviewed.
 4. Trusted Git ref/commit verification is specified and tested.
