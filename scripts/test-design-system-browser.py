@@ -1194,6 +1194,136 @@ def inspect_live_overlay_lifecycle_source():
             fail(f"live-users/overlay-lifecycle: missing {label}")
 
 
+
+def inspect_live_overlay_interactions(browser, base_url):
+    """Exercise the real Live Users drawer/modal/dialog lifecycle with isolated API fixtures."""
+    import json
+
+    context = browser.new_context(
+        viewport={"width": 1440, "height": 900},
+        locale="bn-BD",
+        reduced_motion="reduce",
+    )
+    page = context.new_page()
+    user = {
+        "id": "overlay-test-user",
+        "name": "Overlay Test User",
+        "username": "overlay-test",
+        "email": "overlay-test@example.invalid",
+        "role": "user",
+        "created_at": 1760000000,
+        "email_verified": True,
+    }
+    banned = {
+        "id": "overlay-test-banned",
+        "name": "Restricted Test User",
+        "username": "restricted-test",
+        "email": "restricted-test@example.invalid",
+        "role": "user",
+        "created_at": 1750000000,
+        "email_verified": True,
+        "restriction_type": "ban",
+        "restriction_expires_at": None,
+        "restriction_reason": "browser fixture",
+    }
+
+    def api_fixture(route):
+        path = route.request.url.split("?", 1)[0]
+        if path.endswith("/api/auth/status"):
+            payload = {"configured": True}
+        elif path.endswith("/api/auth/me"):
+            payload = {"authenticated": True, "user": {"id": "owner", "role": "owner"}}
+        elif path.endswith("/api/admin/active-users"):
+            payload = {"admins": [], "members": [user], "guests": []}
+        elif path.endswith("/api/admin/users"):
+            payload = [user, banned]
+        elif path.endswith("/api/presence") or path.endswith("/api/admin/presence"):
+            payload = {"ok": True}
+        else:
+            route.fulfill(status=404, content_type="application/json", body='{"error":"unexpected test API request"}')
+            return
+        route.fulfill(status=200, content_type="application/json", body=json.dumps(payload))
+
+    try:
+        page.route("**/api/**", api_fixture)
+        page.route("https://**/*", lambda route: route.abort())
+        page.goto(base_url + "/live-users.html", wait_until="load", timeout=30000)
+        page.wait_for_selector('.live-user-row[data-user-id="overlay-test-user"]', timeout=10000)
+
+        # Drawer close must retain the shared backdrop and scroll lock until its
+        # close animation cleanup timer finishes.
+        page.locator('.live-user-row[data-user-id="overlay-test-user"]').click()
+        page.wait_for_function(
+            "() => document.querySelector('#liveUserDrawer')?.classList.contains('is-open') && document.body.style.overflow === 'hidden' && !document.querySelector('#liveDrawerBackdrop')?.hidden",
+            timeout=5000,
+        )
+        page.locator("#liveDrawerClose").click()
+        page.wait_for_timeout(140)
+        if page.evaluate("() => document.body.style.overflow") != "hidden":
+            fail("live-users/overlay-interaction: scroll lock released before drawer close animation completed")
+        if page.locator("#liveDrawerBackdrop").evaluate("(el) => el.hidden"):
+            fail("live-users/overlay-interaction: shared backdrop disappeared during drawer close animation")
+        page.wait_for_function(
+            "() => document.body.style.overflow === '' && document.querySelector('#liveDrawerBackdrop')?.hidden",
+            timeout=2500,
+        )
+
+        # Block List close follows the same delayed cleanup contract.
+        page.locator("#liveRestrictionsOpen").click()
+        page.wait_for_function(
+            "() => document.querySelector('#liveRestrictionsModal')?.classList.contains('is-open') && document.body.style.overflow === 'hidden'",
+            timeout=5000,
+        )
+        page.locator("#liveDrawerBackdrop").click()
+        page.wait_for_timeout(120)
+        if page.evaluate("() => document.body.style.overflow") != "hidden":
+            fail("live-users/overlay-interaction: scroll lock released before restrictions modal close completed")
+        page.wait_for_function(
+            "() => document.body.style.overflow === '' && document.querySelector('#liveDrawerBackdrop')?.hidden",
+            timeout=2000,
+        )
+
+        # Restriction-list to account-drawer handoff must never expose the page.
+        page.locator("#liveRestrictionsOpen").click()
+        page.wait_for_selector('.live-restricted-user-row[data-restricted-user-id="overlay-test-banned"]', timeout=5000)
+        page.locator('.live-restricted-user-row[data-restricted-user-id="overlay-test-banned"]').click()
+        page.wait_for_function(
+            "() => document.querySelector('#liveUserDrawer')?.classList.contains('is-open') && document.body.style.overflow === 'hidden' && !document.querySelector('#liveDrawerBackdrop')?.hidden",
+            timeout=5000,
+        )
+
+        # A native dialog opened during drawer-close cleanup must inherit the
+        # shared lock; closing it must not cancel the still-running drawer close.
+        page.locator('[data-action="details"]').click()
+        page.wait_for_function(
+            "() => document.querySelector('#liveUserDialog')?.open && document.body.style.overflow === 'hidden'",
+            timeout=5000,
+        )
+        page.locator("#liveDialogClose").click()
+        page.wait_for_timeout(120)
+        if page.evaluate("() => document.body.style.overflow") != "hidden":
+            fail("live-users/overlay-interaction: native dialog close unlocked the page while drawer close was still active")
+        page.wait_for_function(
+            "() => document.body.style.overflow === '' && document.querySelector('#liveDrawerBackdrop')?.hidden && !document.querySelector('#liveUserDialog')?.open",
+            timeout=2500,
+        )
+
+        # Fixed overlays live directly under body, avoiding transformed or
+        # contained intermediate ancestors that would redefine their viewport.
+        ancestry = page.evaluate(
+            """() => ["#liveDrawerBackdrop", "#liveUserDrawer", "#liveRestrictionsModal", "#liveUserDialog"].map(selector => {
+              const element = document.querySelector(selector);
+              return {selector, directBodyChild: element?.parentElement === document.body};
+            })"""
+        )
+        for item in ancestry:
+            if not item["directBodyChild"]:
+                fail(f"live-users/overlay-interaction: {item['selector']} is no longer a direct body child; fixed containing-block ancestry needs review ({item})")
+    except Exception as exc:
+        fail(f"live-users/overlay-interaction: {type(exc).__name__}: {exc}")
+    finally:
+        context.close()
+
 def main() -> int:
     server, base_url = serve()
     checks = 0
@@ -1201,6 +1331,8 @@ def main() -> int:
         with sync_playwright() as playwright:
             inspect_live_overlay_lifecycle_source()
             browser = playwright.chromium.launch(headless=True)
+            inspect_live_overlay_interactions(browser, base_url)
+            checks += 1
             for name, config in PAGES.items():
                 route = config[0]
                 for viewport_name, width, height in VIEWPORTS:
@@ -1230,7 +1362,7 @@ def main() -> int:
     print(
         f"PASS: {checks} page/viewport checks across {len(PAGES)} pages; "
         "DUCS contrast samples; DUSS/DUPS/DUCS token loading; keyboard focus; "
-        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, mobile-to-desktop resize cleanup, and Live Users shared-overlay state guards."
+        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, mobile-to-desktop resize cleanup, Live Users shared-overlay state guards and dynamic drawer/modal/native-dialog lifecycle, close-animation scroll-lock retention, restriction-to-drawer hand-off, and fixed-overlay containing-block ancestry."
     )
     print(
         "LIMITATION: 720px is a 200%-zoom layout-width proxy, not native browser zoom. "
