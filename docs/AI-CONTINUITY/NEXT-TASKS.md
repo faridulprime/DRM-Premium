@@ -111,3 +111,6 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Responsive Builder inspector geometry is now verified relative to the revealed fixed Website Builder shell, including desktop/tablet and mobile top offsets; Chromium run #45678321298 passed. This remains static-page geometry validation, not full Builder interaction testing.
 
 - Live Users closing smoke pseudo-elements now have a browser assertion for their local DUPS z-index tokens; run #45678490915 passed. Continue scanning remaining literal offsets and local stacking layers with selector/containing-block evidence.
+
+
+- DUPS visual-editor fixed anchors migrated and covered by computed Chromium geometry/layer assertions: base toggle, panel, and desktop/compact edge offsets. Next batch: inspect Category Bar responsive top-anchor states and verify the Profile Completion overlay's actual containing block/offsets; do not alter the existing responsive coordinates without state-specific browser evidence.
