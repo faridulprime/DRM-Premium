@@ -182,6 +182,27 @@ await test("Change detail storage failure returns controlled 503", async () => {
   const { response } = await call({ token: "owner-token", path: "/api/governance/changes/change-42", env: mockEnv({ failChangeDetail: true }) });
   assert.equal(response.status, 503);
 });
+await test("Owner can list findings with filters and pagination", async () => {
+  const rows = [{ id: "finding-3", analyzer_version: "1.0", repository_commit_sha: "abc123", file_path: "src/a.js", symbol: "alpha", classification: "A", confidence: 0.98, evidence_json: "[]", status: "open", created_at: 300 }, { id: "finding-2", analyzer_version: "1.0", repository_commit_sha: "abc123", file_path: "src/b.js", symbol: "beta", classification: "B", confidence: 0.8, evidence_json: "[]", status: "under_review", created_at: 200 }, { id: "finding-1", analyzer_version: "1.0", repository_commit_sha: "abc123", file_path: "src/c.js", symbol: "gamma", classification: "C", confidence: 0.6, evidence_json: "[]", status: "dismissed", created_at: 100 }];
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/findings?limit=2&status=open&classification=A", env: mockEnv({ findingRows: rows }) });
+  assert.equal(response.status, 200); assert.equal(body.items.length, 2); assert.equal(body.items[0].id, "finding-3"); assert.equal(body.page.hasMore, true); assert.ok(body.page.nextCursor);
+});
+await test("Findings endpoint validates filters, cursor and search", async () => {
+  const a = await call({ token: "owner-token", path: "/api/governance/findings?status=unknown" });
+  const b = await call({ token: "owner-token", path: "/api/governance/findings?classification=Z" });
+  const d = await call({ token: "owner-token", path: "/api/governance/findings?cursor=bad" });
+  const e = await call({ token: "owner-token", path: "/api/governance/findings?q=%00" });
+  assert.equal(a.response.status, 400); assert.equal(b.response.status, 400); assert.equal(d.response.status, 400); assert.equal(e.response.status, 400);
+});
+await test("Findings endpoint is Owner-only and handles storage failure", async () => {
+  const forbidden = await call({ token: "admin-token", path: "/api/governance/findings" });
+  const failed = await call({ token: "owner-token", path: "/api/governance/findings", env: mockEnv({ failFindings: true }) });
+  assert.equal(forbidden.response.status, 403); assert.equal(failed.response.status, 503);
+});
+await test("Findings endpoint rejects non-GET methods", async () => {
+  const { response } = await call({ token: "owner-token", method: "POST", path: "/api/governance/findings" });
+  assert.equal(response.status, 405);
+});
 await test("Owner can read paginated append-only audit events", async () => {
   const rows = [
     { id: "event-3", aggregate_type: "change_request", aggregate_id: "change-3", event_type: "created", actor_type: "human", created_at: 300 },
@@ -273,6 +294,6 @@ await test("Missing D1 binding returns 503", async () => {
   assert.equal(response.status, 503);
 });
 
-console.log("DUGA health, read-only change and audit API tests: PASS");
+console.log("DUGA health, read-only change, findings and audit API tests: PASS");
 for (const name of tests) console.log("PASS: " + name);
 console.log("LIMITATION: mocked D1 and local handler only; no live Cloudflare Pages deployment tested.");
