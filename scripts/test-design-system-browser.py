@@ -330,6 +330,39 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                         record["samples"].append(sample)
         if metrics["headerHeight"] <= 0:
             fail(f"{name}/{viewport_name}: visible header geometry could not be measured")
+        if name == "homepage":
+            shell_edges = page.evaluate(
+                """() => {
+                  const root = getComputedStyle(document.documentElement);
+                  const zero = parseFloat(root.getPropertyValue("--dups-offset-0"));
+                  const header = document.querySelector(".topbar");
+                  const category = document.querySelector(".category-bar");
+                  const measure = (element) => {
+                    if (!element) return {missing: true};
+                    const style = getComputedStyle(element);
+                    const rect = element.getBoundingClientRect();
+                    return {
+                      position: style.position,
+                      top: rect.top,
+                      left: rect.left,
+                      right: innerWidth - rect.right
+                    };
+                  };
+                  return {zero, header: measure(header), category: measure(category)};
+                }"""
+            )
+            for label in ("header", "category"):
+                geometry = shell_edges[label]
+                if geometry.get("missing"):
+                    fail(f"{name}/{viewport_name}: shared {label} element is missing")
+                    continue
+                try:
+                    if geometry["position"] != "fixed":
+                        fail(f"{name}/{viewport_name}: shared {label} is no longer fixed-positioned ({geometry})")
+                    if any(abs(geometry[key] - shell_edges["zero"]) > 1 for key in ("top", "left", "right")):
+                        fail(f"{name}/{viewport_name}: shared {label} viewport-edge geometry differs from the DUPS zero-offset token ({geometry}, expected={shell_edges['zero']})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: shared {label} DUPS edge geometry could not be resolved ({geometry})")
         if name != "profile":
             expected_layer = (
                 metrics["tokens"]["dupsLiveHeader"]
