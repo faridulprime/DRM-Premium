@@ -168,6 +168,10 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   dups: pick("--dups-layer-page-header"),
                   dupsHomeHeaderMobile: pick("--dups-layer-home-header-mobile"),
                   dupsLiveHeader: pick("--dups-layer-live-header"),
+                  dupsSidebarMobile: pick("--dups-layer-sidebar-mobile"),
+                  dupsSidebarBackdrop: pick("--dups-layer-sidebar-backdrop"),
+                  dupsHomeSidebarMobile: pick("--dups-layer-home-sidebar-mobile"),
+                  dupsHomeSidebarBackdrop: pick("--dups-layer-home-sidebar-backdrop"),
                   ducsBg: pick("--ducs-bg-canvas"),
                   ducsText: pick("--ducs-text-primary"),
                   ducsSecondary: pick("--ducs-text-secondary"),
@@ -340,6 +344,55 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
             fail(f"{name}/{mode}: expected the configured motion duration, found {transition}")
         if page.locator(backdrop).evaluate("(el) => el.hidden"):
             fail(f"{name}/{mode}: backdrop remained hidden while drawer was open")
+
+        layers = page.evaluate(
+            """({sidebar, backdrop}) => {
+              const root = getComputedStyle(document.documentElement);
+              const value = (name) => root.getPropertyValue(name).trim();
+              return {
+                sidebar: getComputedStyle(document.querySelector(sidebar)).zIndex,
+                backdrop: getComputedStyle(document.querySelector(backdrop)).zIndex,
+                header: getComputedStyle(document.querySelector("header")).zIndex,
+                tokens: {
+                  sidebar: value("--dups-layer-sidebar-mobile"),
+                  backdrop: value("--dups-layer-sidebar-backdrop"),
+                  homeSidebar: value("--dups-layer-home-sidebar-mobile"),
+                  homeBackdrop: value("--dups-layer-home-sidebar-backdrop")
+                }
+              };
+            }""",
+            arg={"sidebar": sidebar, "backdrop": backdrop},
+        )
+        expected_sidebar = layers["tokens"]["homeSidebar"] if name == "homepage" else layers["tokens"]["sidebar"]
+        expected_backdrop = layers["tokens"]["homeBackdrop"] if name == "homepage" else layers["tokens"]["backdrop"]
+        try:
+            actual_sidebar = float(layers["sidebar"])
+            actual_backdrop = float(layers["backdrop"])
+            actual_header = float(layers["header"])
+            if actual_sidebar != float(expected_sidebar):
+                fail(
+                    f"{name}/{mode}: sidebar z-index {actual_sidebar:g} does not match "
+                    f"DUPS token {float(expected_sidebar):g}"
+                )
+            if actual_backdrop != float(expected_backdrop):
+                fail(
+                    f"{name}/{mode}: backdrop z-index {actual_backdrop:g} does not match "
+                    f"DUPS token {float(expected_backdrop):g}"
+                )
+            # The homepage/admin overlay covers the header; Live Users and
+            # Upload Studio intentionally keep their fixed header above it.
+            valid_order = (
+                actual_sidebar > actual_backdrop > actual_header
+                if name in ("homepage", "admin")
+                else actual_header > actual_sidebar > actual_backdrop
+            )
+            if not valid_order:
+                fail(
+                    f"{name}/{mode}: unexpected overlay stack "
+                    f"(header={actual_header:g}, sidebar={actual_sidebar:g}, backdrop={actual_backdrop:g})"
+                )
+        except (TypeError, ValueError):
+            fail(f"{name}/{mode}: DUPS computed stacking values could not be parsed ({layers})")
 
         # Close during the transition to exercise cancellation of stale timers.
         page.locator(toggle).dispatch_event("click")
