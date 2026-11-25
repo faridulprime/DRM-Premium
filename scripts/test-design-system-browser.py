@@ -51,6 +51,7 @@ ROOT_TOKENS = {
 }
 FAILURES: list[str] = []
 WARNINGS: list[str] = []
+STACKING_CONTEXT_AUDIT: dict[str, dict] = {}
 
 
 def fail(message: str) -> None:
@@ -200,7 +201,49 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const rect = el.getBoundingClientRect();
                   return rect.width <= 0 || rect.height <= 0;
                 }).length
-,                fixedAncestorIssues: [...document.querySelectorAll("body *")].flatMap((el) => {
+,                stackingContextAncestors: [...document.querySelectorAll("body *")].flatMap((el) => {
+                  const style = getComputedStyle(el);
+                  if (!["fixed", "sticky"].includes(style.position)) return [];
+                  const visible = typeof el.checkVisibility === "function"
+                    ? el.checkVisibility({checkOpacity: true, checkVisibilityCSS: true})
+                    : !el.closest("[hidden]") && style.display !== "none" && style.visibility !== "hidden";
+                  if (!visible) return [];
+                  const contexts = [];
+                  let ancestor = el.parentElement;
+                  while (ancestor && ancestor !== document.documentElement) {
+                    const cs = getComputedStyle(ancestor);
+                    const reasons = [];
+                    const willChange = cs.willChange.split(/,\s*/);
+                    const contain = cs.contain.split(/\s+/);
+                    if (["absolute", "relative"].includes(cs.position) && cs.zIndex !== "auto") reasons.push("positioned-z-index");
+                    if (["fixed", "sticky"].includes(cs.position)) reasons.push("fixed-or-sticky");
+                    if (Number(cs.opacity) < 1) reasons.push("opacity");
+                    if (cs.mixBlendMode !== "normal") reasons.push("mix-blend-mode");
+                    if (cs.isolation === "isolate") reasons.push("isolation");
+                    if (cs.transform !== "none" || cs.translate !== "none" || cs.rotate !== "none" || cs.scale !== "none") reasons.push("transform");
+                    if (cs.filter !== "none") reasons.push("filter");
+                    if (cs.backdropFilter !== "none") reasons.push("backdrop-filter");
+                    if (cs.perspective !== "none") reasons.push("perspective");
+                    if (contain.some(v => ["layout", "paint", "strict", "content"].includes(v))) reasons.push("contain");
+                    if (cs.containerType && cs.containerType !== "normal") reasons.push("container-type");
+                    if (cs.clipPath !== "none") reasons.push("clip-path");
+                    if (cs.maskImage && cs.maskImage !== "none") reasons.push("mask");
+                    if (willChange.some(v => ["opacity", "transform", "translate", "rotate", "scale", "filter", "backdrop-filter", "perspective", "mix-blend-mode"].includes(v))) reasons.push("will-change");
+                    const parentDisplay = getComputedStyle(ancestor.parentElement || document.documentElement).display;
+                    if (cs.zIndex !== "auto" && ["flex", "inline-flex", "grid", "inline-grid"].includes(parentDisplay)) reasons.push("flex-grid-item-z-index");
+                    if (reasons.length) contexts.push({
+                      selector: ancestor.id ? "#" + ancestor.id : ancestor.tagName.toLowerCase() + (typeof ancestor.className === "string" && ancestor.className.trim() ? "." + ancestor.className.trim().split(/\s+/).slice(0, 2).join(".") : ""),
+                      reasons
+                    });
+                    ancestor = ancestor.parentElement;
+                  }
+                  return contexts.length ? [{
+                    element: el.id ? "#" + el.id : el.tagName.toLowerCase() + (typeof el.className === "string" && el.className.trim() ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".") : ""),
+                    position: style.position,
+                    contexts
+                  }] : [];
+                }),
+                fixedAncestorIssues: [...document.querySelectorAll("body *")].flatMap((el) => {
                   const style = getComputedStyle(el);
                   if (!["fixed", "sticky"].includes(style.position)) return [];
                   const visible = typeof el.checkVisibility === "function"
@@ -245,6 +288,15 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 f"filtered, contained, or will-change ancestors "
                 f"({metrics['fixedAncestorIssues']})"
             )
+        for entry in metrics["stackingContextAncestors"]:
+            for context in entry["contexts"]:
+                for reason in context["reasons"]:
+                    key = f"{context['selector']}::{reason}"
+                    record = STACKING_CONTEXT_AUDIT.setdefault(key, {"count": 0, "samples": []})
+                    record["count"] += 1
+                    sample = f"{name}/{viewport_name}:{entry['element']}({entry['position']})"
+                    if sample not in record["samples"] and len(record["samples"]) < 3:
+                        record["samples"].append(sample)
         if metrics["headerHeight"] <= 0:
             fail(f"{name}/{viewport_name}: visible header geometry could not be measured")
         if name != "profile":
@@ -1454,6 +1506,12 @@ def main() -> int:
         print(f"WARNINGS: {len(WARNINGS)} responsive touch-target observations")
         for item in WARNINGS:
             print(f"  - {item}")
+    if STACKING_CONTEXT_AUDIT:
+        print(f"STACKING-CONTEXT INVENTORY: {len(STACKING_CONTEXT_AUDIT)} ancestor/reason combinations across visible fixed/sticky elements (diagnostic only; no automatic failure)")
+        for key, record in sorted(STACKING_CONTEXT_AUDIT.items()):
+            print(f"  - {key}: {record['count']} observations; samples={record['samples']}")
+    else:
+        print("STACKING-CONTEXT INVENTORY: no stacking-context ancestors found for visible fixed/sticky elements in sampled states")
     if FAILURES:
         print(f"FAIL: {len(FAILURES)} browser validation issue(s)")
         for item in FAILURES:
