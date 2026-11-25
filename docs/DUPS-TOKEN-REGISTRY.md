@@ -209,3 +209,8 @@ The original desktop coordinates and the effective 760px compact centering break
 ## Upload Studio mobile global-header edge anchors — 2026-11-26
 
 The fixed mobile Upload Studio global header uses `--dups-offset-0` for its top, left and right viewport edges. This reuses the zero-offset primitive rather than introducing duplicate component-specific zero tokens; the existing mobile-header layer alias remains unchanged.
+
+
+## Shared shell viewport-edge anchors — 2026-11-26
+
+The shared fixed header, Category Bar horizontal edges, compact navigation drawer top/bottom edges and navigation backdrop full-viewport inset reuse `--dups-offset-0`. No duplicate zero-valued component tokens were introduced. The Category Bar's vertical header-height dependency remains owned by DUSS.
