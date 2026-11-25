@@ -20,6 +20,8 @@ Outstanding release gates include:
 
 The feature-branch health check is targeted structural verification only. It does not establish live Preview schema readiness or full SQL equivalence.
 
+**Reading note:** Sections 2–9 preserve observations and recommendations from the original 2026-11-25 baseline audit; where those historical statements conflict with the current feature-branch implementation, the implementation update in Section 11 and the current-state file supersede them.
+
 ## 2. Existing request pipeline observed
 
 Source: `functions/api/[[path]].js`.
