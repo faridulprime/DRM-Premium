@@ -95,12 +95,16 @@ Only these candidate transitions are allowed; all unlisted pairs are denied:
 | final_review | rejected | Authorized human rejection with rationale |
 | final_review | blocked | Blocking reason recorded |
 
-Candidate terminal semantics:
+Candidate terminal and resumption semantics (Owner decision recorded: B — resumable):
 - `accepted`, `rejected`, and `cancelled` are terminal. Reopening requires a new linked change request.
-- `blocked` is a hold state with no outgoing transition in this proposal. Resumption requires an explicit policy amendment; otherwise create a new linked request.
-- A `blocked` transition requires a non-empty reason and blocking condition.
+- `blocked` is a resumable hold state, not a terminal state. It may leave `blocked` only through an explicit, authorized `unblock` operation after the blocking condition is demonstrably cleared.
+- On entry to `blocked`, preserve the exact prior workflow state in the immutable block audit event (for example, `from_status`) together with a non-empty blocking reason, blocking condition, actor and timestamp. Do not rely on a mutable client-supplied resume target.
+- On unblock, derive the candidate resume state from the latest valid block event. Require an authorized human Owner, a non-empty unblock rationale, evidence that the blocking condition is cleared, a fresh state-version compare-and-swap, and an append-only audit event in the same atomic D1 batch.
+- Before restoring the prior state, re-evaluate all gates. If the implementation SHA, policy/registry revision, assignment, approval, review or validation evidence has become stale, resume at the earliest workflow stage whose prerequisites are still valid; never skip a gate or restore a state whose prerequisites no longer hold.
+- A repeated block/unblock cycle creates new audit events; no historical event is edited or deleted. Concurrent unblock attempts must be protected by CAS and one-time transition tokens.
+- The unblock operation does not itself authorize implementation, merge, deployment or any other separately gated action.
 
-**Owner review required:** confirm whether `blocked` is terminal or resumable, whether rejected/cancelled requests require a new linked request, and whether the rework edges above are correct. This matrix is proposed, not previously approved.
+**Owner review remaining:** confirm whether rejected/cancelled requests require a new linked request and whether the proposed rework edges are correct. The resumable-block decision is now recorded as approved by the Owner; the full matrix remains proposed until remaining decisions and implementation review are complete.
 
 ## 5. Risk and approval gates
 
@@ -170,7 +174,7 @@ Before any Preview write endpoint:
 - unknown fields and spoofed actor/role/approver/reviewer/principal/risk/SHA/token;
 - malformed/oversized arrays, paths and JSON;
 - revoked assignment, wrong scope, unknown system and invalid path ownership;
-- every allowed and denied state transition;
+- every allowed and denied state transition, including block/unblock, blocked-state audit provenance, stale-gate re-entry and concurrent unblock attempts;
 - stale `state_version`, replayed token and concurrent writers;
 - implementer self-review; AI identity attempting human approval;
 - high/critical risk without Platform Owner approval;
@@ -184,7 +188,7 @@ Before any Preview write endpoint:
 ## 10. No-go conditions
 
 Do not implement or enable write endpoints until:
-1. Owner approves exact transition matrix and blocked/terminal semantics.
+1. Owner approves remaining transition-matrix semantics (rejected/cancelled reopening and rework edges); resumable `blocked` handling has been selected, but its implementation contract still requires review.
 2. D1 migration is reconciled with Preview migration history and separately approved.
 3. Disposable D1 evidence is independently reviewed.
 4. Trusted Git ref/commit verification is specified and tested.
