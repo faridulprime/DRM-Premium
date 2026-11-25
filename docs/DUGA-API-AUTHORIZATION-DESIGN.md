@@ -36,7 +36,7 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 ## Remaining proposed route contracts
 - GET /api/governance/overview — Owner-only operational summary.
 - GET /api/governance/systems — versioned registry snapshot, read-only.
-- GET /api/governance/changes — cursor-paginated requests.
+- GET /api/governance/changes — implemented Owner-only, read-only cursor-paginated list. Supports a bounded 1–50 page size, allow-listed status filter and title/summary search; returns only an explicit set of change-request columns and parsed affected-system/path arrays. Uses descending `(created_at,id)` keyset pagination and returns an opaque cursor. No write operations are exposed.
 - POST /api/governance/changes — create a proposal; server assigns actor and ID.
 - GET /api/governance/changes/:id — request plus related reviews, approvals and validations.
 - POST /api/governance/changes/:id/reviews — AI audit/human review record; identity derived from trusted execution context.
@@ -63,6 +63,12 @@ The catch-all API now handles `GET /api/governance/health` after normal session 
 
 ## 17. DUGA schema readiness response
 The Owner health route reports `schema: not_installed` when none of the expected tables exist, `partial` when only some exist, and `ready` when all eight are present. This is a structural presence check only: it does not prove that table definitions, indexes, triggers, migration order or data integrity match the reviewed draft. A separate schema fingerprint/validation step is still required before declaring a Preview database accepted.
+
+## 19. Read-only change request listing — 2026-11-25
+
+`GET /api/governance/changes` is now implemented in the Pages catch-all handler. It reuses session authentication and explicitly requires the application Owner role. Query parameters are bounded: `limit` accepts 1–50 (default 25), `status` must be one of the DUGA lifecycle states, `q` is limited to 120 characters, and `cursor` is validated before use. SQL values are parameter-bound; sort order is deterministic by `created_at DESC,id DESC` and pagination is keyset-based. The response selects only named columns and converts the two JSON-array fields into arrays.
+
+This is a read-only route. It does not create, update, approve, reject, assign, or audit a change request. If the DUGA table is absent or query fails, it returns a controlled 503. The new tests use mocked D1; they do not prove live Preview behavior, query performance under production data, or actual database readiness.
 
 ## 18. Structural schema inspection boundary
 The health route now checks the required column names via read-only `PRAGMA table_info`, named index presence and required trigger presence via `sqlite_master`. A `ready` result means these named structural elements exist. It does not yet compare column types, nullability, CHECK/FK definitions, index column order/uniqueness, trigger SQL bodies, migration ledger or data integrity. Preview acceptance must still run a stronger schema-diff/fingerprint validator against a verified backup and migration history.
