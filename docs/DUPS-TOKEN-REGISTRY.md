@@ -243,3 +243,8 @@ The Website Builder shell, public registration dialog, account suspension screen
 
 
 The public registration dialog also consumes the zero-offset primitive on all four viewport edges while retaining its native dialog centering through `margin:auto`. Its computed geometry is included in the Homepage overlay browser contract.
+
+
+## Live Users avatar image fill — 2026-11-26
+
+The `.live-avatar img` and `.live-drawer-avatar img` positioned image layers now use `--dups-offset-0` for all four parent-relative edges. This preserves full-frame image coverage and the existing avatar stacking layer.
