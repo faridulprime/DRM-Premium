@@ -35,6 +35,9 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 - Use CHECK constraints for enumerations, non-empty identifiers and JSON validity where supported.
 - Use foreign keys to existing users for human identities; use ON DELETE RESTRICT for governance actors/approvers so deleting an account cannot erase accountability history.
 - Use XOR CHECK constraints for human vs AI actor identity.
+- Require a non-null human assigning actor for every assignment row; AI principals cannot self-assign governance roles.
+- Keep finding review metadata paired: reviewer and review timestamp must either both be present or both be absent.
+- Require a lease expiry exactly while a job is running; non-running jobs must not retain a lease.
 - Use scoped unique indexes for active assignments; avoid ambiguous platform/system scope.
 - Add indexes for status/time, request references, actor lookups and pending jobs.
 - Use optimistic state versioning on change requests to prevent lost updates.
@@ -101,3 +104,7 @@ The schema draft was syntax-tested in a local SQLite 3.46.1 in-memory database w
 The first probe exposed a role-kind/scope gap: the original draft did not prevent an AI principal from being assigned a human-only role. The SQL draft was tightened with CHECK constraints matching governance/ownership/roles.json: platform-owner, governance-manager and system-owner are human roles; ai-maintainer and independent-ai-auditor are AI roles; platform-wide roles use platform scope and system roles use system scope. Follow-up probes passed for AI-as-platform-owner rejection, wrong-scope AI maintainer rejection, human-as-AI-auditor rejection and a valid system-scoped AI maintainer.
 
 Limitations: this was a local SQLite syntax/constraint test, not a Cloudflare D1 test. It does not validate Cloudflare's deployed SQLite runtime, D1 foreign-key settings, D1 batch semantics, migration history, API authorization, or regression compatibility with the live Preview database. No D1 database was accessed or modified.
+
+
+## 12. Additional integrity hardening — 2026-11-25
+The draft now requires `assigned_by_user_id` for every role assignment and pairs `reviewed_at` with `reviewed_by_user_id` for findings. Job lease state is constrained so only running jobs can hold a lease expiry. These constraints reduce invalid states at rest; they do not replace Owner authorization, actor derivation or transition checks in the API.
