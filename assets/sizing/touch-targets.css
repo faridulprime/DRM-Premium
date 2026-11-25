@@ -63,3 +63,66 @@
   align-items:center;
   min-block-size:var(--duss-touch-target-min, 44px)!important;
 }
+
+/* Header controls and search actions */
+.topbar>.yt-menu-trigger,
+.admin-topbar>.yt-menu-trigger,
+.live-topbar>.yt-menu-trigger,
+.studio-global-topbar>.yt-menu-trigger {
+  inline-size:var(--duss-touch-target-min, 44px)!important;
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+  flex:0 0 var(--duss-touch-target-min, 44px)!important;
+}
+
+.yt-search>button,
+.admin-search>button {
+  inline-size:var(--duss-touch-target-min, 44px)!important;
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+  flex:0 0 var(--duss-touch-target-min, 44px)!important;
+}
+
+.topbar .yt-auth-field {
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.topbar .yt-auth-field input {
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+  min-inline-size:44px!important;
+}
+
+.topbar>#headerLoginForm>.yt-login-action,
+.topbar .yt-create-button {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+@media(max-width:760px) {
+  .home-page .topbar {
+    grid-template-columns:44px minmax(0,1fr) 44px!important;
+  }
+  .home-page .yt-search {
+    inline-size:44px!important;
+    min-inline-size:44px!important;
+    max-inline-size:44px!important;
+  }
+}
+
+.admin-main .gate-panel input:not([type="checkbox"]),
+.admin-main .gate-panel select,
+.admin-main .gate-panel textarea,
+.admin-main .admin-login-panel input:not([type="checkbox"]),
+.admin-main .admin-login-panel select,
+.admin-main .admin-login-panel textarea {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.admin-main .gate-panel .primary,
+.admin-main .admin-login-panel .primary {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+

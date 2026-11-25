@@ -197,3 +197,7 @@ Validation boundary:
 - The module consumes the existing `--duss-touch-target-min` (44px) token for primary menu triggers, brand/back links, search fields and buttons, the Live Users restriction action, profile save action, sidebar links and category chips.
 - Component icon and text sizes remain unchanged. Interactive control boxes are allowed to grow to the DUSS minimum; responsive header/search layout must still pass the browser overflow and viewport checks.
 - Updated the DUSS cache key to `duss-08` on all five pages. This is a consumer integration pass; it does not establish complete coverage of every dynamic dialog, generated action, or third-party control.
+
+### Phase 8 follow-up — rendered target audit
+
+The first 35-state Chromium audit exposed remaining undersized controls in the public login row and Admin sign-in/setup panels. The DUSS touch-target consumer module now applies the existing 44px token to those authentication inputs/actions, the Home/Admin search icon buttons, and the Home mobile menu/search slots. This was done as a hit-area adjustment; typography and icon glyph sizing remain unchanged. The next browser run is the acceptance check for viewport overflow and the revised target dimensions.
