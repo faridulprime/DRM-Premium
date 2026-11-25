@@ -246,6 +246,109 @@ def main() -> int:
                    require_audit_event("change-request-transition:change-blocked:3")),
           should_fail=False)
 
+    # Exhaustive database transition matrix: every allow-listed edge succeeds,
+    # every other pair (including terminal-state exits) is rejected.
+    allowed_edges = {
+        "proposed": {"analyzing", "cancelled", "blocked"},
+        "analyzing": {"impact_review", "cancelled", "blocked"},
+        "impact_review": {"awaiting_ai_audit", "awaiting_human_approval", "cancelled", "blocked"},
+        "awaiting_ai_audit": {"awaiting_human_approval", "impact_review", "blocked"},
+        "awaiting_human_approval": {"approved", "rejected", "impact_review", "blocked"},
+        "approved": {"implementing", "blocked"},
+        "implementing": {"validating", "blocked"},
+        "validating": {"final_review", "implementing", "blocked"},
+        "final_review": {"accepted", "implementing", "blocked"},
+        "accepted": set(),
+        "rejected": set(),
+        "cancelled": set(),
+        "blocked": {"impact_review", "cancelled"},
+    }
+    progression = {
+        "proposed": [],
+        "analyzing": ["analyzing"],
+        "impact_review": ["analyzing", "impact_review"],
+        "awaiting_ai_audit": ["analyzing", "impact_review", "awaiting_ai_audit"],
+        "awaiting_human_approval": ["analyzing", "impact_review", "awaiting_ai_audit", "awaiting_human_approval"],
+        "approved": ["analyzing", "impact_review", "awaiting_ai_audit", "awaiting_human_approval", "approved"],
+        "implementing": ["analyzing", "impact_review", "awaiting_ai_audit", "awaiting_human_approval", "approved", "implementing"],
+        "validating": ["analyzing", "impact_review", "awaiting_ai_audit", "awaiting_human_approval", "approved", "implementing", "validating"],
+        "final_review": ["analyzing", "impact_review", "awaiting_ai_audit", "awaiting_human_approval", "approved", "implementing", "validating", "final_review"],
+        "accepted": ["analyzing", "impact_review", "awaiting_ai_audit", "awaiting_human_approval", "approved", "implementing", "validating", "final_review", "accepted"],
+        "rejected": ["analyzing", "impact_review", "awaiting_ai_audit", "awaiting_human_approval", "rejected"],
+        "cancelled": ["cancelled"],
+        "blocked": ["blocked"],
+    }
+
+    def insert_matrix_request(request_id):
+        db.execute("""INSERT INTO duga_change_requests
+          (id,title,summary,rationale,status,risk_level,affected_systems_json,
+           affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+           source_branch,policy_commit_sha,created_at,updated_at)
+          VALUES (?, 'Matrix','Transition test','','proposed','low','[]','[]',
+                  'rollback','human','human-1','feature/test','policy-sha',1,1)""",
+          (request_id,))
+
+    def matrix_transition(request_id, old_status, new_status, version, timestamp):
+        assignments = ["status=?", "state_version=?", "updated_at=?"]
+        values = [new_status, version + 1, timestamp]
+        if new_status == "blocked":
+            assignments.extend(["blocked_from_status=?", "block_reason_code='other'"])
+            values.append(old_status)
+        elif old_status == "blocked":
+            assignments.extend(["blocked_from_status=NULL", "block_reason_code=NULL"])
+        if old_status == "approved" and new_status == "implementing":
+            assignments.extend(["implementer_type='ai'", "implementer_principal_id='matrix-agent'"])
+        if old_status == "implementing" and new_status == "validating":
+            assignments.append("implementation_commit_sha=?")
+            values.append("matrix-commit-" + request_id)
+        result = db.execute(
+            "UPDATE duga_change_requests SET " + ",".join(assignments) +
+            " WHERE id=? AND status=? AND state_version=?",
+            (*values, request_id, old_status, version),
+        )
+        if result.rowcount != 1:
+            raise AssertionError(f"matrix transition did not match exactly one row: {old_status}->{new_status}")
+
+    def matrix_fixture(source_status, request_id):
+        insert_matrix_request(request_id)
+        state, version, timestamp = "proposed", 1, 1
+        for target in progression[source_status]:
+            matrix_transition(request_id, state, target, version, timestamp + 1)
+            state, version, timestamp = target, version + 1, timestamp + 1
+        if state != source_status:
+            raise AssertionError(f"bad matrix fixture: expected {source_status}, got {state}")
+        return version, timestamp
+
+    matrix_allowed_count = 0
+    matrix_rejected_count = 0
+    for source_status, targets in allowed_edges.items():
+        for target_status in targets:
+            request_id = f"matrix-allow-{matrix_allowed_count}"
+            version, timestamp = matrix_fixture(source_status, request_id)
+            check(f"allowed lifecycle edge {source_status}->{target_status}",
+                  lambda rid=request_id, src=source_status, dst=target_status, v=version, t=timestamp:
+                      matrix_transition(rid, src, dst, v, t + 1),
+                  should_fail=False)
+            matrix_allowed_count += 1
+
+    all_statuses = tuple(allowed_edges)
+    for source_status, targets in allowed_edges.items():
+        for target_status in all_statuses:
+            if target_status == source_status or target_status in targets:
+                continue
+            request_id = f"matrix-reject-{matrix_rejected_count}"
+            version, timestamp = matrix_fixture(source_status, request_id)
+            check(f"rejected lifecycle edge {source_status}->{target_status}",
+                  lambda rid=request_id, src=source_status, dst=target_status, v=version, t=timestamp:
+                      matrix_transition(rid, src, dst, v, t + 1),
+                  should_fail=True)
+            matrix_rejected_count += 1
+
+    if matrix_allowed_count != 29 or matrix_rejected_count != 127:
+        raise AssertionError(
+            f"Unexpected lifecycle matrix coverage: allowed={matrix_allowed_count}, rejected={matrix_rejected_count}"
+        )
+
     check(
         "request cannot be inserted with preassigned human implementer",
         lambda: db.execute(
