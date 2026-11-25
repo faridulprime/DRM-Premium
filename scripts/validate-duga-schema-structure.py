@@ -106,6 +106,14 @@ def main() -> int:
             if actual != expected:
                 fail(f"{table} column order/shape mismatch: expected={expected}, actual={actual}")
 
+        # Every table must expose a TEXT primary-key id as the sole PK.
+        for table in EXPECTED_COLUMNS:
+            info = {r[1]: r for r in db.execute(f'PRAGMA table_info("{table}")')}
+            id_row = info.get("id")
+            if not id_row or str(id_row[2]).upper() != "TEXT" or int(id_row[5]) != 1:
+                fail(f"{table}.id must be a TEXT primary key")
+
+
         actual_indexes = {}
         for table in EXPECTED_COLUMNS:
             for row in db.execute(f'PRAGMA index_list("{table}")'):
@@ -134,6 +142,25 @@ def main() -> int:
             if not row or row[0] != table or marker.lower() not in (row[1] or "").lower():
                 fail(f"trigger {name} missing or body marker mismatch")
 
+        # Verify trigger timing/operation, not just its name and message text.
+        trigger_sql = {
+            name: row[0].lower()
+            for name, row in (
+                (name, db.execute("SELECT sql FROM sqlite_master WHERE type='trigger' AND name=?", (name,)).fetchone())
+                for name in EXPECTED_TRIGGERS
+            )
+            if row
+        }
+        trigger_requirements = {
+            "duga_review_no_implementer_self_audit": ("before insert on duga_reviews", "raise(abort"),
+            "duga_audit_no_update": ("before update on duga_audit_events", "raise(abort"),
+            "duga_audit_no_delete": ("before delete on duga_audit_events", "raise(abort"),
+        }
+        for name, fragments in trigger_requirements.items():
+            sql = trigger_sql.get(name, "")
+            if any(fragment not in sql for fragment in fragments):
+                fail(f"trigger {name} operation/timing semantics mismatch")
+
         # Verify critical foreign-key relationships, including human actor references.
         expected_fks = {
             "duga_assignments": {("assigned_by_user_id", "users", "id"), ("user_id", "users", "id")},
@@ -148,6 +175,23 @@ def main() -> int:
             actual = {(r[3], r[2], r[4]) for r in db.execute(f'PRAGMA foreign_key_list("{table}")')}
             if not expected.issubset(actual):
                 fail(f"{table} missing foreign keys: {sorted(expected-actual)}")
+
+        # The draft deliberately uses RESTRICT for every FK; reject accidental cascades.
+        for table in EXPECTED_COLUMNS:
+            for fk in db.execute(f'PRAGMA foreign_key_list("{table}")'):
+                if str(fk[6]).upper() != "RESTRICT":
+                    fail(f"{table}.{fk[3]} has unsafe/unreviewed ON DELETE action: {fk[6]}")
+
+        expected_fk_counts = {
+            "duga_assignments": 2, "duga_change_requests": 2,
+            "duga_reviews": 2, "duga_approvals": 2,
+            "duga_validation_runs": 1, "duga_audit_events": 1,
+            "duga_analysis_findings": 1, "duga_jobs": 0,
+        }
+        for table, expected_count in expected_fk_counts.items():
+            actual_count = len(list(db.execute(f'PRAGMA foreign_key_list("{table}")')))
+            if actual_count != expected_count:
+                fail(f"{table} foreign-key count mismatch: expected={expected_count}, actual={actual_count}")
 
         # Critical CHECK constraints must remain present in the reviewed DDL.
         ddl = {r[0]: (r[1] or "").lower() for r in db.execute(
@@ -166,7 +210,7 @@ def main() -> int:
 
         print("DUGA deep schema validation: PASS")
         print(f"Tables: {len(actual_tables)} | Indexes: {len(EXPECTED_INDEXES)} | Triggers: {len(EXPECTED_TRIGGERS)}")
-        print("Columns, critical type/nullability declarations, ordered index columns, uniqueness/partial flags, trigger markers, critical foreign keys and selected CHECK constraints verified.")
+        print("Columns, critical type/nullability declarations, ordered index columns, uniqueness/partial flags, trigger markers, critical foreign keys and RESTRICT delete actions, TEXT primary keys, trigger timing/operation and selected CHECK constraints verified.")
         print("LIMITATION: in-memory draft validation only; no live Preview D1 schema was inspected.")
         return 0
     except (sqlite3.Error, AssertionError) as exc:
