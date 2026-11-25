@@ -662,9 +662,9 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
 
 /* Universal account-role badge system: role colors are semantic, not page-status colors. */
 .role-badge,.dash-role.role-badge,.pro-badge.role-badge,.live-role.role-badge,.live-drawer-chip.role-badge,.studio-role-badge.role-badge{
- display:inline-flex;align-items:center;justify-content:center;gap:6px;width:max-content;max-width:100%;
- padding:4px 8px;border:1px solid transparent;border-radius:999px;font-size:11px;line-height:1.2;
- font-weight:650;letter-spacing:.035em;white-space:nowrap;text-shadow:none;box-shadow:none;
+ display:inline-flex;align-items:center;justify-content:center;gap:var(--duss-role-badge-gap, 6px);width:max-content;max-width:100%;
+ padding:var(--duss-role-badge-padding-y, 4px) var(--duss-role-badge-padding-x, 8px);border:1px solid transparent;border-radius:var(--duss-role-badge-radius, 999px);font-size:var(--duss-role-badge-font-size, 11px);line-height:var(--duss-role-badge-line-height, 1.2);
+ font-weight:var(--duss-role-badge-font-weight, 650);letter-spacing:var(--duss-role-badge-letter-spacing, .035em);white-space:nowrap;text-shadow:none;box-shadow:none;
 }
 .role-badge--owner{color:var(--ducs-shell-role-owner-text)!important;background:var(--ducs-shell-role-owner-bg)!important;border-color:var(--ducs-shell-role-owner-border)!important}
 .role-badge--admin{color:var(--ducs-shell-role-admin-text)!important;background:var(--ducs-shell-role-admin-bg)!important;border-color:var(--ducs-shell-role-admin-border)!important}
