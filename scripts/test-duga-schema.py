@@ -474,6 +474,13 @@ def main() -> int:
         ),
         should_fail=True,
     )
+    check("job cannot be inserted already running with a forged lease",
+        lambda: db.execute("""INSERT INTO duga_jobs
+          (id,job_type,status,input_json,available_at,attempts,lease_owner,
+           lease_token,lease_generation,lease_expires_at,created_at,updated_at)
+          VALUES ('job-insert-running','validation','running','{}',1,1,
+                  'worker-forged','token-forged',1,100,1,1)"""),
+        should_fail=True)
     db.execute(
         """INSERT INTO duga_jobs
            (id,job_type,status,input_json,available_at,created_at,updated_at)
@@ -487,11 +494,13 @@ def main() -> int:
         should_fail=False)
     db.execute(
         """INSERT INTO duga_jobs
-           (id,job_type,status,input_json,available_at,attempts,lease_owner,
-            lease_token,lease_generation,lease_expires_at,created_at,updated_at)
-           VALUES ('job-lease','validation','running','{}',1,1,'worker-a',
-                   'token-a',1,100,1,1)"""
+           (id,job_type,status,input_json,available_at,created_at,updated_at)
+           VALUES ('job-lease','validation','queued','{}',1,1,1)"""
     )
+    db.execute("""UPDATE duga_jobs SET status='running',attempts=1,
+      lease_owner='worker-a',lease_token='token-a',lease_generation=1,
+      lease_expires_at=100,updated_at=2
+      WHERE id='job-lease' AND status='queued' AND available_at<=50""")
     check("duplicate active lease token rejected",
         lambda: db.execute("""UPDATE duga_jobs SET lease_owner='worker-b',
           lease_token='token-queued',lease_generation=2,attempts=2,lease_expires_at=100
