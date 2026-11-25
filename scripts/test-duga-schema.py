@@ -114,6 +114,57 @@ def main() -> int:
                    'feature/test','policy-sha','ai','agent-same',1,1)"""
     )
     check(
+        "human implementer requires human user identity",
+        lambda: db.execute(
+            """INSERT INTO duga_change_requests
+               (id,title,summary,rationale,status,risk_level,affected_systems_json,
+                affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+                source_branch,policy_commit_sha,implementer_type,implementer_principal_id,
+                created_at,updated_at)
+               VALUES ('change-bad-human-implementer','Title','Summary','','proposed','low',
+                       '[]','[]','rollback','human','human-1',
+                       'feature/test','policy-sha','human','agent-x',1,1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "AI implementer requires AI principal identity",
+        lambda: db.execute(
+            """INSERT INTO duga_change_requests
+               (id,title,summary,rationale,status,risk_level,affected_systems_json,
+                affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+                source_branch,policy_commit_sha,implementer_type,implementer_user_id,
+                created_at,updated_at)
+               VALUES ('change-bad-ai-implementer','Title','Summary','','proposed','low',
+                       '[]','[]','rollback','human','human-1',
+                       'feature/test','policy-sha','ai','human-2',1,1)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "human reviewer cannot submit independent AI audit",
+        lambda: db.execute(
+            """INSERT INTO duga_reviews
+               (id,change_request_id,review_type,reviewer_type,reviewer_user_id,
+                decision,reviewed_commit_sha,evidence_json,created_at)
+               VALUES ('review-human-as-ai','change-self-audit','independent_ai_audit','human',
+                       'human-2','approved','commit-1','{}',2)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "AI reviewer cannot submit human review",
+        lambda: db.execute(
+            """INSERT INTO duga_reviews
+               (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
+                decision,reviewed_commit_sha,evidence_json,created_at)
+               VALUES ('review-ai-as-human','change-self-audit','human_review','ai',
+                       'agent-independent','approved','commit-1','{}',2)"""
+        ),
+        should_fail=True,
+    )
+
+    check(
         "AI implementer cannot independently audit own change",
         lambda: db.execute(
             """INSERT INTO duga_reviews
