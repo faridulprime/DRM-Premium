@@ -212,3 +212,7 @@ The shared sidebar and Profile drawer now use the DUPS zero-offset primitive for
 ## Live Users drawer backdrop viewport-edge anchor — 2026-11-26
 
 The Live Users drawer backdrop now consumes the shared DUPS zero-offset primitive for all four viewport insets. Its fixed positioning, stacking layer, visual treatment and shared overlay lifecycle are preserved. The dynamic browser fixture checks its computed viewport-edge geometry while the drawer is open; this source/test addition remains pending a confirmed Chromium workflow result.
+
+## Compact Homepage and Admin viewport-edge tokenization — 2026-11-26
+
+The compact Homepage fixed header uses the shared zero-offset token for its top and horizontal viewport edges while retaining an automatic bottom edge. The Admin Category Bar uses the same token for horizontal edges and preserves its responsive top anchor. Browser assertions now check Admin Category Bar left/right geometry against the token. No fixed positioning, responsive dimensions, breakpoints or stacking order are intentionally changed; the new assertions await a confirmed Chromium workflow result.
