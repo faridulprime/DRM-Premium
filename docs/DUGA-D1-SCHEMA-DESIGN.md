@@ -145,3 +145,21 @@ The lease-transition trigger rejects skipped generations, token/owner replacemen
 
 The runtime protocol remains mandatory: claim/reclaim must be one conditional UPDATE that matches queued availability or expired running lease and increments attempts/generation atomically. Every heartbeat and completion must condition on id, status='running', the exact token and generation, and an unexpired lease; a zero-row result means the worker is stale and must discard its result. Tokens must be cryptographically random and generated server-side. Do not read-then-write a claim, accept worker-supplied token/generation, or publish side effects before successful fenced completion. This draft does not implement a worker API or prove D1 runtime behavior.
 
+
+
+## 23. Evidence mutability classification (F-05)
+
+| Table | Immutable evidence | Permitted mutable state |
+|---|---|---|
+| duga_reviews | Entire row; corrections require a new review | None |
+| duga_approvals | Entire row, including assignment/policy snapshot | None |
+| duga_audit_events | Entire row | None |
+| duga_assignments | Grant identity, scope, role, subject and grant actor/time | One-way active -> revoked, with revoker and timestamp |
+| duga_validation_runs | Change/commit/validator identity; all fields after terminal status | queued -> running -> passed/failed/cancelled, or queued -> cancelled |
+| duga_analysis_findings | Analyzer version, source commit/path/symbol, classification, confidence and evidence | Versioned review status with reviewer/time |
+
+Assignment grant/revocation and validation/finding state transitions generate audit rows through database triggers in the same statement. Assignment events identify the recorded human grantor/revoker; finding review identifies the recorded reviewer. Validation transition audit rows use the explicit database actor label `duga-db-trigger`: this proves a database-enforced transition was recorded, not which external runner authenticated or whether its result is genuine.
+
+Finding evidence cannot be deleted or rewritten. Review state moves from open to under_review and then to accepted/dismissed/quarantined; each update increments state_version and records reviewer/time. Validation rows may transition only through the declared lifecycle, their identity fields cannot change, and terminal rows cannot be updated. Reviews and approvals remain fully immutable.
+
+These triggers provide atomic database audit capture, not a complete API authorization system. The API must derive reviewer/revoker identity from trusted sessions and use state-version compare-and-swap. Validation service identity, commit provenance and result authenticity remain unresolved runtime requirements.
