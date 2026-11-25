@@ -135,3 +135,13 @@ This is database-level consistency evidence, not a replacement for server-side s
 ## 21. Validation-run lifecycle invariants
 
 `duga_validation_runs` now constrains timestamps by status: queued runs have neither start nor completion time; running runs require a start and forbid completion; passed/failed runs require both timestamps with completion not earlier than start; cancelled runs require completion and, if execution started, completion cannot precede start. A cancellation before execution is represented by a null start and non-null completion. These checks validate row consistency only; they do not prove runner identity, commit provenance, or that results were genuinely produced by a trusted CI runner.
+
+
+## 22. Fenced job leases (F-04)
+
+The job row now carries a non-empty lease owner, an unpredictable per-claim lease token, and a monotonically increasing fencing generation. The generation and attempt count advance together on a fresh claim or expired-lease reclaim. Heartbeats retain the current identity and generation; terminal completion/cancellation clears owner, token and expiry while retaining the generation. A partial unique index prevents the same token from being active on two jobs.
+
+The lease-transition trigger rejects skipped generations, token/owner replacement without a generation advance, heartbeat identity changes, and terminal transitions that fail to clear lease fields. Regression tests model queued-to-running claims, heartbeat, expiry/reclaim, stale-token heartbeat/completion, generation skipping and valid completion.
+
+The runtime protocol remains mandatory: claim/reclaim must be one conditional UPDATE ... RETURNING that matches queued availability or expired running lease and increments attempts/generation atomically. Every heartbeat and completion must condition on id, status='running', the exact token and generation, and an unexpired lease; a zero-row result means the worker is stale and must discard its result. Tokens must be cryptographically random and generated server-side. Do not read-then-write a claim, accept worker-supplied token/generation, or publish side effects before successful fenced completion. This draft does not implement a worker API or prove D1 runtime behavior.
+
