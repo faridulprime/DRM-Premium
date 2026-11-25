@@ -1,6 +1,6 @@
 # DRM Universal Sizing System (DUSS)
-Version: 0.5.0 — Role badge and Admin action-button sizing migration
-Status: Core token foundation, selected form/profile geometry, public shell, role badges, and Admin action-button geometry migrated to semantic tokens
+Version: 0.6.0 — Role badge, Admin action-button, and audited icon sizing migration
+Status: Core token foundation, selected form/profile geometry, public shell, role badges, Admin action-button geometry, and selected SVG/glyph icon sizes migrated to semantic tokens
 
 ## Purpose and boundaries
 DUSS centralizes sizing for typography, icons, spacing, controls, layout, surfaces, and responsive behavior. DUME continues to own motion and animation. DUSS does not redesign colors or visual themes.
@@ -148,3 +148,17 @@ Completed on `feature/full-admin-panel`:
 Validation:
 - Source-level assertions verify each migrated selector uses the new token family.
 - No browser-rendered or interaction validation is claimed. Browser screenshots, computed-style comparison, keyboard/touch interaction, 200% zoom, and Bengali/Latin overflow checks remain outstanding.
+
+
+## Phase 6 implementation update — 2026-11-25
+
+Completed on `feature/full-admin-panel`:
+- Added component-specific icon-size tokens for the global menu icon, search icons, authentication-field icons, sidebar logout icon/glyphs, Live Users search, Profile brand mark, and homepage field glyph.
+- Migrated only selectors whose current dimensions and responsive overrides were identified in the source audit: `theme.css`, `styles.css`, `live-users.css`, and `profile.css`.
+- Preserved the existing source dimensions: 24, 21, 16, 14, 22, 20, 19, 17, 15, 30 and 27 CSS px as applicable.
+- Kept visual/optical alignment changes out of this phase; CSS source sizes alone cannot establish visual centering or perceived size.
+- Updated the sizing cache key to `duss-06` on all five consuming pages.
+
+Validation:
+- Static token-reference and cache-key checks are added in `scripts/test-duss-tokens.py` and a dedicated GitHub Actions workflow.
+- Browser screenshots, computed bounding boxes, keyboard/touch interaction, zoom and Bengali/Latin text layout remain separate runtime checks.
