@@ -119,3 +119,8 @@ Chromium run #45678490915 passed the computed z-index checks for the closing dra
 ### Visual editor fixed-anchor migration — 2026-11-26
 
 The base visual-editor toggle and panel now consume semantic DUPS anchor tokens. The active Homepage theme override consumes desktop (14px) and compact (12px) edge tokens for the fixed toggle. A Chromium assertion reveals the static hidden toggle/panel and verifies computed fixed positioning, top/left/right/bottom geometry, and existing local z-index token agreement at the existing Homepage viewport set. Numeric coordinates and stacking order are preserved. This does not validate the editor's authenticated interaction flow, dynamic collision handling, or every route where the editor may be mounted.
+
+
+### Profile completion overlay anchor migration — 2026-11-26
+
+The fixed profile-completion bar now consumes DUPS top and viewport-center anchor tokens; its backdrop consumes an explicit zero-inset token. Chromium verifies computed fixed positioning, top offset, center alignment, full-viewport backdrop coverage and existing stacking order at the Homepage viewport set. Existing 74px/50%/0px geometry and layer values are preserved.
