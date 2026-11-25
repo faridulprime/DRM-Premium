@@ -139,7 +139,7 @@ This is database-level consistency evidence, not a replacement for server-side s
 
 ## 22. Fenced job leases (F-04)
 
-The job row now carries a non-empty lease owner, an unpredictable per-claim lease token, and a monotonically increasing fencing generation. The generation and attempt count advance together on a fresh claim or expired-lease reclaim. Heartbeats retain the current identity and generation; terminal completion/cancellation clears owner, token and expiry while retaining the generation. A partial unique index prevents the same token from being active on two jobs.
+The job row must be inserted queued with zero attempts and no lease/result fields; a database insert guard prevents bypassing the claim protocol. It then carries a non-empty lease owner, an unpredictable per-claim lease token, and a monotonically increasing fencing generation. The generation and attempt count advance together on a fresh claim or expired-lease reclaim. Heartbeats retain the current identity and generation; terminal completion/cancellation clears owner, token and expiry while retaining the generation. A partial unique index prevents the same token from being active on two jobs.
 
 The lease-transition trigger rejects skipped generations, token/owner replacement without a generation advance, heartbeat identity changes, and terminal transitions that fail to clear lease fields. It also freezes job identity/input/availability/creation fields across all updates, prevents result publication before terminal completion, and requires nondecreasing update timestamps. Regression tests model queued-to-running claims, heartbeat, expiry/reclaim, stale-token heartbeat/completion, generation skipping, immutable-input/result bypass attempts and valid completion.
 
