@@ -280,6 +280,25 @@ BEGIN
  'file_path',NEW.file_path),NEW.reviewed_at);
 END;
 
+CREATE TRIGGER duga_assignments_insert_guard
+BEFORE INSERT ON duga_assignments
+WHEN NEW.status<>'active' OR NEW.revoked_at IS NOT NULL OR NEW.revoked_by_user_id IS NOT NULL
+BEGIN SELECT RAISE(ABORT,'DUGA assignments must begin active'); END;
+CREATE TRIGGER duga_assignments_no_delete
+BEFORE DELETE ON duga_assignments
+BEGIN SELECT RAISE(ABORT,'DUGA assignment grant evidence cannot be deleted'); END;
+CREATE TRIGGER duga_validation_runs_insert_guard
+BEFORE INSERT ON duga_validation_runs
+WHEN NEW.status<>'queued'
+BEGIN SELECT RAISE(ABORT,'DUGA validation runs must begin queued'); END;
+CREATE TRIGGER duga_validation_runs_no_delete
+BEFORE DELETE ON duga_validation_runs
+BEGIN SELECT RAISE(ABORT,'DUGA validation evidence cannot be deleted'); END;
+CREATE TRIGGER duga_findings_insert_guard
+BEFORE INSERT ON duga_analysis_findings
+WHEN NEW.status<>'open' OR NEW.reviewed_at IS NOT NULL OR NEW.reviewed_by_user_id IS NOT NULL
+BEGIN SELECT RAISE(ABORT,'DUGA findings must begin open and unreviewed'); END;
+
 CREATE TRIGGER duga_assignments_update_guard
 BEFORE UPDATE ON duga_assignments
 WHEN NOT (OLD.status='active' AND NEW.status='revoked'
