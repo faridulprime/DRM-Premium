@@ -193,3 +193,8 @@ The closing drawer pseudo-layer assertion passed in Chromium run #45678490915 on
 - This is a containing-block ancestry check, not a proof that every possible stacking-context interaction or visual collision is correct. Existing targeted header/drawer/modal layer assertions remain separate.
 - All five page viewport declarations use `width=device-width,initial-scale=1`; none opts into `viewport-fit=cover`, and no `env(safe-area-inset-*)` declarations were found in the audited CSS. Therefore no edge-to-edge safe-area inset patch was added speculatively. Actual iOS device safe-area behavior remains unverified.
 - Native desktop browser zoom remains unverified. The 720 CSS-pixel case is only a 200%-zoom layout-width proxy; static headless Chromium cannot establish the browser's real Ctrl/Cmd+plus zoom behavior.
+
+
+## Upload Studio mobile header anchor migration — 2026-11-26
+
+The fixed mobile Upload Studio global header now consumes the shared zero-offset primitive for its top/left/right viewport edges. The existing fixed positioning, mobile-header stacking token and dimensions are preserved. A targeted Chromium assertion checks the rendered edge geometry and layer-token agreement at all sampled Upload Studio viewports up to 760 CSS px. Native browser zoom, physical iOS safe-area behavior and deployed runtime remain outside this validation.
