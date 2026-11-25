@@ -206,6 +206,21 @@ def main() -> int:
             SET policy_commit_sha='new-policy',updated_at=8
             WHERE id='change-self-audit'"""),
           should_fail=True)
+    check("affected-system scope is immutable after proposal creation",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET affected_systems_json='["OTHER"]',updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
+    check("risk classification is immutable after proposal creation",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET risk_level='critical',updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
+    check("proposal summary is immutable after creation",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET summary='silently rewritten',updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
     check("implementation commit cannot be overwritten",
           lambda: db.execute("""UPDATE duga_change_requests
             SET implementation_commit_sha='forged-commit',updated_at=8
