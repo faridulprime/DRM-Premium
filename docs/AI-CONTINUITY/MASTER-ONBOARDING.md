@@ -55,3 +55,8 @@ These documents do not grant GitHub, Cloudflare, database or other service permi
 - Expanded the Owner health route from table-name detection to read-only structural inspection: required columns via `PRAGMA table_info`, named indexes and required triggers via `sqlite_master`. The response includes missing tables, columns, indexes and triggers. Tests cover a missing required column and complete/partial structures. This still does not prove exact constraints, index definitions, trigger bodies, migration history or data integrity.
 
 - Added `scripts/validate-duga-schema-structure.py` to the governance CI: it validates the DUGA draft's exact table/column inventory, index uniqueness/partial flags, trigger body markers, critical foreign keys and selected CHECK constraints using in-memory SQLite only. The health API inventory now includes the unique single-platform-owner index. CI initially exposed an incomplete mock inventory and a case-sensitive assertion in the new validator; both were corrected. The deep validator's corrected version is awaiting a fresh CI result.
+
+
+## Registry validation extension — 2026-11-25
+
+`scripts/validate-registry-schema.mjs` validates the GitHub desired-state system registry against `governance/registry/system-schema.json`. It checks required and unsupported fields, primitive types, string patterns, enums, array uniqueness, dependency references and dependency cycles. The DUGA governance workflow runs this check alongside the existing ownership/path/dependency validator. This is static repository validation only; it does not query or modify Preview/Production D1 and does not establish that a deployed runtime is serving the current registry.
