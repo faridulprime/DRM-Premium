@@ -2,34 +2,33 @@
 const $=s=>document.querySelector(s),host=$("#dumcHomeGrid");
 if(!host)return;
 const labels={"01_MOVIE_LIBRARY":"মুভি লাইব্রেরি","02_LANGUAGE":"ভাষা","03_FILM_INDUSTRY":"ফিল্ম ইন্ডাস্ট্রি","04_DUBBED_MOVIES":"ডাবড মুভি","05_GENRES":"Genre","06_COUNTRIES":"দেশ","07_COLLECTIONS":"Collections","08_RELEASE_YEARS":"মুক্তির বছর","09_SUBTITLES":"সাবটাইটেল"};
-const visibleRoots=new Set(Object.keys(labels));
+const visibleRoots=new Set(["01_MOVIE_LIBRARY","02_LANGUAGE","03_FILM_INDUSTRY","04_DUBBED_MOVIES","05_GENRES","06_COUNTRIES","07_COLLECTIONS","08_RELEASE_YEARS","09_SUBTITLES"]);
 let roots=[],activeRoot="",activeFolder="",movies=[],offset=0,query="",loading=false,hasMore=false,searchTimer=null;
+const folderName=s=>String(s??"").replace(/^\\d+_/,"").replace(/_/g," ");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
 function flatten(n,out=[]){for(const c of n.children||[]){if(c.id==="ARCHIVED")continue;out.push(c);flatten(c,out)}return out}
-async function loadTaxonomyFallback(){
+async function loadTaxonomy(){
  try{
   const response=await fetch("/assets/dumc/taxonomy.json",{cache:"force-cache"});
   if(!response.ok)throw new Error("Folder taxonomy unavailable");
   const data=await response.json();
   roots=(data.children||[]).filter(x=>visibleRoots.has(x.id));
   renderCategories();renderSubcategories();
-  $("#dumcHomeCount").textContent="DUMC folder catalog";
-  host.innerHTML='<p class="empty dumc-empty">ফোল্ডারগুলো প্রস্তুত। মুভির তালিকা চালু হবে D1 migration প্রয়োগের পর।</p>';
-  $("#dumcHomeMore").hidden=true;
- }catch{host.innerHTML='<p class="empty dumc-empty">মুভি লাইব্রেরি সাময়িকভাবে পাওয়া যাচ্ছে না।</p>'}
+  $("#dumcHomeCount").textContent=roots.length+"টি প্রধান ফোল্ডার";
+ }catch{}
 }
 function renderCategories(){
  const el=$("#dumcHomeCategories");
- const items=[{id:"",name:"সব মুভি"},...roots.map(x=>({id:x.id,name:labels[x.id]||x.name}))];
- el.innerHTML=items.map(x=>'<button type="button" class="dumc-home-chip'+((x.id===activeRoot)?" active":"")+'" data-root="'+esc(x.id)+'">'+esc(x.name)+'</button>').join("");
+ const items=[{id:"",name:"সব মুভি"},...roots.map(x=>({id:x.id,name:labels[x.id]||folderName(x.name)}))];
+ el.innerHTML=items.map(x=>'<button type="button" class="dumc-home-chip'+((x.id===activeRoot)?" active":"")+'" data-root="'+esc(x.id)+'">'+esc(folderName(x.name))+'</button>').join("");
 }
 function renderSubcategories(){
  const el=$("#dumcHomeSubcategories"),root=roots.find(x=>x.id===activeRoot);
  if(!root){el.innerHTML="";el.hidden=true;return}
  const children=flatten(root,[]);
  el.hidden=!children.length;
- el.innerHTML=children.map(x=>'<button type="button" class="dumc-home-subchip'+(x.id===activeFolder?" active":"")+'" data-folder="'+esc(x.id)+'">'+esc(x.name)+(Number(x.movie_count||0)>0?' <span>'+Number(x.movie_count)+'</span>':'')+'</button>').join("");
+ el.innerHTML=children.map(x=>'<button type="button" class="dumc-home-subchip'+(x.id===activeFolder?" active":"")+'" data-folder="'+esc(x.id)+'">'+esc(folderName(x.name))+(Number(x.movie_count||0)>0?' <span>'+Number(x.movie_count)+'</span>':'')+'</button>').join("");
 }
 function renderMovies(){
  const filtered=movies;
@@ -69,5 +68,5 @@ host.addEventListener("click",e=>{
  const b=e.target.closest("[data-movie-id]");if(!b)return;
  const movie=movies.find(x=>x.id===b.dataset.movieId);if(movie&&typeof window.play==="function")window.play(movie);
 });
-loadMovies(true);
+loadTaxonomy().finally(()=>loadMovies(true));
 })();
