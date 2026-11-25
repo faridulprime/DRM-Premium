@@ -181,6 +181,12 @@ await test("Change detail storage failure returns controlled 503", async () => {
   const { response } = await call({ token: "owner-token", path: "/api/governance/changes/change-42", env: mockEnv({ failChangeDetail: true }) });
   assert.equal(response.status, 503);
 });
+await test("Change list and detail reject non-GET methods explicitly", async () => {
+  const list = await call({ token: "owner-token", method: "POST", path: "/api/governance/changes" });
+  const detail = await call({ token: "owner-token", method: "POST", path: "/api/governance/changes/change-42" });
+  assert.equal(list.response.status, 405);
+  assert.equal(detail.response.status, 405);
+});
 await test("Unknown governance route is not exposed", async () => {
   const { response } = await call({ token: "owner-token", path: "/api/governance/changes/unknown" });
   assert.equal(response.status, 404);
