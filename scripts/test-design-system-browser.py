@@ -374,9 +374,17 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 """() => {
                   const drawer = document.querySelector(".profile-drawer");
                   const backdrop = document.querySelector(".profile-drawer-backdrop");
+                  const sidebar = document.querySelector(".yt-sidebar");
                   const root = getComputedStyle(document.documentElement);
                   const zero = parseFloat(root.getPropertyValue("--dups-offset-0"));
-                  if (!drawer || !backdrop) return {missing: true};
+                  if (!drawer || !backdrop || !sidebar) return {missing: true};
+                  const sidebarStyle = getComputedStyle(sidebar);
+                  const sidebarResult = {
+                    position: sidebarStyle.position,
+                    top: parseFloat(sidebarStyle.top),
+                    left: parseFloat(sidebarStyle.left),
+                    bottom: parseFloat(sidebarStyle.bottom)
+                  };
                   const drawerStyle = getComputedStyle(drawer);
                   const drawerResult = {
                     position: drawerStyle.position,
@@ -395,7 +403,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     left: parseFloat(backdropStyle.left)
                   };
                   backdrop.hidden = wasHidden;
-                  return {zero, drawer: drawerResult, backdrop: backdropResult};
+                  return {zero, drawer: drawerResult, backdrop: backdropResult, sidebar: sidebarResult};
                 }"""
             )
             if drawer_edges.get("missing"):
@@ -403,9 +411,14 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             else:
                 try:
                     drawer = drawer_edges["drawer"]
+                    sidebar = drawer_edges["sidebar"]
                     if drawer["position"] != "fixed" or any(abs(drawer[key] - drawer_edges["zero"]) > 1 for key in ("top", "right", "bottom")):
                         fail(f"{name}/{viewport_name}: Profile drawer fixed viewport-edge anchors differ from the DUPS zero-offset token ({drawer_edges})")
+                    if sidebar["position"] != "fixed" or abs(sidebar["left"] - drawer_edges["zero"]) > 1 or abs(sidebar["bottom"] - drawer_edges["zero"]) > 1:
+                        fail(f"{name}/{viewport_name}: Homepage sidebar fixed edge anchors differ from the DUPS zero-offset token ({drawer_edges})")
                     if width <= 760:
+                        if abs(sidebar["top"] - drawer_edges["zero"]) > 1:
+                            fail(f"{name}/{viewport_name}: compact Homepage sidebar top anchor differs from the DUPS zero-offset token ({drawer_edges})")
                         backdrop = drawer_edges["backdrop"]
                         if backdrop["position"] != "fixed" or any(abs(backdrop[key] - drawer_edges["zero"]) > 1 for key in ("top", "right", "bottom", "left")):
                             fail(f"{name}/{viewport_name}: compact Profile drawer backdrop does not fill the viewport using the DUPS zero-offset token ({drawer_edges})")
