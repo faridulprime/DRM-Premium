@@ -78,3 +78,9 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Defined server-side OIDC claim checks, immutable binding keys, retry/attempt semantics, API boundary requirements and D1 evidence-model implications without prescribing an immediate migration.
 - Added a threat acceptance matrix covering forged success, wrong repository/commit/PR/base/workflow, unapproved workflow revision, artifact mismatch, expired/replayed/wrong-scope OIDC, stale lease, policy drift, provider outage and partial persistence. Each case requires a negative test and proof that no PASS/approval-eligible evidence is created.
 - Explicitly design-only: no verifier, OIDC exchange, write endpoint, worker, schema migration, Preview D1 operation or deployment is implemented. Next gates: independent security review; confirm actual GitHub/Cloudflare identity architecture; then implementation planning only after Preview migration-history and backup preflight.
+
+### Governance health endpoint schema-contract alignment
+- Audited `functions/api/[[path]].js` against the current design-only DUGA schema draft. The health endpoint previously checked a stale subset of columns/indexes/triggers and could report schema readiness without checking the F-01–F-05 and F-04 job-fencing controls.
+- Updated its expected contract to all eight draft tables, current columns/indexes, and all 23 named triggers. Trigger checks require the expected operation/table and a distinguishing SQL marker; trigger attachment to the wrong table or a modified definition is reported missing.
+- Updated `scripts/test-governance-health-api.mjs` mock schema and trigger fixtures to match the same full contract.
+- This is a read-only endpoint/test change only. It does not apply the draft schema or prove live Preview D1 compatibility. Health checks verify presence/markers, not full SQL equivalence; static structural validator and SQLite regression suite remain separate controls.
