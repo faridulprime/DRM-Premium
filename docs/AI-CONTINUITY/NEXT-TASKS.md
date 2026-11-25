@@ -22,7 +22,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 4. [DONE] Replace the shared 20 KB header-only body guard with incremental stream byte counting. Regression tests cover absent and understated Content-Length; DUGA Governance CI run #45710504527 passed. Remaining public-endpoint abuse controls still require Cloudflare edge/WAF inspection and legitimate traffic measurement.
 5. If edge protections are absent or insufficient, design bounded controls and route-level regression tests before changing runtime behavior.
 6. Maintain the separation between unpublished Builder JSON (`/api/builder/draft`) and separately persisted live style settings (`/api/builder/style`, legacy `/api/admin/settings`).
-7. Add application regression tests for authentication, registration OTP, role management, presence, analytics, profile images and Builder style/draft flows. Partial coverage added: `/api/admin/active-users` and `/api/admin/users` explicitly deny Admin, Member and anonymous sessions; DUGA Governance CI run #45710985236 passed. The remaining flows are not yet covered.
+7. Add application regression tests for authentication, registration OTP, role management, presence, analytics, profile images and Builder style/draft flows. Partial coverage added: `/api/admin/active-users` and `/api/admin/users` explicitly deny Admin, Member and anonymous sessions; role-mutation tests verify Admin cannot PATCH/DELETE accounts and Owner cannot demote/delete their own account. DUGA Governance CI runs #45710985236 and #45711380191 passed. The remaining flows are not yet covered.
 
 ## DUGA review track — Draft PR #4
 
