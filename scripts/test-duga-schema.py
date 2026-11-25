@@ -103,6 +103,39 @@ def main() -> int:
         ),
         should_fail=False,
     )
+    db.execute(
+        """INSERT INTO duga_change_requests
+           (id,title,summary,rationale,status,risk_level,affected_systems_json,
+            affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+            source_branch,policy_commit_sha,implementer_type,implementer_principal_id,
+            created_at,updated_at)
+           VALUES ('change-self-audit','Title','Summary','','proposed','low',
+                   '["DUSS"]','[]','rollback','human','human-1',
+                   'feature/test','policy-sha','ai','agent-same',1,1)"""
+    )
+    check(
+        "AI implementer cannot independently audit own change",
+        lambda: db.execute(
+            """INSERT INTO duga_reviews
+               (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
+                decision,reviewed_commit_sha,evidence_json,created_at)
+               VALUES ('review-self','change-self-audit','independent_ai_audit','ai',
+                       'agent-same','approved','commit-1','{}',2)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "independent AI auditor may review change",
+        lambda: db.execute(
+            """INSERT INTO duga_reviews
+               (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
+                decision,reviewed_commit_sha,evidence_json,created_at)
+               VALUES ('review-independent','change-self-audit','independent_ai_audit','ai',
+                       'agent-independent','approved','commit-1','{}',2)"""
+        ),
+        should_fail=False,
+    )
+
     check(
         "finding review metadata must be paired",
         lambda: db.execute(
