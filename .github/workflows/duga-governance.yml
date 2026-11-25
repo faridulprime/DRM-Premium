@@ -28,6 +28,7 @@ on:
       - feature/full-admin-panel
     paths:
       - "docs/DUGA-API-AUTHORIZATION-DESIGN.md"
+      - "docs/DUGA-API-WRITE-CONTRACT.md"
       - "docs/DUGA-D1-SCHEMA-DESIGN.md"
       - "docs/DUGA-IMPLEMENTATION-PLAN.md"
       - "README.md"
