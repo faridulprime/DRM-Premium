@@ -1,7 +1,7 @@
 # DUGA — Disposable Cloudflare D1 Acceptance Plan
 
-Status: PASS — owner-operated authenticated Worker acceptance completed on the named disposable Cloudflare D1 database on 2026-11-25. The Worker returned `results.pass = true` for the combined CAS, audit atomicity, rollback, replay, token-reuse and competing-writer assertions. This is disposable-D1 evidence only; it is not Production or shared Preview acceptance.
-Applies to: `duga-foundation-review` schema draft v0.1.0 at commit `c33045567c4a94cc6c818d12a66efb4109c2b894`.
+Status: PARTIAL — the earlier CAS/audit Worker acceptance passed against the prior schema, but it predates the immutable predecessor-link and AI-review decision constraints. Revised-schema D1 acceptance is NOT RUN.
+Applies to: current `duga-foundation-review` schema draft v0.1.0, baseline commit `b3606febb30804d139eb0822fc00024424b726b7`.
 Purpose: prove the candidate DUGA schema against Cloudflare D1 itself before any migration is proposed.
 
 ## 0. Hard safety gate
@@ -17,7 +17,7 @@ Run this plan only against a newly created, disposable D1 database with no produ
 
 ## 1. Prepare a disposable test database
 
-1. Create a new D1 database through the Cloudflare dashboard or Wrangler, explicitly named for disposable DUGA acceptance testing.
+1. Create a NEW D1 database through the Cloudflare dashboard or Wrangler, explicitly named for revised-schema disposable DUGA acceptance testing. This is necessary: the previously tested database contains the older schema and retained synthetic rows; do not reuse it for the revised-schema run.
 2. This database was confirmed empty except for Cloudflare's internal `_cf_KV` table. Do not import the application's real users schema or data.
 3. Use the isolated test fixture `scripts/duga-d1-disposable-acceptance-fixture.sql`. It creates only a minimal synthetic `users(id)` parent table and then applies the reviewed DUGA schema draft.
 4. The fixture is test-only and must be run only after visually verifying the exact database name and ID in the Cloudflare dashboard. It must never be run against Production or shared Preview.
@@ -82,7 +82,20 @@ Attempt orphan references for:
 
 Each orphan INSERT must fail. Then insert valid parent/child fixtures and confirm `PRAGMA foreign_key_check` returns no rows.
 
-### 4.3 Append-only audit checks
+### 4.3 Revised lifecycle/schema constraints
+
+Use synthetic IDs and a valid synthetic human user from this database.
+
+- Insert a valid terminal predecessor (`status='rejected'`) and a new request whose `parent_change_request_id` references it; the insert must succeed.
+- Attempt a child with a nonexistent parent ID; it must fail the foreign key.
+- Attempt a self-parent request (`parent_change_request_id` equal to its own `id`); it must fail.
+- Attempt to change an existing request's `parent_change_request_id`; it must fail with `change request parent link is immutable`.
+- Insert an AI review (`reviewer_type='ai'`, `review_type='independent_ai_audit'`, non-empty `reviewer_principal_id`) with `decision='rejected'`; it must fail. An AI `approved` or `changes_requested` row may pass when all other fields are valid.
+- Confirm a human review can still record `decision='rejected'` when all other fields are valid.
+
+Important: SQL enforces referential integrity and immutable linkage, but it does NOT enforce that the predecessor is currently `rejected` or `cancelled` when the child is created. That terminal-state check, and the prohibition on copying predecessor evidence/authority, remain mandatory server-side API rules and are not D1 acceptance claims.
+
+### 4.4 Append-only audit checks
 
 Insert one valid audit event, then separately attempt:
 ```sql
@@ -139,7 +152,7 @@ D1 acceptance is PASS only when every required probe above passes on Cloudflare 
 
 If any probe fails or cannot be run, report PARTIAL/FAIL with the exact gap. Do not create a production migration, connect the test database to the app, implement state-changing API routes, merge PR #4, or deploy Production as a consequence of this test.
 
-## 8. Current verified status
+## 8. Earlier verified status (prior schema only)
 
 Owner-operated Cloudflare D1 Console observations (2026-11-24):
 - Disposable database: `drm-duga-acceptance-disposable` / `6d512429-34a3-498b-9430-45f11d382da9`.
@@ -161,3 +174,11 @@ Authenticated disposable Worker acceptance (2026-11-25):
 - Test-only synthetic rows and audit events are retained in this disposable database.
 - Temporary unauthenticated diagnostic route was removed from source before the final deployment; the owner pulled the removal and redeployed. Do not reintroduce it.
 - No production migration has been applied. No Production or shared Preview database was used; no live Pages binding was changed. PR #4 remains Draft and unmerged.
+
+
+## 9. Revised-schema run status — 2026-11-25
+
+- The disposable fixture was refreshed to match the current schema draft, including the self-referencing predecessor FK, self-link CHECK, immutable-parent trigger and AI-review rejection CHECK.
+- The previous database `drm-duga-acceptance-disposable` (`6d512429-34a3-498b-9430-45f11d382da9`) is an older-schema test database with retained synthetic rows. Do not treat it as revised-schema acceptance and do not overwrite/reseed it.
+- A newly created disposable database is required for the revised fixture and all probes. The existing Worker CAS/audit suite can be used only after its `DB` binding is explicitly pointed at that new disposable database; do not change the existing deployed Worker binding without checking the exact target.
+- Revised-schema D1 acceptance remains NOT RUN until the owner executes the fixture and probes against the new database. Production and shared Preview remain out of scope.
