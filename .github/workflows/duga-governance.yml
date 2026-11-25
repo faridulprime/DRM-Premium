@@ -25,6 +25,7 @@ on:
       - "scripts/validate-governance.mjs"
       - "scripts/validate-migration-inventory.mjs"
       - "scripts/test-duga-schema.py"
+      - "scripts/test-governance-health-api.mjs"
       - "functions/api/**"
       - ".github/workflows/duga-governance.yml"
   workflow_dispatch:
