@@ -8,6 +8,9 @@ on:
       - "migrations/0009_dumc_movie_library.sql"
       - "migrations/manifest.json"
       - "functions/api/[[path]].js"
+      - "upload-studio.html"
+      - "upload-studio.js"
+      - "dumc-manager.js"
       - "scripts/test-dumc-migration.py"
       - ".github/workflows/dumc-validation.yml"
   pull_request:
