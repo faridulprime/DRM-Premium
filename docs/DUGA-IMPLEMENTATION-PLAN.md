@@ -10,9 +10,9 @@ Scope: Phase 0–4 (Phase 3 partial; Phase 4 read-only API foundation)
 |---|---|---|
 | 0 — Repository audit | Complete | Baseline and isolation constraints documented. |
 | 1 — Architecture and policy | Complete | DUGA specification, role model, lifecycle and authorization design are versioned. |
-| 2 — Git governance foundation | Complete | Registry, ownership, dependencies and static validation pass in CI. |
+| 2 — Git governance foundation | Complete | Registry, ownership, dependencies, JSON Schema checks and 12 negative-case validator regression tests pass in CI (run #45651462886). |
 | 3 — D1 schema and migration design / Preview testing | Partially complete | Draft schema, migration inventory validator and in-memory SQLite regression suite pass. Preview D1 history and backup are not verified; no migration has been applied. |
-| 4 — Permission and authorization APIs | Partially implemented | Owner-only read-only `GET /api/governance/health`, `GET /api/governance/changes` (filtered/keyset-paginated list), and `GET /api/governance/changes/:id` (bounded related records) exist. Syntax, Owner authorization, input validation, pagination and mocked D1 tests pass in CI. Live Preview D1 and deployed runtime tests remain. |
+| 4 — Permission and authorization APIs | Partially implemented | Owner-only read-only health, overview, findings, changes list/detail and audit-list routes exist in the Pages catch-all. Mocked D1 tests cover selected authorization, validation, filtering and pagination behavior. Live Preview D1, deployed runtime and full route-by-route regression remain. |
 | 5 — Change, approval and review operations | Not started | Requires the operational schema and full API authorization layer. |
 | 6 — Complete DACP handover pack | Not started | Expand continuity and recovery artifacts after implementation stabilizes. |
 | 7 — Security review, automated validation and Preview acceptance | Partially enabled, not complete | Static CI, mocked API tests and in-memory SQLite checks exist; Preview acceptance and live D1/runtime security tests remain. |
@@ -58,7 +58,7 @@ Exit criteria: registry is internally consistent and traceable to inspected repo
 
 ## Registry publication gate — 2026-11-25
 
-The canonical registry remains `governance/registry/systems.json` in GitHub desired state. A runtime publication endpoint is deferred: the inspected repository root has no `package.json`, `wrangler.toml`, `wrangler.jsonc`, or `_routes.json`, so the Pages build output directory and asset binding are not established by repository evidence. Do not assume `env.ASSETS`, JSON module import support, or a build pipeline. Before publishing the registry, verify the Cloudflare Pages build command/output directory, exact asset binding and route behavior, then choose either a static JSON asset or an Owner-only API backed by that verified asset. No D1 copy or migration is needed for this purpose. Static CI success does not prove deployed Pages asset access.
+The canonical registry remains `governance/registry/systems.json` in GitHub desired state. A runtime publication endpoint is deferred: the inspected repository root has no `package.json`, `wrangler.toml`, `wrangler.jsonc`, or `_routes.json`, so the Pages build output directory and asset binding are not established by repository evidence. Do not assume `env.ASSETS`, JSON module import support, or a build pipeline. Before publishing the registry, verify the Cloudflare Pages build command/output directory, exact asset binding and route behavior, then choose either a static JSON asset or an Owner-only API backed by that verified asset. No D1 copy or migration is needed for this purpose. A recursive Git tree audit (139 tracked paths) also found no `package.json`, `wrangler.toml`, `wrangler.jsonc`, `_routes.json`, Vite/Webpack config or build workflow. This confirms only that those files are absent from the inspected branch tree; Cloudflare Dashboard settings and inherited Pages build configuration remain unknown. Static CI success does not prove deployed Pages asset access.
 
 ## Deferred phases
 - Phase 3: D1 schema and migration design/Preview testing.
