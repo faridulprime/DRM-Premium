@@ -16,10 +16,13 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Application: DUMC movie library
 
-1. [DONE — taxonomy only] DUMC v1.0.0 catalog and Upload Studio folder explorer are on `feature/full-admin-panel`; 12 top-level sections / 226 folder nodes. See `docs/DUMC-SPEC.md`.
-2. Design and independently review a D1 schema for canonical movie records, stable folder IDs, many-to-many movie-folder relations, original/dubbed audio variants, subtitles and metadata provenance.
-3. Add authenticated, role-scoped folder/movie CRUD and assignment APIs with validation, uniqueness constraints, auditability and regression tests.
-4. Keep folder assignment disabled until the persistence API is deployed and verified. Do not apply any migration or deploy without explicit Owner approval.
+1. [DONE — feature branch] DUMC taxonomy (12 sections / 226 folders), additive migration 0009, authenticated Owner/Admin folder/movie APIs, Upload Studio explorer/editor, audio/subtitle reference endpoints, and SQLite/CI tests are committed on `feature/full-admin-panel`.
+2. Observe the DUMC GitHub Actions validation run and fix any failing migration, manifest, API or browser-script checks.
+3. Verify Preview D1 identity, backup and applied migration history; then apply migration 0009 to the intended non-production database and verify the schema/seed counts. Do not guess the target database from the manifest.
+4. Configure a dedicated movie media bucket and authenticated upload/download pipeline; then test real audio and subtitle objects. Current endpoints only register existing object keys or HTTPS URLs.
+5. Run authenticated browser acceptance for folder browsing, custom folders, movie metadata, multiple classifications and video-create folder assignment.
+6. Keep Production/main unchanged until Preview acceptance is complete; any release/deployment remains a separate controlled step.
+
 
 ## Application: API and Website Builder review
 
