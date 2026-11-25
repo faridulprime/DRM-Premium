@@ -367,11 +367,15 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     if (form) form.hidden = state.loginHidden;
                     if (profile) profile.hidden = state.profileHidden;
                     const style = getComputedStyle(bar);
+                    const tokenValue = style.getPropertyValue("--dups-anchor-category-bar-top").trim();
+                    const tokenPixels = tokenValue.endsWith("rem")
+                      ? parseFloat(tokenValue) * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16)
+                      : parseFloat(tokenValue);
                     results.push({
                       state,
                       position: style.position,
                       top: parseFloat(style.top),
-                      token: style.getPropertyValue("--dups-anchor-category-bar-top").trim()
+                      token: tokenPixels
                     });
                   }
                   if (form) form.hidden = original.loginHidden;
@@ -386,7 +390,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     try:
                         if state["position"] != "fixed":
                             fail(f"{name}/{viewport_name}: Category Bar is not fixed-positioned ({state})")
-                        if abs(state["top"] - float(state["token"].replace("px", ""))) > 1:
+                        if abs(state["top"] - float(state["token"])) > 1:
                             fail(f"{name}/{viewport_name}: Category Bar computed top does not match its DUPS state token ({state})")
                     except (TypeError, ValueError, KeyError):
                         fail(f"{name}/{viewport_name}: Category Bar anchor token could not be resolved ({state})")
