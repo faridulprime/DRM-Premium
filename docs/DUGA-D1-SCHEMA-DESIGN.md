@@ -35,7 +35,7 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 - Use CHECK constraints for enumerations, trimmed non-empty identifiers/required text and JSON syntax validity where supported; reject whitespace-only rollback plans, principals and evidence identifiers.
 - Enforce JSON value shape as well as syntax: affected-system and affected-path fields are arrays; review/finding evidence, validation results, audit payloads, and job input/result payloads are objects. API validation must additionally validate array element types, allowed system IDs, path normalization and payload schemas.
 - Use foreign keys to existing users for human identities; use ON DELETE RESTRICT for governance actors/approvers so deleting an account cannot erase accountability history.
-- Keep every review, approval and validation run attached to an existing change request with ON DELETE RESTRICT. The audit aggregate reference is intentionally polymorphic and therefore cannot be a conventional FK; API/service logic must validate the aggregate target before appending an event. Jobs are queue records and do not implicitly own a change request unless a future schema revision adds an explicit nullable FK.
+- Keep every review, approval and validation run attached to an existing change request with ON DELETE RESTRICT. Renewed requests use a self-referencing `parent_change_request_id` with `ON DELETE RESTRICT`; reject missing/self parents and prevent parent-link mutation. The audit aggregate reference is intentionally polymorphic and therefore cannot be a conventional FK; API/service logic must validate the aggregate target before appending an event. Jobs are queue records and do not implicitly own a change request unless a future schema revision adds an explicit nullable FK.
 - Use XOR CHECK constraints for human vs AI actor identity.
 - Use scoped unique indexes for active assignments; enforce at most one active Platform Owner and one active human System Owner per system. Revoked assignments remain as history and permit replacement.
 - Add indexes for status/time, request references, actor lookups and pending jobs.
@@ -144,10 +144,12 @@ The schema was reviewed against the state-machine and authorization requirements
 - Temporal consistency: assignment revocation ordering, validation queued/running/completed timestamp shapes, job lease/status consistency, successful job result requirement, and update timestamp ordering.
 - Required text/identity values reject whitespace-only strings, including rollback plan and AI principal IDs.
 - Change request rejects unknown risk values, invalid human/AI requester combinations and the literal `main` source branch.
-- Review rows reject mismatched reviewer type and review type (for example, an AI principal cannot submit a `human_review`).
+- Review rows reject mismatched reviewer type and review type (for example, an AI principal cannot submit a `human_review`). AI audit rows cannot record `rejected`; only a human review/approval path may record terminal rejection.
 - Approval rows reject role labels outside `system-owner` and `platform-owner`.
 - Validation rows reject unknown statuses and malformed JSON evidence.
 - A valid terminal status is accepted by the SQL enum. This demonstrates that enum validation is not transition authorization.
+- Renewed requests can reference an existing predecessor; missing/self-referential parent links and parent-link mutation are rejected by the schema draft.
+- AI audit rows cannot record `rejected`; AI may approve its audit or request changes, while terminal rejection remains human-only.
 
 ### Mandatory server-side invariants before any API can be enabled
 1. **Transition matrix:** validate every old-state → new-state pair against an explicit transition table; reject direct jumps such as proposed → accepted. Use `state_version` in a conditional UPDATE and require exactly one affected row.
