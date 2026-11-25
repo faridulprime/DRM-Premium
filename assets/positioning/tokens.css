@@ -43,6 +43,7 @@
 
   /* Anchor relationship spacing. */
   --dups-anchor-gap-xs: 0.25rem;
+  --dups-anchor-gap-status: var(--dups-anchor-gap-xs);
   --dups-anchor-gap-sm: 0.5rem;
   --dups-anchor-gap-md: 0.75rem;
   --dups-anchor-gap-lg: 1rem;
