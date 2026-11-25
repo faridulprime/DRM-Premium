@@ -5,7 +5,7 @@ const schema=JSON.parse(await readFile('governance/registry/system-schema.json',
 const errors=[];
 const unique=a=>new Set(a).size===a.length;
 if(registry.authority!=='github-desired-state')errors.push('registry authority must be github-desired-state');
-if(!/^\\d+\\.\\d+\\.\\d+$/.test(registry.registryVersion||''))errors.push('invalid registryVersion');
+if(!/^[0-9]+[.][0-9]+[.][0-9]+$/.test(registry.registryVersion||''))errors.push('invalid registryVersion');
 const known=new Set((registry.systems||[]).map(s=>s.id));
 for(const s of registry.systems||[]){
  for(const k of schema.required||[])if(!Object.hasOwn(s,k))errors.push(s.id+' missing '+k);
