@@ -12,6 +12,7 @@ on:
       - "docs/DUGA-SPEC.md"
       - "docs/AI-CONTINUITY/**"
       - "scripts/validate-governance.mjs"
+      - "scripts/validate-registry-schema.mjs"
       - "scripts/validate-migration-inventory.mjs"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-schema-structure.py"
@@ -62,6 +63,8 @@ jobs:
         run: node scripts/test-governance-health-api.mjs
       - name: Validate registry, ownership and dependencies
         run: node scripts/validate-governance.mjs
+      - name: Validate registry schema and dependency cycles
+        run: node scripts/validate-registry-schema.mjs
       - name: Validate D1 migration inventory (static only)
         run: node scripts/validate-migration-inventory.mjs
       - name: Set up Python
