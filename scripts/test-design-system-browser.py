@@ -1461,7 +1461,7 @@ def main() -> int:
         return 1
 
     print(
-        f"PASS: {checks} page/viewport checks across {len(PAGES)} pages; "
+        f"PASS: {checks - 1} page/viewport checks across {len(PAGES)} pages plus 1 dynamic Live Users overlay interaction suite; "
         "DUCS contrast samples; DUSS/DUPS/DUCS token loading; keyboard focus; "
         "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, mobile-to-desktop resize cleanup, Live Users shared-overlay state guards and dynamic drawer/modal/native-dialog lifecycle, close-animation scroll-lock retention, restriction-to-drawer hand-off, and fixed-overlay containing-block ancestry."
     )

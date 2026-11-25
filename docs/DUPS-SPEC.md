@@ -175,3 +175,13 @@ The responsive Website Builder inspector geometry assertion also passed in Chrom
 
 
 The closing drawer pseudo-layer assertion passed in Chromium run #45678490915 on commit `f327ca4c0120c292a6047002057881a188208d33`: both computed `::before` and `::after` z-index values matched their DUPS tokens. [Run #45678490915](https://github.com/faridulprime/DRM-Premium/actions/runs/45678490915). The full 35 page/viewport and DUME lifecycle suite passed.
+
+
+## Fixed/sticky ancestor and mobile viewport audit — 2026-11-26
+
+- Expanded the Chromium audit to inspect every visible fixed or sticky element on the five static pages at all seven existing viewport widths.
+- The scan checks ancestor transforms, perspective, filters/backdrop-filters, paint/layout containment, and relevant `will-change` values that can establish a fixed-position containing block.
+- Chromium audit run #45697389096 passed on commit `d8f5bf76c602acc2c6b8c79021dfa61b0bf6a88b`: 35 page/viewport states plus the dynamic Live Users overlay interaction suite. No visible fixed/sticky element was found captured by one of the scanned ancestor containing-block properties. [Run #45697389096](https://github.com/faridulprime/DRM-Premium/actions/runs/45697389096).
+- This is a containing-block ancestry check, not a proof that every possible stacking-context interaction or visual collision is correct. Existing targeted header/drawer/modal layer assertions remain separate.
+- All five page viewport declarations use `width=device-width,initial-scale=1`; none opts into `viewport-fit=cover`, and no `env(safe-area-inset-*)` declarations were found in the audited CSS. Therefore no edge-to-edge safe-area inset patch was added speculatively. Actual iOS device safe-area behavior remains unverified.
+- Native desktop browser zoom remains unverified. The 720 CSS-pixel case is only a 200%-zoom layout-width proxy; static headless Chromium cannot establish the browser's real Ctrl/Cmd+plus zoom behavior.
