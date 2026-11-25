@@ -29,7 +29,7 @@ const schemaSpec = {
 function tokenHash(token) {
   return createHash("sha256").update(token).digest("base64url");
 }
-function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, failChangeDetail = false, failAudit = false, failFindings = false, findingRows = [], auditRows = [], changeRows = [], changeDetail = null, relatedRows = {}, tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
+function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, failChangeDetail = false, failAudit = false, failFindings = false, failOverview = false, overviewRows = {}, findingRows = [], auditRows = [], changeRows = [], changeDetail = null, relatedRows = {}, tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
   const users = new Map([
     [tokenHash("owner-token"), { id: "owner-1", email: "owner@example.test", username: "owner", role: "owner" }],
     [tokenHash("admin-token"), { id: "admin-1", email: "admin@example.test", username: "admin", role: "admin" }],
@@ -51,6 +51,11 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
           throw new Error("Unexpected SQL in test: " + sql);
         },
         async all() {
+          if (/FROM duga_(change_requests|analysis_findings|jobs|assignments) GROUP BY status/.test(sql)) {
+            if (failOverview) throw new Error("simulated overview query failure");
+            const table = sql.match(/FROM (duga_[a-z_]+) GROUP BY status/)[1];
+            return { results: overviewRows[table] || [] };
+          }
           if (sql.includes("FROM duga_analysis_findings")) { if (failFindings) throw new Error("simulated findings query failure"); return { results: findingRows }; }
           if (sql.includes("FROM duga_reviews")) return { results: relatedRows.reviews || [] };
           if (sql.includes("FROM duga_approvals")) return { results: relatedRows.approvals || [] };
@@ -114,6 +119,23 @@ await test("Unauthenticated caller is rejected", async () => {
 await test("Ordinary User is rejected", async () => {
   const { response } = await call({ token: "user-token" });
   assert.equal(response.status, 401);
+});
+await test("Owner can read governance overview status counts", async () => {
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/overview", env: mockEnv({ overviewRows: {
+    duga_change_requests: [{ status: "proposed", count: 3 }, { status: "accepted", count: 2 }],
+    duga_analysis_findings: [{ status: "open", count: 4 }],
+    duga_jobs: [{ status: "queued", count: 1 }, { status: "failed", count: 2 }],
+    duga_assignments: [{ status: "active", count: 5 }],
+  } }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.changes.total, 5); assert.equal(body.changes.byStatus.proposed, 3);
+  assert.equal(body.findings.total, 4); assert.equal(body.jobs.total, 3); assert.equal(body.assignments.total, 5);
+});
+await test("Overview is Owner-only, GET-only and fails closed on missing DUGA tables", async () => {
+  const forbidden = await call({ token: "admin-token", path: "/api/governance/overview" });
+  const method = await call({ token: "owner-token", method: "POST", path: "/api/governance/overview" });
+  const failed = await call({ token: "owner-token", path: "/api/governance/overview", env: mockEnv({ failOverview: true }) });
+  assert.equal(forbidden.response.status, 403); assert.equal(method.response.status, 405); assert.equal(failed.response.status, 503);
 });
 await test("Owner can list change requests with bounded pagination", async () => {
   const rows = [
@@ -294,6 +316,6 @@ await test("Missing D1 binding returns 503", async () => {
   assert.equal(response.status, 503);
 });
 
-console.log("DUGA health, read-only change, findings and audit API tests: PASS");
+console.log("DUGA health, read-only change, findings, overview and audit API tests: PASS");
 for (const name of tests) console.log("PASS: " + name);
 console.log("LIMITATION: mocked D1 and local handler only; no live Cloudflare Pages deployment tested.");
