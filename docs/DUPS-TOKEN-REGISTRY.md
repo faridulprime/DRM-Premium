@@ -119,8 +119,8 @@ The base toggle coordinates are overridden by the theme's fixed bottom-right pla
 
 | Token | Value | Intent |
 |---|---:|---|
-| `--dups-anchor-profile-complete-top` | 74px | Top coordinate of the fixed profile-completion bar |
-| `--dups-anchor-profile-complete-center` | `var(--dups-viewport-center)` (50%) | Horizontal viewport-center anchor |
+| `--dups-anchor-profile-complete-top` | 74px desktop; 66px compact/mobile | Top coordinate of the fixed profile-completion bar |
+| `--dups-anchor-profile-complete-center` | 50% | Horizontal viewport-center anchor |
 | `--dups-anchor-profile-backdrop-inset` | `var(--dups-offset-0)` (0) | Full-viewport backdrop edge inset |
 
 The values preserve the existing fixed overlay geometry. Chromium checks the computed top/center anchors, full-viewport backdrop insets and existing bar-above-backdrop layer ordering at all Homepage viewport states.

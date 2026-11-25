@@ -124,3 +124,6 @@ The base visual-editor toggle and panel now consume semantic DUPS anchor tokens.
 ### Profile completion overlay anchor migration — 2026-11-26
 
 The fixed profile-completion bar now consumes DUPS top and viewport-center anchor tokens; its backdrop consumes an explicit zero-inset token. Chromium verifies computed fixed positioning, top offset, center alignment, full-viewport backdrop coverage and existing stacking order at the Homepage viewport set. Existing 74px/50%/0px geometry and layer values are preserved.
+
+
+The responsive compact/mobile override retains its pre-existing 66px top coordinate through the same component-scoped token. The browser test reveals the hidden static bar/backdrop before reading computed geometry, so it validates actual pixel positioning rather than the unresolved percentage returned for a display:none element.

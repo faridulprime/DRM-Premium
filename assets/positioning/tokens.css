@@ -43,7 +43,7 @@
 
   /* Profile completion overlay anchors. */
   --dups-anchor-profile-complete-top: 74px;
-  --dups-anchor-profile-complete-center: var(--dups-viewport-center);
+  --dups-anchor-profile-complete-center: 50%;
   --dups-anchor-profile-backdrop-inset: var(--dups-offset-0);
 
   /* Visual editor fixed anchors; preserve existing desktop/mobile coordinates. */

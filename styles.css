@@ -131,7 +131,7 @@ body.account-suspended{overflow:hidden}
 .profile-bar-action:hover{background:var(--ducs-home-profilebar-action-hover, rgba(131,239,165,.23))}
 .profile-bar-close{width:30px;height:30px;display:grid;place-items:center;flex:none;border:0;border-radius:6px;background:transparent;color:#aeb8c3;font-size:22px;line-height:1;cursor:pointer}
 .profile-bar-close:hover{background:rgba(255,255,255,.09);color:#fff}
-@media(max-width:600px){.profile-complete-bar{top:66px;width:calc(100vw - 20px);gap:8px;padding:7px}.profile-bar-message{font-size:10px;gap:3px}.profile-brand-lockup{font-size:10px}.profile-brand-mark{width:var(--duss-icon-size-profile-complete-brand-mobile, 14px);height:var(--duss-icon-size-profile-complete-brand-mobile, 14px)}.profile-bar-action{padding:0 10px}}
+@media(max-width:600px){.profile-complete-bar{--dups-anchor-profile-complete-top:66px;top:var(--dups-anchor-profile-complete-top, 66px);width:calc(100vw - 20px);gap:8px;padding:7px}.profile-bar-message{font-size:10px;gap:3px}.profile-brand-lockup{font-size:10px}.profile-brand-mark{width:var(--duss-icon-size-profile-complete-brand-mobile, 14px);height:var(--duss-icon-size-profile-complete-brand-mobile, 14px)}.profile-bar-action{padding:0 10px}}
 
 
 
