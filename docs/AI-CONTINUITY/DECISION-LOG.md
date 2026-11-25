@@ -31,15 +31,15 @@ Decision:
 
 ## DUGA-ADR-003 — Conservative change-request lifecycle enforcement defaults
 Date: 2026-11-25
-Status: Proposed in implementation design; not yet encoded in SQL or API
+Status: Proposed defaults encoded in the feature-branch schema draft; owner/security ratification and API enforcement remain pending
 
 Recommended defaults:
 - `accepted`, `rejected` and `cancelled` are permanently terminal; corrections use a linked successor request.
-- `blocked` can resume only to an explicitly recorded eligible prior state, with reason resolution, fresh authorization and revalidation.
+- `blocked` can resume only to `impact_review`, or be cancelled; the prior state and enumerated reason code are retained in audit evidence.
 - Every request entering implementation requires an independent AI audit and human approval in Foundation.
 - Requester/approver separation and implementer/AI-auditor separation are required.
-- Approval and review records remain immutable; a changed implementation attempt requires distinct commit/evidence history.
-- The database enforces lifecycle shape and optimistic version increments; the trusted API enforces authenticated actor identity, scope, evidence provenance and atomic state/audit persistence.
+- Approval and review records remain immutable. The current schema draft makes the first implementation commit write-once; changed-commit retries require a future attempt-history model or a successor request.
+- The database draft enforces lifecycle shape, immutable bindings, terminal/delete guards, block metadata and optimistic version increments; the trusted API must enforce authenticated actor identity, scope, evidence provenance, CAS and actor-attributed audit persistence.
 
 Rationale:
 - Prevent silent gate bypass and preserve immutable decision history.
@@ -48,5 +48,6 @@ Rationale:
 
 Consequences:
 - These defaults are documented in `docs/DUGA-CHANGE-REQUEST-ENFORCEMENT-DESIGN.md`.
-- They remain proposed pending workflow reconciliation and owner/security review.
+- The database-draft implementation is present on `feature/full-admin-panel`; local SQLite tests have been authored but not yet run.
+- The database-generated audit actor `duga-db-trigger` is synthetic and must not be presented as authenticated user attribution.
 - No migration, D1 operation, write API or deployment is authorized by this ADR.
