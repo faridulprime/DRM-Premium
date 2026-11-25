@@ -229,3 +229,8 @@ Both Live Users avatar image variants now consume `--dups-offset-0` for their ab
 
 
 The registration dialog base rule now explicitly consumes `--dups-layer-register-dialog`. The browser test checks this declared local layer as well as the fixed four-edge viewport geometry. When opened as a native modal dialog, browser top-layer ordering remains independent of ordinary document stacking contexts.
+
+
+### Homepage status and Upload Studio thumbnail overlay — 2026-11-26
+
+The Homepage login-status notice now consumes `--dups-offset-0` for its flush right anchor. Upload Studio's thumbnail play-overlay now consumes the same primitive for full thumbnail coverage. The browser regression suite creates a deterministic thumbnail fixture and verifies absolute positioning plus all four computed edges across the existing Upload Studio viewport matrix. Existing top offset, local z-index, thumbnail aspect ratio, and play-overlay centering remain unchanged; this new assertion awaits a completed run.
