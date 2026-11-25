@@ -915,7 +915,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: {layer['name']} DUPS layer could not be resolved ({layer})")
             try:
-                layers_by_name = {layer["name"]: float(layer["zIndex"]) for layer in homepage_layers if not layer.get("missing")}
+                layers_by_name = {layer["name"]: float(layer["zIndex"]) for layer in homepage_layers if not layer.get("missing") and layer["zIndex"] != "auto"}
                 if layers_by_name.get("profile-complete-bar", 0) <= layers_by_name.get("profile-bar-backdrop", 0):
                     fail(f"{name}/{viewport_name}: profile completion bar must stack above its backdrop ({layers_by_name})")
                 profile_bar = next(layer for layer in homepage_layers if layer["name"] == "profile-complete-bar")
