@@ -10,7 +10,7 @@ on:
       - "scripts/validate-governance.mjs"
       - "scripts/validate-migration-inventory.mjs"
       - "scripts/test-duga-schema.py"
-      - "functions/api/[[path]].js"
+      - "functions/api/**"
       - ".github/workflows/duga-governance.yml"
   push:
     branches:
@@ -24,7 +24,7 @@ on:
       - "scripts/validate-governance.mjs"
       - "scripts/validate-migration-inventory.mjs"
       - "scripts/test-duga-schema.py"
-      - "functions/api/[[path]].js"
+      - "functions/api/**"
       - ".github/workflows/duga-governance.yml"
   workflow_dispatch:
 
