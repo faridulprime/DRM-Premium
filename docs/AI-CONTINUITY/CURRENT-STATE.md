@@ -44,5 +44,7 @@ Verified commit: documentation update follows disposable D1 Worker acceptance; s
 
 ## API security and lifecycle design update — 2026-11-25
 - Added `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` as a proposed contract. It defines the initial Owner-session trust boundary, future scoped assignment checks, AI/validation identity boundary, risk approval gates, commit-bound evidence staleness, guarded implementation SHA updates, candidate state-transition matrix and required security/regression tests.
-- The transition matrix is explicitly awaiting Owner review; blocked-state resumability, rejected/cancelled terminal semantics and rework edges are not approved policy yet.
+- Owner selected option B: `blocked` is resumable. The design requires immutable block-event provenance, authorized unblock with rationale and evidence the condition cleared, CAS + audit, and re-evaluation of stale gates before resumption. Rejected/cancelled reopening semantics and rework edges remain under review.
 - API integration remains NO-GO for Preview write endpoints. No DUGA API runtime code, migration, Preview binding, Production resource or application runtime code was changed.
+
+- Recorded Owner decision (2026-11-25): blocked-state policy option B — resumable. No runtime implementation was made; unblock must be an explicit audited, authorized CAS transition and cannot bypass stale evidence gates.
