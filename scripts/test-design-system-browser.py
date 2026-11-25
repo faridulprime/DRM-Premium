@@ -536,15 +536,27 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const fixture = document.createElement("span");
                   fixture.className = "live-avatar";
                   fixture.style.position = "relative";
-                  fixture.innerHTML = '<i class="live-presence-dot"></i>';
+                  fixture.innerHTML = '<img alt=""><i class="live-presence-dot"></i>';
                   document.body.appendChild(fixture);
+                  const drawerFixture = document.createElement("span");
+                  drawerFixture.className = "live-drawer-avatar";
+                  drawerFixture.style.position = "relative";
+                  drawerFixture.innerHTML = '<img alt="">';
+                  document.body.appendChild(drawerFixture);
                   const dot = getComputedStyle(fixture.querySelector(".live-presence-dot"));
+                  const avatarImage = getComputedStyle(fixture.querySelector("img"));
+                  const drawerImage = getComputedStyle(drawerFixture.querySelector("img"));
                   const root = getComputedStyle(document.documentElement);
                   return {
                     position: dot.position,
                     right: parseFloat(dot.right),
                     bottom: parseFloat(dot.bottom),
-                    expected: parseFloat(root.getPropertyValue("--dups-anchor-live-presence-edge"))
+                    expected: parseFloat(root.getPropertyValue("--dups-anchor-live-presence-edge")),
+                    expectedZero: parseFloat(root.getPropertyValue("--dups-offset-0")),
+                    avatarImagePosition: avatarImage.position,
+                    avatarImageEdges: [avatarImage.top, avatarImage.right, avatarImage.bottom, avatarImage.left],
+                    drawerImagePosition: drawerImage.position,
+                    drawerImageEdges: [drawerImage.top, drawerImage.right, drawerImage.bottom, drawerImage.left]
                   };
                 }"""
             )
