@@ -101,5 +101,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 
 ## DUPS follow-up — 2026-11-26
 
-- Restricted Users modal z-index now uses the existing DUPS layer token; browser assertions cover computed fixed positioning, token agreement and viewport centering at seven viewport widths. Await the CI result before treating this targeted check as passed.
+- Restricted Users modal z-index now uses the existing DUPS layer token; browser assertions cover computed fixed positioning, token agreement and viewport centering at seven viewport widths. Passed in Chromium run #45676504120 at all seven viewport widths; this remains a targeted check.
 - Remaining DUPS work: audit other positioned elements and ancestor stacking contexts; inspect real anchor relationships and collision/fallback behavior; validate safe-area, native zoom and dynamic overlay interactions. Do not infer full positioning-system completion from this targeted migration.
