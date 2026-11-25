@@ -59,5 +59,5 @@ Verification date: 2026-11-25
 - It separates database-enforceable invariants (initial state, transition graph, version increments, immutable identity/commit bindings, terminal/delete guards) from trusted API duties (session/service authentication, scoped assignments, evidence provenance, compare-and-swap and actor attribution).
 - It explicitly rejects pretending that a trigger actor such as `duga-db-trigger` proves the authenticated human/service identity. The proposed API state update and actor-attributed audit insert must commit atomically.
 - The current state-machine schema gap remains unresolved in the operational SQL draft: no change-request lifecycle guards or automatic request-transition audit. No schema draft, migration, D1 database, API write route, Preview or Production was changed.
-- Latest design commit: `9d93e11fa326606caa5966ca4601f58de9c73978`.
+- Latest design-reference commit: `a7af580562956fae34bfe3abbc7d3d396523c497` (DUGA spec now links the enforcement design).
 - Next: reconcile the design with the actual DUGA SQL draft and schema validators; add lifecycle invariants to the in-memory SQLite test design first. Then obtain fresh CI evidence. Shared Preview migration remains NO-GO until migration history and backup/recovery are verified and separate approval is granted.
