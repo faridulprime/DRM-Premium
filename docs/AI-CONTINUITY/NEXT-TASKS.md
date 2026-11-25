@@ -97,3 +97,9 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Added `docs/DUGA-IDENTITY-AUTHORIZATION-BOUNDARY.md` to separate human sessions, AI principals and validation/worker service identities; document current facts, proposed authorization matrix, mutation requirements and adversarial tests.
 - Explicit limitation: source-level review only, not live Pages validation or penetration test. No service credentials, OIDC verifier, endpoint, migration, D1 mutation or deployment.
 - Next: confirm Owner/Admin/System Owner/Platform Owner powers, separation-of-duties and re-authentication policy; confirm GitHub/Cloudflare workload identity design before implementing any write route.
+
+
+## DUPS follow-up — 2026-11-26
+
+- Restricted Users modal z-index now uses the existing DUPS layer token; browser assertions cover computed fixed positioning, token agreement and viewport centering at seven viewport widths. Await the CI result before treating this targeted check as passed.
+- Remaining DUPS work: audit other positioned elements and ancestor stacking contexts; inspect real anchor relationships and collision/fallback behavior; validate safe-area, native zoom and dynamic overlay interactions. Do not infer full positioning-system completion from this targeted migration.
