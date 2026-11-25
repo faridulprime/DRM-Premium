@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Integration-style tests for the initial DUGA health route.
+ * Integration-style tests for the DUGA health and read-only change listing routes.
  * Loads the Pages handler as an ES module and supplies a minimal in-memory D1 mock.
  * No Cloudflare account, network call, or real database is used.
  */
@@ -29,7 +29,7 @@ const schemaSpec = {
 function tokenHash(token) {
   return createHash("sha256").update(token).digest("base64url");
 }
-function mockEnv({ failProbe = false, failSchemaProbe = false, tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
+function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, changeRows = [], tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
   const users = new Map([
     [tokenHash("owner-token"), { id: "owner-1", email: "owner@example.test", username: "owner", role: "owner" }],
     [tokenHash("admin-token"), { id: "admin-1", email: "admin@example.test", username: "admin", role: "admin" }],
@@ -49,7 +49,7 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, tables = [], comp
           }
           throw new Error("Unexpected SQL in test: " + sql);
         },
-        async all() {
+        async all() {\n          if (sql.includes("FROM duga_change_requests")) {\n            if (failChanges) throw new Error("simulated DUGA query failure");\n            return { results: changeRows };\n          }
           if (sql.includes("FROM sqlite_master")) {
             if (failSchemaProbe) throw new Error("simulated schema probe outage");
             const results = [];
@@ -105,8 +105,40 @@ await test("Ordinary User is rejected", async () => {
   const { response } = await call({ token: "user-token" });
   assert.equal(response.status, 401);
 });
+await test("Owner can list change requests with bounded pagination", async () => {
+  const rows = [
+    { id: "change-3", title: "Third", summary: "s3", status: "proposed", risk_level: "low", affected_systems_json: '["DCP"]', affected_paths_json: '["src/a.js"]', created_at: 300, updated_at: 301 },
+    { id: "change-2", title: "Second", summary: "s2", status: "approved", risk_level: "medium", affected_systems_json: '[]', affected_paths_json: '[]', created_at: 200, updated_at: 201 },
+    { id: "change-1", title: "First", summary: "s1", status: "rejected", risk_level: "high", affected_systems_json: '[]', affected_paths_json: '[]', created_at: 100, updated_at: 101 },
+  ];
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/changes?limit=2", env: mockEnv({ changeRows: rows }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.items.length, 2);
+  assert.equal(body.items[0].id, "change-3");
+  assert.deepEqual(body.items[0].affected_systems, ["DCP"]);
+  assert.equal(body.page.hasMore, true);
+  assert.ok(body.page.nextCursor);
+});
+await test("Change request listing rejects non-Owner", async () => {
+  const { response } = await call({ token: "admin-token", path: "/api/governance/changes" });
+  assert.equal(response.status, 403);
+});
+await test("Change request listing validates limit and status", async () => {
+  const a = await call({ token: "owner-token", path: "/api/governance/changes?limit=500" });
+  const b = await call({ token: "owner-token", path: "/api/governance/changes?status=made-up" });
+  assert.equal(a.response.status, 400);
+  assert.equal(b.response.status, 400);
+});
+await test("Change request listing rejects malformed cursor", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes?cursor=not-a-cursor" });
+  assert.equal(response.status, 400);
+});
+await test("Change request listing handles missing schema/storage", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes", env: mockEnv({ failChanges: true }) });
+  assert.equal(response.status, 503);
+});
 await test("Unknown governance route is not exposed", async () => {
-  const { response } = await call({ token: "owner-token", path: "/api/governance/changes" });
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes/unknown" });
   assert.equal(response.status, 404);
 });
 await test("Non-GET health method is rejected", async () => {
@@ -161,6 +193,6 @@ await test("Missing D1 binding returns 503", async () => {
   assert.equal(response.status, 503);
 });
 
-console.log("DUGA health API tests: PASS");
+console.log("DUGA health and changes API tests: PASS");
 for (const name of tests) console.log("PASS: " + name);
 console.log("LIMITATION: mocked D1 and local handler only; no live Cloudflare Pages deployment tested.");
