@@ -85,3 +85,12 @@ This is a component-scoped alias preserving the existing numeric value. It does 
 | `--dups-anchor-gap-status` | `var(--dups-anchor-gap-xs)` (4px at the default root size) | Separation between the mobile Homepage header and its anchored login status |
 
 The existing `--dups-offset-2` (0.5rem; 8px at the default root size) supplies the right-edge offset. The mobile Homepage status selector consumes both tokens; no layout or visibility behavior is changed.
+
+
+## Live Users dialog sticky-header layer — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-layer-live-dialog-sticky-header` | 1 | Local stacking order for the sticky header inside the Live Users detail dialog |
+
+The alias preserves the existing component-local value and must not be interpreted as a global layer.
