@@ -19,13 +19,14 @@ Verification date: 2026-11-25
 - `scripts/duga-d1-disposable-acceptance-console.sql` is synchronized to the fixture's comment-free SQL.
 - `scripts/test-duga-fixture-sync.py` compares the current schema draft, fixture and Console SQL through source parity and in-memory SQLite schema-object checks.
 - The new parity test is included in `.github/workflows/duga-schema-smoke.yml` and its relevant file paths are in push and PR filters.
-- GitHub Actions run `45601804933` (run number 244) completed successfully on the latest PR head `c1df117318d419c4c43c7ef1a18ee4e7e680aaf5`. Its logs confirm:
+- GitHub Actions run `45601966255` (run number 250) completed successfully on the latest PR head `4b05f82232bebba39d137cb5f8e3d58741494302`. Its logs confirm Worker syntax, local schema SQLite tests, fixture parity, governance validation and malformed-input tests all passed. This run still used the older Node 20-targeting actions; the workflow is now upgraded to current v7 action majors and the next run must verify the upgrade.
+- The workflow uses `actions/checkout@v7`, `actions/setup-node@v7` with package-manager caching disabled, and `actions/setup-python@v7`.
   - disposable Worker JavaScript syntax check passed;
   - `scripts/test-duga-schema.py` passed;
   - `scripts/test-duga-fixture-sync.py` passed, confirming identical SQLite schema objects for draft, fixture and Console SQL;
   - registry validation passed;
   - malformed-input validator tests passed (5 cases).
-- This is CI/local SQLite and JavaScript syntax evidence only. It is not Cloudflare D1 acceptance and does not authorize a Preview migration.
+- CI remains local SQLite and JavaScript syntax evidence only. It is not Cloudflare D1 acceptance and does not authorize a Preview migration.
 
 ## Shared Preview and Production safety
 

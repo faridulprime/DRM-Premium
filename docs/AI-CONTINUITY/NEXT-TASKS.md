@@ -15,6 +15,7 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Next implementation/review sequence
 
+0. Verify the next DUGA schema smoke run after the checkout/setup-node/setup-python v7 upgrade; this workflow change is CI-only.
 1. Obtain explicit owner approval for a fresh revised-schema disposable D1 acceptance deployment/test. Confirm the exact disposable database name and ID before deployment.
 2. Use a newly created disposable D1 database only; never bind the Worker to shared Preview or Production. Apply the synchronized current fixture only to that disposable DB.
 3. Run the authenticated Worker and retain the complete JSON response, including nested per-case counts. Confirm CAS success, stale writer, replay, token reuse, forced audit rollback and competing-writer assertions.
