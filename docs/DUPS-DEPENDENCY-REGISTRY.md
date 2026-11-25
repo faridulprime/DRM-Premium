@@ -226,3 +226,6 @@ The Homepage overlay geometry test now includes the public registration dialog a
 ### Live Users avatar image fill — 2026-11-26
 
 Both Live Users avatar image variants now consume `--dups-offset-0` for their absolute full-parent fill. The browser fixture checks both image variants' computed top/right/bottom/left edges against the token while retaining the existing presence-dot assertions. No avatar dimensions, object-fit, border radius, or local layer values changed.
+
+
+The registration dialog base rule now explicitly consumes `--dups-layer-register-dialog`. The browser test checks this declared local layer as well as the fixed four-edge viewport geometry. When opened as a native modal dialog, browser top-layer ordering remains independent of ordinary document stacking contexts.
