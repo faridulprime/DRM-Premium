@@ -369,6 +369,22 @@ def main() -> int:
     )
     db.execute(
         """INSERT INTO duga_jobs
+           (id,job_type,status,input_json,available_at,created_at,updated_at)
+           VALUES ('job-queued','validation','queued','{}',1,1,1)"""
+    )
+    check("queued job can be atomically claimed with generation one",
+        lambda: db.execute("""UPDATE duga_jobs SET status='running',attempts=1,
+          lease_owner='worker-a',lease_token='token-queued',lease_generation=1,
+          lease_expires_at=100,updated_at=2
+          WHERE id='job-queued' AND status='queued' AND available_at<=50"""),
+        should_fail=False)
+    check("duplicate active lease token rejected",
+        lambda: db.execute("""UPDATE duga_jobs SET status='running',attempts=1,
+          lease_owner='worker-b',lease_token='token-queued',lease_generation=1,
+          lease_expires_at=100 WHERE id='job-lease' AND status='running'"""),
+        should_fail=True)
+    db.execute(
+        """INSERT INTO duga_jobs
            (id,job_type,status,input_json,available_at,attempts,lease_owner,
             lease_token,lease_generation,lease_expires_at,created_at,updated_at)
            VALUES ('job-lease','validation','running','{}',1,1,'worker-a',
@@ -540,7 +556,7 @@ def main() -> int:
         "SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'duga_%'"
     ).fetchone()[0]
 
-    if (table_count, trigger_count) != (8, 8):
+    if (table_count, trigger_count) != (8, 9):
         raise AssertionError(
             f"Unexpected schema object counts: tables={table_count}, triggers={trigger_count}"
         )
