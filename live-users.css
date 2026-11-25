@@ -196,9 +196,9 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 
 
 /* Universal role colors on Live Users: keep Guest and account-status chips neutral. */
-.live-role.role-badge{padding:2px 7px;font-size:9px;letter-spacing:.015em}
+.live-role.role-badge{padding:var(--duss-role-badge-live-padding-y, 2px) var(--duss-role-badge-live-padding-x, 7px);font-size:var(--duss-role-badge-live-font-size, 9px);letter-spacing:var(--duss-role-badge-live-letter-spacing, .015em)}
 .live-role.role-badge svg{flex:none}
-.live-drawer-chip.role-badge{padding:5px 8px;font-size:9px}
+.live-drawer-chip.role-badge{padding:var(--duss-role-badge-drawer-padding-y, 5px) var(--duss-role-badge-drawer-padding-x, 8px);font-size:var(--duss-role-badge-drawer-font-size, 9px)}
 
 
 /* Mobile Live Users: fluid panel and compact, non-overflowing topbar. */
