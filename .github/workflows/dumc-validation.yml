@@ -35,5 +35,9 @@ jobs:
           node-version: "22"
       - name: Validate DUMC migration and taxonomy
         run: python scripts/test-dumc-migration.py
+      - name: Validate migration inventory
+        run: node scripts/validate-migration-inventory.mjs
       - name: Validate API JavaScript syntax
         run: node --input-type=module --check < 'functions/api/[[path]].js'
+      - name: Validate Upload Studio JavaScript syntax
+        run: node --check upload-studio.js && node --check dumc-manager.js
