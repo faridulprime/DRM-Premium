@@ -111,3 +111,6 @@ The draft now requires `assigned_by_user_id` for every role assignment and pairs
 
 ## 13. Independent auditor enforcement
 The D1 draft now includes a `BEFORE INSERT` trigger that rejects an independent AI audit when the reviewer principal matches the AI implementer principal recorded on that change. This is defense in depth only: the API must still derive the reviewer identity from a trusted execution context and validate the reviewed commit.
+
+## 15. Identifier and JSON shape constraints
+The draft now requires affected-system and affected-path payloads to be JSON arrays (not merely any valid JSON value). AI requester, implementer, reviewer and audit actor principal identifiers must be non-empty. Audit event types must also be non-empty. The in-memory regression suite covers representative invalid values. These database constraints complement, but do not replace, API-level schema validation and authorization.
