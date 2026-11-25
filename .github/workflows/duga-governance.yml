@@ -16,6 +16,7 @@ on:
       - feature/full-admin-panel
     paths:
       - "governance/**"
+      - "migrations/**"
       - "docs/DUGA-SPEC.md"
       - "docs/AI-CONTINUITY/**"
       - "scripts/validate-governance.mjs"
