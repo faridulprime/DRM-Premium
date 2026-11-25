@@ -1536,6 +1536,21 @@ def inspect_live_overlay_interactions(browser, base_url):
             "() => document.querySelector('#liveUserDrawer')?.classList.contains('is-open') && document.body.style.overflow === 'hidden' && !document.querySelector('#liveDrawerBackdrop')?.hidden",
             timeout=5000,
         )
+        backdrop_geometry = page.locator("#liveDrawerBackdrop").evaluate(
+            """el => {
+              const style = getComputedStyle(el);
+              const rect = el.getBoundingClientRect();
+              const zero = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--dups-offset-0"));
+              return {position: style.position, top: parseFloat(style.top), right: parseFloat(style.right),
+                bottom: parseFloat(style.bottom), left: parseFloat(style.left), zero,
+                rect: {top: rect.top, right: innerWidth - rect.right, bottom: innerHeight - rect.bottom, left: rect.left}};
+            }"""
+        )
+        if backdrop_geometry["position"] != "fixed" or any(
+            abs(backdrop_geometry[edge] - backdrop_geometry["zero"]) > 1
+            for edge in ("top", "right", "bottom", "left")
+        ):
+            fail(f"live-users/overlay-interaction: drawer backdrop does not cover the viewport using the DUPS zero-offset token ({backdrop_geometry})")
         page.locator("#liveDrawerClose").click()
         page.wait_for_timeout(140)
         if page.evaluate("() => document.body.style.overflow") != "hidden":
