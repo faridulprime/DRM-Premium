@@ -1,6 +1,6 @@
 # DUGA — Disposable Cloudflare D1 Acceptance Plan
 
-Status: PARTIAL D1 ACCEPTANCE — owner created and manually populated the named disposable database. Schema inventory, foreign-key check, audit INSERT, and append-only UPDATE/DELETE probes have been run successfully. CAS + transactional audit acceptance is still pending; the assistant has no direct Cloudflare access.
+Status: PASS — owner-operated authenticated Worker acceptance completed on the named disposable Cloudflare D1 database on 2026-11-25. The Worker returned `results.pass = true` for the combined CAS, audit atomicity, rollback, replay, token-reuse and competing-writer assertions. This is disposable-D1 evidence only; it is not Production or shared Preview acceptance.
 Applies to: `duga-foundation-review` schema draft v0.1.0 at commit `c33045567c4a94cc6c818d12a66efb4109c2b894`.
 Purpose: prove the candidate DUGA schema against Cloudflare D1 itself before any migration is proposed.
 
@@ -93,7 +93,7 @@ Both mutations must fail because of the append-only triggers. Confirm the origin
 
 ## 5. Transaction and compare-and-swap probes
 
-Cloudflare documents `D1Database.batch()` as transactional, but the actual DUGA statement sequence must be tested through a small Worker bound only to the disposable database. The isolated Worker source at `scripts/duga-d1-acceptance-worker/` is designed to return each statement's individual `D1Result.meta.changes` value and batch error/result. It is not deployed. Do not infer row counts from aggregate metadata.
+Cloudflare documents `D1Database.batch()` as transactional, but the actual DUGA statement sequence must be tested through a small Worker bound only to the disposable database. The isolated Worker source at `scripts/duga-d1-acceptance-worker/` returns each statement's individual `D1Result.meta.changes` value and batch error/result. It was deployed only as `duga-d1-acceptance-disposable`, bound only to the disposable D1 ID recorded below. Do not infer row counts from aggregate metadata.
 
 Probe A — rollback:
 1. In one `db.batch([...])`, perform a valid disposable test-row insert followed by a deliberately failing statement.
@@ -141,13 +141,23 @@ If any probe fails or cannot be run, report PARTIAL/FAIL with the exact gap. Do 
 
 ## 8. Current verified status
 
-Owner-reported and screenshot-verified on 2026-11-24:
+Owner-operated Cloudflare D1 Console observations (2026-11-24):
 - Disposable database: `drm-duga-acceptance-disposable` / `6d512429-34a3-498b-9430-45f11d382da9`.
 - The database was initially empty except for Cloudflare's `_cf_KV` table.
 - The comment-free fixture was manually executed. The inventory query showed all eight DUGA tables and both append-only audit triggers.
 - `PRAGMA foreign_key_check` completed successfully with no violation rows shown.
 - A synthetic audit event INSERT succeeded.
 - UPDATE and DELETE against that event were both rejected by `DUGA audit events are append-only` (`SQLITE_CONSTRAINT_TRIGGER`).
-- These are direct Cloudflare D1 Console observations supplied by the owner; they are not Worker batch/CAS evidence.
-- A separate authenticated acceptance Worker source and pinned Wrangler config now exist under `scripts/duga-d1-acceptance-worker/`. It has not been deployed or run.
-- No production migration has been applied. PR #4 remains draft and unmerged.
+- These are direct Cloudflare D1 Console observations supplied by the owner.
+
+Authenticated disposable Worker acceptance (2026-11-25):
+- Worker: `duga-d1-acceptance-disposable` at `https://duga-d1-acceptance-disposable.faridulprime.workers.dev`.
+- D1 binding: `DB`, pinned in Wrangler config to `drm-duga-acceptance-disposable` / `6d512429-34a3-498b-9430-45f11d382da9`.
+- Authenticated `POST /run` completed at `2026-11-25T01:04:19.420Z`.
+- Run ID: `53d70371-008c-46a0-8bc3-33522be990eb`.
+- Worker response: `results.pass = true`.
+- The aggregate PASS is computed only when all assertions succeed: successful transition has UPDATE changes=1 and audit INSERT changes=1; stale writer, replay and token reuse each have 0/0; forced audit CHECK failure rejects the batch and leaves state version/token unchanged; two competing writers produce exactly one 1/1 winner and one 0/0 loser; exactly one audit event exists for the successful token and concurrent race.
+- The user-visible PowerShell output showed only the aggregate PASS, not each nested count. The above individual outcomes are the Worker source's explicit predicates underlying that PASS, not separately printed per-test output.
+- Test-only synthetic rows and audit events are retained in this disposable database.
+- Temporary unauthenticated diagnostic route was removed from source before the final deployment; the owner pulled the removal and redeployed. Do not reintroduce it.
+- No production migration has been applied. No Production or shared Preview database was used; no live Pages binding was changed. PR #4 remains Draft and unmerged.
