@@ -43,7 +43,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
 }
 .topbar>.yt-menu-trigger:hover{background:var(--ducs-shell-menu-hover-bg, #272727)}
 .topbar>.yt-menu-trigger:active{background:var(--ducs-shell-menu-active-bg, #3a3a3a);transform:scale(.97)}
-.topbar>.yt-menu-trigger svg{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.topbar>.yt-menu-trigger svg{display:block;width:var(--duss-icon-size-nav-menu, 24px);height:var(--duss-icon-size-nav-menu, 24px);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 .topbar .brand{
   display:flex;align-items:center;gap:8px;flex:0 0 auto;
   margin:0;color:var(--ink)!important;text-decoration:none;
@@ -69,7 +69,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
   border:0;border-left:1px solid var(--ducs-shell-search-border, #303030);border-radius:0;background:var(--ducs-shell-search-button-bg, #222);color:var(--ink);
 }
 .yt-search button:hover{background:var(--ducs-shell-search-button-hover-bg, #303030)}
-.yt-search svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2}
+.yt-search svg{width:var(--duss-icon-size-search-default, 21px);height:var(--duss-icon-size-search-default, 21px);fill:none;stroke:currentColor;stroke-width:2}
 .topbar .yt-account-actions{
   display:flex!important;align-items:center;gap:8px!important;flex:0 0 auto;margin:0!important;
 }
@@ -81,7 +81,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{
 }
 .topbar .yt-auth-field:focus-within{border-color:var(--ducs-shell-auth-field-focus-border, #8ab4f8);background:var(--ducs-shell-auth-field-focus-bg, #161616)}
 .topbar .yt-auth-field svg{
-  width:16px;height:16px;flex:0 0 16px;fill:none;stroke:var(--ducs-shell-auth-field-icon, #aaa);
+  width:var(--duss-icon-size-auth-field, 16px);height:var(--duss-icon-size-auth-field, 16px);flex:0 0 var(--duss-icon-size-auth-field, 16px);fill:none;stroke:var(--ducs-shell-auth-field-icon, #aaa);
   stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
 .topbar .yt-auth-field:focus-within svg{stroke:var(--ducs-shell-auth-field-focus-border, #8ab4f8)}
@@ -151,7 +151,7 @@ body.sidebar-open .yt-sidebar{
 }
 .side-link:hover,.side-link.active{background:var(--ducs-shell-sidebar-link-hover-bg, #272727)}
 .side-link.active{font-weight:700}
-.side-icon{width:var(--duss-nav-icon-size, 24px);flex:0 0 var(--duss-nav-icon-size, 24px);text-align:center;font-size:20px;color:var(--ink)}
+.side-icon{width:var(--duss-nav-icon-size, 24px);flex:0 0 var(--duss-nav-icon-size, 24px);text-align:center;font-size:var(--duss-icon-size-sidebar-glyph, 20px);color:var(--ink)}
 .sidebar-heading{padding:8px 12px 10px;font-size:16px;font-weight:700}
 .sidebar-backdrop{display:none}
 body.sidebar-open{padding-left:var(--duss-sidebar-width, 240px)}
@@ -308,7 +308,7 @@ footer span+span{margin-left:12px;font-size:13px;font-weight:400}
 }
 .sidebar-logout-button:hover{background:var(--ducs-shell-logout-hover-bg, #272727)!important}
 .sidebar-logout-button:focus-visible{outline:2px solid var(--ducs-shell-focus-ring, #8ab4f8)!important;outline-offset:2px!important}
-.sidebar-logout-button svg{width:22px!important;height:22px!important;flex:0 0 22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.sidebar-logout-button svg{width:var(--duss-icon-size-sidebar-logout, 22px)!important;height:var(--duss-icon-size-sidebar-logout, 22px)!important;flex:0 0 var(--duss-icon-size-sidebar-logout, 22px)!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
 .sidebar-logout-button:disabled{opacity:.6!important;cursor:wait!important}
 @media(max-width:1100px) and (min-width:761px){
  body:not(.sidebar-open) .sidebar-logout-area{display:none!important}
@@ -715,7 +715,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .topbar{grid-template-columns:36px minmax(0,1fr) 40px;gap:0 6px!important;padding-inline:8px!important}
  .home-page .topbar .brand #brandName{font-size:14px!important}
  .home-page .topbar .yt-auth-field{padding:0 7px}
- .home-page .topbar .yt-auth-field svg{width:14px;height:14px;flex-basis:14px}
+ .home-page .topbar .yt-auth-field svg{width:var(--duss-icon-size-auth-field-compact, 14px);height:var(--duss-icon-size-auth-field-compact, 14px);flex-basis:var(--duss-icon-size-auth-field-compact, 14px)}
  .home-page .topbar .yt-auth-field input{font-size:12px}
  .home-page .topbar>#headerLoginForm>.yt-login-action,.home-page .topbar .yt-create-button{font-size:12px}
  .home-page .cards{grid-template-columns:1fr}
@@ -778,7 +778,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .register-actions button{min-height:46px;font-size:14px}
  .home-page .yt-sidebar{width:min(320px,88vw);z-index:var(--dups-layer-home-sidebar-mobile, 300);top:0;padding:14px 12px 18px}
  .home-page .side-link{min-height:46px;height:auto;padding:10px 12px;gap:16px;font-size:14px}
- .home-page .side-icon{width:24px;flex-basis:24px;font-size:19px}
+ .home-page .side-icon{width:24px;flex-basis:24px;font-size:var(--duss-icon-size-sidebar-glyph-mobile, 19px)}
  .home-page .sidebar-heading{font-size:15px}
  .home-page.drawer-open .topbar{z-index:var(--dups-layer-page-header, 100)!important}
  .home-page.drawer-open .sidebar-backdrop:not([hidden]){z-index:var(--dups-layer-home-sidebar-backdrop, 290)!important}
@@ -873,7 +873,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  }
  .home-page .yt-search input{display:block!important;flex:1 1 auto;min-width:0;width:100%;padding:0 11px;font-size:14px!important}
  .home-page .yt-search button{display:grid!important;place-items:center;width:40px!important;min-width:40px;flex:0 0 40px!important;height:38px!important;border:0;border-left:1px solid var(--ducs-shell-home-search-border);border-radius:0 10px 10px 0;background:var(--ducs-shell-home-search-button-bg)}
- .home-page .yt-search svg{width:17px;height:17px}
+ .home-page .yt-search svg{width:var(--duss-icon-size-home-search-mobile, 17px);height:var(--duss-icon-size-home-search-mobile, 17px)}
  .home-page .topbar .yt-account-actions[hidden]{display:none!important}
  .home-page .topbar .yt-account-actions:not([hidden]){
   grid-column:1/-1;grid-row:3;display:grid!important;
@@ -933,7 +933,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .yt-search{height:32px!important;min-height:32px!important;border-radius:9px!important}
  .home-page .yt-search input{font-size:12px!important;padding:0 9px!important}
  .home-page .yt-search button{width:32px!important;min-width:32px!important;flex-basis:32px!important;height:30px!important;border-radius:0 8px 8px 0!important}
- .home-page .yt-search svg{width:15px!important;height:15px!important}
+ .home-page .yt-search svg{width:var(--duss-icon-size-home-search-compact, 15px)!important;height:var(--duss-icon-size-home-search-compact, 15px)!important}
  .home-page .topbar .yt-account-actions:not([hidden]){grid-row:3;grid-template-rows:36px 36px;gap:5px!important}
  .home-page .topbar .yt-auth-field{height:36px;min-height:36px;border-radius:9px;padding:0 8px}
  .home-page .topbar>#headerLoginForm>.yt-login-action,.home-page .topbar .yt-create-button{height:36px;min-height:36px;border-radius:9px}
@@ -961,7 +961,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .admin-topbar .admin-search{height:36px!important;min-height:36px!important;border-radius:10px!important}
  .admin-topbar .admin-search input{font-size:13px!important;padding:0 10px!important}
  .admin-topbar .admin-search button{width:36px!important;min-width:36px!important;flex-basis:36px!important;height:34px!important;border-radius:0 9px 9px 0!important}
- .admin-topbar .admin-search svg{width:16px;height:16px}
+ .admin-topbar .admin-search svg{width:var(--duss-icon-size-admin-search-compact, 16px);height:var(--duss-icon-size-admin-search-compact, 16px)}
  .admin-category-bar{top:86px!important}
 }
 
