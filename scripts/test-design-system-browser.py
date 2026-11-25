@@ -767,7 +767,10 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const token = value.endsWith("rem")
                     ? parseFloat(value) * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16)
                     : parseFloat(value);
-                  return {position: style.position, top: parseFloat(style.top), token};
+                  const root = getComputedStyle(document.documentElement);
+                  return {position: style.position, top: parseFloat(style.top), token,
+                    left: parseFloat(style.left), right: parseFloat(style.right),
+                    expectedZero: parseFloat(root.getPropertyValue("--dups-offset-0"))};
                 }"""
             )
             if admin_category_anchor.get("missing"):
@@ -778,6 +781,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                         fail(f"{name}/{viewport_name}: Admin Category Bar is not fixed-positioned ({admin_category_anchor})")
                     if abs(admin_category_anchor["top"] - float(admin_category_anchor["token"])) > 1:
                         fail(f"{name}/{viewport_name}: Admin Category Bar computed top does not match its DUPS token ({admin_category_anchor})")
+                    if any(abs(admin_category_anchor[edge] - admin_category_anchor["expectedZero"]) > 1 for edge in ("left", "right")):
+                        fail(f"{name}/{viewport_name}: Admin Category Bar horizontal edges differ from the DUPS zero-offset token ({admin_category_anchor})")
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: Admin Category Bar anchor token could not be resolved ({admin_category_anchor})")
 
