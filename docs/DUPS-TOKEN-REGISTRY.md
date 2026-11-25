@@ -261,3 +261,8 @@ The Homepage `.header-login-status` flush right edge and Upload Studio `.preview
 ## Upload Studio fixed sidebar anchors — 2026-11-26
 
 The desktop Upload Studio sidebar now uses `--dups-offset-0` for its top, bottom, and left viewport anchors, preserving its `right:auto` sizing behavior. The browser audit checks the computed fixed-position geometry on desktop viewport states.
+
+
+## Compact Live Users topbar horizontal anchors — 2026-11-26
+
+The mobile Live Users fixed topbar now uses `--dups-offset-0` for its left and right viewport edges. The browser audit checks the computed horizontal coverage at every compact Live Users viewport.
