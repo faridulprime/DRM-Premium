@@ -1,0 +1,39 @@
+name: DUMC Movie Library Validation
+
+on:
+  push:
+    branches: [feature/full-admin-panel]
+    paths:
+      - "assets/dumc/**"
+      - "migrations/0009_dumc_movie_library.sql"
+      - "migrations/manifest.json"
+      - "functions/api/[[path]].js"
+      - "scripts/test-dumc-migration.py"
+      - ".github/workflows/dumc-validation.yml"
+  pull_request:
+    paths:
+      - "assets/dumc/**"
+      - "migrations/0009_dumc_movie_library.sql"
+      - "migrations/manifest.json"
+      - "functions/api/[[path]].js"
+      - "scripts/test-dumc-migration.py"
+      - ".github/workflows/dumc-validation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate DUMC migration and taxonomy
+        run: python scripts/test-dumc-migration.py
+      - name: Validate API JavaScript syntax
+        run: node --input-type=module --check < 'functions/api/[[path]].js'
