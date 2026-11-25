@@ -591,6 +591,9 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const bar = document.querySelector(".category-bar");
                   if (!bar) return {missing: true};
                   const wasOpen = document.body.classList.contains("profile-drawer-open");
+                  const previousTransition = bar.style.getPropertyValue("transition");
+                  const previousPriority = bar.style.getPropertyPriority("transition");
+                  bar.style.setProperty("transition", "none", "important");
                   document.body.classList.add("profile-drawer-open");
                   const style = getComputedStyle(bar);
                   const result = {
@@ -599,6 +602,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     token: parseFloat(style.getPropertyValue("--dups-anchor-profile-drawer-clearance"))
                   };
                   if (!wasOpen) document.body.classList.remove("profile-drawer-open");
+                  if (previousTransition) bar.style.setProperty("transition", previousTransition, previousPriority);
+                  else bar.style.removeProperty("transition");
                   return result;
                 }"""
             )
