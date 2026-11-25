@@ -75,8 +75,7 @@ Only these candidate transitions are allowed; all unlisted pairs are denied:
 | impact_review | blocked | Blocking reason recorded |
 | impact_review | cancelled | Authorized human cancellation with rationale |
 | awaiting_ai_audit | awaiting_human_approval | Trusted independent audit passed for current commit; reviewer differs from implementer |
-| awaiting_ai_audit | impact_review | Audit requests changes; rationale/evidence recorded |
-| awaiting_ai_audit | impact_review | Audit identifies a material gap requiring revised impact/scope/risk assessment; findings and rationale recorded |
+| awaiting_ai_audit | impact_review | Independent AI audit requests changes or identifies a material impact/scope/risk gap; attach findings/evidence and non-empty rationale |
 | awaiting_ai_audit | blocked | Blocking reason recorded |
 | awaiting_human_approval | approved | Required human approver authorized for scope/risk; same implementation commit |
 | awaiting_human_approval | impact_review | Human reviewer requests changes; rationale recorded |
