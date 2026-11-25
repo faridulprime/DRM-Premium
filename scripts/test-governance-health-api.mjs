@@ -96,6 +96,22 @@ async function call({ token, method = "GET", path = "/api/governance/health", en
 const tests = [];
 async function test(name, fn) { await fn(); tests.push(name); }
 
+await test("Registration, verification and login reject malformed credentials before database access", async () => {
+  const env = {
+    SESSION_SECRET: "test-session-secret",
+    OWNER_EMAIL: "owner@example.test",
+    GOOGLE_APPS_SCRIPT_URL: "https://mailer.example.test/exec",
+    GOOGLE_APPS_SCRIPT_TOKEN: "test-token",
+    DB: { prepare() { throw new Error("DB must not be queried for malformed credentials"); } },
+  };
+  const register = await call({ method: "POST", path: "/api/auth/register-otp", body: { email: "not-an-email", username: "ab", password: "short" }, env });
+  const verify = await call({ method: "POST", path: "/api/auth/register-verify", body: { email: "member@example.test", username: "member", password: "valid-password", code: "12x" }, env });
+  const login = await call({ method: "POST", path: "/api/auth/login", body: { email: "not-an-email", password: "valid-password" }, env });
+  assert.equal(register.response.status, 400, "registration must reject malformed email/username/password");
+  assert.equal(verify.response.status, 400, "verification must reject a non-six-digit code");
+  assert.equal(login.response.status, 400, "login must reject malformed email");
+});
+
 await test("Shared JSON reader enforces the 20 KB streaming limit without Content-Length", async () => {
   const payload = JSON.stringify({ email: "owner@example.test", username: "valid_user", password: "valid-password" });
   const env = {
