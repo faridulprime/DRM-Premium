@@ -41,6 +41,14 @@
   --dups-live-drawer-left: calc(54.4% - 90px);
   --dups-viewport-center: 50%;
 
+  /* Visual editor fixed anchors; preserve existing desktop/mobile coordinates. */
+  --dups-anchor-visual-editor-legacy-top: var(--dups-offset-3);
+  --dups-anchor-visual-editor-legacy-left: var(--dups-offset-3);
+  --dups-anchor-visual-editor-panel-top: 3.5rem;
+  --dups-anchor-visual-editor-panel-left: var(--dups-offset-3);
+  --dups-anchor-visual-editor-edge: 0.875rem;
+  --dups-anchor-visual-editor-edge-compact: var(--dups-offset-3);
+
   /* Anchor relationship spacing. */
   --dups-anchor-gap-xs: 0.25rem;
   --dups-anchor-gap-status: var(--dups-anchor-gap-xs);
