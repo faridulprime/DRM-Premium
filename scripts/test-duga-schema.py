@@ -403,6 +403,11 @@ def main() -> int:
           lease_generation=2,attempts=2,lease_expires_at=300,updated_at=3
           WHERE id='job-lease' AND status='running' AND lease_token='token-a'
             AND lease_generation=1 AND lease_expires_at<=200""")
+    check("old lease token cannot complete after reclaim",
+        lambda: db.execute("""UPDATE duga_jobs SET status='succeeded',result_json='{}',
+          lease_owner=NULL,lease_token=NULL,lease_expires_at=NULL
+          WHERE id='job-lease' AND status='running' AND lease_token='token-a'
+            AND lease_generation=1"""), should_fail=False)
     check("old lease token cannot heartbeat after reclaim",
         lambda: db.execute("""UPDATE duga_jobs SET lease_expires_at=400
           WHERE id='job-lease' AND status='running' AND lease_token='token-a'
