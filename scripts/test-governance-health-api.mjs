@@ -10,7 +10,6 @@ import { createHash, webcrypto } from "node:crypto";
 
 globalThis.crypto ??= webcrypto;
 globalThis.btoa ??= (value) => Buffer.from(value, "binary").toString("base64");
-import { pathToFileURL } from "node:url";
 
 const source = await readFile(new URL("../functions/api/[[path]].js", import.meta.url), "utf8");
 const moduleUrl = "data:text/javascript;base64," + Buffer.from(source).toString("base64");
@@ -32,6 +31,7 @@ function mockEnv({ role = "owner", failProbe = false, dbEnabled = true } = {}) {
         bind(...args) { this.args = args; return this; },
         async first() {
           if (sql.includes("FROM sessions s JOIN users u")) return users.get(this.args[0]) || null;
+          if (sql.includes("FROM user_restrictions WHERE user_id=?")) return null;
           if (sql === "SELECT 1 AS ok") {
             if (failProbe) throw new Error("simulated D1 outage");
             return { ok: 1 };
