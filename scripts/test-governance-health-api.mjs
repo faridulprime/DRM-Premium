@@ -18,7 +18,7 @@ const { onRequest } = await import(moduleUrl);
 function tokenHash(token) {
   return createHash("sha256").update(token).digest("base64url");
 }
-function mockEnv({ role = "owner", failProbe = false, dbEnabled = true } = {}) {
+function mockEnv({ failProbe = false, failSchemaProbe = false, tables = [], dbEnabled = true } = {}) {
   const users = new Map([
     [tokenHash("owner-token"), { id: "owner-1", email: "owner@example.test", username: "owner", role: "owner" }],
     [tokenHash("admin-token"), { id: "admin-1", email: "admin@example.test", username: "admin", role: "admin" }],
@@ -35,6 +35,13 @@ function mockEnv({ role = "owner", failProbe = false, dbEnabled = true } = {}) {
           if (sql === "SELECT 1 AS ok") {
             if (failProbe) throw new Error("simulated D1 outage");
             return { ok: 1 };
+          }
+          throw new Error("Unexpected SQL in test: " + sql);
+        },
+        async all() {
+          if (sql.includes("FROM sqlite_master")) {
+            if (failSchemaProbe) throw new Error("simulated schema probe outage");
+            return { results: tables.map(name => ({ name })) };
           }
           throw new Error("Unexpected SQL in test: " + sql);
         },
@@ -58,7 +65,7 @@ async function test(name, fn) { await fn(); tests.push(name); }
 await test("Owner can read D1 health", async () => {
   const { response, body } = await call({ token: "owner-token" });
   assert.equal(response.status, 200);
-  assert.deepEqual(body, { ok: true, service: "DUGA", database: "reachable", access: "owner" });
+  assert.deepEqual(body, { ok: true, service: "DUGA", database: "reachable", schema: "not_installed", schemaTables: [], expectedSchemaTables: 8, access: "owner" });
 });
 await test("Admin is explicitly forbidden", async () => {
   const { response } = await call({ token: "admin-token" });
@@ -83,6 +90,29 @@ await test("Non-GET health method is rejected", async () => {
 await test("Cross-origin mutation is rejected before route handling", async () => {
   const { response } = await call({ token: "owner-token", method: "POST", origin: "https://attacker.example" });
   assert.equal(response.status, 403);
+});
+await test("Partial DUGA schema is reported accurately", async () => {
+  const { response, body } = await call({
+    token: "owner-token",
+    env: mockEnv({ tables: ["duga_assignments", "duga_jobs", "users"] }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "partial");
+  assert.deepEqual(body.schemaTables, ["duga_assignments", "duga_jobs"]);
+});
+await test("Complete DUGA schema is reported ready", async () => {
+  const expected = [
+    "duga_assignments", "duga_change_requests", "duga_reviews", "duga_approvals",
+    "duga_validation_runs", "duga_audit_events", "duga_analysis_findings", "duga_jobs",
+  ];
+  const { response, body } = await call({ token: "owner-token", env: mockEnv({ tables: expected }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "ready");
+  assert.equal(body.schemaTables.length, 8);
+});
+await test("Schema probe failure returns controlled 503", async () => {
+  const { response } = await call({ token: "owner-token", env: mockEnv({ failSchemaProbe: true }) });
+  assert.equal(response.status, 503);
 });
 await test("D1 probe failure returns controlled 503", async () => {
   const { response } = await call({ token: "owner-token", env: mockEnv({ failProbe: true }) });
