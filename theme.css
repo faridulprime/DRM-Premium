@@ -962,7 +962,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .admin-topbar .admin-search input{font-size:13px!important;padding:0 10px!important}
  .admin-topbar .admin-search button{width:36px!important;min-width:36px!important;flex-basis:36px!important;height:34px!important;border-radius:0 9px 9px 0!important}
  .admin-topbar .admin-search svg{width:var(--duss-icon-size-admin-search-compact, 16px);height:var(--duss-icon-size-admin-search-compact, 16px)}
- .admin-category-bar{top:86px!important}
+ .admin-category-bar{top:var(--dups-anchor-category-bar-top, 86px)!important}
 }
 
 /* Match the Admin mobile drawer's transform-based open and close transition. */
