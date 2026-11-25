@@ -96,6 +96,40 @@ async function call({ token, method = "GET", path = "/api/governance/health", en
 const tests = [];
 async function test(name, fn) { await fn(); tests.push(name); }
 
+await test("Shared JSON reader enforces the 20 KB streaming limit without Content-Length", async () => {
+  const payload = JSON.stringify({ email: "owner@example.test", username: "valid_user", password: "valid-password" });
+  const env = {
+    SESSION_SECRET: "test-session-secret",
+    OWNER_EMAIL: "owner@example.test",
+    GOOGLE_APPS_SCRIPT_URL: "https://mailer.example.test/exec",
+    GOOGLE_APPS_SCRIPT_TOKEN: "test-token",
+    DB: { prepare() { throw new Error("DB must not be queried for the reserved Owner email"); } },
+  };
+  async function post(raw) {
+    const encoded = new TextEncoder().encode(raw);
+    let offset = 0;
+    const body = new ReadableStream({
+      pull(controller) {
+        if (offset >= encoded.length) return controller.close();
+        const end = Math.min(offset + 8192, encoded.length);
+        controller.enqueue(encoded.slice(offset, end));
+        offset = end;
+      },
+    });
+    const request = new Request("https://example.test/api/auth/register-otp", {
+      method: "POST",
+      headers: { Origin: "https://example.test", "Content-Type": "application/json" },
+      body,
+      duplex: "half",
+    });
+    return onRequest({ request, env });
+  }
+  const accepted = await post(payload);
+  assert.equal(accepted.status, 409, "a valid small JSON body should reach reserved-Owner validation");
+  const oversized = await post(payload + " ".repeat(21000));
+  assert.equal(oversized.status, 400, "an oversized streamed body must be rejected before route validation");
+});
+
 await test("Owner can read D1 health", async () => {
   const { response, body } = await call({ token: "owner-token" });
   assert.equal(response.status, 200);
