@@ -124,14 +124,14 @@ body.account-suspended{overflow:hidden}
 .profile-bar-message{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:0;color:var(--ducs-home-profilebar-text, #d3dbe4);font:500 12px/1.45 'Space Grotesk','Hind Siliguri',sans-serif}
 .profile-welcome{color:#d3dbe4}
 .profile-brand-lockup{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;font:600 12px/1 'Space Grotesk',sans-serif;letter-spacing:-.025em}
-.profile-brand-mark{width:16px;height:16px;flex:none;color:#f1f1f1}
+.profile-brand-mark{width:var(--duss-icon-size-profile-complete-brand, 16px);height:var(--duss-icon-size-profile-complete-brand, 16px);flex:none;color:#f1f1f1}
 .profile-brand-main{color:#f1f1f1}
 .profile-brand-accent{color:#60a5fa}
 .profile-bar-action{min-height:31px;display:inline-flex;align-items:center;justify-content:center;padding:0 13px;border:1px solid rgba(131,239,165,.35);border-radius:6px;background:var(--ducs-home-profilebar-action-bg, rgba(131,239,165,.14));color:#a5f2bd;text-decoration:none;font-size:11px;font-weight:700;white-space:nowrap;transition:background .15s}
 .profile-bar-action:hover{background:var(--ducs-home-profilebar-action-hover, rgba(131,239,165,.23))}
 .profile-bar-close{width:30px;height:30px;display:grid;place-items:center;flex:none;border:0;border-radius:6px;background:transparent;color:#aeb8c3;font-size:22px;line-height:1;cursor:pointer}
 .profile-bar-close:hover{background:rgba(255,255,255,.09);color:#fff}
-@media(max-width:600px){.profile-complete-bar{top:66px;width:calc(100vw - 20px);gap:8px;padding:7px}.profile-bar-message{font-size:10px;gap:3px}.profile-brand-lockup{font-size:10px}.profile-brand-mark{width:14px;height:14px}.profile-bar-action{padding:0 10px}}
+@media(max-width:600px){.profile-complete-bar{top:66px;width:calc(100vw - 20px);gap:8px;padding:7px}.profile-bar-message{font-size:10px;gap:3px}.profile-brand-lockup{font-size:10px}.profile-brand-mark{width:var(--duss-icon-size-profile-complete-brand-mobile, 14px);height:var(--duss-icon-size-profile-complete-brand-mobile, 14px)}.profile-bar-action{padding:0 10px}}
 
 
 

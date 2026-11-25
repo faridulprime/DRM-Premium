@@ -172,8 +172,10 @@ Completed on `feature/full-admin-panel`:
 - Strengthened the static regression script to inspect every matching override block for the audited compact-search and Profile brand selectors, not merely find one token reference somewhere in the stylesheet.
 - Completed the Admin search token migration in both `admin.css` and `theme.css`, so an earlier stylesheet cannot retain a hardcoded duplicate.
 - Replaced the Homepage mobile sidebar icon-slot width and flex-basis with the existing navigation-size token, preserving the 24px slot.
+- Added separate desktop/mobile shield-icon tokens for the Homepage profile-completion banner (16px/14px).
+- Added independent 23px action-symbol slot and 12px glyph tokens for Live Users' action drawer.
 - Updated all five DUSS cache keys to `duss-07`.
 
 Validation boundary:
 - CSS source dimensions remain unchanged for effective components. The 25px declaration was unreachable because the later same-breakpoint rule sets 27px.
-- Static CI can confirm token wiring and selector block coverage, but cannot prove browser-computed layout, touch behavior, localization fit, or optical alignment.
+- Static CI can confirm token wiring and selector block coverage, but cannot prove browser-computed layout, touch behavior, localization fit, or optical alignment. The expanded v0.7.0 test now checks 20 icon/slot tokens and all audited consumer variants.

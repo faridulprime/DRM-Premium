@@ -22,7 +22,7 @@ Verification date: 2026-11-25
 ## Existing subsystem status
 
 - DUME 0.2.0: shared mobile drawer controller integrated on four pages; broader motion migration and browser validation pending.
-- DUSS 0.7.0: foundation, selected form/profile geometry, public shell geometry, role badges, Admin action buttons and 16 audited SVG/glyph icon dimensions migrated to semantic tokens. Two missed icon variants and later hardcoded responsive search overrides were corrected; source dimensions of effective components remain unchanged. Visual/optical equivalence is not established without browser rendering.
+- DUSS 0.7.0: foundation, selected form/profile geometry, public shell geometry, role badges, Admin action buttons and 20 audited SVG/glyph/icon-slot dimensions migrated to semantic tokens. Two missed icon variants and later hardcoded responsive search overrides were corrected; source dimensions of effective components remain unchanged. Visual/optical equivalence is not established without browser rendering.
 - DUPS 0.3.0: token foundation and selected positioning/layer migrations; browser validation pending.
 - DUCS 0.3.1: token foundation and partial page/component migration; residual literals, full computed-style audit, browser regression and complete contrast validation remain.
 
@@ -34,7 +34,7 @@ Verification date: 2026-11-25
 
 ## Validation status
 
-- DUSS v0.7.0 workflow run #10 passed: 16 icon tokens/references, compact override coverage, prior badge/button tokens, seven CSS brace checks and five page cache keys. Follow-up source audit also tokenized the duplicate Admin search rule in `admin.css` and the Homepage mobile nav icon slot; the latest CI run must verify those additions. This is static source verification only. The workflow now uses actions/checkout@v7 and actions/setup-python@v7; a separate run verifies the action upgrade.
+- DUSS v0.7.0 workflow run #10 passed: 16 icon tokens/references, compact override coverage, prior badge/button tokens, seven CSS brace checks and five page cache keys. Follow-up source audit also tokenized the duplicate Admin search rule, Homepage mobile nav icon slot, Homepage profile-completion shield, and Live Users action-drawer icon slot/glyph; the latest CI run must verify those additions. This is static source verification only. The workflow now uses actions/checkout@v7 and actions/setup-python@v7; a separate run verifies the action upgrade.
 - Browser screenshots, computed dimensions, keyboard/touch checks, 200% zoom and Bengali/Latin overflow tests have not been run.
 - The source audit does not establish Cloudflare edge configuration or Production runtime behavior.
 

@@ -327,4 +327,8 @@
   /* Legacy component exceptions retained until a visual redesign is approved. */
   --duss-icon-size-live-role: 0.6875rem;
   --duss-icon-size-profile-drawer-logout: 0.9375rem;
+  --duss-icon-size-profile-complete-brand: 1rem;
+  --duss-icon-size-profile-complete-brand-mobile: 0.875rem;
+  --duss-icon-slot-size-live-drawer-action: 1.4375rem;
+  --duss-icon-size-live-drawer-action: 0.75rem;
 }

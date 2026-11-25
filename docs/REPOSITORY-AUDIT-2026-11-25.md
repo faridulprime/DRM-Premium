@@ -13,7 +13,7 @@ This is a source-level audit. It is not a browser test, penetration test, Cloudf
 
 - Advanced DUSS from v0.5.0 through v0.7.0.
 - Corrected the token stylesheet's stale version header and added a regression assertion so its marker must match DUSS v0.6.0; v0.7.0 keeps this check active.
-- Added 16 semantic icon-size tokens and migrated their audited selector consumers without intentionally changing effective CSS dimensions.
+- Added 20 semantic icon/slot-size tokens and migrated their audited selector consumers without intentionally changing effective CSS dimensions.
 - Updated the five DUSS stylesheet cache keys to `duss-07`.
 - Added `scripts/test-duss-tokens.py` and `.github/workflows/duss-sizing-smoke.yml` for static regression checks.
 - Tokenized the two remaining audited icon variants and the later hardcoded responsive search overrides; removed one superseded 25px Profile brand declaration.
@@ -70,7 +70,7 @@ Inspect the actual Pages/Cloudflare edge rules and establish normal traffic/hear
 
 ### F-03 — DUSS migration is source-level only
 
-DUSS v0.7.0 centralizes selected role-badge, Admin action-button, and 16 SVG/glyph icon dimensions. The latest source audit added the 11px Live Users role glyph and 15px Profile drawer logout glyph, and removed hardcoded duplicate search-icon overrides. The icon migration intentionally preserves current CSS dimensions. It does not claim optical equivalence or establish rendered visual alignment.
+DUSS v0.7.0 centralizes selected role-badge, Admin action-button, and 20 audited SVG/glyph/icon-slot dimensions. The latest source audit added the 11px Live Users role glyph and 15px Profile drawer logout glyph, and removed hardcoded duplicate search-icon overrides. The icon migration intentionally preserves current CSS dimensions. It does not claim optical equivalence or establish rendered visual alignment.
 
 **Outstanding validation**
 - DUSS GitHub Actions run #10 passed on commit `58c8cbaa4a392757a4c34cd4d472f568fd729f7a`; run #10 verifies source wiring only.

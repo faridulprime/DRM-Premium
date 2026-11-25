@@ -95,6 +95,10 @@ def main() -> int:
         "--duss-icon-size-field-glyph": "0.9375rem",
         "--duss-icon-size-live-role": "0.6875rem",
         "--duss-icon-size-profile-drawer-logout": "0.9375rem",
+        "--duss-icon-size-profile-complete-brand": "1rem",
+        "--duss-icon-size-profile-complete-brand-mobile": "0.875rem",
+        "--duss-icon-slot-size-live-drawer-action": "1.4375rem",
+        "--duss-icon-size-live-drawer-action": "0.75rem",
     }
     for name, value in token_values.items():
         check_token(tokens, name, value)
@@ -125,6 +129,10 @@ def main() -> int:
         "--duss-icon-size-field-glyph": "styles.css",
         "--duss-icon-size-live-role": "live-users.css",
         "--duss-icon-size-profile-drawer-logout": "theme.css",
+        "--duss-icon-size-profile-complete-brand": "styles.css",
+        "--duss-icon-size-profile-complete-brand-mobile": "styles.css",
+        "--duss-icon-slot-size-live-drawer-action": "live-users.css",
+        "--duss-icon-size-live-drawer-action": "live-users.css",
     }
     for name, path in consumers.items():
         check_reference(source_files[path], name, path)
@@ -163,6 +171,11 @@ def main() -> int:
         source_files["profile.css"], ".profile-brand svg",
         "--duss-icon-size-profile-brand-mobile"
     )
+
+    check_selector_icon_token(source_files["styles.css"], ".profile-brand-mark", "--duss-icon-size-profile-complete-brand")
+    check_selector_icon_token(source_files["styles.css"], ".profile-brand-mark", "--duss-icon-size-profile-complete-brand-mobile")
+    check_selector_icon_token(source_files["live-users.css"], ".live-drawer-action .action-symbol", "--duss-icon-slot-size-live-drawer-action")
+    check_selector_icon_token(source_files["live-users.css"], ".live-drawer-action .action-symbol", "--duss-icon-size-live-drawer-action", properties=("font-size",))
 
     # Guard the previous migrations while this audit advances.
     legacy_families = {
@@ -206,7 +219,7 @@ def main() -> int:
         fail("DUSS specification is not aligned with the v0.7 icon-sizing migration")
 
     print(
-        "PASS: 16 icon tokens, 16 selector references, all audited duplicate overrides and mobile nav slot, "
+        "PASS: 16 icon tokens, 16 selector references, all audited duplicate overrides, profile-banner and Live Users drawer variants, mobile nav slot, "
         "prior badge/button tokens, 7 CSS brace checks, 5 page cache keys, and DUSS v0.7 documentation."
     )
     print("NOTE: Static source verification only; no browser geometry is inferred.")
