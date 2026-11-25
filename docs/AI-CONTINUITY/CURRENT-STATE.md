@@ -14,7 +14,7 @@ Verification date: 2026-11-25
 - DUGA architecture, roles, ownership, dependency metadata and policies are present on this branch.
 - D1 operational schema remains a design draft here. No DUGA API or separate Control Center is implemented in the website runtime.
 - A separate branch, `duga-foundation-review`, contains Draft PR #4 based on `main`; it is open and unmerged.
-- DUGA PR #4 GitHub Actions run `45601804933` (run 244) completed successfully on the review branch's source/test update before the latest documentation-only continuity commit. Logs confirm disposable Worker syntax, local DUGA schema SQLite tests, the new draft/fixture/Console parity test, governance validation and malformed-input tests all passed.
+- DUGA PR #4 GitHub Actions run `45601966255` (run 250) completed successfully on head `4b05f82232bebba39d137cb5f8e3d58741494302`. Logs confirm disposable Worker syntax, local DUGA schema SQLite tests, draft/fixture/Console parity, governance validation and malformed-input tests all passed. It still emitted Node 20 action deprecation warnings. The review-branch workflow has since been upgraded to checkout/setup-node/setup-python v7; its next run is pending.
 - PR #4 records an earlier disposable-D1 Worker acceptance PASS (run `53d70371-008c-46a0-8bc3-33522be990eb`). The DUGA lifecycle review explicitly notes that the schema was subsequently extended with predecessor-link and AI-review constraints, and revised-schema disposable D1 acceptance has NOT RUN.
 - Shared Preview migration-history reconciliation, independent third-party review, trusted AI/validation identity, Git provenance and application integration tests remain outstanding. Preview migration and DUGA write endpoints remain NO-GO.
 - Human identity assignments remain unassigned. AI principal IDs are not credentials.
@@ -34,13 +34,13 @@ Verification date: 2026-11-25
 
 ## Validation status
 
-- DUSS v0.7.0 workflow run #10 passed: 16 icon tokens/references, compact override coverage, prior badge/button tokens, seven CSS brace checks and five page cache keys. Follow-up source audit also tokenized the duplicate Admin search rule, Homepage mobile nav icon slot, Homepage profile-completion shield, and Live Users action-drawer icon slot/glyph. Run #13 passed the 20-definition/20-consumer checks, but its human-readable success count was stale; the next run verifies dynamically generated counts. This is static source verification only. The workflow now uses actions/checkout@v7 and actions/setup-python@v7; a separate run verifies the action upgrade.
+- DUSS v0.7.0 run #14 passed with dynamically reported counts: 20 icon/slot tokens and 20 consumer references, audited duplicate overrides, profile-banner and Live Users drawer variants, mobile nav slot, prior badge/button tokens, seven CSS brace checks and five page cache keys. The workflow uses checkout/setup-python v7; run #11 independently confirmed the v7 actions and no longer logged the Node 20 deprecation warning. This remains static source verification only.
 - Browser screenshots, computed dimensions, keyboard/touch checks, 200% zoom and Bengali/Latin overflow tests have not been run.
 - The source audit does not establish Cloudflare edge configuration or Production runtime behavior.
 
 ## Next direction
 
-1. Verify the DUSS workflow after its v7 action upgrade.
+1. Complete browser-based DUSS sizing and interaction validation when a browser test environment is available.
 2. Perform browser-based sizing and interaction validation before further geometry changes; no rendered-browser test has been run.
 3. Continue with icon optical review, then remaining page-specific controls, cards/grids and dialogs.
 4. Inspect Cloudflare edge rate-limits and establish normal heartbeat volume for public presence/analytics before designing quotas.

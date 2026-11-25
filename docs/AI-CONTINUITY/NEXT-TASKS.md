@@ -6,7 +6,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Application: DUSS
 
-1. Verify the latest DUSS run after correcting the success-message count to derive from the 20-token/20-consumer registries; run #13 passed the underlying checks.
+1. DUSS run #14 verified all 20 icon/slot tokens and 20 consumer references with accurate dynamic counts; next step is browser-based rendering and interaction validation.
 2. Perform browser screenshots and computed-style/bounding-box comparisons for Homepage, Admin, Live Users, Upload Studio and Profile; no browser-runner integration is currently available in this work session.
 3. Test mobile/tablet/desktop, 200% zoom, keyboard focus, touch targets and Bengali/Latin overflow.
 4. Review SVG/glyph optical alignment using rendered evidence; do not infer optical equivalence from CSS dimensions.
@@ -24,6 +24,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## DUGA review track — Draft PR #4
 
+0. Verify the PR #4 DUGA workflow after the checkout/setup-node/setup-python v7 upgrade; no D1 execution is part of this change.
 1. Obtain independent third-party review of the SQL schema, lifecycle transitions, authorization policy and CAS/audit design.
 2. Run full revised-schema acceptance against a fresh disposable D1 after the parent-change-request and AI-review constraints; the older Worker PASS does not cover these later schema additions.
 3. Reconcile the actual shared Preview D1 migration history and repository migration sequence, including duplicate `0004` and `0007` prefixes.
