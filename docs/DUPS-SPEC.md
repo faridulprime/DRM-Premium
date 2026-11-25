@@ -172,3 +172,6 @@ The expanded Chromium suite passed in run #45677961245 on commit `d9953b483c21ea
 
 
 The responsive Website Builder inspector geometry assertion also passed in Chromium run #45678321298: the test revealed the hidden Builder shell in the static page, verified it as a fixed containing block, and checked the inspector's top/right/bottom offsets against that shell at all existing widths up to 900 CSS px. [Run #45678321298](https://github.com/faridulprime/DRM-Premium/actions/runs/45678321298).
+
+
+The closing drawer pseudo-layer assertion passed in Chromium run #45678490915 on commit `f327ca4c0120c292a6047002057881a188208d33`: both computed `::before` and `::after` z-index values matched their DUPS tokens. [Run #45678490915](https://github.com/faridulprime/DRM-Premium/actions/runs/45678490915). The full 35 page/viewport and DUME lifecycle suite passed.
