@@ -79,3 +79,8 @@ The Restricted Users modal now consumes the existing `--dups-layer-live-drawer` 
 ### Website Builder responsive inspector — 2026-11-26
 
 The inspector's responsive absolute-positioning layer now uses `--dups-layer-builder-inspector` with fallback 2. Chromium browser assertions check its computed `position:absolute` and z-index/token agreement at the existing widths up to 900 CSS px. This is a local layer inside the fixed Website Builder shell, not a global overlay layer.
+
+
+### Homepage overlay and responsive inspector browser acceptance — 2026-11-26
+
+Chromium run #45677034569 passed the added Homepage fixed-layer/token checks for the Website Builder, suspension screen and profile-completion overlay pair, plus the responsive Builder inspector's absolute-positioning/token checks at widths up to 900 CSS px. The Live Users Restricted Users modal checks also pass in the same browser suite. This remains a curated set of components, not a complete DUPS inventory.
