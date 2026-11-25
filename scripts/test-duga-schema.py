@@ -261,6 +261,33 @@ def main() -> int:
                    require_audit_event("change-request-transition:change-blocked:3")),
           should_fail=False)
 
+    def stale_change_request_update():
+        result = db.execute("""UPDATE duga_change_requests
+          SET status='awaiting_ai_audit',state_version=4,updated_at=4
+          WHERE id='change-blocked' AND status='impact_review' AND state_version=2""")
+        if result.rowcount != 0:
+            raise AssertionError("stale compare-and-swap unexpectedly changed a row")
+
+    check("stale expected state_version changes zero rows",
+          stale_change_request_update, should_fail=False)
+
+    db.execute("""CREATE TRIGGER test_fail_change_request_audit
+      BEFORE INSERT ON duga_audit_events
+      WHEN NEW.aggregate_type='change_request'
+      BEGIN SELECT RAISE(ABORT,'simulated audit storage failure'); END""")
+    check("audit insert failure aborts the state transition",
+          lambda: transition_request("change-blocked","impact_review","awaiting_ai_audit",3,4),
+          should_fail=True)
+    db.execute("DROP TRIGGER test_fail_change_request_audit")
+
+    def require_blocked_request_unchanged():
+        row = db.execute("SELECT status,state_version FROM duga_change_requests WHERE id='change-blocked'").fetchone()
+        if row != ("impact_review",3):
+            raise AssertionError(f"state changed despite audit failure: {row}")
+
+    check("audit failure leaves state and version unchanged",
+          require_blocked_request_unchanged, should_fail=False)
+
     # Exhaustive database transition matrix: every allow-listed edge succeeds,
     # every other pair (including terminal-state exits) is rejected.
     allowed_edges = {
