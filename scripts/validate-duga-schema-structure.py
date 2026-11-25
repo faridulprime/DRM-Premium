@@ -20,7 +20,7 @@ EXPECTED_COLUMNS = {
     "duga_validation_runs": "id change_request_id commit_sha status validator validator_version results_json started_at completed_at created_at".split(),
     "duga_audit_events": "id aggregate_type aggregate_id event_type actor_type actor_user_id actor_principal_id actor_system_id payload_json policy_commit_sha created_at".split(),
     "duga_analysis_findings": "id analyzer_version repository_commit_sha file_path symbol classification confidence evidence_json status created_at reviewed_at reviewed_by_user_id".split(),
-    "duga_jobs": "id job_type status input_json result_json attempts available_at lease_expires_at created_at updated_at".split(),
+    "duga_jobs": "id job_type status input_json result_json attempts available_at lease_owner lease_token lease_generation lease_expires_at created_at updated_at".split(),
 }
 
 EXPECTED_INDEXES = {
@@ -40,6 +40,7 @@ EXPECTED_INDEXES = {
     "idx_duga_findings_status_time": ("duga_analysis_findings", 0, 0),
     "idx_duga_findings_file_commit": ("duga_analysis_findings", 0, 0),
     "idx_duga_jobs_queue": ("duga_jobs", 0, 0),
+    "uq_duga_jobs_active_lease_token": ("duga_jobs", 1, 1),
 }
 
 EXPECTED_INDEX_COLUMNS = {
@@ -59,6 +60,7 @@ EXPECTED_INDEX_COLUMNS = {
     "idx_duga_findings_status_time": ["status", "created_at"],
     "idx_duga_findings_file_commit": ["file_path", "repository_commit_sha"],
     "idx_duga_jobs_queue": ["status", "available_at"],
+    "uq_duga_jobs_active_lease_token": ["lease_token"],
 }
 
 # Explicit critical column declarations: (SQLite declared type, NOT NULL flag, PK ordinal).
@@ -76,6 +78,7 @@ EXPECTED_COLUMN_DECLARATIONS = {
     ("duga_analysis_findings", "confidence"): ("REAL", 1, 0),
     ("duga_jobs", "attempts"): ("INTEGER", 1, 0),
     ("duga_jobs", "available_at"): ("INTEGER", 1, 0),
+    ("duga_jobs", "lease_generation"): ("INTEGER", 1, 0),
 }
 EXPECTED_TRIGGERS = {
     "duga_review_no_implementer_self_audit": ("duga_reviews", "Implementer cannot independently audit"),
@@ -86,6 +89,7 @@ EXPECTED_TRIGGERS = {
     "duga_approvals_no_delete": ("duga_approvals", "immutable evidence"),
     "duga_audit_no_update": ("duga_audit_events", "append-only"),
     "duga_audit_no_delete": ("duga_audit_events", "append-only"),
+    "duga_jobs_lease_transition_guard": ("duga_jobs", "Invalid DUGA job lease transition"),
 }
 
 def fail(message: str) -> None:
@@ -269,8 +273,10 @@ def main() -> int:
             ],
             "duga_jobs": [
                 "attempts>=0",
-                "status='running' and lease_expires_at is not null",
-                "status<>'running' and lease_expires_at is null",
+                "status='running' and lease_owner is not null and length(lease_owner)>0",
+                "lease_token is not null and length(lease_token)>0",
+                "lease_generation>0 and lease_expires_at is not null",
+                "status<>'running' and lease_owner is null and lease_token is null and lease_expires_at is null",
             ],
         }
         for table, fragments in required_fragments.items():
