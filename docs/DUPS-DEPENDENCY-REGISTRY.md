@@ -125,6 +125,10 @@ The base visual-editor toggle and panel now consume semantic DUPS anchor tokens.
 
 The fixed profile-completion bar now consumes DUPS top and viewport-center anchor tokens; its backdrop consumes an explicit zero-inset token. Chromium verifies computed fixed positioning, top offset, center alignment, full-viewport backdrop coverage and existing stacking order at the Homepage viewport set. Existing 74px/50%/0px geometry and layer values are preserved.
 
+### Profile drawer Category Bar clearance — 2026-11-26
+
+The Category Bar's 390px right displacement while the desktop Profile drawer is open now consumes `--dups-anchor-profile-drawer-clearance`; the compact override sets that same token to 0px. Chromium toggles the drawer-open body state in the Homepage fixture and compares computed `right` against the resolved token at every existing viewport. The Admin mobile Category Bar's final late 86px override also now sets and consumes the state-scoped Category Bar top token instead of bypassing it with a literal.
+
 
 The responsive compact/mobile override retains its pre-existing 66px top coordinate through the same component-scoped token. The browser test reveals the hidden static bar/backdrop before reading computed geometry, so it validates actual pixel positioning rather than the unresolved percentage returned for a display:none element.
 
