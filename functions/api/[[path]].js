@@ -260,13 +260,13 @@ async function handle(req,env){
    return json({ok:true,id},201);
   }
   if(p.length===4&&p[2]==="folders"&&m==="PATCH"){
-   const d=await readBody(req),old=await env.DB.prepare("SELECT id FROM dumc_folders WHERE id=? AND is_system=0 AND owner_id=? AND is_archived=0").bind(p[3],user.id).first();
+   const d=await readBody(req),old=await env.DB.prepare("SELECT id FROM dumc_folders WHERE id=? AND is_system=0 AND is_archived=0 AND (?='owner' OR owner_id=?)").bind(p[3],user.role,user.id).first();
    if(!old)return fail("Custom folder not found.",404);
    if(d?.name!==undefined&&!textOK(d.name,100))return fail("Folder name must be 1–100 characters.",400);
    if(d?.description!==undefined&&(typeof d.description!=="string"||d.description.length>500))return fail("Folder description is too long.",400);
    if(d?.sort_order!==undefined&&(!Number.isInteger(d.sort_order)||d.sort_order<0||d.sort_order>2147483647))return fail("Folder sort_order must be a non-negative integer.",400);
    const now=Math.floor(Date.now()/1000);
-   try{await env.DB.prepare("UPDATE dumc_folders SET name=COALESCE(?,name),description=COALESCE(?,description),sort_order=COALESCE(?,sort_order),updated_at=? WHERE id=? AND owner_id=?").bind(d.name===undefined?null:d.name.trim(),d.description===undefined?null:d.description,d.sort_order===undefined?null:(Number.isInteger(d.sort_order)?d.sort_order:null),now,p[3],user.id).run();}
+   try{await env.DB.prepare("UPDATE dumc_folders SET name=COALESCE(?,name),description=COALESCE(?,description),sort_order=COALESCE(?,sort_order),updated_at=? WHERE id=? AND (?='owner' OR owner_id=?)").bind(d.name===undefined?null:d.name.trim(),d.description===undefined?null:d.description,d.sort_order===undefined?null:d.sort_order,now,p[3],user.role,user.id).run();}
    catch{return fail("Folder name conflicts with another folder.",409)}
    return json({ok:true});
   }
@@ -277,7 +277,7 @@ async function handle(req,env){
     env.DB.prepare("SELECT COUNT(*) AS n FROM dumc_movie_folder_assignments WHERE folder_id=?").bind(p[3]).first()
    ]);
    if(Number(children.n)||Number(assignments.n))return fail("Folder has subfolders or movie assignments. Move them before deleting.",409);
-   await env.DB.prepare("UPDATE dumc_folders SET is_archived=1,updated_at=? WHERE id=? AND owner_id=?").bind(Math.floor(Date.now()/1000),p[3],user.id).run();
+   await env.DB.prepare("UPDATE dumc_folders SET is_archived=1,updated_at=? WHERE id=? AND (?='owner' OR owner_id=?)").bind(Math.floor(Date.now()/1000),p[3],user.role,user.id).run();
    return json({ok:true,archived:true});
   }
   if(p.length===3&&p[2]==="movies"&&m==="GET"){
