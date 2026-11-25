@@ -378,11 +378,6 @@ def main() -> int:
           lease_expires_at=100,updated_at=2
           WHERE id='job-queued' AND status='queued' AND available_at<=50"""),
         should_fail=False)
-    check("duplicate active lease token rejected",
-        lambda: db.execute("""UPDATE duga_jobs SET status='running',attempts=1,
-          lease_owner='worker-b',lease_token='token-queued',lease_generation=2,attempts=2,
-          lease_expires_at=100 WHERE id='job-lease' AND status='running'"""),
-        should_fail=True)
     db.execute(
         """INSERT INTO duga_jobs
            (id,job_type,status,input_json,available_at,attempts,lease_owner,
@@ -390,6 +385,11 @@ def main() -> int:
            VALUES ('job-lease','validation','running','{}',1,1,'worker-a',
                    'token-a',1,100,1,1)"""
     )
+    check("duplicate active lease token rejected",
+        lambda: db.execute("""UPDATE duga_jobs SET lease_owner='worker-b',
+          lease_token='token-queued',lease_generation=2,attempts=2,lease_expires_at=100
+          WHERE id='job-lease' AND status='running'"""),
+        should_fail=True)
     check("heartbeat preserves lease identity and generation",
         lambda: db.execute("""UPDATE duga_jobs SET lease_expires_at=120,updated_at=2
           WHERE id='job-lease' AND status='running' AND lease_token='token-a'
