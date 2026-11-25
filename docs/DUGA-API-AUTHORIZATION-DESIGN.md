@@ -1,6 +1,6 @@
 # DUGA API & Authorization Design
 Version: 0.1.0
-Status: Proposed contract only; no endpoint is implemented.
+Status: Initial Owner-only health endpoint implemented and mocked-integration-tested; remaining governance API contract is proposed.
 
 ## Existing API behavior observed
 The current API is implemented in one Cloudflare Pages catch-all file: functions/api/[[path]].js.
@@ -57,3 +57,6 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 
 ## 14. Initial health endpoint — 2026-11-25
 The catch-all API now handles `GET /api/governance/health` after normal session authentication and before generic admin route handling. It explicitly requires the existing application Owner role, returns 403 for Admin, probes D1 with a read-only `SELECT 1`, and returns no schema/table claims. Unknown governance paths return 404. This is a minimal routing/authentication foothold, not evidence of a deployed or runtime-tested endpoint; the branch has not been deployed to Preview.
+
+## 16. Mocked health API test coverage
+`scripts/test-governance-health-api.mjs` imports the Pages handler and tests the route with a minimal mock D1 binding. It verifies Owner success, Admin denial, unauthenticated/User denial, unknown-route 404, non-GET rejection, cross-origin mutation rejection, D1 probe failure 503 and missing-binding 503. This is handler-level integration coverage with mocked D1, not a live Cloudflare Preview test.
