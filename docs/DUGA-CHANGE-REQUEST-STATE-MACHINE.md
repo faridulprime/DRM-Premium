@@ -1,6 +1,6 @@
 # DUGA Change-Request State Machine and Authorization Contract
 
-**Status:** design contract and gap assessment only. No status trigger, write route, migration, D1 operation, or deployment is implemented.
+**Status:** design contract plus schema-draft lifecycle guards. No write route, migration, D1 operation, or deployment is implemented.
 
 ## 1. Current verified baseline
 
@@ -8,15 +8,11 @@ The current DUGA draft defines the allowed status vocabulary in `duga_change_req
 
 `proposed`, `analyzing`, `impact_review`, `awaiting_ai_audit`, `awaiting_human_approval`, `approved`, `implementing`, `validating`, `final_review`, `accepted`, `rejected`, `cancelled`, `blocked`.
 
-The table also contains `state_version`, `policy_commit_sha`, base/implementation commit fields and requester/implementer identities. However, unlike assignments, findings, validation runs and jobs, the current draft has **no change-request INSERT/UPDATE/DELETE lifecycle triggers** and no automatic change-request transition audit trigger.
+The table also contains `state_version`, `policy_commit_sha`, base/implementation commit fields and requester/implementer identities. The feature-branch schema draft now adds `blocked_from_status`, `block_reason_code`, INSERT/UPDATE/DELETE lifecycle guards and a database transition-audit trigger.
 
-Consequences:
-- A caller with database write access could insert a request directly in a late or terminal status.
-- An update can currently jump between any CHECK-allowed statuses, including terminal states, without incrementing `state_version`.
-- Identity, commit and policy fields are not protected by a change-request immutability/transition trigger.
-- No database-generated audit event currently proves a change-request status transition.
+The draft-level gaps are addressed structurally: requests start in `proposed` at version 1; transitions follow the allow-list and increment the version once; requester/source/base/policy identity bindings are immutable; terminal states cannot be updated; physical deletion is blocked; and state changes create an append-only database event. The trigger event uses `system / duga-db-trigger` and is not authenticated actor attribution. The future API must add a separate actor-attributed audit record.
 
-These are schema-draft gaps, not proof of a live Preview vulnerability. The draft has not been installed in Preview.
+These changes apply only to the feature-branch schema draft. They are not evidence of a live Preview vulnerability or of a live Preview fix; the revised schema has not been installed in Preview.
 
 ## 2. State machine proposal
 
@@ -33,7 +29,7 @@ The following is a conservative proposed graph. It deliberately does not assume 
 | implementing | validating, blocked | Implementer identity and immutable target commit recorded; implementation evidence available |
 | validating | final_review, implementing, blocked | Validation run is terminal and provider-verified; failed validation returns to implementation, never to final review |
 | final_review | accepted, implementing, blocked | Final review verifies exact commit, successful validation, current approvals and policy |
-| blocked | an explicitly recorded eligible resume state, or cancelled | Block reason resolved; fresh authorization and evidence; resume target recorded in audit payload |
+| blocked | impact_review, or cancelled | Block reason resolved; fresh authorization and impact/evidence review; the prior state and reason are retained in the transition audit payload |
 | accepted | none | Terminal |
 | rejected | none | Terminal |
 | cancelled | none | Terminal |
@@ -42,7 +38,7 @@ No automatic transition is implied by a job finishing. The API must verify the r
 
 ### 2.1 Important policy decisions still requiring owner/security review
 
-- Whether `blocked` may resume and which states are eligible for each block reason.
+- Whether the conservative `blocked → impact_review` or `blocked → cancelled` policy should remain the permanent recovery rule.
 - Whether `rejected` and `cancelled` are permanently terminal (this proposal says yes).
 - Whether an approved request can be revoked after implementation starts, and what explicit supersession workflow is required.
 - Whether a high/critical-risk request requires both independent AI audit and human approval, while low/medium risk may use a narrower path.
@@ -71,16 +67,16 @@ Role names alone are insufficient. Authorization must be evaluated against activ
 
 A future schema revision should consider:
 
-1. INSERT guard: every change request begins in `proposed`, with `state_version=1` and no implementation commit/implementer assignment.
-2. UPDATE guard: status changes must follow the approved transition graph and increment `state_version` by exactly one.
-3. Immutable identity: request ID, requester identity, creation time and original source/base/policy context cannot be silently rewritten. If a policy/base refresh is allowed, represent it as a separately versioned, auditable event with explicit revalidation requirements.
-4. Commit binding: implementation commit is write-once per implementation attempt; a new attempt must be represented explicitly, not by silently replacing prior evidence.
-5. Terminal-state guard: accepted/rejected/cancelled cannot be edited or reopened. Corrections require a new request linked by an explicit supersession relation.
-6. Audit: every state transition produces an append-only audit event in the same database statement/transaction, including previous state, next state, old/new version, reason code, policy SHA and server-derived actor reference.
-7. CAS: API update predicate must include request ID, expected status, expected state_version and relevant policy/commit values; require exactly one changed row.
-8. DELETE: change requests are evidence roots and should not be physically deleted; use explicit cancellation/supersession.
-9. Evidence prerequisites: state transition must not treat an arbitrary JSON claim as proof. Reviews, approvals and validations must be separately verified and reference the same request/commit/policy tuple.
-10. Separation of duties: database constraints can prevent selected self-review cases, but trusted session/service identity and role/scope checks remain API responsibilities.
+1. INSERT guard: implemented in the draft; every request begins in `proposed`, with `state_version=1`, no implementer/commit, and matching creation/update timestamps.
+2. UPDATE guard: implemented in the draft; status changes follow the allow-list and increment `state_version` exactly once.
+3. Immutable identity: implemented for request ID, requester identity, creation time, source branch, base commit and policy SHA.
+4. Commit binding: implementer is assigned only on `approved → implementing`; the implementation commit is write-once after it is recorded. The current draft has no attempt-history table, so a retry with a changed commit is not supported; use a successor request until that model is designed.
+5. Terminal-state guard: implemented for accepted/rejected/cancelled. Corrections require a successor request.
+6. Audit: implemented as an append-only database-generated transition event. Its actor is `duga-db-trigger`, not the authenticated actor; API actor attribution remains mandatory.
+7. CAS: API update predicate must include request ID, expected status, expected `state_version` and relevant policy/commit values; require exactly one changed row.
+8. DELETE: implemented; change requests cannot be physically deleted.
+9. Evidence prerequisites: API must verify reviews, approvals and validations against the same request/commit/policy tuple; a valid database edge is not proof that gates were met.
+10. Separation of duties: database constraints prevent selected self-review cases, but trusted session/service identity and role/scope checks remain API responsibilities.
 
 The SQL guard is defense in depth. It does not replace server-side authorization or trusted evidence verification.
 
@@ -127,4 +123,4 @@ Do not rely on read-then-write authorization without compare-and-swap. Do not ac
 - Test the new schema in SQLite, then disposable D1, then Preview D1/runtime.
 - Keep Production untouched absent separate explicit authorization.
 
-This document is a design/gap assessment only. No schema change, API write route, OIDC flow, Preview D1 access, or deployment was performed.
+The feature-branch operational schema draft and in-memory test/validator definitions now include lifecycle enforcement. The tests have not yet been executed in this session. No API write route, OIDC flow, migration, Preview D1 access, or deployment was performed.
