@@ -198,3 +198,8 @@ The closing drawer pseudo-layer assertion passed in Chromium run #45678490915 on
 ## Upload Studio mobile header anchor migration — 2026-11-26
 
 The fixed mobile Upload Studio global header now consumes the shared zero-offset primitive for its top/left/right viewport edges. The existing fixed positioning, mobile-header stacking token and dimensions are preserved. A targeted Chromium assertion checks the rendered edge geometry and layer-token agreement at all sampled Upload Studio viewports up to 760 CSS px. Native browser zoom, physical iOS safe-area behavior and deployed runtime remain outside this validation.
+
+
+## Shared shell viewport-edge anchor migration — 2026-11-26
+
+The fixed shared header now uses the DUPS zero-offset primitive for its viewport edges. The Category Bar uses that primitive for horizontal edges while preserving its DUSS header-height vertical anchor. The mobile navigation drawer uses the same primitive for top/bottom and its backdrop for full-viewport insets. A targeted Chromium assertion checks the rendered Homepage header and Category Bar geometry across the seven static viewport samples. No shell sizing, responsive breakpoint, stacking layer or interaction behavior is intentionally changed.
