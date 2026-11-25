@@ -33,6 +33,7 @@ on:
       - "docs/DUGA-SPEC.md"
       - "docs/AI-CONTINUITY/**"
       - "scripts/validate-governance.mjs"
+      - "scripts/validate-registry-schema.mjs"
       - "scripts/validate-migration-inventory.mjs"
       - "scripts/test-duga-schema.py"
       - "scripts/validate-duga-schema-structure.py"
