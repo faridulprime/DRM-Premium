@@ -21,7 +21,7 @@ Verification date: 2026-11-25
   - blocked-state metadata with enumerated reason codes; resume is restricted to `impact_review` or cancellation;
   - write-once implementer identity and implementation commit;
   - append-only database transition audit event attributed to `system / duga-db-trigger` (not authenticated human/service attribution).
-- The in-memory SQLite smoke-test definitions and deep structural-validator expectations were updated. They have NOT yet been executed against the branch-head schema in this session; do not report a test pass.
+- The in-memory SQLite smoke suite and deep structural validator both PASS in GitHub Actions on commit `d0d21d774689417624d75cd255f9f7e2f4485966`: [DUGA Governance run #45672305048](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305048) and [DUGA schema smoke run #45672305053](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305053). The lifecycle matrix tests 29 allowed transitions and rejects 127 unlisted pairs.
 - Current schema limitation: there is no implementation-attempt history table. A changed implementation commit cannot be recorded as a retry; a new commit needs a successor request until a separately reviewed attempt model is added. Same-commit revalidation is the only safe retry interpretation.
 - API work remains outstanding: authenticated actor derivation, scoped role/assignment checks, evidence/provenance verification, compare-and-swap, and an actor-attributed audit insert in the same D1 batch. The trigger event is only a database fact and cannot identify the authenticated actor.
 - Revised-schema disposable D1 acceptance, independent security review, Preview migration-history reconciliation and backup/recovery checks remain outstanding. Shared Preview migration and DUGA write endpoints remain NO-GO.
@@ -61,7 +61,7 @@ Verification date: 2026-11-25
 
 - Implemented draft-only lifecycle guards in `governance/schemas/d1-operational-schema.sql`.
 - Added blocked-state metadata and synthetic transition audit.
-- Updated `scripts/test-duga-schema.py` with lifecycle adversarial cases and updated the expected trigger inventory.
+- Updated `scripts/test-duga-schema.py` with lifecycle adversarial cases and an exhaustive 29-allowed/127-rejected transition matrix; both schema test workflows passed.
 - Updated `scripts/validate-duga-schema-structure.py` with new columns, trigger and CHECK-expression expectations.
 - Updated the enforcement design and state-machine docs to reflect the actual draft behavior and limitations.
 - Next: execute both SQLite scripts against the exact branch head; fix failures; then inspect the API architecture for CAS/actor attribution. Do not create migration 0009 or touch Preview until the separate readiness/approval gates pass.
