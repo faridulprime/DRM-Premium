@@ -99,3 +99,8 @@ The sticky detail-dialog header now consumes `--dups-layer-live-dialog-sticky-he
 ### Latest DUPS targeted Chromium verification — 2026-11-26
 
 Run #45677961245 passed the mobile Homepage header-status anchor token checks and Live Users detail-dialog sticky-header token checks, along with Homepage overlay layers, responsive Builder inspector and Restricted Users modal checks. The run also passed all 35 existing page/viewport checks and DUME lifecycle assertions. This curated browser suite does not constitute full DUPS conformance.
+
+
+### Live Users drawer closing-effect pseudo layers — 2026-11-26
+
+Migrated the remaining literal `z-index: 5` on `.live-user-drawer.is-closing::before` to the existing `--dups-layer-live-effect` token. Chromium reads both closing pseudo-element computed z-index values and checks them against the base/top DUPS tokens. These layers remain local to the drawer; no global overlay ordering is implied.
