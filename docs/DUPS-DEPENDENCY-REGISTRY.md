@@ -134,7 +134,7 @@ The responsive compact/mobile override retains its pre-existing 66px top coordin
 Migrated all 13 numeric Homepage Category Bar top declarations in `theme.css` to a state-scoped `--dups-anchor-category-bar-top` token. The token defaults to DUSS desktop/mobile header heights and is overridden only by the pre-existing responsive/state selectors; Admin mobile overrides use the same semantic anchor token. Chromium now checks computed fixed positioning and token agreement across the Homepage's guest, login-hidden and profile-menu-visible states at each mobile viewport. This is a token migration only: all previous numeric top coordinates and selector precedence are retained.
 
 
-The compact/mobile 66px override exists in both the base stylesheet and the later Homepage theme layer. Both declarations now set and consume the same DUPS anchor token, preserving cascade precedence and the original computed position.
+The compact/mobile 66px override exists in both the base stylesheet and the later Homepage theme layer. Both declarations now set and consume the same DUPS anchor token, preserving cascade precedence and the original computed position. A duplicate late `theme.css` Admin Category Bar override previously bypassed the token; it now consumes the same state-scoped token. Chromium also checks the Admin bar's computed fixed top against the resolved token.
 
 
 ### Live Users notice anchor migration — 2026-11-26
