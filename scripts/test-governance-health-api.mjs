@@ -430,6 +430,18 @@ await test("Every governance read endpoint enforces Owner-only authorization", a
   }
 });
 
+await test("Owner-only application account routes deny Admin, Member and anonymous sessions", async () => {
+  const routes = ["/api/admin/active-users", "/api/admin/users"];
+  for (const path of routes) {
+    const admin = await call({ token: "admin-token", path });
+    const member = await call({ token: "user-token", path });
+    const anonymous = await call({ path });
+    assert.equal(admin.response.status, 403, "Admin must be denied: " + path);
+    assert.equal(member.response.status, 401, "Member must be denied: " + path);
+    assert.equal(anonymous.response.status, 401, "Anonymous caller must be denied: " + path);
+  }
+});
+
 await test("Every governance read endpoint rejects mutation methods", async () => {
   const routes = [
     "/api/governance/health",
