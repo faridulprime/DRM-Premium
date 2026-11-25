@@ -14,7 +14,7 @@ SCHEMA = ROOT / "governance" / "schemas" / "d1-operational-schema.sql"
 
 EXPECTED_COLUMNS = {
     "duga_assignments": "id scope_type scope_id role_id subject_type user_id principal_id status assigned_by_user_id created_at revoked_at revoked_by_user_id".split(),
-    "duga_change_requests": "id title summary rationale status risk_level affected_systems_json affected_paths_json rollback_plan requested_by_type requested_by_user_id requested_by_principal_id source_branch base_commit_sha policy_commit_sha implementer_type implementer_user_id implementer_principal_id implementation_commit_sha state_version created_at updated_at".split(),
+    "duga_change_requests": "id title summary rationale status blocked_from_status block_reason_code risk_level affected_systems_json affected_paths_json rollback_plan requested_by_type requested_by_user_id requested_by_principal_id source_branch base_commit_sha policy_commit_sha implementer_type implementer_user_id implementer_principal_id implementation_commit_sha state_version created_at updated_at".split(),
     "duga_reviews": "id change_request_id review_type reviewer_type reviewer_user_id reviewer_principal_id decision reviewed_commit_sha evidence_json created_at".split(),
     "duga_approvals": "id change_request_id approver_user_id approver_role authorization_assignment_id authorization_scope_type authorization_scope_id policy_commit_sha decision approved_commit_sha rationale created_at".split(),
     "duga_validation_runs": "id change_request_id commit_sha status validator validator_version results_json started_at completed_at created_at".split(),
@@ -83,6 +83,10 @@ EXPECTED_COLUMN_DECLARATIONS = {
     ("duga_jobs", "lease_generation"): ("INTEGER", 1, 0),
 }
 EXPECTED_TRIGGERS = {
+    "duga_change_requests_insert_guard": ("duga_change_requests", "begin proposed"),
+    "duga_change_requests_update_guard": ("duga_change_requests", "lifecycle transition"),
+    "duga_change_requests_no_delete": ("duga_change_requests", "evidence roots"),
+    "duga_change_request_transition_audit": ("duga_change_requests", "change_request.status_changed"),
     "duga_review_no_implementer_self_audit": ("duga_reviews", "Implementer cannot independently audit"),
     "duga_reviews_no_update": ("duga_reviews", "immutable evidence"),
     "duga_reviews_no_delete": ("duga_reviews", "immutable evidence"),
@@ -177,6 +181,10 @@ def main() -> int:
             if row
         }
         trigger_requirements = {
+            "duga_change_requests_insert_guard": ("before insert on duga_change_requests", "raise(abort"),
+            "duga_change_requests_update_guard": ("before update on duga_change_requests", "raise(abort"),
+            "duga_change_requests_no_delete": ("before delete on duga_change_requests", "raise(abort"),
+            "duga_change_request_transition_audit": ("after update on duga_change_requests", "insert into duga_audit_events"),
             "duga_review_no_implementer_self_audit": ("before insert on duga_reviews", "raise(abort"),
             "duga_reviews_no_update": ("before update on duga_reviews", "raise(abort"),
             "duga_reviews_no_delete": ("before delete on duga_reviews", "raise(abort"),
@@ -272,14 +280,16 @@ def main() -> int:
             "duga_change_requests": [
                 "json_type(affected_systems_json)='array'",
                 "json_type(affected_paths_json)='array'",
+                "state_version>0",
+                "length(source_branch)>0 and source_branch<>'main'",
+                "status='blocked' and blocked_from_status in ('proposed','analyzing','impact_review','awaiting_ai_audit','awaiting_human_approval','approved','implementing','validating','final_review') and block_reason_code is not null",
+                "status<>'blocked' and blocked_from_status is null and block_reason_code is null",
                 "requested_by_type='human' and requested_by_user_id is not null and requested_by_principal_id is null",
                 "requested_by_type='ai' and requested_by_user_id is null and requested_by_principal_id is not null and length(requested_by_principal_id)>0",
                 "implementer_type='human' and implementer_user_id is not null and implementer_principal_id is null",
                 "implementer_type='ai' and implementer_user_id is null and implementer_principal_id is not null and length(implementer_principal_id)>0",
-                "length(source_branch)>0 and source_branch<>'main'",
-                "state_version>0",
             ],
-            "duga_reviews": [
+            "duga_reviews": [_reviews": [
                 "reviewer_type='human' and reviewer_user_id is not null and reviewer_principal_id is null and review_type='human_review'",
                 "reviewer_type='ai' and reviewer_user_id is null and reviewer_principal_id is not null and length(reviewer_principal_id)>0 and review_type='independent_ai_audit'",
             ],
