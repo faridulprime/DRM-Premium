@@ -194,3 +194,7 @@ The shared fixed `.topbar` now consumes `--dups-offset-0` for top/left/right. Th
 ### Profile drawer and navigation viewport-edge anchors — 2026-11-26
 
 The shared desktop sidebar's left/bottom edges, compact Homepage sidebar's top edge, Profile drawer's top/right/bottom edges and compact Profile drawer backdrop's full-viewport inset now reuse `--dups-offset-0`. Existing fixed positioning, drawer width, desktop header-relative sidebar top, compact breakpoints and layer tokens are preserved. The Chromium Homepage viewport matrix now checks the Profile drawer's fixed edge geometry, sidebar left/bottom edges, compact sidebar top edge, and compact backdrop's four rendered edges. The assertion is source-level test coverage only until a new Chromium workflow run is confirmed.
+
+### Live Users drawer backdrop viewport edges — 2026-11-26
+
+The fixed `.live-drawer-backdrop` now uses `--dups-offset-0` for its four viewport edges. Its existing layer, blur, opacity animation and shared overlay lifecycle are unchanged. The dynamic Live Users Chromium fixture now checks fixed positioning and all four computed edge offsets while the drawer is open. The new assertion has not yet been verified by a completed Chromium workflow run.
