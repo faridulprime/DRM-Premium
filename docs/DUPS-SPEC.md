@@ -138,3 +138,11 @@ DUPS validation remains deliberately scoped: it checks the shared page headers a
 
 
 The new Restricted Users modal assertions passed at all seven viewport widths in the same Chromium run. The complete browser job also passed its 35 existing page/viewport checks and the established DUME drawer lifecycle checks.
+
+
+## Homepage overlay and responsive Builder inspector acceptance — 2026-11-26
+
+- Added a DUPS alias for the Website Builder inspector's existing local z-index 2 and migrated the responsive absolute-positioned inspector to that token without changing its numeric value.
+- Chromium run #45677034569 passed on commit `21eb5ce2ad9e1388955f8b6ad8223447c0d9b6f3`: [run #45677034569](https://github.com/faridulprime/DRM-Premium/actions/runs/45677034569).
+- The browser test checks the responsive inspector's computed absolute positioning and token-resolved layer at widths up to 900 CSS px. It also checks the Homepage Website Builder, suspension screen, profile-completion backdrop and profile-completion bar for fixed positioning and token-matched z-index, including bar-above-backdrop order.
+- The run passed all 35 existing page/viewport checks and the added Homepage/Live Users DUPS assertions. Native browser zoom, visual collision/fallback, full ancestor-context inventory and deployed behavior remain outside this audit.
