@@ -29,3 +29,5 @@
 @media(max-width:1000px){.dumc-home-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}}
 @media(max-width:680px){.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-home-count{font-size:.75rem}.dumc-home-chip{padding:8px 12px;font-size:.82rem}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-toolbar{align-items:stretch;flex-direction:column}.dumc-home-search{width:100%}.dumc-home-subcategories{gap:7px}}
 @media(max-width:380px){.dumc-home-grid{grid-template-columns:1fr}.dumc-home-count{display:none}}
+
+#movies{scroll-margin-top:88px}
