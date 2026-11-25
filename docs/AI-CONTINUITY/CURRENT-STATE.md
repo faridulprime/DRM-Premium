@@ -75,7 +75,8 @@ Verification date: 2026-11-25
 ## DUCS contrast calculation hardening — 2026-11-25
 
 - Added `scripts/test-ducs-contrast-unit.py` with 16 tests covering HEX/RGB parsing, alpha channels, modern RGB syntax, invalid grammar/ranges, token fallback/nesting/cycles, WCAG reference math and alpha compositing.
-- Updated `.github/workflows/ducs-contrast-audit.yml` to run the unit suite before the 98-pair source audit and to trigger on unit-test file changes.
-- CI passed on `d77b339e5c0fcc1ec32fcb9c0f6adafb9914d18e`: [run #45675221898](https://github.com/faridulprime/DRM-Premium/actions/runs/45675221898). All 16 unit tests passed; the source audit reported 93/98 pairs meeting thresholds and five non-text boundary pairs for contextual review.
+- Updated `.github/workflows/ducs-contrast-audit.yml` to run the unit suite before the 106-pair source audit and to trigger on unit-test file changes.
+- CI passed on `d77b339e5c0fcc1ec32fcb9c0f6adafb9914d18e`: [run #45675221898](https://github.com/faridulprime/DRM-Premium/actions/runs/45675221898). All 16 unit tests passed; the initial source audit reported 93/98 pairs meeting thresholds and five non-text boundary pairs for contextual review.
+- Expanded the source-backed registry with Live Users admin/restricted drawer-role gradient endpoints, active restriction-tab text, back-link hover text and drawer-action hover text. The 106-pair audit now reports 101/106 meeting thresholds; the same five boundary findings remain. The expansion passed [run #45675604695](https://github.com/faridulprime/DRM-Premium/actions/runs/45675604695).
 - Updated DUCS contrast/accessibility documentation and next-task tracking. No color token values or page styling were changed in this pass.
-- Remaining: verify the follow-up docs-triggered CI, review the five boundary pairs in rendered component context, and add state/overlay/forced-colors checks. Do not call the source-level audit a full WCAG conformance test.
+- Remaining: verify the latest docs-triggered CI, review the five boundary pairs in rendered component context, and add remaining page-state/overlay/forced-colors checks. Do not call the source-level audit a full WCAG conformance test.
