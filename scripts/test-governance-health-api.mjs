@@ -6,7 +6,10 @@
  */
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { createHash } from "node:crypto";
+import { createHash, webcrypto } from "node:crypto";
+
+globalThis.crypto ??= webcrypto;
+globalThis.btoa ??= (value) => Buffer.from(value, "binary").toString("base64");
 import { pathToFileURL } from "node:url";
 
 const source = await readFile(new URL("../functions/api/[[path]].js", import.meta.url), "utf8");
