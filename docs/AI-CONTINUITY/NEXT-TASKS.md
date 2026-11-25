@@ -21,40 +21,40 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 - Closed the known CAS/audit gap at the design and local-test level: request rows store `last_transition_id`; audit rows store a unique nullable `transition_id`; conditional `INSERT ... SELECT` appends only for the exact successful state version. Local SQLite tests cover success, stale writer, replay, token reuse and audit failure rollback.
 - Cloudflare Pages automatically published a branch Preview. This does not modify D1 and is not a Production deployment.
 
-## Disposable D1 acceptance — next external step
+## Disposable D1 acceptance — completed (disposable environment only)
 
 - The CAS + conditional audit token pattern is now specified in `docs/DUGA-CAS-AUDIT-PATTERN.md` and locally tested.
 - The D1 acceptance plan has been updated to test success, stale writer, replay, token reuse, audit-failure rollback and two competing writers on an isolated D1 database.
 - Owner provisioned and confirmed disposable D1 `drm-duga-acceptance-disposable` (`6d512429-34a3-498b-9430-45f11d382da9`); it was empty except `_cf_KV`.
 - Owner manually applied the comment-free fixture with synthetic `users(id)`. Screenshots verify all eight DUGA tables, both audit triggers, clean foreign-key check, successful audit INSERT, and blocked audit UPDATE/DELETE.
-- Added a separate bearer-secret-protected acceptance Worker source and Wrangler config pinned to that disposable DB under `scripts/duga-d1-acceptance-worker/`; not deployed or run.
-- Next: run CI syntax check, then obtain explicit owner approval before deploying this separate Worker and creating its one-off secret. Never use Pages bindings or shared Preview/Production.
+- Deployed the separate bearer-secret-protected acceptance Worker as `duga-d1-acceptance-disposable`, with Wrangler config pinned to this disposable DB only. Temporary diagnostic route was removed before final redeployment.
+- Authenticated `POST /run` returned `results.pass = true` at `2026-11-25T01:04:19.420Z`; run ID `53d70371-008c-46a0-8bc3-33522be990eb`.
+- The Worker PASS predicate requires successful CAS + audit (1/1), stale writer/replay/token reuse (0/0), forced audit CHECK failure with transactional rollback and unchanged state, and a two-writer race with exactly one winner (1/1), one loser (0/0), and exactly one audit event.
+- PowerShell output exposed the aggregate PASS but not nested per-case counts; the exact assertion predicates are documented in `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md`.
+- Test-only synthetic rows and audit events remain in the disposable database. Do not bind it to Pages or shared Preview/Production.
 
 ## Immediate blockers / required evidence
-1. Schema/FK/append-only probes have partial D1 evidence. CAS + batch atomicity, `meta.changes`, rollback and concurrency probes remain unrun; Worker deployment requires explicit owner approval.
-2. The API concurrency contract has a known unresolved edge case: a zero-row conditional UPDATE is not a SQL error, so a later audit INSERT in the same transactional batch may still execute. Do not assume batch transactionality solves this.
-3. Before implementing state-changing API routes, choose and test a design that makes the audit INSERT conditional on the exact successful transition (e.g. a unique transition token written by the successful update and checked by the audit insert). Prove stale writers and replayed tokens create no audit event.
-4. Human authentication/assignment authorization, reviewer/implementer separation, commit-bound evidence invalidation, trusted validation and canonical Git-ref checks remain design contracts, not runtime enforcement.
+1. Disposable D1 CAS + audit acceptance is PASS for the isolated Worker/database only. Production and shared Preview remain untested and untouched.
+2. Human authentication/assignment authorization, reviewer/implementer separation, commit-bound evidence invalidation, trusted validation and canonical Git-ref checks remain design contracts, not runtime enforcement.
 
 ## Next review sequence
-1. Review the disposable D1 acceptance plan for completeness and provision a separate disposable database only after explicit resource-creation approval.
-2. Run every acceptance probe in `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md` against that disposable D1; retain exact outputs and errors.
-3. Verify the CAS token + conditional audit insert pattern on D1, including simultaneous writers, stale state, replay, token reuse and rollback.
-4. Complete the API transition matrix with optimistic `state_version` checks.
-5. Specify commit-bound gate invalidation: changed implementation SHA must stale prior review, approval and validation evidence.
-6. Specify active assignment/scope checks, reviewer/implementer separation, trusted CI validation, canonical Git-ref verification and server-derived audit actors.
-7. Review Preview D1 migration history read-only; do not infer applied history from filenames or table shape.
-8. Convert the reviewed SQL draft into a uniquely named additive migration only after migration-history reconciliation, D1 acceptance and independent review.
-9. Implement Owner-only governance API routes only after schema, trusted actor/authentication and concurrency design are approved.
-10. Keep `main` and Production D1 untouched unless separately authorized.
+1. Independently review the disposable D1 evidence and Worker implementation; retain the run ID and aggregate PASS qualification.
+2. Complete the API transition matrix with optimistic `state_version` checks.
+3. Specify commit-bound gate invalidation: changed implementation SHA must stale prior review, approval and validation evidence.
+4. Specify active assignment/scope checks, reviewer/implementer separation, trusted CI validation, canonical Git-ref verification and server-derived audit actors.
+5. Review Preview D1 migration history read-only; do not infer applied history from filenames or table shape.
+6. Convert the reviewed SQL draft into a uniquely named additive migration only after migration-history reconciliation, disposable D1 acceptance and independent review.
+7. Implement Owner-only governance API routes only after schema, trusted actor/authentication and concurrency design are approved.
+8. Keep `main` and Production D1 untouched unless separately authorized.
 
 ## Not implemented / not verified
 - No DUGA migration has been applied.
 - No DUGA API or Control Center exists.
 - No trusted AI service credentials or automatic DACE execution exist.
 - No human identity assignments have been made.
-- The owner-created disposable D1 has partial manually observed tests; the assistant has not directly accessed Cloudflare or deployed the acceptance Worker.
-- Local SQLite CI and a successful Pages Preview do not establish Cloudflare D1 behavior.
+- The disposable D1 Worker suite returned aggregate PASS, but its nested individual counts were not printed in the captured PowerShell output. This is not Production or shared Preview acceptance.
+- The assistant did not directly access Cloudflare; deployment and execution were owner-operated.
+- Local SQLite CI and a successful Pages Preview do not establish Production/shared Preview behavior.
 
 ## Preview D1 preflight handoff
 A read-only diagnostic script is available at `governance/schemas/d1-preview-preflight.sql`. Run each SELECT/PRAGMA separately in the Cloudflare D1 Console against Preview only. Share the SQLite version, sqlite_master table/index/trigger listings, migration/meta table discovery and `PRAGMA table_info('users')` output. Do not execute the schema draft or any migration in a shared Preview database.
