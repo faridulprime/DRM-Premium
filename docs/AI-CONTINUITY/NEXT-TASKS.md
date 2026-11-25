@@ -63,6 +63,6 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 
 ### F-05 — Evidence mutability classification
 - Reviews, approvals and audit events are immutable. Assignment grant identity is immutable; revocation is one-way with revoker/time. Validation identity is fixed and terminal evidence is immutable. Finding analyzer evidence is immutable; review state is versioned and reviewer-attributed.
-- Assignment grant/revoke, validation transitions and finding review changes generate audit rows in the same database statement through triggers.
+- Assignment grant/revoke, validation transitions and finding review changes generate audit rows in the same database statement through triggers. Inserts must start in the correct initial state; assignment and validation evidence cannot be deleted.
 - Validation audit actor is the database label duga-db-trigger, not an authenticated runner identity. API trusted-session derivation, CAS enforcement, runner provenance and result authenticity remain open runtime requirements.
 - Tests and structural validator extended for the selected rules. This remains in-memory SQLite only; Preview D1 is untouched.
