@@ -1,6 +1,6 @@
 # DRM Universal Sizing System (DUSS)
-Version: 0.3.0 — Foundation + shared shell migration
-Status: Core token foundation complete; shared form controls, profile geometry, and public navigation shell migrated to semantic tokens
+Version: 0.4.0 — Role badge sizing migration
+Status: Core token foundation, selected form/profile geometry, public shell, and shared role-badge sizing migrated to semantic tokens
 
 ## Purpose and boundaries
 DUSS centralizes sizing for typography, icons, spacing, controls, layout, surfaces, and responsive behavior. DUME continues to own motion and animation. DUSS does not redesign colors or visual themes.
@@ -121,3 +121,16 @@ Still outstanding:
 - Responsive density modes and full browser-based visual, keyboard, zoom, and Bengali/Latin overflow validation.
 
 No rendered-browser regression test was available during this source update. The migrated shell dimensions are source-level verified only.
+
+
+## Phase 4 implementation update — 2026-11-25
+
+Completed on `feature/full-admin-panel`:
+- Added semantic DUSS sizing tokens for the shared role-badge baseline and its audited dashboard, mobile, Live Users, drawer, and Upload Studio variants.
+- Migrated the shared role-badge rule in `theme.css` and the matching component overrides in `admin.css`, `live-users.css`, and `upload-studio.css`.
+- Preserved the existing pixel-equivalent values using rem-based tokens and explicit pixel fallbacks; no intended visual redesign or dimension change.
+- Updated the DUSS stylesheet cache key to `duss-04` on all five consuming pages.
+
+Validation:
+- Source-level assertions confirmed the new token references exist in all four consuming stylesheets.
+- This verifies source wiring only. Browser screenshots, computed-style comparison, keyboard/touch interaction, 200% zoom, and Bengali/Latin overflow checks remain outstanding.
