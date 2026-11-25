@@ -162,3 +162,8 @@ The dynamically created `.sb-live-edit-overlay` now uses the zero-offset primiti
 ### Homepage hero decorative-anchor migration — 2026-11-26
 
 The hero corner decoration and its `::before` overlay now use zero-inset DUPS tokens. Their existing relative/absolute containing-block relationship and geometry are preserved. Chromium verifies the hero positioning context, zero corner offsets and full pseudo-element coverage across the Homepage viewport matrix.
+
+
+### Homepage login-status responsive anchor/layer migration — 2026-11-26
+
+The Homepage login-status badge now consumes a semantic 8px desktop gap token and a dedicated local layer token retaining its existing z-index of 20. The compact rule continues to use the existing 4px gap and 8px right offset tokens. Chromium checks the actual computed anchor geometry and layer across the Homepage viewport matrix, including both sides of the 760px breakpoint. This is a behavior-preserving token migration.
