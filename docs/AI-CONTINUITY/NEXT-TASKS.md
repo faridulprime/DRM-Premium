@@ -73,3 +73,13 @@ A read-only diagnostic script is available at `governance/schemas/d1-preview-pre
 - Unblocking must be an explicit authorized operation with a non-empty rationale and evidence that the blocking condition is cleared. It must use CAS + an append-only audit event, retain prior state in immutable block-event provenance, and re-evaluate all gates before selecting a safe resume stage.
 - Internal consistency review corrected duplicate matrix rows, aligned DUGA-SPEC/schema design with the approved lifecycle, added immutable predecessor linkage for renewed requests, and prohibited AI audit rows from recording terminal rejection. Local SQLite coverage added; Cloudflare D1 behavior remains unverified.
 - This is a policy/design decision only; no runtime code or schema migration has been implemented. A separate independent reviewer and Preview migration-history reconciliation remain required.
+
+
+## Immediate continuation — revised-schema D1 acceptance (2026-11-25)
+
+- Refreshed `scripts/duga-d1-disposable-acceptance-fixture.sql` to contain the exact current operational schema draft, including immutable predecessor linkage and the AI reviewer decision constraint (commit `7ec6056649ae8d1a6cd8fc267479563ad8063156`).
+- Updated `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md` to mark revised-schema D1 acceptance NOT RUN and require a newly created disposable database. The prior disposable database contains the older schema and retained synthetic rows; do not reuse it for this acceptance.
+- The revised plan adds D1 probes for valid/missing/self predecessor links, immutable parent link, AI rejection prohibition and human terminal rejection, in addition to existing JSON/FK/audit/CAS/rollback/concurrency tests.
+- Next owner-operated action: create a fresh disposable D1 database, verify its exact name/ID, apply the refreshed fixture, and run the listed probes. Do not alter Production or shared Preview. The existing deployed acceptance Worker is pinned to the old disposable database; do not repoint/redeploy it until the new target is explicitly verified.
+- Still blocked: independent third-party review, read-only Preview migration-history reconciliation, trusted AI/validator identity, tested Git provenance, and app integration/runtime enforcement. No write API or migration should be enabled while these gates remain open.
+- PR #4 remains Draft and unmerged; `main`, Production and shared Preview remain untouched.
