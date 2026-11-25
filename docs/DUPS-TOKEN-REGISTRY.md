@@ -74,6 +74,9 @@ The token file also includes component-specific aliases for shared shell, Profil
 | Token | Value | Intended use |
 |---|---:|---|
 | `--dups-layer-builder-inspector` | 2 | Local overlay order for the Website Builder inspector when it becomes absolutely positioned at widths up to 900 CSS px |
+| `--dups-anchor-builder-inspector-top` | 66px desktop/tablet; 112px compact | Top offset within the fixed Website Builder shell, following the responsive toolbar |
+| `--dups-anchor-builder-inspector-right` | 0 | Flush right edge within the Builder shell |
+| `--dups-anchor-builder-inspector-bottom` | 34px | Clearance for the Builder footer within the shell |
 
 This is a component-scoped alias preserving the existing numeric value. It does not establish a global layer above unrelated content; it is scoped within the fixed Website Builder shell.
 
