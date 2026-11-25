@@ -103,15 +103,23 @@ await test("Owner can read D1 health", async () => {
   assert.equal(body.expectedSchemaTables, 8);
   assert.equal(body.missing.tables.length, 8);
 });
-await test("Health rejects missing change-request lifecycle triggers", async () => {
-  const { response, body } = await call({ token: "owner-token", env: mockEnv({
-    tables: Object.keys(schemaSpec),
-    completeSchema: true,
-    omitTrigger: "duga_change_request_transition_audit",
-  }) });
-  assert.equal(response.status, 200);
-  assert.equal(body.schema, "partial");
-  assert.deepEqual(body.missing.triggers, ["duga_change_request_transition_audit"]);
+await test("Health rejects each missing change-request lifecycle trigger", async () => {
+  const requiredTriggers = [
+    "duga_change_requests_insert_guard",
+    "duga_change_requests_update_guard",
+    "duga_change_requests_no_delete",
+    "duga_change_request_transition_audit",
+  ];
+  for (const triggerName of requiredTriggers) {
+    const { response, body } = await call({ token: "owner-token", env: mockEnv({
+      tables: Object.keys(schemaSpec),
+      completeSchema: true,
+      omitTrigger: triggerName,
+    }) });
+    assert.equal(response.status, 200, triggerName);
+    assert.equal(body.schema, "partial", triggerName);
+    assert.deepEqual(body.missing.triggers, [triggerName], triggerName);
+  }
 });
 
 await test("Health requires blocked-state metadata columns", async () => {
