@@ -12,6 +12,7 @@ This is a source-level audit. It is not a browser test, penetration test, Cloudf
 ## Work completed in this continuation
 
 - Advanced DUSS from v0.5.0 to v0.6.0.
+- Corrected the token stylesheet's stale version header and added a regression assertion so its marker must match DUSS v0.6.0.
 - Added 14 semantic icon-size tokens and migrated their audited selector consumers without intentionally changing their current CSS dimensions.
 - Updated the five DUSS stylesheet cache keys to `duss-06`.
 - Added `scripts/test-duss-tokens.py` and `.github/workflows/duss-sizing-smoke.yml` for future static regression checks.
