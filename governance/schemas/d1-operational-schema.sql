@@ -16,6 +16,7 @@ CREATE TABLE duga_assignments (
   assigned_by_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   created_at INTEGER NOT NULL,
   revoked_at INTEGER,
+  revoked_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
   CHECK ((scope_type='platform' AND scope_id IS NULL) OR (scope_type='system' AND scope_id IS NOT NULL AND length(scope_id)>0)),
   CHECK ((role_id IN ('platform-owner','governance-manager','system-owner','read-only-observer') AND subject_type='human') OR
          (role_id IN ('ai-maintainer','independent-ai-auditor') AND subject_type='ai')),
@@ -23,7 +24,7 @@ CREATE TABLE duga_assignments (
          (role_id IN ('system-owner','ai-maintainer','independent-ai-auditor') AND scope_type='system') OR
          role_id='read-only-observer'),
   CHECK ((subject_type='human' AND user_id IS NOT NULL AND principal_id IS NULL) OR (subject_type='ai' AND user_id IS NULL AND principal_id IS NOT NULL AND length(principal_id)>0)),
-  CHECK ((status='active' AND revoked_at IS NULL) OR (status='revoked' AND revoked_at IS NOT NULL))
+  CHECK ((status='active' AND revoked_at IS NULL AND revoked_by_user_id IS NULL) OR (status='revoked' AND revoked_at IS NOT NULL AND revoked_by_user_id IS NOT NULL))
 );
 CREATE UNIQUE INDEX uq_duga_assignment_human_active
   ON duga_assignments(scope_type,ifnull(scope_id,''),role_id,user_id)
@@ -216,6 +217,47 @@ CREATE TRIGGER duga_audit_no_delete
 BEFORE DELETE ON duga_audit_events
 BEGIN SELECT RAISE(ABORT,'DUGA audit events are append-only'); END;
 
+CREATE TRIGGER duga_assignment_grant_audit AFTER INSERT ON duga_assignments
+BEGIN
+ INSERT INTO duga_audit_events
+ (id,aggregate_type,aggregate_id,event_type,actor_type,actor_user_id,payload_json,created_at)
+ VALUES ('assignment-grant:'||NEW.id,'assignment',NEW.id,'assignment.granted',
+ 'human',NEW.assigned_by_user_id,json_object('scope_type',NEW.scope_type,
+ 'scope_id',NEW.scope_id,'role_id',NEW.role_id,'subject_type',NEW.subject_type,
+ 'user_id',NEW.user_id,'principal_id',NEW.principal_id),NEW.created_at);
+END;
+CREATE TRIGGER duga_assignment_revoke_audit AFTER UPDATE ON duga_assignments
+WHEN OLD.status='active' AND NEW.status='revoked'
+BEGIN
+ INSERT INTO duga_audit_events
+ (id,aggregate_type,aggregate_id,event_type,actor_type,actor_user_id,payload_json,created_at)
+ VALUES ('assignment-revoke:'||NEW.id,'assignment',NEW.id,'assignment.revoked',
+ 'human',NEW.revoked_by_user_id,json_object('previous_status',OLD.status,
+ 'status',NEW.status,'revoked_at',NEW.revoked_at),NEW.revoked_at);
+END;
+CREATE TRIGGER duga_validation_transition_audit AFTER UPDATE ON duga_validation_runs
+WHEN OLD.status<>NEW.status
+BEGIN
+ INSERT INTO duga_audit_events
+ (id,aggregate_type,aggregate_id,event_type,actor_type,actor_system_id,payload_json,created_at)
+ VALUES ('validation-transition:'||NEW.id||':'||NEW.status,'job',NEW.id,
+ 'validation.'||NEW.status,'system','duga-db-trigger',
+ json_object('previous_status',OLD.status,'status',NEW.status,
+ 'commit_sha',NEW.commit_sha,'validator',NEW.validator),
+ COALESCE(NEW.completed_at,NEW.started_at,NEW.created_at));
+END;
+CREATE TRIGGER duga_finding_review_audit AFTER UPDATE ON duga_analysis_findings
+WHEN OLD.status<>NEW.status
+BEGIN
+ INSERT INTO duga_audit_events
+ (id,aggregate_type,aggregate_id,event_type,actor_type,actor_user_id,payload_json,created_at)
+ VALUES ('finding-review:'||NEW.id||':'||NEW.state_version,'finding',NEW.id,
+ 'finding.'||NEW.status,'human',NEW.reviewed_by_user_id,
+ json_object('previous_status',OLD.status,'status',NEW.status,
+ 'state_version',NEW.state_version,'repository_commit_sha',NEW.repository_commit_sha,
+ 'file_path',NEW.file_path),NEW.reviewed_at);
+END;
+
 CREATE TABLE duga_analysis_findings (
   id TEXT PRIMARY KEY,
   analyzer_version TEXT NOT NULL,
@@ -229,11 +271,58 @@ CREATE TABLE duga_analysis_findings (
   created_at INTEGER NOT NULL,
   reviewed_at INTEGER,
   reviewed_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
+  state_version INTEGER NOT NULL DEFAULT 1 CHECK (state_version>0),
   CHECK ((reviewed_at IS NULL AND reviewed_by_user_id IS NULL) OR
          (reviewed_at IS NOT NULL AND reviewed_by_user_id IS NOT NULL))
 );
 CREATE INDEX idx_duga_findings_status_time ON duga_analysis_findings(status,created_at DESC);
 CREATE INDEX idx_duga_findings_file_commit ON duga_analysis_findings(file_path,repository_commit_sha);
+
+CREATE TRIGGER duga_assignments_update_guard
+BEFORE UPDATE ON duga_assignments
+WHEN NOT (OLD.status='active' AND NEW.status='revoked'
+ AND NEW.id=OLD.id AND NEW.scope_type=OLD.scope_type
+ AND NEW.scope_id IS OLD.scope_id AND NEW.role_id=OLD.role_id
+ AND NEW.subject_type=OLD.subject_type AND NEW.user_id IS OLD.user_id
+ AND NEW.principal_id IS OLD.principal_id
+ AND NEW.assigned_by_user_id=OLD.assigned_by_user_id
+ AND NEW.created_at=OLD.created_at
+ AND NEW.revoked_at IS NOT NULL AND NEW.revoked_by_user_id IS NOT NULL)
+BEGIN SELECT RAISE(ABORT,'DUGA assignment permits revocation only'); END;
+
+CREATE TRIGGER duga_findings_update_guard
+BEFORE UPDATE ON duga_analysis_findings
+WHEN NOT (
+ NEW.id=OLD.id AND NEW.analyzer_version=OLD.analyzer_version
+ AND NEW.repository_commit_sha=OLD.repository_commit_sha
+ AND NEW.file_path=OLD.file_path AND NEW.symbol IS OLD.symbol
+ AND NEW.classification=OLD.classification AND NEW.confidence=OLD.confidence
+ AND NEW.evidence_json=OLD.evidence_json AND NEW.created_at=OLD.created_at
+ AND OLD.status IN ('open','under_review')
+ AND NEW.status IN ('under_review','accepted','dismissed','quarantined')
+ AND NEW.state_version=OLD.state_version+1
+ AND NEW.reviewed_at IS NOT NULL AND NEW.reviewed_by_user_id IS NOT NULL
+ AND (OLD.status='open' OR NEW.status IN ('accepted','dismissed','quarantined')))
+BEGIN SELECT RAISE(ABORT,'Invalid DUGA finding review transition'); END;
+CREATE TRIGGER duga_findings_no_delete
+BEFORE DELETE ON duga_analysis_findings
+BEGIN SELECT RAISE(ABORT,'DUGA finding evidence is immutable'); END;
+
+CREATE TRIGGER duga_validation_runs_update_guard
+BEFORE UPDATE ON duga_validation_runs
+WHEN NOT (
+ NEW.id=OLD.id AND NEW.change_request_id=OLD.change_request_id
+ AND NEW.commit_sha=OLD.commit_sha AND NEW.validator=OLD.validator
+ AND NEW.validator_version=OLD.validator_version AND NEW.created_at=OLD.created_at
+ AND OLD.status IN ('queued','running')
+ AND ((OLD.status='queued' AND NEW.status='running'
+       AND NEW.started_at IS NOT NULL AND NEW.completed_at IS NULL)
+   OR (OLD.status='queued' AND NEW.status='cancelled'
+       AND NEW.started_at IS NULL AND NEW.completed_at IS NOT NULL)
+   OR (OLD.status='running' AND NEW.status IN ('passed','failed','cancelled')
+       AND NEW.started_at=OLD.started_at AND NEW.completed_at IS NOT NULL
+       AND NEW.completed_at>=OLD.started_at)))
+BEGIN SELECT RAISE(ABORT,'Invalid DUGA validation-run transition'); END;
 
 CREATE TABLE duga_jobs (
   id TEXT PRIMARY KEY,
