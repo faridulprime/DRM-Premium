@@ -89,3 +89,8 @@ Chromium run #45677034569 passed the added Homepage fixed-layer/token checks for
 ### Mobile Homepage header-status anchor — 2026-11-26
 
 The header login status uses the existing DUPS anchor-gap and logical offset tokens for its mobile absolute position: 4px below the header and 8px from the right edge at the default root size. The Chromium audit verifies computed absolute positioning and both offsets against the token values on the existing Homepage mobile viewport checks. The containing block remains the fixed Homepage header; no general-purpose popover engine or collision fallback is implied.
+
+
+### Live Users detail-dialog sticky header — 2026-11-26
+
+The sticky detail-dialog header now consumes `--dups-layer-live-dialog-sticky-header` (fallback 1). The Chromium audit checks computed sticky positioning and z-index/token agreement on the Live Users page at all existing viewport widths. Its layer is local to the dialog; it does not compete with page-level overlays.
