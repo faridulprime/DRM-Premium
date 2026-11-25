@@ -39,7 +39,7 @@ The implementer cannot audit the same change. AI cannot provide final human appr
 These are DUGA governance roles; they do not silently replace the current application's Owner/Admin/User authorization.
 
 ## Change lifecycle
-Proposed → Analysis → Impact Review → Independent AI Audit → Human Approval → Feature-branch Implementation → Automated Validation → Final Review → Accepted/Rejected.
+Proposed → Analysis → Impact Review → Independent AI Audit → Human Approval → Approved → Feature-branch Implementation → Automated Validation → Final Review → Accepted. Only the explicit transitions in `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` are allowed. `blocked` is a resumable hold state; `rejected` and `cancelled` are terminal. Rework follows only documented edges and preserves immutable evidence/audit history. A renewed attempt after rejection/cancellation requires a new linked Change Request with independent evidence and approvals. AI audit can request changes but cannot make a terminal rejection decision.
 Production merge/deployment is separate and requires explicit authorization. Failed required validation blocks acceptance.
 
 ## DACE safety model
