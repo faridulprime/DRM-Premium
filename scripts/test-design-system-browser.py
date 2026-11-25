@@ -974,6 +974,68 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
         if page.locator(backdrop).evaluate("(el) => el.hidden"):
             fail(f"{name}/{mode}: backdrop remained hidden while drawer was open")
 
+        containing_blocks = page.locator(sidebar).evaluate(
+            """(element) => {
+              const offenders = [];
+              let ancestor = element.parentElement;
+              while (ancestor && ancestor !== document.documentElement) {
+                const style = getComputedStyle(ancestor);
+                const contain = style.contain.split(/\\s+/);
+                const willChange = style.willChange.split(/,\\s*/);
+                const createsFixedContainingBlock =
+                  style.transform !== "none"
+                  || style.perspective !== "none"
+                  || style.filter !== "none"
+                  || style.backdropFilter !== "none"
+                  || contain.some(value => ["paint", "layout", "strict", "content"].includes(value))
+                  || willChange.some(value => ["transform", "perspective", "filter"].includes(value));
+                if (createsFixedContainingBlock) {
+                  offenders.push({
+                    tag: ancestor.tagName.toLowerCase(),
+                    id: ancestor.id,
+                    className: typeof ancestor.className === "string" ? ancestor.className.slice(0, 80) : "",
+                    transform: style.transform,
+                    perspective: style.perspective,
+                    filter: style.filter,
+                    backdropFilter: style.backdropFilter,
+                    contain: style.contain,
+                    willChange: style.willChange
+                  });
+                }
+                ancestor = ancestor.parentElement;
+              }
+              return {position: getComputedStyle(element).position, offenders};
+            }"""
+        )
+        if containing_blocks["position"] == "fixed" and containing_blocks["offenders"]:
+            fail(
+                f"{name}/{mode}: fixed drawer is captured by an ancestor containing block "
+                f"({containing_blocks['offenders']})"
+            )
+        backdrop_containing_blocks = page.locator(backdrop).evaluate(
+            """(element) => {
+              const offenders = [];
+              let ancestor = element.parentElement;
+              while (ancestor && ancestor !== document.documentElement) {
+                const style = getComputedStyle(ancestor);
+                if (style.transform !== "none" || style.perspective !== "none"
+                    || style.filter !== "none" || style.backdropFilter !== "none"
+                    || /(^|\\s)(paint|layout|strict|content)(\\s|$)/.test(style.contain)
+                    || /(^|,\\s*)(transform|perspective|filter)(\\s*,|$)/.test(style.willChange)) {
+                  offenders.push({tag: ancestor.tagName.toLowerCase(), id: ancestor.id,
+                    className: typeof ancestor.className === "string" ? ancestor.className.slice(0, 80) : ""});
+                }
+                ancestor = ancestor.parentElement;
+              }
+              return {position: getComputedStyle(element).position, offenders};
+            }"""
+        )
+        if backdrop_containing_blocks["position"] == "fixed" and backdrop_containing_blocks["offenders"]:
+            fail(
+                f"{name}/{mode}: fixed backdrop is captured by an ancestor containing block "
+                f"({backdrop_containing_blocks['offenders']})"
+            )
+
         layers = page.evaluate(
             """({sidebar, backdrop}) => {
               const root = getComputedStyle(document.documentElement);
