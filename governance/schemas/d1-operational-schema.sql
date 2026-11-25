@@ -372,6 +372,18 @@ CREATE INDEX idx_duga_jobs_queue ON duga_jobs(status,available_at);
 CREATE UNIQUE INDEX uq_duga_jobs_active_lease_token
   ON duga_jobs(lease_token) WHERE status='running';
 
+-- A job must enter the queue before any worker can claim it. INSERT must not
+-- bypass the fenced claim transition or forge prior attempts.
+CREATE TRIGGER duga_jobs_insert_guard
+BEFORE INSERT ON duga_jobs
+WHEN NEW.status<>'queued' OR NEW.attempts<>0
+  OR NEW.lease_owner IS NOT NULL OR NEW.lease_token IS NOT NULL
+  OR NEW.lease_generation<>0 OR NEW.lease_expires_at IS NOT NULL
+  OR NEW.result_json IS NOT NULL
+BEGIN
+  SELECT RAISE(ABORT,'DUGA jobs must begin queued without lease or result evidence');
+END;
+
 -- Every claim/reclaim advances both attempt count and fencing generation.
 -- Heartbeats retain the current lease identity; completion/release clears it.
 -- The API must still use a conditional UPDATE matching token, generation and
