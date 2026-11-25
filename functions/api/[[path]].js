@@ -234,6 +234,135 @@ async function handle(req,env){
  }
  const user=await getSession(req,env);if(!user||!["owner","admin"].includes(user.role))return fail("Admin login required.",401);
 
+
+ if(p[0]==="admin"&&p[1]==="dumc"){
+  const canAccessVideo=async(videoId)=>!!(await env.DB.prepare("SELECT id FROM videos WHERE id=? AND (?='owner' OR owner_id=?)").bind(videoId,user.role,user.id).first());
+  const canAccessFolder=async(folderId)=>await env.DB.prepare("SELECT id,parent_id,name,description,kind,sort_order,is_system,owner_id,is_archived FROM dumc_folders WHERE id=? AND is_archived=0 AND (is_system=1 OR owner_id=? OR ?='owner')").bind(folderId,user.id,user.role).first();
+  const folderParent=async(folderId,parentId)=>{const f=await canAccessFolder(folderId);return !!f&&f.parent_id===parentId};
+  const folderRelations={
+   dubbed_language:"04_DUBBED_MOVIES",genre:"05_GENRES",country:"06_COUNTRIES",
+   collection:"07_COLLECTIONS",subtitle_language:"09_SUBTITLES",
+   artwork:"10_ARTWORK",metadata:"11_METADATA"
+  };
+  if(p.length===3&&p[2]==="folders"&&m==="GET"){
+   const rows=await env.DB.prepare("SELECT f.id,f.parent_id,f.name,f.description,f.kind,f.sort_order,f.is_system,f.owner_id,f.is_archived,COUNT(DISTINCT a.video_id) AS movie_count FROM dumc_folders f LEFT JOIN dumc_movie_folder_assignments a ON a.folder_id=f.id WHERE f.is_archived=0 AND (f.is_system=1 OR f.owner_id=? OR ?='owner') GROUP BY f.id ORDER BY f.parent_id,f.sort_order,f.name").bind(user.id,user.role).all();
+   const byId=new Map((rows.results||[]).map(x=>[x.id,{...x,children:[]}]));
+   const roots=[];
+   for(const node of byId.values()){if(node.parent_id&&byId.has(node.parent_id))byId.get(node.parent_id).children.push(node);else if(!node.parent_id)roots.push(node);}
+   return json({system:"DUMC",version:"1.0.0",folders:roots,total:(rows.results||[]).length});
+  }
+  if(p.length===3&&p[2]==="folders"&&m==="POST"){
+   const d=await readBody(req);if(!textOK(d?.name,100)||!textOK(d?.parent_id,120))return fail("Folder name and parent_id are required.",400);
+   const parent=await canAccessFolder(d.parent_id);if(!parent)return fail("Parent folder not found or not accessible.",404);
+   const id="custom_"+crypto.randomUUID(),now=Math.floor(Date.now()/1000);
+   try{await env.DB.prepare("INSERT INTO dumc_folders(id,parent_id,name,description,kind,sort_order,is_system,owner_id,is_archived,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,0,?,?)").bind(id,parent.id,d.name.trim(),String(d.description||"").slice(0,500),"Custom",Number.isInteger(d.sort_order)?d.sort_order:now,0,user.id,now,now).run();}
+   catch{return fail("A folder with this name already exists at this level.",409)}
+   return json({ok:true,id},201);
+  }
+  if(p.length===4&&p[2]==="folders"&&m==="PATCH"){
+   const d=await readBody(req),old=await env.DB.prepare("SELECT id FROM dumc_folders WHERE id=? AND is_system=0 AND owner_id=? AND is_archived=0").bind(p[3],user.id).first();
+   if(!old)return fail("Custom folder not found.",404);
+   if(d?.name!==undefined&&!textOK(d.name,100))return fail("Folder name must be 1–100 characters.",400);
+   if(d?.description!==undefined&&(typeof d.description!=="string"||d.description.length>500))return fail("Folder description is too long.",400);
+   const now=Math.floor(Date.now()/1000);
+   try{await env.DB.prepare("UPDATE dumc_folders SET name=COALESCE(?,name),description=COALESCE(?,description),sort_order=COALESCE(?,sort_order),updated_at=? WHERE id=? AND owner_id=?").bind(d.name===undefined?null:d.name.trim(),d.description===undefined?null:d.description,d.sort_order===undefined?null:(Number.isInteger(d.sort_order)?d.sort_order:null),now,p[3],user.id).run();}
+   catch{return fail("Folder name conflicts with another folder.",409)}
+   return json({ok:true});
+  }
+  if(p.length===4&&p[2]==="folders"&&m==="DELETE"){
+   const old=await env.DB.prepare("SELECT id FROM dumc_folders WHERE id=? AND is_system=0 AND owner_id=? AND is_archived=0").bind(p[3],user.id).first();if(!old)return fail("Custom folder not found.",404);
+   const [children,assignments]=await Promise.all([
+    env.DB.prepare("SELECT COUNT(*) AS n FROM dumc_folders WHERE parent_id=? AND is_archived=0").bind(p[3]).first(),
+    env.DB.prepare("SELECT COUNT(*) AS n FROM dumc_movie_folder_assignments WHERE folder_id=?").bind(p[3]).first()
+   ]);
+   if(Number(children.n)||Number(assignments.n))return fail("Folder has subfolders or movie assignments. Move them before deleting.",409);
+   await env.DB.prepare("UPDATE dumc_folders SET is_archived=1,updated_at=? WHERE id=? AND owner_id=?").bind(Math.floor(Date.now()/1000),p[3],user.id).run();
+   return json({ok:true,archived:true});
+  }
+  if(p.length===3&&p[2]==="movies"&&m==="GET"){
+   const limit=Math.min(100,Math.max(1,Number(u.searchParams.get("limit")||50))),offset=Math.max(0,Number(u.searchParams.get("offset")||0));
+   const rows=await env.DB.prepare("SELECT v.id,v.title,v.category,v.youtube_id,v.thumbnail_url,v.description,v.featured,v.published,v.created_at,v.updated_at,dm.original_language_folder_id,dm.industry_folder_id,dm.production_country_folder_id,dm.release_year,dm.runtime_seconds FROM videos v LEFT JOIN dumc_movies dm ON dm.video_id=v.id WHERE (?='owner' OR v.owner_id=?) ORDER BY v.created_at DESC LIMIT ? OFFSET ?").bind(user.role,user.id,limit,offset).all();
+   const total=await env.DB.prepare("SELECT COUNT(*) AS n FROM videos WHERE (?='owner' OR owner_id=?)").bind(user.role,user.id).first();
+   return json({movies:rows.results||[],total:Number(total.n||0),limit,offset});
+  }
+  if(p.length===4&&p[2]==="movies"&&m==="GET"){
+   const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
+   const [movie,assignments,audio,subtitles]=await Promise.all([
+    env.DB.prepare("SELECT v.id,v.title,v.category,v.youtube_id,v.thumbnail_url,v.description,v.featured,v.published,v.created_at,v.updated_at,dm.original_language_folder_id,dm.industry_folder_id,dm.production_country_folder_id,dm.release_year,dm.runtime_seconds,dm.metadata_json FROM videos v LEFT JOIN dumc_movies dm ON dm.video_id=v.id WHERE v.id=?").bind(videoId).first(),
+    env.DB.prepare("SELECT a.folder_id,a.relation_type,f.name,f.parent_id FROM dumc_movie_folder_assignments a JOIN dumc_folders f ON f.id=a.folder_id WHERE a.video_id=? ORDER BY a.relation_type,f.name").bind(videoId).all(),
+    env.DB.prepare("SELECT id,language_folder_id,track_type,label,asset_key,source_url,is_default,sort_order FROM dumc_audio_tracks WHERE video_id=? ORDER BY track_type,sort_order").bind(videoId).all(),
+    env.DB.prepare("SELECT id,language_folder_id,label,asset_key,source_url,is_default FROM dumc_subtitles WHERE video_id=? ORDER BY language_folder_id").bind(videoId).all()
+   ]);
+   return json({movie,assignments:assignments.results||[],audioTracks:audio.results||[],subtitles:subtitles.results||[]});
+  }
+  if(p.length===4&&p[2]==="movies"&&m==="PUT"){
+   const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
+   const d=await readBody(req);if(!d||typeof d!=="object"||Array.isArray(d))return fail("Movie metadata object required.",400);
+   const fields=["original_language_folder_id","industry_folder_id","production_country_folder_id"];
+   for(const field of fields)if(d[field]!==undefined&&d[field]!==null&&typeof d[field]!=="string")return fail("Invalid "+field+".",400);
+   if(d.original_language_folder_id&&!await folderParent(d.original_language_folder_id,"02_LANGUAGE"))return fail("Original language must be a folder under 02_LANGUAGE.",400);
+   if(d.industry_folder_id&&!await folderParent(d.industry_folder_id,"03_FILM_INDUSTRY"))return fail("Film industry must be a folder under 03_FILM_INDUSTRY.",400);
+   if(d.production_country_folder_id&&!await folderParent(d.production_country_folder_id,"06_COUNTRIES"))return fail("Production country must be a folder under 06_COUNTRIES.",400);
+   if(d.release_year!==undefined&&d.release_year!==null&&(!Number.isInteger(d.release_year)||d.release_year<1888||d.release_year>2100))return fail("Release year must be between 1888 and 2100.",400);
+   if(d.runtime_seconds!==undefined&&d.runtime_seconds!==null&&(!Number.isInteger(d.runtime_seconds)||d.runtime_seconds<1||d.runtime_seconds>100000))return fail("Runtime is outside the accepted range.",400);
+   const metadata=d.metadata===undefined?{}:d.metadata;if(!metadata||typeof metadata!=="object"||Array.isArray(metadata)||Object.keys(metadata).length>50||JSON.stringify(metadata).length>8000)return fail("Metadata must be a small JSON object.",400);
+   const now=Math.floor(Date.now()/1000);
+   await env.DB.prepare("INSERT INTO dumc_movies(video_id,original_language_folder_id,industry_folder_id,production_country_folder_id,release_year,runtime_seconds,metadata_json,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(video_id) DO UPDATE SET original_language_folder_id=excluded.original_language_folder_id,industry_folder_id=excluded.industry_folder_id,production_country_folder_id=excluded.production_country_folder_id,release_year=excluded.release_year,runtime_seconds=excluded.runtime_seconds,metadata_json=excluded.metadata_json,updated_at=excluded.updated_at").bind(videoId,d.original_language_folder_id??null,d.industry_folder_id??null,d.production_country_folder_id??null,d.release_year??null,d.runtime_seconds??null,JSON.stringify(metadata),now,now).run();
+   return json({ok:true,video_id:videoId});
+  }
+  if(p.length===5&&p[2]==="movies"&&p[4]==="folders"&&m==="PUT"){
+   const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
+   const d=await readBody(req),items=d?.assignments;if(!Array.isArray(items)||items.length>100)return fail("Assignments must be an array of at most 100 items.",400);
+   const seen=new Set(),stmts=[],allowed=Object.keys(folderRelations),now=Math.floor(Date.now()/1000);
+   for(const item of items){
+    if(!item||!allowed.includes(item.relation_type)||typeof item.folder_id!=="string"||seen.has(item.relation_type+":"+item.folder_id))return fail("Invalid or duplicate folder assignment.",400);
+    seen.add(item.relation_type+":"+item.folder_id);
+    if(!await folderParent(item.folder_id,folderRelations[item.relation_type]))return fail("Folder does not match relation type: "+item.relation_type,400);
+    stmts.push(env.DB.prepare("INSERT INTO dumc_movie_folder_assignments(video_id,folder_id,relation_type,created_by,created_at) VALUES(?,?,?,?,?)").bind(videoId,item.folder_id,item.relation_type,user.id,now));
+   }
+   await env.DB.batch([
+    env.DB.prepare("DELETE FROM dumc_movie_folder_assignments WHERE video_id=?").bind(videoId),
+    ...stmts
+   ]);
+   return json({ok:true,assignment_count:items.length});
+  }
+  if(p.length===5&&p[2]==="movies"&&p[4]==="audio"&&m==="POST"){
+   const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
+   const d=await readBody(req);if(!d||!["original","dubbed"].includes(d.track_type)||!textOK(d.language_folder_id,120)||!await folderParent(d.language_folder_id,"02_LANGUAGE"))return fail("Valid audio type and language folder are required.",400);
+   const assetKey=typeof d.asset_key==="string"?d.asset_key.trim():"",sourceUrl=typeof d.source_url==="string"?d.source_url.trim():"";
+   if(!assetKey&&!sourceUrl)return fail("Provide an uploaded asset_key or HTTPS source_url.",400);
+   if(assetKey&&(!/^movies\/[A-Za-z0-9/_-]{1,240}$/.test(assetKey)||assetKey.split("/").includes("..")))return fail("Invalid movie asset key.",400);
+   if(sourceUrl){try{const parsed=new URL(sourceUrl);if(parsed.protocol!=="https:"||parsed.username||parsed.password||sourceUrl.length>2000)return fail("Audio source must be a valid HTTPS URL.",400)}catch{return fail("Audio source URL is invalid.",400)}}
+   const id=crypto.randomUUID(),now=Math.floor(Date.now()/1000),label=String(d.label||"").trim().slice(0,100),isDefault=d.is_default===true?1:0;
+   const stmts=[];if(isDefault)stmts.push(env.DB.prepare("UPDATE dumc_audio_tracks SET is_default=0 WHERE video_id=? AND track_type=?").bind(videoId,d.track_type));
+   stmts.push(env.DB.prepare("INSERT INTO dumc_audio_tracks(id,video_id,language_folder_id,track_type,label,asset_key,source_url,is_default,sort_order,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)").bind(id,videoId,d.language_folder_id,d.track_type,label,assetKey||null,sourceUrl||null,isDefault,Number.isInteger(d.sort_order)?d.sort_order:now,now,now));
+   await env.DB.batch(stmts);return json({ok:true,id},201);
+  }
+  if(p.length===6&&p[2]==="movies"&&p[4]==="audio"&&m==="DELETE"){
+   const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
+   const result=await env.DB.prepare("DELETE FROM dumc_audio_tracks WHERE id=? AND video_id=?").bind(p[5],videoId).run();
+   return result.meta.changes?json({ok:true}):fail("Audio track not found.",404);
+  }
+  if(p.length===5&&p[2]==="movies"&&p[4]==="subtitles"&&m==="POST"){
+   const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
+   const d=await readBody(req);if(!d||!textOK(d.language_folder_id,120)||!await folderParent(d.language_folder_id,"09_SUBTITLES"))return fail("Valid subtitle language folder is required.",400);
+   const assetKey=typeof d.asset_key==="string"?d.asset_key.trim():"",sourceUrl=typeof d.source_url==="string"?d.source_url.trim():"";
+   if(!assetKey&&!sourceUrl)return fail("Provide an uploaded subtitle asset_key or HTTPS source_url.",400);
+   if(assetKey&&(!/^movies\/[A-Za-z0-9/_-]{1,240}$/.test(assetKey)||assetKey.split("/").includes("..")))return fail("Invalid subtitle asset key.",400);
+   if(sourceUrl){try{const parsed=new URL(sourceUrl);if(parsed.protocol!=="https:"||parsed.username||parsed.password||sourceUrl.length>2000)return fail("Subtitle source must be a valid HTTPS URL.",400)}catch{return fail("Subtitle source URL is invalid.",400)}}
+   const id=crypto.randomUUID(),now=Math.floor(Date.now()/1000),label=String(d.label||"").trim().slice(0,100),isDefault=d.is_default===true?1:0;
+   const stmts=[];if(isDefault)stmts.push(env.DB.prepare("UPDATE dumc_subtitles SET is_default=0 WHERE video_id=?").bind(videoId));
+   stmts.push(env.DB.prepare("INSERT INTO dumc_subtitles(id,video_id,language_folder_id,label,asset_key,source_url,is_default,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)").bind(id,videoId,d.language_folder_id,label,assetKey||null,sourceUrl||null,isDefault,now,now));
+   await env.DB.batch(stmts);return json({ok:true,id},201);
+  }
+  if(p.length===6&&p[2]==="movies"&&p[4]==="subtitles"&&m==="DELETE"){
+   const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
+   const result=await env.DB.prepare("DELETE FROM dumc_subtitles WHERE id=? AND video_id=?").bind(p[5],videoId).run();
+   return result.meta.changes?json({ok:true}):fail("Subtitle not found.",404);
+  }
+  return fail("DUMC route not found.",404);
+ }
+
  // DUGA foundation health probe: authenticated Owner only; read-only and table-independent.
  if(p[0]==="governance"){
   if(user.role!=="owner")return fail("শুধু Owner Governance API ব্যবহার করতে পারবেন।",403);
