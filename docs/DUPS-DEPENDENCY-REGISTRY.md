@@ -47,7 +47,9 @@ These totals are lexical declaration counts, not a claim that 60 distinct compon
 - Source dependency audit: added.
 - Shared-shell stacking migration: source-level tokenized in `theme.css` for desktop header, category bar, desktop/mobile sidebar, sidebar backdrop, mobile home header/sidebar/backdrop, and Profile drawer/backdrop. Numeric fallbacks preserve the audited values.
 - Other component positioning migration: pending.
-- Stacking-context inspection and browser visual validation: pending.
+- Fixed/sticky containing-block ancestor checks: Chromium run #45697389096 passed across 35 page/viewport states and the dynamic Live Users overlay suite.
+- Expanded stacking-context ancestor inventory: implemented in the browser audit; execution/result review on the latest commit is pending.
+- Full browser visual collision validation, native zoom, physical mobile safe-area, and RTL checks: pending.
 - Keyboard, zoom, mobile safe-area, and RTL checks: pending.
 
 ## Phase 1 migration note — shared shell stacking
@@ -172,3 +174,8 @@ The Homepage login-status badge now consumes a semantic 8px desktop gap token an
 ### Live Users account drawer responsive anchor migration — 2026-11-26
 
 The fixed account drawer's existing desktop placement (51.1% vertical; calc(54.4% - 90px) horizontal) and compact 50%/50% centering are now represented by semantic DUPS anchor tokens. The effective 760px breakpoint, translate-based center alignment and local layer remain unchanged. The earlier 700px drawer rule remains compatible; the later 760px rule now consumes the same compact anchor tokens while the Restricted Users modal retains its independent viewport-center token. Chromium reveals the static drawer via its is-open state and checks rendered center coordinates against the viewport-derived targets across the existing Live Users viewport matrix.
+
+### Stacking-context audit implementation — 2026-11-26
+
+The browser test now emits a diagnostic inventory of stacking-context-producing ancestors for visible fixed/sticky elements across the five static pages and seven viewport widths. It includes positioned/fixed/sticky z-index, opacity, blend mode, isolation, transforms, filters, perspective, containment, container queries, clip-path/masks, flex/grid-item z-index and relevant `will-change` values. This inventory is diagnostic only; it does not fail merely because an intentional context exists. The latest test expansion has not yet been verified by a completed Chromium run. It does not cover all pseudo-elements, shadow roots, iframe documents, dynamic application states, native browser zoom, physical iOS safe areas, or deployed runtime.
+
