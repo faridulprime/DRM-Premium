@@ -41,11 +41,9 @@ This review inspected the SQL draft and its stated lifecycle/authorization desig
 
 ### F-04 — Job lease has no owner or fencing token
 
-**Evidence:** `duga_jobs` stores `lease_expires_at` but no lease owner, attempt-specific token, or monotonically increasing fencing generation.
+**Resolution in current draft:** `duga_jobs` now stores `lease_owner`, per-claim `lease_token`, and monotonic `lease_generation`; attempts advance with generation on claims/reclaims. A partial unique index prevents a token being active on multiple jobs. The lease-transition trigger enforces claim/reclaim generation increments, stable heartbeat identity, and lease clearing on completion. SQLite regression cases cover heartbeat, expired-lease reclaim, stale-token operations, skipped generations and valid completion.
 
-**Risk:** After a lease expires and another worker claims the job, a delayed prior worker may still attempt to publish a result. A timestamp alone cannot distinguish the current lease holder from a stale worker.
-
-**Recommendation:** Before implementing workers, design an atomic claim protocol with a unique lease token or monotonic generation. Require every heartbeat/completion write to match the current token/generation and status. Test expiry, reclaim, duplicate delivery, and stale-worker completion races.
+**Remaining runtime requirement:** A worker API must use one conditional `UPDATE ... RETURNING` for claim/reclaim and require exact job ID, running status, token, generation and unexpired lease on heartbeat/completion. Zero returned rows means stale worker. This remains a design-only SQLite check; no D1 worker or concurrency test has run.
 
 ### F-05 — Operational evidence tables do not share the audit table's append-only protection
 
@@ -68,7 +66,7 @@ This review inspected the SQL draft and its stated lifecycle/authorization desig
 ## Required next steps
 
 1. Obtain an independent reviewer for SQL, API authorization, state machine, CAS, and audit semantics.
-2. Resolve F-01 through F-05 in the design before proposing an executable migration or write endpoints.
+2. F-01 through F-04 have draft-level resolutions; F-05 remains open. Resolve all evidence mutability classifications before proposing an executable migration or write endpoints.
 3. Extend the schema regression tests and structural validator to cover the chosen invariants.
 4. Only after design review, test the revised draft on a fresh disposable D1. First verify the shared Preview migration history and backup; do not infer either from repository filenames or the manifest.
 5. Keep Production untouched and do not deploy or apply migrations without explicit authorization.
