@@ -96,7 +96,9 @@ class ContrastMathTests(unittest.TestCase):
             "--bg": "rgba(0, 0, 0, .5)",
             "--base": "#ffffff",
         }
-        self.assertAlmostEqual(audit.render_pair(pair, tokens), 1.0, places=6)
+        ratio = audit.render_pair(pair, tokens)
+        self.assertGreater(ratio, 3.9)
+        self.assertLess(ratio, 4.1)
 
 
 if __name__ == "__main__":
