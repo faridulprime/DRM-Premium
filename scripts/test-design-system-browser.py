@@ -343,6 +343,32 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 fail(f"{name}/{viewport_name}: profile completion overlay stack could not be compared ({homepage_layers})")
 
         if name == "live-users":
+            closing_effect_layers = page.evaluate(
+                """() => {
+                  const drawer = document.querySelector(".live-user-drawer");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!drawer) return {missing: true};
+                  drawer.classList.add("is-closing");
+                  return {
+                    before: getComputedStyle(drawer, "::before").zIndex,
+                    after: getComputedStyle(drawer, "::after").zIndex,
+                    baseToken: root.getPropertyValue("--dups-layer-live-effect").trim(),
+                    topToken: root.getPropertyValue("--dups-layer-live-effect-top").trim()
+                  };
+                }"""
+            )
+            if closing_effect_layers.get("missing"):
+                fail(f"{name}/{viewport_name}: Live Users drawer effect host is missing")
+            else:
+                try:
+                    if float(closing_effect_layers["before"]) != float(closing_effect_layers["baseToken"]):
+                        fail(f"{name}/{viewport_name}: closing drawer ::before layer does not match its DUPS token ({closing_effect_layers})")
+                    if float(closing_effect_layers["after"]) != float(closing_effect_layers["topToken"]):
+                        fail(f"{name}/{viewport_name}: closing drawer ::after layer does not match its DUPS token ({closing_effect_layers})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: closing drawer effect layers could not be resolved ({closing_effect_layers})")
+
+        if name == "live-users":
             dialog_header_layer = page.evaluate(
                 """() => {
                   const header = document.querySelector(".live-user-dialog > header");
