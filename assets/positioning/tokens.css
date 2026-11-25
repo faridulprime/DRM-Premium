@@ -133,6 +133,7 @@
   --dups-anchor-builder-inspector-bottom: 34px;
   --dups-layer-builder-live-overlay: 20;
   --dups-layer-live-dialog-sticky-header: 1;
+  --dups-anchor-live-dialog-sticky-header-top: var(--dups-offset-0);
 }
 
 @media (max-width: 760px) {
