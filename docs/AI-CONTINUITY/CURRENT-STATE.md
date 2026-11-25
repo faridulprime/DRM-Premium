@@ -11,7 +11,7 @@ Verification date: 2026-11-25
 
 ## DUGA
 
-- Current feature-branch head is being updated on `feature/full-admin-panel`; Production `main` remains untouched.
+- Current feature-branch head at this checkpoint: `277f7aaf1752abe0c0ea478289e81c1611d555c1` (new documentation-only commits follow); Production `main` remains untouched.
 - DUGA operational SQL remains a design draft, not an applied migration. No D1 database has been read or written in this workstream.
 - The change-request lifecycle draft now has:
   - initial INSERT guard: `proposed`, `state_version=1`, no implementer/implementation commit, matching create/update timestamps;
@@ -66,6 +66,6 @@ Verification date: 2026-11-25
 - Updated the enforcement design and state-machine docs to reflect the actual draft behavior and limitations.
 - Added `docs/DUGA-API-WRITE-CONTRACT.md` covering session-derived actors, disabled untrusted AI/runner identities, named commands, CAS, atomic audit coupling, idempotency, concurrency, HTTP semantics and disposable-D1 acceptance gates. No write endpoint was added.
 - Hardened `GET /api/governance/health`: it now requires the four `duga_change_requests` lifecycle triggers and both blocked-state metadata columns. Mocked regressions assert missing transition-audit trigger and missing block-reason column return `schema: partial`.
-- Complete DUGA Governance CI passed on `2481651798ef60c3793bfeafe81abff1cd9aeec6`: [run #45673718961](https://github.com/faridulprime/DRM-Premium/actions/runs/45673718961). This includes the new health-trigger/blocked-column regressions, in-memory SQLite smoke suite and deep structural validator.
-- D1 `batch()` atomicity / `changes()` coupling remain unverified; Governance write APIs and shared Preview/Production migration remain NO-GO.
+- Complete DUGA Governance CI passed on `2481651798ef60c3793bfeafe81abff1cd9aeec6`: [run #45673718961](https://github.com/faridulprime/DRM-Premium/actions/runs/45673718961). Follow-up documentation CI also passed on `e0a85898697e159afccf38a575099a1d7ea307a4` (run #45673812326) and the then-current head `277f7aaf1752abe0c0ea478289e81c1611d555c1` (run #45673820027).
+- D1 `batch()` atomicity / `changes()` coupling remain unverified; Governance write APIs and shared Preview/Production migration remain NO-GO. The earlier health-route gap for change-request lifecycle triggers and blocked-state columns is resolved on the feature branch; see `docs/DUGA-API-WRITE-CONTRACT.md` Section 11 and `docs/DUGA-API-INTEGRATION-READINESS.md` Section 11.
 - Next: complete CI verification, then add exact D1 statement-semantics tests only in an explicitly approved disposable database after its identity, backup and migration history are verified. Do not create migration 0009 or touch shared Preview/Production.
