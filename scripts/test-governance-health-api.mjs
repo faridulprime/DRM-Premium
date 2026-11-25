@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Integration-style tests for the DUGA health and read-only change listing routes.
+ * Integration-style tests for the DUGA health, change listing and change detail routes.
  * Loads the Pages handler as an ES module and supplies a minimal in-memory D1 mock.
  * No Cloudflare account, network call, or real database is used.
  */
@@ -29,7 +29,7 @@ const schemaSpec = {
 function tokenHash(token) {
   return createHash("sha256").update(token).digest("base64url");
 }
-function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, changeRows = [], tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
+function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, failChangeDetail = false, changeRows = [], changeDetail = null, relatedRows = {}, tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
   const users = new Map([
     [tokenHash("owner-token"), { id: "owner-1", email: "owner@example.test", username: "owner", role: "owner" }],
     [tokenHash("admin-token"), { id: "admin-1", email: "admin@example.test", username: "admin", role: "admin" }],
@@ -42,6 +42,7 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
         bind(...args) { this.args = args; return this; },
         async first() {
           if (sql.includes("FROM sessions s JOIN users u")) return users.get(this.args[0]) || null;
+          if (sql.includes("FROM duga_change_requests WHERE id=?")) { if (failChangeDetail) throw new Error("simulated detail query failure"); return changeDetail; }
           if (sql.includes("FROM user_restrictions WHERE user_id=?")) return null;
           if (sql === "SELECT 1 AS ok") {
             if (failProbe) throw new Error("simulated D1 outage");
@@ -50,6 +51,10 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
           throw new Error("Unexpected SQL in test: " + sql);
         },
         async all() {
+          if (sql.includes("FROM duga_reviews")) return { results: relatedRows.reviews || [] };
+          if (sql.includes("FROM duga_approvals")) return { results: relatedRows.approvals || [] };
+          if (sql.includes("FROM duga_validation_runs")) return { results: relatedRows.validationRuns || [] };
+          if (sql.includes("FROM duga_audit_events")) return { results: relatedRows.auditEvents || [] };
           if (sql.includes("FROM duga_change_requests")) {
             if (failChanges) throw new Error("simulated DUGA query failure");
             return { results: changeRows };
@@ -141,6 +146,30 @@ await test("Change request listing handles missing schema/storage", async () => 
   const { response } = await call({ token: "owner-token", path: "/api/governance/changes", env: mockEnv({ failChanges: true }) });
   assert.equal(response.status, 503);
 });
+await test("Owner can read a change request with bounded related records", async () => {
+  const change = { id: "change-42", title: "Example", summary: "Summary", status: "proposed", risk_level: "low", affected_systems_json: '["DCP"]', affected_paths_json: '["src/a.js"]', created_at: 100, updated_at: 101 };
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/changes/change-42", env: mockEnv({ changeDetail: change, relatedRows: { reviews: [{ id: "review-1" }], approvals: [], validationRuns: [], auditEvents: [{ id: "event-1" }] } }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.change.id, "change-42");
+  assert.deepEqual(body.change.affected_systems, ["DCP"]);
+  assert.equal(body.reviews.length, 1);
+  assert.equal(body.auditEvents.length, 1);
+  assert.equal(body.limits.perRelatedCollection, 50);
+});
+await test("Missing change request returns 404", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes/not-found" });
+  assert.equal(response.status, 404);
+});
+await test("Change detail rejects malformed ID and non-Owner", async () => {
+  const malformed = await call({ token: "owner-token", path: "/api/governance/changes/%3Cscript%3E" });
+  const forbidden = await call({ token: "admin-token", path: "/api/governance/changes/change-42" });
+  assert.equal(malformed.response.status, 400);
+  assert.equal(forbidden.response.status, 403);
+});
+await test("Change detail storage failure returns controlled 503", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes/change-42", env: mockEnv({ failChangeDetail: true }) });
+  assert.equal(response.status, 503);
+});
 await test("Unknown governance route is not exposed", async () => {
   const { response } = await call({ token: "owner-token", path: "/api/governance/changes/unknown" });
   assert.equal(response.status, 404);
@@ -197,6 +226,6 @@ await test("Missing D1 binding returns 503", async () => {
   assert.equal(response.status, 503);
 });
 
-console.log("DUGA health and changes API tests: PASS");
+console.log("DUGA health and read-only changes API tests: PASS");
 for (const name of tests) console.log("PASS: " + name);
 console.log("LIMITATION: mocked D1 and local handler only; no live Cloudflare Pages deployment tested.");
