@@ -223,3 +223,7 @@ Reused `--dups-offset-0` for the shared sidebar's left/bottom anchors, compact H
 ## Live Users drawer backdrop viewport edges — 2026-11-26
 
 The fixed Live Users drawer backdrop now reuses `--dups-offset-0` for all four viewport insets. This avoids a duplicate zero-valued token; its fixed positioning, blur, opacity lifecycle and existing backdrop layer remain unchanged. The dynamic Chromium overlay fixture checks computed fixed edge coordinates against the zero-offset token while the drawer is open.
+
+## Compact Homepage and Admin Category Bar viewport edges — 2026-11-26
+
+The compact Homepage fixed header now expresses its top/left/right viewport anchors with `--dups-offset-0`, retaining `bottom:auto` explicitly. The Admin Category Bar now uses the same zero-offset primitive for left/right while keeping its existing responsive top anchor. No dimensions, breakpoints or stacking layers change.
