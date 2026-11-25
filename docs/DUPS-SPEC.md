@@ -135,3 +135,6 @@ DUPS validation remains deliberately scoped: it checks the shared page headers a
 - Replaced the Restricted Users modal's remaining literal `z-index: 120` with the existing `--dups-layer-live-drawer` token and preserved the numeric fallback.
 - Extended the Chromium browser audit to inspect the actual computed modal positioning mode, computed z-index versus its DUPS token, and viewport-center geometry at the seven existing viewport widths (1440, 900, 390, 320, 720, 760 and 761 CSS px).
 - This validates the modal's source-backed fixed placement and center alignment in the checked-out static site. It does not prove visual collision handling, every ancestor stacking context, or deployed behavior.
+
+
+The new Restricted Users modal assertions passed at all seven viewport widths in the same Chromium run. The complete browser job also passed its 35 existing page/viewport checks and the established DUME drawer lifecycle checks.
