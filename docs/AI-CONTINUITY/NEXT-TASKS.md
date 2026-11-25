@@ -34,11 +34,11 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 - Test-only synthetic rows and audit events remain in the disposable database. Do not bind it to Pages or shared Preview/Production.
 
 
-## API security and lifecycle design — proposed, awaiting Owner decisions
+## API security and lifecycle design — proposed; blocked-state policy selected
 
 - Added `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` covering bootstrap Owner-session authorization, future scoped assignments, AI/validation trust boundaries, risk approval, commit-bound evidence staleness, guarded commit updates, a candidate transition matrix, route payload rules and security/regression tests.
 - Added an explicit candidate transition matrix from the existing DUGA lifecycle states. It is not approved executable policy.
-- Owner decisions still required: whether `blocked` is resumable or terminal; whether rejected/cancelled changes require a new linked request; whether the proposed rework edges are correct.
+- Owner decision recorded: `blocked` is resumable (option B). The implementation contract requires immutable prior-state provenance in the block event, authorized unblock with rationale and proof the condition cleared, CAS + audit, and re-evaluation of all evidence gates before resuming. Still awaiting Owner decisions on rejected/cancelled reopening and the proposed rework edges.
 - API integration readiness remains NO-GO for Preview write endpoints. No API runtime code, migration or binding was changed.
 - Next: review/confirm the transition matrix; then specify canonical Git ref/PR-base verification and the policy/registry revision pinning contract. Only after those reviews and Preview migration-history reconciliation should implementation planning be revisited.
 
@@ -48,7 +48,7 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Next review sequence
 1. Independently review the disposable D1 evidence and Worker implementation; retain the run ID and aggregate PASS qualification.
-2. Complete the API transition matrix with optimistic `state_version` checks.
+2. Complete the API transition matrix with optimistic `state_version` checks, including explicit block/unblock paths and stale-gate re-entry.
 3. Specify commit-bound gate invalidation: changed implementation SHA must stale prior review, approval and validation evidence.
 4. Specify active assignment/scope checks, reviewer/implementer separation, trusted CI validation, canonical Git-ref verification and server-derived audit actors.
 5. Review Preview D1 migration history read-only; do not infer applied history from filenames or table shape.
@@ -67,3 +67,8 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Preview D1 preflight handoff
 A read-only diagnostic script is available at `governance/schemas/d1-preview-preflight.sql`. Run each SELECT/PRAGMA separately in the Cloudflare D1 Console against Preview only. Share the SQLite version, sqlite_master table/index/trigger listings, migration/meta table discovery and `PRAGMA table_info('users')` output. Do not execute the schema draft or any migration in a shared Preview database.
+
+## Owner decision recorded — 2026-11-25
+- Selected option B: `blocked` is resumable, not terminal.
+- Unblocking must be an explicit authorized operation with a non-empty rationale and evidence that the blocking condition is cleared. It must use CAS + an append-only audit event, retain the prior state in immutable block-event provenance, and re-evaluate all gates before selecting a safe resume stage.
+- This is a policy/design decision only; no runtime code or schema migration has been implemented.
