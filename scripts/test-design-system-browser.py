@@ -285,6 +285,9 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     zIndex: parseFloat(style.zIndex),
                     expectedCenter: parseFloat(root.getPropertyValue("--dups-anchor-live-notice-center")),
                     expectedBottom: parseFloat(root.getPropertyValue("--dups-anchor-live-notice-bottom")),
+                    expectedCompactLeft: parseFloat(root.getPropertyValue("--dups-anchor-live-notice-left-compact")),
+                    expectedCompactRight: parseFloat(root.getPropertyValue("--dups-anchor-live-notice-right-compact")),
+                    right: style.right === "auto" ? null : parseFloat(style.right),
                     expectedZ: parseFloat(root.getPropertyValue("--dups-layer-live-notice"))
                   };
                 }"""
@@ -295,8 +298,11 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 try:
                     if live_notice_anchor["position"] != "fixed":
                         fail(f"{name}/{viewport_name}: Live Users notice is not fixed-positioned ({live_notice_anchor})")
-                    if abs(live_notice_anchor["left"] - width * live_notice_anchor["expectedCenter"] / 100) > 1:
-                        fail(f"{name}/{viewport_name}: Live Users notice center anchor differs from its DUPS token ({live_notice_anchor})")
+                    if width <= 760:
+                        if abs(live_notice_anchor["left"] - live_notice_anchor["expectedCompactLeft"]) > 1 or abs(live_notice_anchor["right"] - live_notice_anchor["expectedCompactRight"]) > 1:
+                            fail(f"{name}/{viewport_name}: compact Live Users notice side insets differ from DUPS tokens ({live_notice_anchor})")
+                    elif abs(live_notice_anchor["left"] - width * live_notice_anchor["expectedCenter"] / 100) > 1:
+                        fail(f"{name}/{viewport_name}: desktop Live Users notice center anchor differs from its DUPS token ({live_notice_anchor})")
                     if abs(live_notice_anchor["bottom"] - live_notice_anchor["expectedBottom"]) > 1:
                         fail(f"{name}/{viewport_name}: Live Users notice bottom clearance differs from its DUPS token ({live_notice_anchor})")
                     if float(live_notice_anchor["zIndex"]) != live_notice_anchor["expectedZ"]:

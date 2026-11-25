@@ -145,3 +145,6 @@ The fixed Live Users status notice now consumes semantic DUPS tokens for its 50%
 ### Registration close and Live Users presence micro-anchor migration — 2026-11-26
 
 The registration dialog close button now consumes dedicated top/right tokens (17px/18px); the Live Users presence dot consumes one shared -1px edge token for right/bottom. Computed Chromium checks cover the dialog's opened state and a temporary avatar fixture across the viewport matrix. These are local component coordinates; no visual geometry changed.
+
+
+The compact/mobile rule retains its existing 10px left and right insets through separate compact tokens; the test now distinguishes desktop center anchoring from the compact full-width inset layout at the 760px breakpoint.

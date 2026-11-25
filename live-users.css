@@ -272,7 +272,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
  .live-user-dialog header h2{font-size:18px}
  .live-user-dialog header button{width:40px;height:40px}
  .live-dialog-body{font-size:14px}
- .live-notice{left:10px;right:10px;max-width:none;font-size:13px}
+ .live-notice{left:var(--dups-anchor-live-notice-left-compact, 10px);right:var(--dups-anchor-live-notice-right-compact, 10px);max-width:none;font-size:13px}
 }
 @media(max-width:380px){
  .live-topbar .brand-admin-suffix{display:none}

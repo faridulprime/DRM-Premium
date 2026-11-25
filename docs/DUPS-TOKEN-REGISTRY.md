@@ -141,6 +141,8 @@ Homepage state selectors override this token for the existing guest, login-form,
 |---|---:|---|
 | `--dups-anchor-live-notice-center` | 50% | Horizontal viewport-center anchor for the fixed live notice |
 | `--dups-anchor-live-notice-bottom` | 18px | Bottom viewport clearance for the fixed live notice |
+| `--dups-anchor-live-notice-left-compact` | 10px | Compact viewport left inset |
+| `--dups-anchor-live-notice-right-compact` | 10px | Compact viewport right inset |
 
 The existing translateX(-50%) centering behavior and local layer 140 are retained. Chromium checks computed fixed positioning, viewport-center coordinate, bottom clearance and layer at every Live Users viewport.
 

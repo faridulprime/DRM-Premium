@@ -67,6 +67,8 @@
   /* Live Users fixed notice anchor. */
   --dups-anchor-live-notice-center: 50%;
   --dups-anchor-live-notice-bottom: 18px;
+  --dups-anchor-live-notice-left-compact: 10px;
+  --dups-anchor-live-notice-right-compact: 10px;
 
   /* Anchor relationship spacing. */
   --dups-anchor-gap-xs: 0.25rem;
