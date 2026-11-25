@@ -42,7 +42,7 @@
   document.body.classList.remove("sidebar-open");document.body.classList.toggle("drawer-open",state);
   sidebar.classList.add("dume-mobile-drawer");
   const duration=REDUCED.matches?0:DURATION;
-  setImportant(sidebar,"transition","transform "+duration+"ms "+EASING+", opacity "+Math.min(duration,520)+"ms ease");
+  setImportant(sidebar,"transition","transform "+duration+"ms "+EASING+", opacity "+Math.min(duration,OPACITY_DURATION)+"ms ease");
   /* Disable legacy page keyframes; DUME owns the transition on this element. */
   setImportant(sidebar,"animation","none");
   setImportant(sidebar,"visibility","visible");setImportant(sidebar,"pointer-events",state?"auto":"none");setImportant(sidebar,"will-change","transform,opacity");

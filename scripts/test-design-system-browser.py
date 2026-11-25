@@ -333,18 +333,36 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
             timeout=5000,
         )
         transition = page.locator(sidebar).evaluate("(el) => getComputedStyle(el).transitionDuration")
-        first_duration = transition.split(",")[0].strip()
-        if first_duration.endswith("ms"):
-            seconds = float(first_duration[:-2]) / 1000
-        elif first_duration.endswith("s"):
-            seconds = float(first_duration[:-1])
-        else:
-            seconds = float(first_duration or "0")
-        is_zero = seconds == 0
-        if reduced_motion and not is_zero:
-            fail(f"{name}/{mode}: expected zero-duration drawer transition, found {transition}")
-        if not reduced_motion and (is_zero or seconds < 0.5):
-            fail(f"{name}/{mode}: expected the configured motion duration, found {transition}")
+        durations = [value.strip() for value in transition.split(",")]
+        motion_config = page.evaluate("() => window.DRMMotion.config")
+
+        def duration_ms(value: str) -> float:
+            if value.endswith("ms"):
+                return float(value[:-2])
+            if value.endswith("s"):
+                return float(value[:-1]) * 1000
+            return float(value or "0")
+
+        actual_durations = [duration_ms(value) for value in durations]
+        expected_durations = (
+            [0.0, 0.0]
+            if reduced_motion
+            else [
+                float(motion_config["drawerDuration"]),
+                min(
+                    float(motion_config["drawerDuration"]),
+                    float(motion_config["drawerOpacityDuration"]),
+                ),
+            ]
+        )
+        if len(actual_durations) != 2 or any(
+            abs(actual - expected) > 1
+            for actual, expected in zip(actual_durations, expected_durations)
+        ):
+            fail(
+                f"{name}/{mode}: computed transition durations {actual_durations}ms "
+                f"do not match DUME token durations {expected_durations}ms"
+            )
         if page.locator(backdrop).evaluate("(el) => el.hidden"):
             fail(f"{name}/{mode}: backdrop remained hidden while drawer was open")
 
