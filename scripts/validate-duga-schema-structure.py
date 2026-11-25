@@ -182,7 +182,7 @@ def main() -> int:
         }
         trigger_requirements = {
             "duga_change_requests_insert_guard": ("before insert on duga_change_requests", "raise(abort"),
-            "duga_change_requests_update_guard": ("before update on duga_change_requests", "raise(abort"),
+            "duga_change_requests_update_guard": ("before update on duga_change_requests", "raise(abort", "new.affected_systems_json<>old.affected_systems_json", "new.risk_level<>old.risk_level", "length(new.implementation_commit_sha)=0"),
             "duga_change_requests_no_delete": ("before delete on duga_change_requests", "raise(abort"),
             "duga_change_request_transition_audit": ("after update on duga_change_requests", "insert into duga_audit_events"),
             "duga_review_no_implementer_self_audit": ("before insert on duga_reviews", "raise(abort"),
