@@ -250,6 +250,12 @@ def main() -> int:
                 "reviewer_type='human' and reviewer_user_id is not null and reviewer_principal_id is null and review_type='human_review'",
                 "reviewer_type='ai' and reviewer_user_id is null and reviewer_principal_id is not null and length(reviewer_principal_id)>0 and review_type='independent_ai_audit'",
             ],
+            "duga_validation_runs": [
+                "status='queued' and started_at is null and completed_at is null",
+                "status='running' and started_at is not null and completed_at is null",
+                "status in ('passed','failed') and started_at is not null and completed_at is not null and completed_at>=started_at",
+                "status='cancelled' and completed_at is not null and (started_at is null or completed_at>=started_at)",
+            ],
             "duga_audit_events": [
                 "length(event_type)>0",
                 "actor_type='human' and actor_user_id is not null and actor_principal_id is null and actor_system_id is null",
