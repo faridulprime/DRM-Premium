@@ -49,7 +49,11 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
           }
           throw new Error("Unexpected SQL in test: " + sql);
         },
-        async all() {\n          if (sql.includes("FROM duga_change_requests")) {\n            if (failChanges) throw new Error("simulated DUGA query failure");\n            return { results: changeRows };\n          }
+        async all() {
+          if (sql.includes("FROM duga_change_requests")) {
+            if (failChanges) throw new Error("simulated DUGA query failure");
+            return { results: changeRows };
+          }
           if (sql.includes("FROM sqlite_master")) {
             if (failSchemaProbe) throw new Error("simulated schema probe outage");
             const results = [];
