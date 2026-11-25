@@ -220,7 +220,7 @@ async function handle(req,env){
  // DUGA foundation health probe: authenticated Owner only; read-only and table-independent.
  if(p[0]==="governance"){
   if(user.role!=="owner")return fail("শুধু Owner Governance API ব্যবহার করতে পারবেন।",403);
-  if((p[1]==="health"||p[1]==="changes"||p[1]==="audit"||p[1]==="findings")&&m!=="GET")return fail("Method not allowed.",405);
+  if((p[1]==="health"||p[1]==="overview"||p[1]==="changes"||p[1]==="audit"||p[1]==="findings")&&m!=="GET")return fail("Method not allowed.",405);
   if(p.length===2&&p[1]==="health"){
    if(m!=="GET")return fail("Method not allowed.",405);
    const expected={
@@ -255,6 +255,21 @@ async function handle(req,env){
    const absent=schemaTables.length===0;
    const schemaStatus=complete?"ready":absent?"not_installed":"partial";
    return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaTables,expectedSchemaTables:expectedCount,missing,access:"owner"});
+  }
+  if(p.length===2&&p[1]==="overview"&&m==="GET"){
+   let changes,findings,jobs,assignments;
+   try{
+    [changes,findings,jobs,assignments]=await Promise.all([
+     env.DB.prepare("SELECT status,COUNT(*) AS count FROM duga_change_requests GROUP BY status").all(),
+     env.DB.prepare("SELECT status,COUNT(*) AS count FROM duga_analysis_findings GROUP BY status").all(),
+     env.DB.prepare("SELECT status,COUNT(*) AS count FROM duga_jobs GROUP BY status").all(),
+     env.DB.prepare("SELECT status,COUNT(*) AS count FROM duga_assignments GROUP BY status").all()
+    ]);
+   }catch{return fail("Governance overview is unavailable; verify the DUGA schema is installed.",503)}
+   const counts=rows=>Object.fromEntries((rows||[]).map(row=>[row.status,Number(row.count)||0]));
+   const changeCounts=counts(changes.results),findingCounts=counts(findings.results),jobCounts=counts(jobs.results),assignmentCounts=counts(assignments.results);
+   const total=map=>Object.values(map).reduce((sum,n)=>sum+n,0);
+   return json({ok:true,generatedAt:Math.floor(Date.now()/1000),changes:{total:total(changeCounts),byStatus:changeCounts},findings:{total:total(findingCounts),byStatus:findingCounts},jobs:{total:total(jobCounts),byStatus:jobCounts},assignments:{total:total(assignmentCounts),byStatus:assignmentCounts}});
   }
   if(p.length===2&&p[1]==="changes"&&m==="GET"){
    const rawLimit=u.searchParams.get("limit")||"25";
