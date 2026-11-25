@@ -184,3 +184,8 @@ The browser test now emits a diagnostic inventory of stacking-context-producing 
 ### Upload Studio mobile global-header anchors — 2026-11-26
 
 The mobile fixed `.studio-global-topbar` now uses the existing `--dups-offset-0` primitive for its top, left and right viewport edges; its existing `--dups-layer-home-header-mobile` layer and 58px header geometry are unchanged. The Chromium audit checks computed fixed positioning, all three rendered viewport-edge offsets and layer-token agreement at the sampled Upload Studio widths up to 760 CSS px. This is a targeted source/geometry assertion, not a native browser zoom, physical safe-area or deployed-runtime test.
+
+
+### Shared shell viewport-edge anchors — 2026-11-26
+
+The shared fixed `.topbar` now consumes `--dups-offset-0` for top/left/right. The fixed `.category-bar` consumes the same zero primitive for left/right while retaining its DUSS header-height top anchor. The mobile shared sidebar consumes the zero primitive for top/bottom, and the mobile sidebar backdrop uses it for all four insets. Existing fixed positioning, dimensions, responsive overrides and layer aliases are preserved. The Chromium audit now checks the Homepage header's zero top/left/right edges and the Category Bar's left/right edges plus alignment directly beneath the rendered header across all seven viewport widths. The assertion is limited to the static Homepage shell fixture.
