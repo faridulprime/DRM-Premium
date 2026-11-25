@@ -10,6 +10,7 @@ on:
       - "scripts/validate-governance.mjs"
       - "scripts/validate-migration-inventory.mjs"
       - "scripts/test-duga-schema.py"
+      - "functions/api/[[path]].js"
       - ".github/workflows/duga-governance.yml"
   push:
     branches:
@@ -40,6 +41,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Check API JavaScript syntax
+        run: node --check 'functions/api/[[path]].js'
       - name: Validate registry, ownership and dependencies
         run: node scripts/validate-governance.mjs
       - name: Validate D1 migration inventory (static only)
