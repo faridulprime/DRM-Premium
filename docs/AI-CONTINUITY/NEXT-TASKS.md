@@ -33,6 +33,15 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 - PowerShell output exposed the aggregate PASS but not nested per-case counts; the exact assertion predicates are documented in `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md`.
 - Test-only synthetic rows and audit events remain in the disposable database. Do not bind it to Pages or shared Preview/Production.
 
+
+## API security and lifecycle design — proposed, awaiting Owner decisions
+
+- Added `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` covering bootstrap Owner-session authorization, future scoped assignments, AI/validation trust boundaries, risk approval, commit-bound evidence staleness, guarded commit updates, a candidate transition matrix, route payload rules and security/regression tests.
+- Added an explicit candidate transition matrix from the existing DUGA lifecycle states. It is not approved executable policy.
+- Owner decisions still required: whether `blocked` is resumable or terminal; whether rejected/cancelled changes require a new linked request; whether the proposed rework edges are correct.
+- API integration readiness remains NO-GO for Preview write endpoints. No API runtime code, migration or binding was changed.
+- Next: review/confirm the transition matrix; then specify canonical Git ref/PR-base verification and the policy/registry revision pinning contract. Only after those reviews and Preview migration-history reconciliation should implementation planning be revisited.
+
 ## Immediate blockers / required evidence
 1. Disposable D1 CAS + audit acceptance is PASS for the isolated Worker/database only. Production and shared Preview remain untested and untouched.
 2. Human authentication/assignment authorization, reviewer/implementer separation, commit-bound evidence invalidation, trusted validation and canonical Git-ref checks remain design contracts, not runtime enforcement.
