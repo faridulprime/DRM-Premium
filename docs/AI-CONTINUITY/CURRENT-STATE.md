@@ -34,6 +34,15 @@ Verification date: 2026-11-25
 - DUPS 0.3.0: token foundation and selected shell/overlay migrations. Browser audit verifies computed page-header layers and mobile drawer/sidebar/backdrop stacking on four drawer pages. General positioning, anchor collision/fallback and complete stacking-context coverage remain pending.
 - DUCS 0.3.1: token foundation and partial first-pass component migration. Browser audit validates four representative semantic contrast pairs; full token-pair/state contrast audit, residual literal review, light/high-contrast themes and forced-colors remain pending.
 
+## DUMC — DRM Universal Movie Section — 2026-11-26
+
+- Added `assets/dumc/taxonomy.json` v1.0.0 with 12 top-level sections and 226 total folder nodes, including language, film industry, dubbed audio, genres, production countries, collections, release decades/years, subtitles, artwork and metadata.
+- Added `docs/DUMC-SPEC.md` describing stable folder IDs, independent classification dimensions, one canonical movie identity and virtual multi-folder relationships.
+- Replaced the Upload Studio Folders placeholder with a searchable, expandable DUMC taxonomy explorer; updated the page's versioned CSS/JS assets.
+- Static validation performed through the repository connector: JSON parses; all 226 folder IDs are unique; Upload Studio markup/assets and DUMC styling anchors are present; `upload-studio.js` passes JavaScript syntax parsing.
+- This is a browsable taxonomy/catalog only. The current schema still stores one category string per video and has no folder table, movie metadata model, or many-to-many folder/media relationships. Folder assignment and audio/subtitle asset storage remain disabled and are not claimed as implemented.
+- No D1 migration, database write, Preview deployment, Production change or live-browser test was performed. A reviewed migration and authenticated API phase requires explicit Owner approval.
+
 ## Application code audit findings
 
 - Website Builder JSON document changes are draft-only; `/api/builder/state` reports `publishEnabled: false`. Separate `Save website style` and legacy visual-editor actions write `settings.visual_editor_config`, which the homepage reads and applies. Confirmation prompts and clearer UI text were added so these live-style writes are not confused with the JSON draft.
