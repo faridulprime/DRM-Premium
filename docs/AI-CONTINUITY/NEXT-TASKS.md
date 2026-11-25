@@ -1,5 +1,5 @@
 # DRM Premium — Next Tasks
-Last updated: 2026-11-25
+Last updated: 2026-11-26
 Target application branch: `feature/full-admin-panel`
 Separate DUGA review branch: `duga-foundation-review`
 DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
@@ -125,4 +125,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 
 - Website Builder dynamic live-edit overlay now uses `--dups-offset-0` and a dedicated local layer-20 token; a DOM fixture checks relative/isolation containing block, absolute full-edge coverage and z-index. Next inspect the remaining fixed-shell and micro-positioned selectors where actual runtime DOM can be reproduced safely.
 
-- Homepage hero corner decoration and full-bleed `::before` overlay now consume zero-inset DUPS tokens; Chromium checks the relative containing block and absolute edge geometry. Continue the remaining fixed/absolute selector audit with DOM-backed checks.
+- Homepage hero corner decoration and full-bleed `::before` overlay now consume zero-inset DUPS tokens; Chromium checks the relative containing block and absolute edge geometry.
+- Website Builder responsive inspector now consumes DUPS top/right/bottom anchors (66px/0/34px, compact top 112px); Chromium compares resolved token offsets against the fixed shell containing block at the existing viewport matrix. Continue the remaining fixed/absolute selector audit with DOM-backed checks.
