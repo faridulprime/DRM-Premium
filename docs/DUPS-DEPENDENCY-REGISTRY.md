@@ -239,3 +239,8 @@ The Homepage login-status notice now consumes `--dups-offset-0` for its flush ri
 ### Upload Studio fixed sidebar anchors — 2026-11-26
 
 The desktop Upload Studio sidebar's fixed top/left/bottom anchors now consume the existing zero-offset primitive; its right edge remains `auto`, preserving intrinsic sidebar width. The browser regression suite checks the computed three-edge geometry at each desktop Upload Studio viewport. Compact off-canvas behavior and the existing sidebar stacking token are unchanged.
+
+
+### Compact Live Users topbar horizontal anchors — 2026-11-26
+
+The compact Live Users fixed topbar's left/right edges now consume the DUPS zero-offset primitive while preserving its fixed positioning, width, height, and responsive padding. The browser suite asserts both computed horizontal edges against the token for each compact Live Users viewport.
