@@ -232,3 +232,6 @@ The compact Homepage fixed header now expresses its top/left/right viewport anch
 ## Compact shared-shell edge anchors — 2026-11-26
 
 The compact shared Category Bar and compact Homepage Category Bar now reuse `--dups-offset-0` for their horizontal viewport edges. The shared header login-status desktop right edge also reuses the zero-offset primitive; the compact status keeps its existing 8px offset. No new zero-valued token is introduced.
+
+
+The shared desktop header login-status notice uses `--dups-offset-0` for its flush right edge; the compact Homepage override continues to use `--dups-offset-2`. The browser assertion resolves the desktop expectation from the zero-offset token rather than hard-coding a numeric zero.
