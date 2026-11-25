@@ -43,7 +43,8 @@ jobs:
         with:
           node-version: "22"
       - name: Check API JavaScript syntax
-        run: node --check 'functions/api/[[path]].js'
+        run: |
+          node --check "functions/api/[[path]].js"
       - name: Validate registry, ownership and dependencies
         run: node scripts/validate-governance.mjs
       - name: Validate D1 migration inventory (static only)
