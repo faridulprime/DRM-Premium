@@ -31,7 +31,7 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 12. Return minimum necessary data; paginate audit and findings endpoints.
 
 ## Implemented initial route
-- GET /api/governance/health — authenticated Owner-only, read-only D1 connectivity and schema-readiness probe. It checks `SELECT 1`, then inspects the eight expected DUGA tables, required columns, named indexes and required triggers. It reports `not_installed`, `partial` or `ready` and returns missing structural elements; it never mutates the database.
+- GET /api/governance/health — authenticated Owner-only, read-only D1 connectivity and schema-readiness probe. It checks `SELECT 1`, then inspects the eight expected DUGA tables, required column names, named indexes and required trigger ownership. For the three critical triggers it also checks selected SQL-definition markers (the expected operation/table and abort-message markers). It reports `not_installed`, `partial` or `ready` and returns missing structural elements; it never mutates the database. The response labels this level `presence-and-critical-trigger-markers`; it is not full schema equivalence. It does not yet verify column types/nullability/primary-key ordinals, foreign-key actions, index column order/uniqueness/partial predicates, complete CHECK expressions, or full trigger semantics.
 
 ## Remaining proposed route contracts
 - GET /api/governance/overview — Owner-only operational summary.
