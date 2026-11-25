@@ -31,12 +31,19 @@ DCP coordinates governance and does not override subsystem ownership.
 ## Evidence discipline
 Separate implemented, partially implemented, planned, unknown and tested states. Treat static source checks as static checks only. Do not infer runtime behavior from token presence or file names.
 
-## Governance metadata validation\nRun `node scripts/validate-governance.mjs` from the repository root after changing the system registry, ownership roles or dependency baseline. This is a static repository check only; it does not validate D1, API authorization, browser behavior or deployment.\n\n## Access limitations
+## Governance metadata validation
+Run `node scripts/validate-governance.mjs` from the repository root after changing the system registry, ownership roles or dependency baseline. This is a static repository check only; it does not validate D1, API authorization, browser behavior or deployment.
+
+## D1 migration inventory validation
+Run `node scripts/validate-migration-inventory.mjs` after changing `migrations/**`, the migration manifest or the DUGA schema draft. It checks manifest/file coverage, execution order, dependency references, duplicate numeric-prefix documentation and the design-only draft safety header. It never connects to D1 or executes SQL.
+## Access limitations
 These documents do not grant GitHub, Cloudflare, database or other service permissions. A new AI account needs access granted independently by the project owner.
 
 ## Verified repository work — 2026-11-25
 - Added `scripts/validate-governance.mjs` to check governance JSON parsing, unique system/role IDs, role references, dependency references, page assets and declared source paths.
-- Added `.github/workflows/duga-governance.yml` to run that validator on relevant pull requests, pushes to `main` or `feature/full-admin-panel`, and manual dispatch.
-- The workflow file and validator are present on `feature/full-admin-panel`. GitHub has not yet reported a workflow run or status for the latest commit at the time of this note; do not describe CI as passing.
-- This work is repository-only. It does not apply migrations, access D1, deploy Pages, or implement the proposed governance API.
-- Next safe step: run/inspect the CI result, then prepare a separately reviewed D1 migration only after reconciling the actual Preview migration history and backup. Keep Production untouched.
+- Added `scripts/validate-migration-inventory.mjs` to verify the migration manifest against SQL files, contiguous fresh-database order, dependency ordering, duplicate-prefix notes and the DUGA draft safety header.
+- Updated `migrations/manifest.json` so both files in each duplicate numeric prefix (`0004` and `0007`) explicitly document the collision.
+- Updated `.github/workflows/duga-governance.yml` to run both static validators for relevant pull requests and pushes, plus manual dispatch.
+- GitHub Actions run `45639433488` for commit `a2290abae3ae09a982a1ee1c841ed7d9a51b7542` completed successfully. Both governance metadata and D1 migration inventory validation steps passed.
+- This remains repository-only validation. No D1 migration was applied, no Cloudflare Pages deployment was performed, and Production was not modified.
+- Next safe step: inspect the remaining DUGA schema constraints and reconcile the actual Preview D1 migration history and backup before proposing an executable migration. Do not infer applied state from filenames or the manifest.
