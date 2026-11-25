@@ -462,6 +462,7 @@ def inspect_resize_transition(browser, base_url, name, config):
     )
     context.route("https://**/*", lambda request_route: request_route.abort())
     page = context.new_page()
+    stage = "opening mobile drawer"
     try:
         page.goto(base_url + route, wait_until="load", timeout=30000)
         page.locator(toggle).dispatch_event("click")
@@ -473,9 +474,9 @@ def inspect_resize_transition(browser, base_url, name, config):
             timeout=5000,
         )
 
-        # Crossing to desktop while the drawer is open must close it and
-        # synchronously clear the mobile backdrop and accessibility state.
+        stage = "waiting for desktop resize cleanup"
         page.set_viewport_size({"width": 761, "height": 900})
+        page.wait_for_timeout(80)
         page.wait_for_function(
             """({toggle, sidebar, backdrop}) => {
               const button = document.querySelector(toggle);
@@ -494,8 +495,7 @@ def inspect_resize_transition(browser, base_url, name, config):
             timeout=5000,
         )
 
-        # Returning to mobile must leave a clean closed state and allow a
-        # fresh open/close cycle without stale transitions or timers.
+        stage = "reopening after returning to mobile"
         page.set_viewport_size({"width": 390, "height": 844})
         page.locator(toggle).dispatch_event("click")
         page.wait_for_function(
@@ -505,6 +505,7 @@ def inspect_resize_transition(browser, base_url, name, config):
             arg={"toggle": toggle, "sidebar": sidebar},
             timeout=5000,
         )
+        stage = "closing after returning to mobile"
         page.locator(toggle).dispatch_event("click")
         page.wait_for_function(
             """({toggle}) => document.querySelector(toggle)?.getAttribute("aria-expanded") === "false"
@@ -520,10 +521,32 @@ def inspect_resize_transition(browser, base_url, name, config):
             timeout=2500,
         )
     except Exception as exc:
-        fail(f"{name}/mobile-to-desktop-resize: {type(exc).__name__}: {exc}")
+        snapshot = page.evaluate(
+            """({toggle, sidebar, backdrop}) => {
+              const button = document.querySelector(toggle);
+              const panel = document.querySelector(sidebar);
+              const overlay = document.querySelector(backdrop);
+              return {
+                innerWidth,
+                mobileMedia: matchMedia("(max-width:760px)").matches,
+                ariaExpanded: button?.getAttribute("aria-expanded"),
+                bodyDrawerOpen: document.body.classList.contains("drawer-open"),
+                bodySidebarOpen: document.body.classList.contains("sidebar-open"),
+                mobileOpen: panel?.classList.contains("mobile-open"),
+                dumeDrawer: panel?.classList.contains("dume-mobile-drawer"),
+                backdropHidden: overlay?.hidden,
+                backdropDume: overlay?.classList.contains("dume-mobile-backdrop"),
+                backdropClosing: overlay?.classList.contains("is-closing")
+              };
+            }""",
+            arg={"toggle": toggle, "sidebar": sidebar, "backdrop": backdrop},
+        )
+        fail(
+            f"{name}/mobile-to-desktop-resize ({stage}): "
+            f"{type(exc).__name__}: {exc}; snapshot={snapshot}"
+        )
     finally:
         context.close()
-
 
 def main() -> int:
     server, base_url = serve()
