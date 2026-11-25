@@ -77,7 +77,7 @@ function dumcNodeHTML(node,depth=0,query=""){
  if(!match)return "";
  const hasChildren=Boolean(node.children?.length);
  const selected=dumcSelectedNode===node.id?" is-selected":"";
- const summary='<summary class="dumc-node-summary'+selected+'" data-dumc-id="'+esc(node.id)+'"><span class="dumc-folder-glyph">'+(hasChildren?"▸":"•")+'</span><span class="dumc-node-copy"><strong>'+esc(node.name)+'</strong><small>'+esc(node.description||"")+'</small></span><span class="dumc-node-count">'+(hasChildren?dumcCount(node)-1:"")+'</span></summary>';
+ const tag=hasChildren?"summary":"button";const summary='<'+tag+(hasChildren?'':' type="button"')+' class="dumc-node-summary'+selected+'" data-dumc-id="'+esc(node.id)+'"><span class="dumc-folder-glyph">'+(hasChildren?"▸":"•")+'</span><span class="dumc-node-copy"><strong>'+esc(node.name)+'</strong><small>'+esc(node.description||"")+'</small></span><span class="dumc-node-count">'+(hasChildren?dumcCount(node)-1:"")+'</span>'+(hasChildren?"</summary>":"</button>");
  return hasChildren?'<details class="dumc-tree-node" '+(depth===0||Boolean(query)?"open":"")+'>'+summary+'<div class="dumc-children">'+children+'</div></details>':'<div class="dumc-leaf">'+summary+'</div>';
 }
 function selectDUMCNode(id){
