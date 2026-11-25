@@ -327,6 +327,31 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 fail(f"{name}/{viewport_name}: profile completion overlay stack could not be compared ({homepage_layers})")
 
         if name == "live-users":
+            dialog_header_layer = page.evaluate(
+                """() => {
+                  const header = document.querySelector(".live-user-dialog > header");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!header) return {missing: true};
+                  const style = getComputedStyle(header);
+                  return {
+                    position: style.position,
+                    zIndex: style.zIndex,
+                    token: root.getPropertyValue("--dups-layer-live-dialog-sticky-header").trim()
+                  };
+                }"""
+            )
+            if dialog_header_layer.get("missing"):
+                fail(f"{name}/{viewport_name}: dialog sticky header is missing")
+            else:
+                try:
+                    if dialog_header_layer["position"] != "sticky":
+                        fail(f"{name}/{viewport_name}: dialog header is not sticky ({dialog_header_layer})")
+                    if float(dialog_header_layer["zIndex"]) != float(dialog_header_layer["token"]):
+                        fail(f"{name}/{viewport_name}: dialog sticky header z-index does not match its local DUPS token ({dialog_header_layer})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: dialog sticky header DUPS layer could not be resolved ({dialog_header_layer})")
+
+        if name == "live-users":
             restriction_layer = page.evaluate(
                 """() => {
                   const modal = document.querySelector(".live-restrictions-modal");
