@@ -232,3 +232,6 @@ Four Homepage full-viewport surfaces now reuse the existing DUPS zero-offset pri
 
 
 The suspension grain texture is included in the four-edge viewport-coverage assertions but excluded from overlay stack-order comparisons because its computed `z-index` is `auto`. This avoids treating a decorative fixed texture as an interactive stacking layer.
+
+
+The public registration dialog is included in the full-viewport edge audit. Its four computed edges are compared with `--dups-offset-0`, while the existing `margin:auto` centering and component-specific layer remain intact.
