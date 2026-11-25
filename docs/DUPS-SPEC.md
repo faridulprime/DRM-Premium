@@ -229,3 +229,6 @@ The header login-status regression now resolves its desktop right-edge expectati
 ## Full-viewport overlay tokenization — 2026-11-26
 
 Four Homepage full-viewport surfaces now reuse the existing DUPS zero-offset primitive: Website Builder shell, public registration dialog, account suspension screen, and suspension grain layer. Their existing fixed positioning, dialog centering, stacking order, and visibility behavior are preserved. The browser audit now asserts the computed four-edge coverage of the shell and suspension surfaces against the token; final verification of this addition is pending.
+
+
+The suspension grain texture is included in the four-edge viewport-coverage assertions but excluded from overlay stack-order comparisons because its computed `z-index` is `auto`. This avoids treating a decorative fixed texture as an interactive stacking layer.
