@@ -190,6 +190,6 @@ The hero remains the relative containing block; both decorative elements remain 
 
 | Token | Value | Intent |
 |---|---:|---|
-| `--dups-anchor-header-login-status-gap` | 8px | Desktop gap below the Homepage header |
+| `--dups-anchor-header-login-status-gap` | 8px | Desktop gap below the badge's `.top-actions` containing block |
 
 The compact header retains its existing 4px gap and 8px right inset through the compact spacing/offset tokens; the existing `--dups-layer-header-status` token preserves the effective layer of 110. Chromium compares rendered badge-to-header geometry, right offset and computed layer at every Homepage viewport, including the 760/761px breakpoint. No responsive coordinates or stacking values change.
