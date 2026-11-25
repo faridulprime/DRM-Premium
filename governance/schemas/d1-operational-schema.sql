@@ -112,12 +112,57 @@ CREATE TABLE duga_approvals (
   change_request_id TEXT NOT NULL REFERENCES duga_change_requests(id) ON DELETE RESTRICT,
   approver_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   approver_role TEXT NOT NULL CHECK (approver_role IN ('system-owner','platform-owner')),
+  authorization_assignment_id TEXT NOT NULL REFERENCES duga_assignments(id) ON DELETE RESTRICT,
+  authorization_scope_type TEXT NOT NULL CHECK (authorization_scope_type IN ('platform','system')),
+  authorization_scope_id TEXT,
+  policy_commit_sha TEXT NOT NULL,
   decision TEXT NOT NULL CHECK (decision IN ('approved','rejected')),
   approved_commit_sha TEXT NOT NULL,
   rationale TEXT NOT NULL DEFAULT '',
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  CHECK ((authorization_scope_type='platform' AND authorization_scope_id IS NULL AND approver_role='platform-owner') OR
+         (authorization_scope_type='system' AND authorization_scope_id IS NOT NULL AND length(authorization_scope_id)>0 AND approver_role='system-owner'))
 );
 CREATE INDEX idx_duga_approvals_change_time ON duga_approvals(change_request_id,created_at DESC);
+
+-- Authorization is checked against the active assignment at insertion time.
+-- The assignment ID, scope and policy revision remain as immutable evidence
+-- even if the assignment is revoked later.
+CREATE TRIGGER duga_approval_authorization_guard
+BEFORE INSERT ON duga_approvals
+WHEN NOT EXISTS (
+  SELECT 1
+  FROM duga_assignments a
+  JOIN duga_change_requests c ON c.id=NEW.change_request_id
+  WHERE a.id=NEW.authorization_assignment_id
+    AND a.subject_type='human'
+    AND a.user_id=NEW.approver_user_id
+    AND a.role_id=NEW.approver_role
+    AND a.status='active'
+    AND a.scope_type=NEW.authorization_scope_type
+    AND a.scope_id IS NEW.authorization_scope_id
+    AND c.policy_commit_sha=NEW.policy_commit_sha
+    AND (
+      (a.role_id='platform-owner' AND a.scope_type='platform' AND a.scope_id IS NULL)
+      OR
+      (a.role_id='system-owner' AND a.scope_type='system'
+       AND EXISTS (
+         SELECT 1 FROM json_each(c.affected_systems_json) affected
+         WHERE affected.value=a.scope_id
+       ))
+    )
+)
+BEGIN
+  SELECT RAISE(ABORT,'Approval requires an active scoped assignment and matching policy revision');
+END;
+
+-- Approval decisions are immutable evidence; corrections require a new record.
+CREATE TRIGGER duga_approvals_no_update
+BEFORE UPDATE ON duga_approvals
+BEGIN SELECT RAISE(ABORT,'DUGA approvals are immutable evidence'); END;
+CREATE TRIGGER duga_approvals_no_delete
+BEFORE DELETE ON duga_approvals
+BEGIN SELECT RAISE(ABORT,'DUGA approvals are immutable evidence'); END;
 
 CREATE TABLE duga_validation_runs (
   id TEXT PRIMARY KEY,
