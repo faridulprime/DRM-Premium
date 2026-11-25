@@ -67,3 +67,12 @@ New tokens require a semantic name, a single owner, an intended use, and a depen
 ## Audited component layer aliases (v0.2.0)
 
 The token file also includes component-specific aliases for shared shell, Profile, Live Users, visual editor/site builder, suspension/profile-completion overlays, and Upload Studio. These aliases intentionally retain legacy numeric values. They are compatibility mappings, not a mandate that unrelated components share the same layer. See `DUPS-DEPENDENCY-REGISTRY.md` for migrated scope and limitations.
+
+
+## Responsive Website Builder inspector layer — 2026-11-26
+
+| Token | Value | Intended use |
+|---|---:|---|
+| `--dups-layer-builder-inspector` | 2 | Local overlay order for the Website Builder inspector when it becomes absolutely positioned at widths up to 900 CSS px |
+
+This is a component-scoped alias preserving the existing numeric value. It does not establish a global layer above unrelated content; it is scoped within the fixed Website Builder shell.
