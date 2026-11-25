@@ -333,7 +333,6 @@ def main() -> int:
     check("assignment revocation requires revoker identity",
           lambda: db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=6 WHERE id='assignment-ai-maintainer'"),
           should_fail=True)
-")
     check(
         "approval rejects revoked assignment",
         lambda: db.execute(
