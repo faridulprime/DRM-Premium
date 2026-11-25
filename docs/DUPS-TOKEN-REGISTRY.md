@@ -214,3 +214,8 @@ The fixed mobile Upload Studio global header uses `--dups-offset-0` for its top,
 ## Shared shell viewport-edge anchors — 2026-11-26
 
 The shared fixed header, Category Bar horizontal edges, compact navigation drawer top/bottom edges and navigation backdrop full-viewport inset reuse `--dups-offset-0`. No duplicate zero-valued component tokens were introduced. The Category Bar's vertical header-height dependency remains owned by DUSS.
+
+
+## Profile drawer and navigation edge anchors — 2026-11-26
+
+Reused `--dups-offset-0` for the shared sidebar's left/bottom anchors, compact Homepage sidebar top, Profile drawer top/right/bottom and compact Profile drawer backdrop inset. No new zero-value semantic tokens were added; header-relative sidebar placement remains owned by DUSS.
