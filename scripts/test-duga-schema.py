@@ -188,6 +188,21 @@ def main() -> int:
     )
 
     check(
+        "review evidence cannot be updated",
+        lambda: db.execute(
+            "UPDATE duga_reviews SET reviewer_principal_id='agent-same' WHERE id='review-independent'"
+        ),
+        should_fail=True,
+    )
+    check(
+        "review evidence cannot be deleted",
+        lambda: db.execute(
+            "DELETE FROM duga_reviews WHERE id='review-independent'"
+        ),
+        should_fail=True,
+    )
+
+    check(
         "finding review metadata must be paired",
         lambda: db.execute(
             """INSERT INTO duga_analysis_findings
