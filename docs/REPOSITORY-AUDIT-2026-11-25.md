@@ -69,7 +69,7 @@ DUSS v0.6.0 centralizes selected role-badge, Admin action-button, and SVG/glyph 
 
 - DUGA review work is on `duga-foundation-review`, Draft PR #4, based on `main`.
 - PR #4 remains open, Draft, and unmerged.
-- GitHub Actions run `45594551319` completed successfully; its job includes the disposable Worker JavaScript syntax check and Python schema/registry tests.
+- GitHub Actions run `45601804933` (run 244) completed successfully on the review branch's fixture-parity/test update before the latest documentation-only continuity commit. Its logs show the Worker syntax check, DUGA SQLite schema tests, the new draft/fixture/Console parity test, governance validation and malformed-input tests all passed.
 - PR #4 records an earlier authenticated disposable-D1 Worker acceptance PASS (run `53d70371-008c-46a0-8bc3-33522be990eb`) on the disposable database only.
 - The lifecycle review says the schema was subsequently extended with predecessor-link and AI-review constraints; revised-schema disposable D1 acceptance is still NOT RUN.
 - Shared Preview migration reconciliation, third-party independent review, trusted service identity, Git provenance, and application integration tests remain outstanding. DUGA Preview write readiness remains NO-GO.
