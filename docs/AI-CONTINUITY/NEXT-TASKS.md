@@ -107,3 +107,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - DUPS targeted follow-up passed: Homepage fixed overlay token/stack checks, responsive Website Builder inspector positioning/layer checks, and Live Users Restricted Users modal center/layer checks are covered by Chromium run #45677034569. Remaining DUPS tasks are the wider positioned-selector/ancestor-context inventory, real anchor collision/fallback behavior, safe-area and native zoom validation.
 
 - DUPS targeted browser coverage expanded and passed in run #45677961245: mobile Homepage login-status anchor gap/right offset and Live Users sticky dialog-header layer, alongside previous Homepage overlays, Builder inspector and Restricted Users modal checks. Continue with evidence-led inventory and containing-block/stacking-context review; do not infer full DUPS completion.
+
+- Responsive Builder inspector geometry is now verified relative to the revealed fixed Website Builder shell, including desktop/tablet and mobile top offsets; Chromium run #45678321298 passed. This remains static-page geometry validation, not full Builder interaction testing.
