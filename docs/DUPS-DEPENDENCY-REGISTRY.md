@@ -221,3 +221,8 @@ The full-viewport audit also includes the decorative suspension grain layer. Bec
 
 
 The Homepage overlay geometry test now includes the public registration dialog alongside the Website Builder and suspension surfaces. It checks fixed positioning, its existing DUPS layer, and all four zero-offset viewport edges; native dialog centering remains controlled by `margin:auto`.
+
+
+### Live Users avatar image fill — 2026-11-26
+
+Both Live Users avatar image variants now consume `--dups-offset-0` for their absolute full-parent fill. The browser fixture checks both image variants' computed top/right/bottom/left edges against the token while retaining the existing presence-dot assertions. No avatar dimensions, object-fit, border radius, or local layer values changed.
