@@ -206,7 +206,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 metrics["tokens"]["dupsLiveHeader"]
                 if name == "live-users"
                 else metrics["tokens"]["dupsHomeHeaderMobile"]
-                if name == "homepage" and width <= 760
+                if name in ("homepage", "upload-studio") and width <= 760
                 else metrics["tokens"]["dups"]
             )
             try:
