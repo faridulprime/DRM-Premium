@@ -1,0 +1,1188 @@
+{
+  "version": "1.0.0",
+  "system": "DUMC",
+  "full_name": "DRM Universal Movie Section",
+  "parent": "Movies",
+  "classification_model": "hybrid-hierarchical-metadata",
+  "rules": [
+    "One canonical movie record per film; folders are logical classifications, not duplicate media copies.",
+    "Original audio language is distinct from dubbed audio languages.",
+    "Film industry, production country, language and genre are independent dimensions.",
+    "A movie may belong to multiple virtual folders through metadata relationships.",
+    "Folder IDs are stable; display names may change without changing identity.",
+    "Unknown metadata remains unknown and must not be inferred."
+  ],
+  "id": "DUMC",
+  "name": "DUMC",
+  "kind": "Root",
+  "description": "DRM Universal Movie Section — the unified movie classification and folder catalog.",
+  "children": [
+    {
+      "id": "00_SYSTEM",
+      "name": "00_SYSTEM",
+      "kind": "System",
+      "description": "System definitions, rules, schemas and versioned taxonomy documentation.",
+      "children": [
+        {
+          "id": "README",
+          "name": "README",
+          "description": "DUMC overview and operating rules."
+        },
+        {
+          "id": "TAXONOMY",
+          "name": "TAXONOMY",
+          "description": "Canonical folder and classification definitions."
+        },
+        {
+          "id": "SCHEMAS",
+          "name": "SCHEMAS",
+          "description": "Future metadata and storage schemas."
+        },
+        {
+          "id": "CHANGELOG",
+          "name": "CHANGELOG",
+          "description": "Version history and taxonomy changes."
+        }
+      ]
+    },
+    {
+      "id": "01_MOVIE_LIBRARY",
+      "name": "01_MOVIE_LIBRARY",
+      "description": "Canonical movie records and their primary media assets.",
+      "children": [
+        {
+          "id": "FEATURED",
+          "name": "FEATURED",
+          "description": "Editorially featured movies."
+        },
+        {
+          "id": "ALL_MOVIES",
+          "name": "ALL_MOVIES",
+          "description": "All canonical movie records."
+        },
+        {
+          "id": "UNCLASSIFIED",
+          "name": "UNCLASSIFIED",
+          "description": "Movies awaiting verified metadata."
+        },
+        {
+          "id": "ARCHIVED",
+          "name": "ARCHIVED",
+          "description": "Archived movie records; not physically deleted."
+        }
+      ]
+    },
+    {
+      "id": "02_LANGUAGE",
+      "name": "02_LANGUAGE",
+      "description": "Original or primary audio language; dubbing is classified separately.",
+      "children": [
+        {
+          "id": "LANG_BANGLA",
+          "name": "Bangla",
+          "description": "Bangla original-audio movies."
+        },
+        {
+          "id": "LANG_HINDI",
+          "name": "Hindi",
+          "description": "Hindi original-audio movies."
+        },
+        {
+          "id": "LANG_ENGLISH",
+          "name": "English",
+          "description": "English original-audio movies."
+        },
+        {
+          "id": "LANG_TAMIL",
+          "name": "Tamil",
+          "description": "Tamil original-audio movies."
+        },
+        {
+          "id": "LANG_TELUGU",
+          "name": "Telugu",
+          "description": "Telugu original-audio movies."
+        },
+        {
+          "id": "LANG_MALAYALAM",
+          "name": "Malayalam",
+          "description": "Malayalam original-audio movies."
+        },
+        {
+          "id": "LANG_KANNADA",
+          "name": "Kannada",
+          "description": "Kannada original-audio movies."
+        },
+        {
+          "id": "LANG_MARATHI",
+          "name": "Marathi",
+          "description": "Marathi original-audio movies."
+        },
+        {
+          "id": "LANG_PUNJABI",
+          "name": "Punjabi",
+          "description": "Punjabi original-audio movies."
+        },
+        {
+          "id": "LANG_URDU",
+          "name": "Urdu",
+          "description": "Urdu original-audio movies."
+        },
+        {
+          "id": "LANG_KOREAN",
+          "name": "Korean",
+          "description": "Korean original-audio movies."
+        },
+        {
+          "id": "LANG_JAPANESE",
+          "name": "Japanese",
+          "description": "Japanese original-audio movies."
+        },
+        {
+          "id": "LANG_CHINESE",
+          "name": "Chinese",
+          "description": "Chinese original-audio movies."
+        },
+        {
+          "id": "LANG_SPANISH",
+          "name": "Spanish",
+          "description": "Spanish original-audio movies."
+        },
+        {
+          "id": "LANG_FRENCH",
+          "name": "French",
+          "description": "French original-audio movies."
+        },
+        {
+          "id": "LANG_ARABIC",
+          "name": "Arabic",
+          "description": "Arabic original-audio movies."
+        },
+        {
+          "id": "LANG_TURKISH",
+          "name": "Turkish",
+          "description": "Turkish original-audio movies."
+        },
+        {
+          "id": "LANG_PERSIAN",
+          "name": "Persian",
+          "description": "Persian original-audio movies."
+        },
+        {
+          "id": "LANG_GERMAN",
+          "name": "German",
+          "description": "German original-audio movies."
+        },
+        {
+          "id": "LANG_ITALIAN",
+          "name": "Italian",
+          "description": "Italian original-audio movies."
+        },
+        {
+          "id": "LANG_RUSSIAN",
+          "name": "Russian",
+          "description": "Russian original-audio movies."
+        },
+        {
+          "id": "LANG_OTHER_LANGUAGES",
+          "name": "Other_Languages",
+          "description": "Other verified original audio languages."
+        }
+      ]
+    },
+    {
+      "id": "03_FILM_INDUSTRY",
+      "name": "03_FILM_INDUSTRY",
+      "description": "Film-industry identity; not inferred from language alone.",
+      "children": [
+        {
+          "id": "INDUSTRY_DHALLYWOOD",
+          "name": "Dhallywood",
+          "description": "Bangladesh film industry."
+        },
+        {
+          "id": "INDUSTRY_BENGALI_CINEMA_INDIA",
+          "name": "Bengali_Cinema_India",
+          "description": "Indian Bengali cinema."
+        },
+        {
+          "id": "INDUSTRY_BOLLYWOOD",
+          "name": "Bollywood",
+          "description": "Hindi-language Indian mainstream cinema."
+        },
+        {
+          "id": "INDUSTRY_TELUGU_CINEMA",
+          "name": "Telugu_Cinema",
+          "description": "Telugu film industry."
+        },
+        {
+          "id": "INDUSTRY_TAMIL_CINEMA",
+          "name": "Tamil_Cinema",
+          "description": "Tamil film industry."
+        },
+        {
+          "id": "INDUSTRY_MALAYALAM_CINEMA",
+          "name": "Malayalam_Cinema",
+          "description": "Malayalam film industry."
+        },
+        {
+          "id": "INDUSTRY_KANNADA_CINEMA",
+          "name": "Kannada_Cinema",
+          "description": "Kannada film industry."
+        },
+        {
+          "id": "INDUSTRY_HOLLYWOOD",
+          "name": "Hollywood",
+          "description": "United States mainstream film industry."
+        },
+        {
+          "id": "INDUSTRY_MARATHI_CINEMA",
+          "name": "Marathi_Cinema",
+          "description": "Marathi film industry."
+        },
+        {
+          "id": "INDUSTRY_PUNJABI_CINEMA",
+          "name": "Punjabi_Cinema",
+          "description": "Punjabi film industry."
+        },
+        {
+          "id": "INDUSTRY_KOREAN_CINEMA",
+          "name": "Korean_Cinema",
+          "description": "South Korean film industry."
+        },
+        {
+          "id": "INDUSTRY_JAPANESE_CINEMA",
+          "name": "Japanese_Cinema",
+          "description": "Japanese film industry."
+        },
+        {
+          "id": "INDUSTRY_CHINESE_CINEMA",
+          "name": "Chinese_Cinema",
+          "description": "Chinese-language film industries."
+        },
+        {
+          "id": "INDUSTRY_OTHER_INDUSTRIES",
+          "name": "Other_Industries",
+          "description": "Other verified film industries."
+        }
+      ]
+    },
+    {
+      "id": "04_DUBBED_MOVIES",
+      "name": "04_DUBBED_MOVIES",
+      "description": "Movies with an available dubbed audio track in the selected language.",
+      "children": [
+        {
+          "id": "DUB_BANGLA_DUBBED",
+          "name": "Bangla_Dubbed",
+          "description": "Movies with a verified Bangla dubbed audio track."
+        },
+        {
+          "id": "DUB_HINDI_DUBBED",
+          "name": "Hindi_Dubbed",
+          "description": "Movies with a verified Hindi dubbed audio track."
+        },
+        {
+          "id": "DUB_ENGLISH_DUBBED",
+          "name": "English_Dubbed",
+          "description": "Movies with a verified English dubbed audio track."
+        },
+        {
+          "id": "DUB_TAMIL_DUBBED",
+          "name": "Tamil_Dubbed",
+          "description": "Movies with a verified Tamil dubbed audio track."
+        },
+        {
+          "id": "DUB_TELUGU_DUBBED",
+          "name": "Telugu_Dubbed",
+          "description": "Movies with a verified Telugu dubbed audio track."
+        },
+        {
+          "id": "DUB_MALAYALAM_DUBBED",
+          "name": "Malayalam_Dubbed",
+          "description": "Movies with a verified Malayalam dubbed audio track."
+        },
+        {
+          "id": "DUB_KANNADA_DUBBED",
+          "name": "Kannada_Dubbed",
+          "description": "Movies with a verified Kannada dubbed audio track."
+        },
+        {
+          "id": "DUB_URDU_DUBBED",
+          "name": "Urdu_Dubbed",
+          "description": "Movies with a verified Urdu dubbed audio track."
+        },
+        {
+          "id": "DUB_OTHER_DUBBED",
+          "name": "Other_Dubbed",
+          "description": "Movies with a verified Other dubbed audio track."
+        }
+      ]
+    },
+    {
+      "id": "05_GENRES",
+      "name": "05_GENRES",
+      "description": "Multi-label genre classification; a movie can belong to several genres.",
+      "children": [
+        {
+          "id": "GENRE_ACTION",
+          "name": "Action",
+          "description": "Action genre."
+        },
+        {
+          "id": "GENRE_ADVENTURE",
+          "name": "Adventure",
+          "description": "Adventure genre."
+        },
+        {
+          "id": "GENRE_ANIMATION",
+          "name": "Animation",
+          "description": "Animation genre."
+        },
+        {
+          "id": "GENRE_COMEDY",
+          "name": "Comedy",
+          "description": "Comedy genre."
+        },
+        {
+          "id": "GENRE_CRIME",
+          "name": "Crime",
+          "description": "Crime genre."
+        },
+        {
+          "id": "GENRE_DRAMA",
+          "name": "Drama",
+          "description": "Drama genre."
+        },
+        {
+          "id": "GENRE_DOCUMENTARY",
+          "name": "Documentary",
+          "description": "Documentary genre."
+        },
+        {
+          "id": "GENRE_FANTASY",
+          "name": "Fantasy",
+          "description": "Fantasy genre."
+        },
+        {
+          "id": "GENRE_HISTORICAL",
+          "name": "Historical",
+          "description": "Historical genre."
+        },
+        {
+          "id": "GENRE_HORROR",
+          "name": "Horror",
+          "description": "Horror genre."
+        },
+        {
+          "id": "GENRE_MYSTERY",
+          "name": "Mystery",
+          "description": "Mystery genre."
+        },
+        {
+          "id": "GENRE_ROMANCE",
+          "name": "Romance",
+          "description": "Romance genre."
+        },
+        {
+          "id": "GENRE_SCIENCE_FICTION",
+          "name": "Science_Fiction",
+          "description": "Science Fiction genre."
+        },
+        {
+          "id": "GENRE_THRILLER",
+          "name": "Thriller",
+          "description": "Thriller genre."
+        },
+        {
+          "id": "GENRE_WAR",
+          "name": "War",
+          "description": "War genre."
+        },
+        {
+          "id": "GENRE_WESTERN",
+          "name": "Western",
+          "description": "Western genre."
+        },
+        {
+          "id": "GENRE_MUSICAL",
+          "name": "Musical",
+          "description": "Musical genre."
+        },
+        {
+          "id": "GENRE_FAMILY",
+          "name": "Family",
+          "description": "Family genre."
+        },
+        {
+          "id": "GENRE_BIOGRAPHY",
+          "name": "Biography",
+          "description": "Biography genre."
+        },
+        {
+          "id": "GENRE_SPORTS",
+          "name": "Sports",
+          "description": "Sports genre."
+        },
+        {
+          "id": "GENRE_SUPERHERO",
+          "name": "Superhero",
+          "description": "Superhero genre."
+        },
+        {
+          "id": "GENRE_PSYCHOLOGICAL",
+          "name": "Psychological",
+          "description": "Psychological genre."
+        },
+        {
+          "id": "GENRE_NOIR",
+          "name": "Noir",
+          "description": "Noir genre."
+        },
+        {
+          "id": "GENRE_DISASTER",
+          "name": "Disaster",
+          "description": "Disaster genre."
+        },
+        {
+          "id": "GENRE_MUSIC",
+          "name": "Music",
+          "description": "Music genre."
+        }
+      ]
+    },
+    {
+      "id": "06_COUNTRIES",
+      "name": "06_COUNTRIES",
+      "description": "Production country or countries, independent from language and industry.",
+      "children": [
+        {
+          "id": "COUNTRY_BANGLADESH",
+          "name": "Bangladesh",
+          "description": "Movies produced in Bangladesh."
+        },
+        {
+          "id": "COUNTRY_INDIA",
+          "name": "India",
+          "description": "Movies produced in India."
+        },
+        {
+          "id": "COUNTRY_UNITED_STATES",
+          "name": "United_States",
+          "description": "Movies produced in United States."
+        },
+        {
+          "id": "COUNTRY_UNITED_KINGDOM",
+          "name": "United_Kingdom",
+          "description": "Movies produced in United Kingdom."
+        },
+        {
+          "id": "COUNTRY_SOUTH_KOREA",
+          "name": "South_Korea",
+          "description": "Movies produced in South Korea."
+        },
+        {
+          "id": "COUNTRY_JAPAN",
+          "name": "Japan",
+          "description": "Movies produced in Japan."
+        },
+        {
+          "id": "COUNTRY_CHINA",
+          "name": "China",
+          "description": "Movies produced in China."
+        },
+        {
+          "id": "COUNTRY_HONG_KONG",
+          "name": "Hong_Kong",
+          "description": "Movies produced in Hong Kong."
+        },
+        {
+          "id": "COUNTRY_TAIWAN",
+          "name": "Taiwan",
+          "description": "Movies produced in Taiwan."
+        },
+        {
+          "id": "COUNTRY_FRANCE",
+          "name": "France",
+          "description": "Movies produced in France."
+        },
+        {
+          "id": "COUNTRY_GERMANY",
+          "name": "Germany",
+          "description": "Movies produced in Germany."
+        },
+        {
+          "id": "COUNTRY_ITALY",
+          "name": "Italy",
+          "description": "Movies produced in Italy."
+        },
+        {
+          "id": "COUNTRY_SPAIN",
+          "name": "Spain",
+          "description": "Movies produced in Spain."
+        },
+        {
+          "id": "COUNTRY_TURKEY",
+          "name": "Turkey",
+          "description": "Movies produced in Turkey."
+        },
+        {
+          "id": "COUNTRY_IRAN",
+          "name": "Iran",
+          "description": "Movies produced in Iran."
+        },
+        {
+          "id": "COUNTRY_THAILAND",
+          "name": "Thailand",
+          "description": "Movies produced in Thailand."
+        },
+        {
+          "id": "COUNTRY_INDONESIA",
+          "name": "Indonesia",
+          "description": "Movies produced in Indonesia."
+        },
+        {
+          "id": "COUNTRY_MALAYSIA",
+          "name": "Malaysia",
+          "description": "Movies produced in Malaysia."
+        },
+        {
+          "id": "COUNTRY_AUSTRALIA",
+          "name": "Australia",
+          "description": "Movies produced in Australia."
+        },
+        {
+          "id": "COUNTRY_CANADA",
+          "name": "Canada",
+          "description": "Movies produced in Canada."
+        },
+        {
+          "id": "COUNTRY_OTHER_COUNTRIES",
+          "name": "Other_Countries",
+          "description": "Movies produced in Other Countries."
+        }
+      ]
+    },
+    {
+      "id": "07_COLLECTIONS",
+      "name": "07_COLLECTIONS",
+      "description": "Curated sets, sequels, franchises and cinematic universes.",
+      "children": [
+        {
+          "id": "COLLECTION_MOVIE_FRANCHISES",
+          "name": "Movie_Franchises",
+          "description": "Movie Franchises collection."
+        },
+        {
+          "id": "COLLECTION_MOVIE_SERIES",
+          "name": "Movie_Series",
+          "description": "Movie Series collection."
+        },
+        {
+          "id": "COLLECTION_CINEMATIC_UNIVERSE",
+          "name": "Cinematic_Universe",
+          "description": "Cinematic Universe collection."
+        },
+        {
+          "id": "COLLECTION_SEQUELS",
+          "name": "Sequels",
+          "description": "Sequels collection."
+        },
+        {
+          "id": "COLLECTION_PREQUELS",
+          "name": "Prequels",
+          "description": "Prequels collection."
+        },
+        {
+          "id": "COLLECTION_STANDALONE_COLLECTIONS",
+          "name": "Standalone_Collections",
+          "description": "Standalone Collections collection."
+        },
+        {
+          "id": "COLLECTION_AWARD_WINNERS",
+          "name": "Award_Winners",
+          "description": "Award Winners collection."
+        },
+        {
+          "id": "COLLECTION_DRM_EDITOR_PICKS",
+          "name": "DRM_Editor_Picks",
+          "description": "DRM Editor Picks collection."
+        }
+      ]
+    },
+    {
+      "id": "08_RELEASE_YEARS",
+      "name": "08_RELEASE_YEARS",
+      "description": "Release year and decade filters, based on verified release dates.",
+      "children": [
+        {
+          "id": "YEAR_2020S",
+          "name": "2020s",
+          "description": "Movies released in 2020s.",
+          "children": [
+            {
+              "id": "YEAR_2020",
+              "name": "2020",
+              "description": "Movies released in 2020."
+            },
+            {
+              "id": "YEAR_2021",
+              "name": "2021",
+              "description": "Movies released in 2021."
+            },
+            {
+              "id": "YEAR_2022",
+              "name": "2022",
+              "description": "Movies released in 2022."
+            },
+            {
+              "id": "YEAR_2023",
+              "name": "2023",
+              "description": "Movies released in 2023."
+            },
+            {
+              "id": "YEAR_2024",
+              "name": "2024",
+              "description": "Movies released in 2024."
+            },
+            {
+              "id": "YEAR_2025",
+              "name": "2025",
+              "description": "Movies released in 2025."
+            },
+            {
+              "id": "YEAR_2026",
+              "name": "2026",
+              "description": "Movies released in 2026."
+            },
+            {
+              "id": "YEAR_2027",
+              "name": "2027",
+              "description": "Movies released in 2027."
+            },
+            {
+              "id": "YEAR_2028",
+              "name": "2028",
+              "description": "Movies released in 2028."
+            },
+            {
+              "id": "YEAR_2029",
+              "name": "2029",
+              "description": "Movies released in 2029."
+            }
+          ]
+        },
+        {
+          "id": "YEAR_2010S",
+          "name": "2010s",
+          "description": "Movies released in 2010s.",
+          "children": [
+            {
+              "id": "YEAR_2010",
+              "name": "2010",
+              "description": "Movies released in 2010."
+            },
+            {
+              "id": "YEAR_2011",
+              "name": "2011",
+              "description": "Movies released in 2011."
+            },
+            {
+              "id": "YEAR_2012",
+              "name": "2012",
+              "description": "Movies released in 2012."
+            },
+            {
+              "id": "YEAR_2013",
+              "name": "2013",
+              "description": "Movies released in 2013."
+            },
+            {
+              "id": "YEAR_2014",
+              "name": "2014",
+              "description": "Movies released in 2014."
+            },
+            {
+              "id": "YEAR_2015",
+              "name": "2015",
+              "description": "Movies released in 2015."
+            },
+            {
+              "id": "YEAR_2016",
+              "name": "2016",
+              "description": "Movies released in 2016."
+            },
+            {
+              "id": "YEAR_2017",
+              "name": "2017",
+              "description": "Movies released in 2017."
+            },
+            {
+              "id": "YEAR_2018",
+              "name": "2018",
+              "description": "Movies released in 2018."
+            },
+            {
+              "id": "YEAR_2019",
+              "name": "2019",
+              "description": "Movies released in 2019."
+            }
+          ]
+        },
+        {
+          "id": "YEAR_2000S",
+          "name": "2000s",
+          "description": "Movies released in 2000s.",
+          "children": [
+            {
+              "id": "YEAR_2000",
+              "name": "2000",
+              "description": "Movies released in 2000."
+            },
+            {
+              "id": "YEAR_2001",
+              "name": "2001",
+              "description": "Movies released in 2001."
+            },
+            {
+              "id": "YEAR_2002",
+              "name": "2002",
+              "description": "Movies released in 2002."
+            },
+            {
+              "id": "YEAR_2003",
+              "name": "2003",
+              "description": "Movies released in 2003."
+            },
+            {
+              "id": "YEAR_2004",
+              "name": "2004",
+              "description": "Movies released in 2004."
+            },
+            {
+              "id": "YEAR_2005",
+              "name": "2005",
+              "description": "Movies released in 2005."
+            },
+            {
+              "id": "YEAR_2006",
+              "name": "2006",
+              "description": "Movies released in 2006."
+            },
+            {
+              "id": "YEAR_2007",
+              "name": "2007",
+              "description": "Movies released in 2007."
+            },
+            {
+              "id": "YEAR_2008",
+              "name": "2008",
+              "description": "Movies released in 2008."
+            },
+            {
+              "id": "YEAR_2009",
+              "name": "2009",
+              "description": "Movies released in 2009."
+            }
+          ]
+        },
+        {
+          "id": "YEAR_1990S",
+          "name": "1990s",
+          "description": "Movies released in 1990s.",
+          "children": [
+            {
+              "id": "YEAR_1990",
+              "name": "1990",
+              "description": "Movies released in 1990."
+            },
+            {
+              "id": "YEAR_1991",
+              "name": "1991",
+              "description": "Movies released in 1991."
+            },
+            {
+              "id": "YEAR_1992",
+              "name": "1992",
+              "description": "Movies released in 1992."
+            },
+            {
+              "id": "YEAR_1993",
+              "name": "1993",
+              "description": "Movies released in 1993."
+            },
+            {
+              "id": "YEAR_1994",
+              "name": "1994",
+              "description": "Movies released in 1994."
+            },
+            {
+              "id": "YEAR_1995",
+              "name": "1995",
+              "description": "Movies released in 1995."
+            },
+            {
+              "id": "YEAR_1996",
+              "name": "1996",
+              "description": "Movies released in 1996."
+            },
+            {
+              "id": "YEAR_1997",
+              "name": "1997",
+              "description": "Movies released in 1997."
+            },
+            {
+              "id": "YEAR_1998",
+              "name": "1998",
+              "description": "Movies released in 1998."
+            },
+            {
+              "id": "YEAR_1999",
+              "name": "1999",
+              "description": "Movies released in 1999."
+            }
+          ]
+        },
+        {
+          "id": "YEAR_1980S",
+          "name": "1980s",
+          "description": "Movies released in 1980s.",
+          "children": [
+            {
+              "id": "YEAR_1980",
+              "name": "1980",
+              "description": "Movies released in 1980."
+            },
+            {
+              "id": "YEAR_1981",
+              "name": "1981",
+              "description": "Movies released in 1981."
+            },
+            {
+              "id": "YEAR_1982",
+              "name": "1982",
+              "description": "Movies released in 1982."
+            },
+            {
+              "id": "YEAR_1983",
+              "name": "1983",
+              "description": "Movies released in 1983."
+            },
+            {
+              "id": "YEAR_1984",
+              "name": "1984",
+              "description": "Movies released in 1984."
+            },
+            {
+              "id": "YEAR_1985",
+              "name": "1985",
+              "description": "Movies released in 1985."
+            },
+            {
+              "id": "YEAR_1986",
+              "name": "1986",
+              "description": "Movies released in 1986."
+            },
+            {
+              "id": "YEAR_1987",
+              "name": "1987",
+              "description": "Movies released in 1987."
+            },
+            {
+              "id": "YEAR_1988",
+              "name": "1988",
+              "description": "Movies released in 1988."
+            },
+            {
+              "id": "YEAR_1989",
+              "name": "1989",
+              "description": "Movies released in 1989."
+            }
+          ]
+        },
+        {
+          "id": "YEAR_1970S",
+          "name": "1970s",
+          "description": "Movies released in 1970s.",
+          "children": [
+            {
+              "id": "YEAR_1970",
+              "name": "1970",
+              "description": "Movies released in 1970."
+            },
+            {
+              "id": "YEAR_1971",
+              "name": "1971",
+              "description": "Movies released in 1971."
+            },
+            {
+              "id": "YEAR_1972",
+              "name": "1972",
+              "description": "Movies released in 1972."
+            },
+            {
+              "id": "YEAR_1973",
+              "name": "1973",
+              "description": "Movies released in 1973."
+            },
+            {
+              "id": "YEAR_1974",
+              "name": "1974",
+              "description": "Movies released in 1974."
+            },
+            {
+              "id": "YEAR_1975",
+              "name": "1975",
+              "description": "Movies released in 1975."
+            },
+            {
+              "id": "YEAR_1976",
+              "name": "1976",
+              "description": "Movies released in 1976."
+            },
+            {
+              "id": "YEAR_1977",
+              "name": "1977",
+              "description": "Movies released in 1977."
+            },
+            {
+              "id": "YEAR_1978",
+              "name": "1978",
+              "description": "Movies released in 1978."
+            },
+            {
+              "id": "YEAR_1979",
+              "name": "1979",
+              "description": "Movies released in 1979."
+            }
+          ]
+        },
+        {
+          "id": "YEAR_1960S",
+          "name": "1960s",
+          "description": "Movies released in 1960s.",
+          "children": [
+            {
+              "id": "YEAR_1960",
+              "name": "1960",
+              "description": "Movies released in 1960."
+            },
+            {
+              "id": "YEAR_1961",
+              "name": "1961",
+              "description": "Movies released in 1961."
+            },
+            {
+              "id": "YEAR_1962",
+              "name": "1962",
+              "description": "Movies released in 1962."
+            },
+            {
+              "id": "YEAR_1963",
+              "name": "1963",
+              "description": "Movies released in 1963."
+            },
+            {
+              "id": "YEAR_1964",
+              "name": "1964",
+              "description": "Movies released in 1964."
+            },
+            {
+              "id": "YEAR_1965",
+              "name": "1965",
+              "description": "Movies released in 1965."
+            },
+            {
+              "id": "YEAR_1966",
+              "name": "1966",
+              "description": "Movies released in 1966."
+            },
+            {
+              "id": "YEAR_1967",
+              "name": "1967",
+              "description": "Movies released in 1967."
+            },
+            {
+              "id": "YEAR_1968",
+              "name": "1968",
+              "description": "Movies released in 1968."
+            },
+            {
+              "id": "YEAR_1969",
+              "name": "1969",
+              "description": "Movies released in 1969."
+            }
+          ]
+        },
+        {
+          "id": "YEAR_BEFORE_1960",
+          "name": "Before_1960",
+          "description": "Movies released in Before 1960.",
+          "children": [
+            {
+              "id": "YEAR_1950",
+              "name": "1950",
+              "description": "Movies released in 1950."
+            },
+            {
+              "id": "YEAR_1951",
+              "name": "1951",
+              "description": "Movies released in 1951."
+            },
+            {
+              "id": "YEAR_1952",
+              "name": "1952",
+              "description": "Movies released in 1952."
+            },
+            {
+              "id": "YEAR_1953",
+              "name": "1953",
+              "description": "Movies released in 1953."
+            },
+            {
+              "id": "YEAR_1954",
+              "name": "1954",
+              "description": "Movies released in 1954."
+            },
+            {
+              "id": "YEAR_1955",
+              "name": "1955",
+              "description": "Movies released in 1955."
+            }
+          ]
+        },
+        {
+          "id": "YEAR_UNKNOWN_YEAR",
+          "name": "Unknown_Year",
+          "description": "Movies released in Unknown Year.",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "09_SUBTITLES",
+      "name": "09_SUBTITLES",
+      "description": "Subtitle availability, independent from audio language.",
+      "children": [
+        {
+          "id": "SUBTITLE_BANGLA",
+          "name": "Bangla",
+          "description": "Bangla subtitle files."
+        },
+        {
+          "id": "SUBTITLE_ENGLISH",
+          "name": "English",
+          "description": "English subtitle files."
+        },
+        {
+          "id": "SUBTITLE_HINDI",
+          "name": "Hindi",
+          "description": "Hindi subtitle files."
+        },
+        {
+          "id": "SUBTITLE_ARABIC",
+          "name": "Arabic",
+          "description": "Arabic subtitle files."
+        },
+        {
+          "id": "SUBTITLE_SPANISH",
+          "name": "Spanish",
+          "description": "Spanish subtitle files."
+        },
+        {
+          "id": "SUBTITLE_FRENCH",
+          "name": "French",
+          "description": "French subtitle files."
+        },
+        {
+          "id": "SUBTITLE_OTHER_SUBTITLES",
+          "name": "Other_Subtitles",
+          "description": "Other verified subtitle languages."
+        }
+      ]
+    },
+    {
+      "id": "10_ARTWORK",
+      "name": "10_ARTWORK",
+      "description": "Movie posters, backdrops, logos, stills and promotional assets.",
+      "children": [
+        {
+          "id": "ARTWORK_POSTERS",
+          "name": "Posters",
+          "description": "Posters assets."
+        },
+        {
+          "id": "ARTWORK_BACKDROPS",
+          "name": "Backdrops",
+          "description": "Backdrops assets."
+        },
+        {
+          "id": "ARTWORK_LOGOS",
+          "name": "Logos",
+          "description": "Logos assets."
+        },
+        {
+          "id": "ARTWORK_STILLS",
+          "name": "Stills",
+          "description": "Stills assets."
+        },
+        {
+          "id": "ARTWORK_TRAILERS_THUMBNAILS",
+          "name": "Trailers_Thumbnails",
+          "description": "Trailers Thumbnails assets."
+        },
+        {
+          "id": "ARTWORK_PROMOTIONAL_ARTWORK",
+          "name": "Promotional_Artwork",
+          "description": "Promotional Artwork assets."
+        }
+      ]
+    },
+    {
+      "id": "11_METADATA",
+      "name": "11_METADATA",
+      "description": "Structured movie metadata, indexes and quality-control queues.",
+      "children": [
+        {
+          "id": "METADATA_MOVIE_RECORDS",
+          "name": "Movie_Records",
+          "description": "Movie Records records and indexes."
+        },
+        {
+          "id": "METADATA_PEOPLE_CAST_CREW",
+          "name": "People_Cast_Crew",
+          "description": "People Cast Crew records and indexes."
+        },
+        {
+          "id": "METADATA_STUDIOS_PRODUCTION",
+          "name": "Studios_Production",
+          "description": "Studios Production records and indexes."
+        },
+        {
+          "id": "METADATA_RATINGS_REVIEWS",
+          "name": "Ratings_Reviews",
+          "description": "Ratings Reviews records and indexes."
+        },
+        {
+          "id": "METADATA_EXTERNAL_IDENTIFIERS",
+          "name": "External_Identifiers",
+          "description": "External Identifiers records and indexes."
+        },
+        {
+          "id": "METADATA_METADATA_IMPORT_QUEUE",
+          "name": "Metadata_Import_Queue",
+          "description": "Metadata Import Queue records and indexes."
+        },
+        {
+          "id": "METADATA_MISSING_METADATA",
+          "name": "Missing_Metadata",
+          "description": "Missing Metadata records and indexes."
+        },
+        {
+          "id": "METADATA_DUPLICATE_REVIEW_QUEUE",
+          "name": "Duplicate_Review_Queue",
+          "description": "Duplicate Review Queue records and indexes."
+        }
+      ]
+    }
+  ]
+}
