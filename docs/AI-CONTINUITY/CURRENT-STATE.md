@@ -1,51 +1,42 @@
 # DRM Premium — Current State
-Verified ref: duga-foundation-review
+Verified ref: `duga-foundation-review`
 Verification date: 2026-11-25
-Verified commit: documentation update follows disposable D1 Worker acceptance; see latest branch head
 
 ## DUGA foundation
-- Isolated review branch is based directly on `main`; it contains only DUGA foundation assets and excludes unrelated Admin/application work.
+
+- This isolated branch is based on `main` and contains DUGA governance foundation and review assets, not unrelated Admin/application changes.
 - Draft PR #4: https://github.com/faridulprime/DRM-Premium/pull/4
-- Governance role, ownership, policy, registry and dependency metadata are present.
-- Validator checks role structure, dependency metadata, system/ownership references, dependency/page-asset endpoints, cycle detection, risk policy contracts, approval stage order, registry rules and the system JSON Schema envelope.
-- Validator guards malformed JSON shapes and unhashable values, returning validation errors instead of crashing for covered cases.
-- Local SQLite schema smoke tests, governance validation and malformed-input unit cases passed in GitHub Actions. Latest expanded schema suite passed in run `45508682329` on commit `d012b10f34e62a7895bebc4c0af6a31a9ea49230`, covering active System Owner uniqueness/reassignment, temporal ordering, validation lifecycle states, job lease/status/result consistency and rejection of blank required values.
-- An isolated, bearer-secret-protected D1 acceptance Worker under `scripts/duga-d1-acceptance-worker/` was deployed only to `duga-d1-acceptance-disposable`, pinned to the disposable D1 ID. The temporary diagnostic route was removed before the final redeployment. CI syntax-checks its JavaScript.
-- D1 design review documents server-side gates still required: legal state transitions, stale-commit invalidation, active assignment checks, reviewer/implementer separation, trusted validation, canonical Git-ref validation, role-specific approval authorization and server-derived audit actors.
-- SQL draft now also checks validation lifecycle timestamps, job lease/status/result consistency, assignment revocation ordering, change/job update ordering and nonblank identity/rollback fields.
-- JSON constraints now enforce arrays for affected systems/paths and objects for review/finding evidence, validation results, audit payloads and job input/result. Added malformed/type-shape probes; GitHub Actions run `45509071788` has completed the test step successfully (run finalization pending at last check).
-- Foreign-key probes now reject orphan assignments/reviews/approvals/validation runs and confirm `PRAGMA foreign_key_check` is clean after valid fixtures. Optimistic-concurrency probes reject a stale second writer and verify local SQLite rollback when the audit insert fails. These do not prove Cloudflare D1 batch semantics.
-- Found and fixed the DACE finding-evidence JSON constraint so malformed JSON is safely rejected through `CASE WHEN json_valid(...) THEN json_type(...)` rather than relying on boolean evaluation order; added wrong-type and malformed-input tests.
-- Reviewed current Cloudflare D1 documentation: FK constraints are enforced by default; `D1Database.batch()` is transactional and rolls back the sequence on statement failure; JSON `json_valid`/`json_type` are documented. Updated DUGA design docs accordingly. Concrete schema and affected-row checks still need a disposable Preview integration test.
-- Also confirmed from D1 result-object docs that each `batch()` statement returns its own `D1Result` and `meta.changes`; API design requires checking each statement's individual result.
-- Identified and corrected an atomic-audit logic gap: a zero-row conditional UPDATE is not an error, so a later unconditional audit INSERT may still run in a transactional batch.
-- Added `last_transition_id` to the change-request schema draft, nullable `transition_id` to audit events, and a unique partial index for non-null transition tokens.
-- Added a documented CAS + conditional `INSERT ... SELECT` pattern. Local SQLite tests now cover success (1 update/1 audit), stale writer (0/0), token replay (0/0), token reuse (0/0), and audit-insert failure rollback.
-- CI on latest verified commit `f5db6c1776de301395fd6e3221d4c3fde0f15972`: push run `45510333338` passed; the sqlite-smoke-test job and local schema/registry/validator step completed successfully.
-- These results are local SQLite evidence only. Owner then created and populated disposable D1 `drm-duga-acceptance-disposable` (`6d512429-34a3-498b-9430-45f11d382da9`). Screenshots show eight DUGA tables, two audit triggers, clean `PRAGMA foreign_key_check`, successful synthetic audit INSERT, and UPDATE/DELETE blocked by the append-only trigger.
-- Authenticated Worker acceptance on the disposable D1 returned `results.pass = true` at `2026-11-25T01:04:19.420Z` (run ID `53d70371-008c-46a0-8bc3-33522be990eb`). The Worker aggregates assertions for success (1 update/1 audit), stale writer/replay/token reuse (0/0), forced audit CHECK failure rollback with unchanged state, and two competing writers (exactly one winner and one loser, one audit event). PowerShell displayed the aggregate PASS rather than nested individual counts; see `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md` for the exact qualification.
-- CI path filters cover `governance/**`, DUGA design and continuity docs, schema/validator tests and workflow files.
-- Cloudflare Pages automatically published a branch Preview: https://duga-foundation-review.drm-premium.pages.dev. This is not Production and does not establish D1 migration or runtime governance validation.
+- Governance roles, ownership, policy, system registry and dependency metadata are present.
+- The D1 operational schema is design-only; no DUGA application API, migration, or Control Center runtime exists.
+- The governance validator checks role/ownership/dependency/policy/registry relationships and malformed-input cases.
+- The proposed CAS + conditional audit SQL pattern has local SQLite tests. It is not a deployed application service.
+- A disposable acceptance Worker is pinned to database `drm-duga-acceptance-disposable` (`6d512429-34a3-498b-9430-45f11d382da9`). PR #4 records an earlier owner-operated aggregate PASS (run `53d70371-008c-46a0-8bc3-33522be990eb`, 2026-11-25 01:04:19Z).
+- That D1 run predates the final parent-request and AI-review constraints. It is not final-schema acceptance evidence. Revised-schema disposable D1 acceptance remains NOT RUN.
+- The latest recorded DUGA schema workflow run `45601555444` succeeded, but its log checked out an earlier PR merge commit `f99d0f854b83a6f99f5da26b333316287a039650`; its executed test block did not include the newly added `test-duga-fixture-sync.py`. A fresh run against the latest PR head is still required.
 
-## Not implemented / not verified
-- DUGA D1 schema remains a design draft; the owner manually applied the test-only fixture to the disposable D1. No production migration was applied.
-- No DUGA API or Control Center is implemented.
-- DACE remains analysis-only; no executable analyzer or AI service authentication exists.
-- Human identity assignments remain unassigned.
-- Local SQLite tests do not prove Cloudflare D1 transactional, trigger or foreign-key behavior; the disposable Worker result does not establish Production or shared Preview acceptance.
-- Policy checks are structural consistency checks; they do not enforce runtime authorization or replace human review.
-- No browser-level or application regression testing is implied by governance CI.
+## Disposable SQL fixture parity
 
-## Safety boundary
-- `main` and Production D1 remain untouched.
-- PR #4 remains draft and must not be merged without explicit authorization and completed review.
-- Production merge and deployment remain separate approvals.
+- `scripts/duga-d1-disposable-acceptance-fixture.sql` contains the latest revised schema, including the immutable predecessor relationship and AI terminal-rejection guard.
+- `scripts/duga-d1-disposable-acceptance-console.sql` has been synchronized to the fixture's comment-free SQL.
+- `scripts/test-duga-fixture-sync.py` compares the fixture and Console SQL and builds local in-memory SQLite schemas for the draft, fixture and Console SQL, comparing their `sqlite_master` objects and foreign-key integrity.
+- The new parity test is included in `.github/workflows/duga-schema-smoke.yml` and its relevant file paths are in both push and PR filters.
+- The successful run currently observed predates this test addition, so do not claim its CI result yet. Its local SQLite parity check is not Cloudflare D1 acceptance.
 
+## Shared Preview and Production safety
 
-## API security and lifecycle design update — 2026-11-25
-- Added `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` as a proposed contract. It defines the initial Owner-session trust boundary, future scoped assignment checks, AI/validation identity boundary, risk approval gates, commit-bound evidence staleness, guarded implementation SHA updates, candidate state-transition matrix and required security/regression tests.
-- Owner selected option B: `blocked` is resumable. The design requires immutable block-event provenance, authorized unblock with rationale and evidence the condition cleared, CAS + audit, and re-evaluation of stale gates before resumption. Owner also decided `rejected` and `cancelled` are terminal; renewed attempts require a new linked Change Request with independent gates and preserved original history. Rework edges are documented: impact/analysis correction, audit findings returning to impact review, human-requested impact rework, failed validation returning to implementation, final-review defects returning to implementation, and block entry from all applicable active stages. AI audit cannot issue terminal rejection. Rework requires rationale, CAS + audit, immutable evidence history and stale-gate re-evaluation. Owner approved the lifecycle policy on 2026-11-25 after a consistency review against DUGA-SPEC, D1 schema design and role definitions; independent technical review and implementation gates remain pending.
-- API integration remains NO-GO for Preview write endpoints. No DUGA API runtime code, migration, Preview binding, Production resource or application runtime code was changed.
+- Shared Preview D1 is recorded as `drmdatabase-preview`, UUID `6821a135-9330-4537-9cf8-eb9ca90970b8`, based on owner-supplied screenshots.
+- Production D1 is separately recorded as `drmdatabase`.
+- No DUGA object or migration is confirmed in shared Preview. Migration-history reconciliation remains incomplete; a name-filter query with no rows is not proof that no migration history exists.
+- Preview migration rollout and DUGA write endpoints remain NO-GO.
+- Production and `main` remain untouched.
 
-- Recorded Owner decisions (2026-11-25): `blocked` is resumable; `rejected` and `cancelled` are terminal and any renewed attempt requires a new linked Change Request. No runtime implementation was made. Unblock must be an explicit audited, authorized CAS transition and cannot bypass stale evidence gates; linked requests do not inherit prior approvals or evidence.
-- Owner-approved lifecycle policy is recorded in the lifecycle design and aligned with DUGA-SPEC and D1 schema design. Consistency review also found and fixed duplicate AI-audit rework rows, missing predecessor linkage for renewed Change Requests, and the SQL ability for an AI audit row to record `rejected`. Local SQLite tests now cover linked-request FK/self-link/immutability and AI rejection restrictions. A separate third-party independent review, Cloudflare Preview D1 migration reconciliation and trusted identity/security validation remain pending.
+## Remaining review gates
+
+1. Fresh GitHub Actions run against the latest PR head, including fixture/Console parity test.
+2. Fresh disposable D1 acceptance against the revised fixture/schema, with complete JSON output and nested per-case results retained.
+3. Independent third-party review of SQL, lifecycle, authorization and CAS/audit design.
+4. Actual shared Preview migration-history reconciliation and complete schema/index/trigger inventory.
+5. Tested trusted AI/validation identity and Git provenance before any service write path.
+6. Pages catch-all auth/router regression and application integration tests.
+
+Human identity assignments remain unassigned. AI principal IDs are attribution labels, not credentials.
