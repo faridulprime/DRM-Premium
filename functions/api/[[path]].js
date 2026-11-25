@@ -220,7 +220,7 @@ async function handle(req,env){
   if(user.role!=="owner")return fail("শুধু Owner Governance API ব্যবহার করতে পারবেন।",403);
   if(p.length===2&&p[1]==="health"){
    if(m!=="GET")return fail("Method not allowed.",405);
-   const probe=await env.DB.prepare("SELECT 1 AS ok").first();
+   let probe;try{probe=await env.DB.prepare("SELECT 1 AS ok").first()}catch{return fail("Governance database probe failed.",503)}
    if(Number(probe?.ok)!==1)return fail("Governance database probe failed.",503);
    return json({ok:true,service:"DUGA",database:"reachable",access:"owner"});
   }
