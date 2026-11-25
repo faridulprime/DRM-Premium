@@ -358,15 +358,16 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const rightValue = compact ? root.getPropertyValue("--dups-offset-2").trim() : "0px";
                   const right = rightValue.endsWith("rem")
                     ? parseFloat(rightValue) * rootSize : parseFloat(rightValue);
+                  const statusRect = status.getBoundingClientRect();
+                  const headerRect = header.getBoundingClientRect();
                   return {
                     position: style.position,
-                    top: parseFloat(style.top),
+                    gap: statusRect.top - headerRect.bottom,
                     right: parseFloat(style.right),
                     zIndex: style.zIndex,
-                    headerHeight: header.getBoundingClientRect().height,
-                    gap,
+                    expectedGap: gap,
                     expectedRight: right,
-                    expectedLayer: parseFloat(root.getPropertyValue("--dups-layer-home-login-status"))
+                    expectedLayer: parseFloat(root.getPropertyValue("--dups-layer-header-status"))
                   };
                 }"""
             )
@@ -376,7 +377,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 try:
                     if header_status_anchor["position"] != "absolute":
                         fail(f"{name}/{viewport_name}: header login status is not absolutely anchored ({header_status_anchor})")
-                    if abs(header_status_anchor["top"] - (header_status_anchor["headerHeight"] + header_status_anchor["gap"])) > 1:
+                    if abs(header_status_anchor["gap"] - header_status_anchor["expectedGap"]) > 1:
                         fail(f"{name}/{viewport_name}: header login status anchor gap differs from its responsive DUPS token ({header_status_anchor})")
                     if abs(header_status_anchor["right"] - header_status_anchor["expectedRight"]) > 1:
                         fail(f"{name}/{viewport_name}: header login status right offset differs from its responsive DUPS value ({header_status_anchor})")
