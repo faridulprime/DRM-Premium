@@ -1178,11 +1178,28 @@ def inspect_resize_transition(browser, base_url, name, config):
     finally:
         context.close()
 
+def inspect_live_overlay_lifecycle_source():
+    """Guard shared overlay state against timer races and nested-dialog unlocks."""
+    source = Path("live-users.js").read_text(encoding="utf-8")
+    required = {
+        "centralized backdrop and scroll-lock ownership": "function syncOverlayLifecycle()",
+        "drawer close animation keeps overlay active": "overlayState.drawerClosing=true;syncOverlayLifecycle()",
+        "restriction hand-off retains shared backdrop": "overlayState.restrictionHandoff=Boolean(keepBackdrop);syncOverlayLifecycle()",
+        "native dialog joins shared overlay state": "overlayState.dialog=true;syncOverlayLifecycle()",
+        "native dialog close releases only its own state": "overlayState.dialog=false;syncOverlayLifecycle()",
+        "close timers cleared on page exit": "clearTimeout(drawerCloseTimer);clearTimeout(restrictionCloseTimer)",
+    }
+    for label, marker in required.items():
+        if marker not in source:
+            fail(f"live-users/overlay-lifecycle: missing {label}")
+
+
 def main() -> int:
     server, base_url = serve()
     checks = 0
     try:
         with sync_playwright() as playwright:
+            inspect_live_overlay_lifecycle_source()
             browser = playwright.chromium.launch(headless=True)
             for name, config in PAGES.items():
                 route = config[0]
@@ -1213,7 +1230,7 @@ def main() -> int:
     print(
         f"PASS: {checks} page/viewport checks across {len(PAGES)} pages; "
         "DUCS contrast samples; DUSS/DUPS/DUCS token loading; keyboard focus; "
-        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, and mobile-to-desktop resize cleanup."
+        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, mobile-to-desktop resize cleanup, and Live Users shared-overlay state guards."
     )
     print(
         "LIMITATION: 720px is a 200%-zoom layout-width proxy, not native browser zoom. "
