@@ -248,7 +248,7 @@ async function handle(req,env){
     for(const col of spec.columns)if(!cols.has(col))missing.columns.push(table+"."+col);
     const tableObjects=new Set(rows.filter(x=>x.tbl_name===table).map(x=>x.name));
     for(const name of spec.indexes)if(!tableObjects.has(name))missing.indexes.push(name);
-    for(const name of spec.triggers)if(!rows.some(x=>x.type==="trigger"&&x.name===name))missing.triggers.push(name);
+    for(const name of spec.triggers)if(!rows.some(x=>x.type==="trigger"&&x.name===name&&x.tbl_name===table))missing.triggers.push(name);
    }
    const expectedCount=Object.keys(expected).length;
    const complete=missing.tables.length===0&&missing.columns.length===0&&missing.indexes.length===0&&missing.triggers.length===0;
