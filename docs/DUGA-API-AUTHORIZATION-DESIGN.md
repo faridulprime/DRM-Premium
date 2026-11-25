@@ -1,6 +1,6 @@
 # DUGA API & Authorization Design
 Version: 0.1.0
-Status: Owner-only read-only health, change-list and change-detail endpoints implemented and mocked-handler-tested; all governance write endpoints remain proposed.
+Status: Owner-only read-only health, change-list, change-detail and audit-list endpoints implemented and mocked-handler-tested; all governance write endpoints remain proposed.
 
 ## Existing API behavior observed
 The current API is implemented in one Cloudflare Pages catch-all file: `functions/api/[[path]].js`.
@@ -42,7 +42,7 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 - POST /api/governance/changes/:id/reviews — AI audit/human review record; identity derived from trusted execution context.
 - POST /api/governance/changes/:id/approvals — human Owner approval/rejection only.
 - POST /api/governance/changes/:id/validation-runs — trusted validation runner result, not arbitrary browser assertion.
-- GET /api/governance/audit — cursor-paginated append-only audit events.
+- GET /api/governance/audit — implemented Owner-only, read-only cursor-paginated append-only audit events. Supports bounded page size and allow-listed aggregate type filter; exposes explicit event/actor/payload fields only. No mutation is exposed.
 - GET /api/governance/findings — DACE evidence findings; no destructive endpoint.
 
 ## Security invariants
@@ -76,3 +76,7 @@ This is a read-only route. It does not create, update, approve, reject, assign, 
 
 ## 18. Structural schema inspection boundary
 The health route now checks the required column names via read-only `PRAGMA table_info`, named index presence and required trigger presence via `sqlite_master`. A `ready` result means these named structural elements exist. It does not yet compare column types, nullability, CHECK/FK definitions, index column order/uniqueness, trigger SQL bodies, migration ledger or data integrity. Preview acceptance must still run a stronger schema-diff/fingerprint validator against a verified backup and migration history.
+
+## 21. Read-only audit event listing — 2026-11-25
+
+`GET /api/governance/audit` returns a bounded, keyset-paginated stream of DUGA audit events, optionally filtered by allow-listed `aggregate_type`. It selects an explicit set of event and actor fields, uses bound SQL parameters, validates cursors and returns a controlled 503 if the audit table is unavailable. The route is Owner-only and read-only; append-only enforcement remains a database-trigger responsibility in the schema draft. Mocked handler tests cover pagination, filters, authorization and storage failure. Live Preview behavior and real audit data remain unverified.
