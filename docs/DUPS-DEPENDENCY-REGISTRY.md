@@ -207,3 +207,6 @@ The compact Homepage fixed header replaces its zero-valued inset shorthand with 
 ### Compact shared-shell horizontal edge anchors — 2026-11-26
 
 The compact shared Category Bar and compact Homepage Category Bar now consume `--dups-offset-0` for left/right viewport edges, while preserving their existing top anchors and dimensions. The shared desktop header login-status notice uses the same primitive for its flush right edge; its compact Homepage override retains the existing 8px offset. Chromium regression coverage now checks the Homepage Category Bar's computed left/right offsets against the zero token in each tested header state. These source/test additions remain pending a confirmed Chromium workflow run.
+
+
+The desktop header login-status browser assertion now reads its expected right-edge coordinate from `--dups-offset-0`; the compact rule continues to read `--dups-offset-2`. This ensures both responsive variants are checked against the actual token definitions rather than a duplicated literal expectation.
