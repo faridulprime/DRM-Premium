@@ -1,6 +1,6 @@
 # DRM Universal Color System (DUCS)
 Version: 0.3.1 — Upload Studio palette aliasing and refreshed static validation
-Status: Token foundation, page mappings, refreshed per-file source inventory, dependency registry, and component alias modules are in place. Admin, Live Users, Profile, and Upload Studio have partial first-pass component migrations. Homepage and page-specific first-pass tokenization is in place for primary components and overlays. Residual literal cleanup, full computed-style audit, browser visual regression, and complete contrast validation remain pending.
+Status: Token foundation, page mappings, source inventory, dependency registry and component aliases are in place. First-pass component migrations exist across all five pages. Chromium validates token loading and four representative semantic contrast pairings; residual literal cleanup, full contrast matrix, computed-style coverage and theme/forced-colors validation remain pending.
 
 ## Purpose
 DUCS centralizes color decisions for DRM Premium. It separates raw palette values from semantic meaning and component implementation so color changes can be reviewed across their dependencies.
@@ -82,3 +82,9 @@ The initial shared shell migration replaces the legacy root aliases in `theme.cs
 - DUPS computed header stacking values are checked against the page-header, Homepage mobile-header, and Live Users header layer tokens for the applicable pages and widths.
 - The audit reports, but does not fail on, interactive targets smaller than 44px. Several remain and need a deliberate DUSS touch-target review; the visible logo links are included in this observation. No blanket size increase was made.
 - Scope is local static-site rendering, not deployed Cloudflare Pages or Pages Functions. No D1, authentication, edge, or Production behavior is exercised. The 720px case is not native browser zoom. This is not a full WCAG certification or visual/optical approval.
+
+## Browser contrast sample acceptance — 2026-11-25
+
+Browser audit run #11 passed on commit `c423ea1fe0e35459d279f40bf444afa69fcd4c53`: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803). It parses and checks representative semantic foreground/background pairs for primary text, secondary text, action color and border against the canvas on the five principal pages across seven viewport widths.
+
+This is a representative sample, not a full DUCS contrast audit. It does not measure every component/state pair, overlays, gradients, image-backed text, light/high-contrast themes, forced-colors, or color-vision simulation. Do not treat the run as complete WCAG conformance.

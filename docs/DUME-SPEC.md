@@ -1,6 +1,6 @@
 # DRM Universal Motion Engine (DUME)
 Version: 0.2.0 — Shared mobile drawer controller token integration
-Status: Shared mobile drawer controller and CSS timing tokens are integrated on four pages; broader component motion migration and browser validation remain pending.
+Status: Shared mobile drawer controller and CSS timing tokens are integrated on four pages. Normal/reduced-motion open/close lifecycle, cleanup and the 760/761px boundary passed browser checks on those pages; other motion families and Profile remain outside this controller migration.
 
 ## Purpose
 DUME centralizes interaction motion: transition duration, easing, animation sequencing, reduced-motion behavior, and motion state orchestration. It does not own element dimensions, coordinate placement, or colors.
@@ -52,3 +52,9 @@ A component is migrated only when timing and easing are tokenized, state changes
 - DUPS computed header stacking values are checked against the page-header, Homepage mobile-header, and Live Users header layer tokens for the applicable pages and widths.
 - The audit reports, but does not fail on, interactive targets smaller than 44px. Several remain and need a deliberate DUSS touch-target review; the visible logo links are included in this observation. No blanket size increase was made.
 - Scope is local static-site rendering, not deployed Cloudflare Pages or Pages Functions. No D1, authentication, edge, or Production behavior is exercised. The 720px case is not native browser zoom. This is not a full WCAG certification or visual/optical approval.
+
+## Browser lifecycle acceptance — 2026-11-25
+
+Browser audit run #11 passed on commit `c423ea1fe0e35459d279f40bf444afa69fcd4c53`: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803). The test covers mobile drawer open/close, backdrop visibility, post-close cleanup and reduced-motion duration on Homepage, Admin, Live Users and Upload Studio, plus desktop-side menu behavior at 761px.
+
+The test does not establish that every animation/transition in DRM is centralized in DUME. Profile drawer, Live Users modal effects, Site Builder, dialogs and other local motion remain separate migration candidates. Rapid viewport resize while a drawer is open and broader keyboard/visual animation review remain pending.

@@ -1,6 +1,6 @@
 # DRM Universal Positioning System (DUPS)
 Version: 0.3.0 — Shared shell, floating layers, and viewport placement migration
-Status: Token foundation, shared-shell stacking, Live Users overlay layers, editor overlays, and Upload Studio fixed layers migrated; browser validation pending
+Status: Token foundation and selected shared-shell/overlay migrations; computed header and mobile drawer/backdrop layer checks passed in Chromium on five pages/four drawer pages. Broader position/anchor migration and collision validation remain pending.
 
 ## Purpose
 DUPS centralizes coordinate-based positioning decisions in DRM Premium. It makes positioning contexts, logical offsets, anchored placement, and stacking order explicit and reviewable across pages.
@@ -116,3 +116,9 @@ A component is considered migrated only when:
 ## DUPS overlay stacking validation — 2026-11-25
 
 Browser audit run #4 had already checked the computed page-header layer against its semantic DUPS header token on five pages. The expanded audit now also inspects the computed sidebar, backdrop and page-header z-indexes after opening the mobile drawer. It checks the matching DUPS mobile sidebar/backdrop token values and the expected page-specific stack order: Homepage/Admin drawers above backdrop and header; Live Users/Upload Studio headers above drawer and backdrop. This tests the active rendered cascade rather than merely checking that token definitions exist.
+
+## Browser acceptance — 2026-11-25
+
+Browser audit run #11 passed on commit `c423ea1fe0e35459d279f40bf444afa69fcd4c53`: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803). It verifies computed page-header z-index values against the DUPS header tokens and, after opening mobile drawers, verifies the computed sidebar/backdrop/header values and page-specific stacking order on Homepage, Admin, Live Users and Upload Studio.
+
+This is limited to the tested header/drawer layers and their active rendered cascade. It does not validate every positioned element, every stacking context, anchored tooltip/popover collision handling, native zoom, safe-area layout, or all pages' overlay interactions.

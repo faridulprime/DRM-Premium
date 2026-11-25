@@ -1,6 +1,6 @@
 # DRM Universal Sizing System (DUSS)
 Version: 0.8.0 — 44px interactive target baseline — Expanded audited icon variants and override coverage
-Status: Core token foundation, selected form/profile geometry, public shell, role badges, Admin action-button geometry, and 16 audited SVG/glyph icon sizes migrated to semantic tokens
+Status: Core token foundation and selected component migrations; 20 audited icon/slot tokens, 20 mapped consumers, and 44px interactive-target rules are in place. Five-page browser regression passed with zero undersized visible targets in the tested states; broader component/optical review remains.
 
 ## Purpose and boundaries
 DUSS centralizes sizing for typography, icons, spacing, controls, layout, surfaces, and responsive behavior. DUME continues to own motion and animation. DUSS does not redesign colors or visual themes.
@@ -200,6 +200,14 @@ Validation boundary:
 
 ### Phase 8 follow-up — rendered target audit
 
-The first 35-state Chromium audit exposed remaining undersized controls in the public login row and Admin sign-in/setup panels. The DUSS touch-target consumer module now applies the existing 44px token to those authentication inputs/actions, the Home/Admin search icon buttons, and the Home mobile menu/search slots. This was done as a hit-area adjustment; typography and icon glyph sizing remain unchanged. The next browser run is the acceptance check for viewport overflow and the revised target dimensions.
+The first 35-state Chromium audit exposed remaining undersized controls in the public login row and Admin sign-in/setup panels. The DUSS touch-target consumer module now applies the existing 44px token to those authentication inputs/actions, the Home/Admin search icon buttons, and the Home mobile menu/search slots. This was done as a hit-area adjustment; typography and icon glyph sizing remain unchanged. The acceptance run passed: five pages at seven viewport widths, zero horizontal overflow, and zero visible interactive targets below 44px in the tested states.
 
 The first touch-target pass also showed that a broad width override could collapse the responsive Home search field at narrow widths. That page-wide width/grid override has been removed; only the specific menu/search action hit areas are enlarged, preserving the original responsive search layout. Search-clear buttons and compact category chips receive explicit 44px inline targets. The browser audit is used to re-check 320px overflow and visible control geometry.
+
+## DUSS v0.8 browser acceptance — 2026-11-25
+
+- Static DUSS source validation run #20 passed on commit `c423ea1fe0e35459d279f40bf444afa69fcd4c53`: [run #20](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765851).
+- Browser regression run #11 passed on the same commit: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803).
+- The browser suite rendered Homepage, Admin, Live Users, Upload Studio and Profile at 1440, 900, 390, 320, 720 (layout-width proxy), 760 and 761 CSS px. It reported 35/35 page/viewport checks passed and zero visible interactive targets below 44px.
+- The v0.8 consumer stylesheet is loaded after page styles on all five pages. Static checks verify the 44px minimum token, its consumer module, Live Users fallback link class, five page cache keys and the existing icon/slot token consumers.
+- Scope limitations: generated/dynamic controls outside the sampled states are not comprehensively enumerated; the 720px case is not native browser zoom; optical glyph alignment and visual design approval remain separate tasks.

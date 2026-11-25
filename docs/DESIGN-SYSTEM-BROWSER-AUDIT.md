@@ -37,3 +37,16 @@ A passing run is evidence of the tested static rendered states only. It is not a
 ## DUPS overlay stacking validation — 2026-11-25
 
 Browser audit run #4 had already checked the computed page-header layer against its semantic DUPS header token on five pages. The expanded audit now also inspects the computed sidebar, backdrop and page-header z-indexes after opening the mobile drawer. It checks the matching DUPS mobile sidebar/backdrop token values and the expected page-specific stack order: Homepage/Admin drawers above backdrop and header; Live Users/Upload Studio headers above drawer and backdrop. This tests the active rendered cascade rather than merely checking that token definitions exist.
+
+## Latest acceptance run #11 — 2026-11-25
+
+- Commit: `c423ea1fe0e35459d279f40bf444afa69fcd4c53`.
+- Result: PASS, 35 page/viewport checks across Homepage, Admin, Live Users, Upload Studio and Profile at 1440, 900, 390, 320, 720 (layout-width proxy), 760 and 761 CSS px.
+- Zero horizontal overflow, zero zero-geometry visible controls, and zero visible interactive targets below 44px were reported in the tested states.
+- DUSS/DUPS/DUCS assets and representative tokens resolved. First keyboard focus had a visible focus indicator. The selected DUCS contrast pairs passed.
+- DUPS computed header and mobile drawer/sidebar/backdrop layer relationships passed.
+- DUME mobile drawer lifecycle passed on four pages for normal and reduced-motion settings, including close cleanup and 760/761px breakpoint behavior.
+- The DUSS static source smoke also passed as run #20: [DUSS run #20](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765851).
+- Browser CI: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803).
+
+The previous run #4 warnings are historical; run #11 is the latest target-size acceptance and reports zero warnings. The 720px case is only a layout-width proxy for a 1440px viewport at 200% zoom, not a native browser zoom test. The audit uses the checked-out static site and does not exercise Cloudflare Pages Functions, D1, authentication, edge security rules, deployment, Production, full WCAG conformance, or final visual/optical design approval.

@@ -4,13 +4,15 @@ Target application branch: `feature/full-admin-panel`
 Separate DUGA review branch: `duga-foundation-review`
 DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
-## Application: DUSS
+## Application: Universal Design Systems
 
-1. DUSS run #15 verifies 20 icon/slot tokens, 20 mapped consumers and the v0.7 section marker; next step is browser-based rendering and interaction validation.
-2. Perform browser screenshots and computed-style/bounding-box comparisons for Homepage, Admin, Live Users, Upload Studio and Profile; no browser-runner integration is currently available in this work session.
-3. Test mobile/tablet/desktop, 200% zoom, keyboard focus, touch targets and Bengali/Latin overflow.
-4. Review SVG/glyph optical alignment using rendered evidence; do not infer optical equivalence from CSS dimensions.
-5. Continue auditing remaining icon implementations and page-specific buttons/badges, cards/grids and dialogs/tables only after consumers and breakpoints are mapped.
+1. DUSS v0.8 static smoke run #20 and browser audit run #11 passed. Five-page/seven-viewport coverage has zero horizontal overflow and zero visible targets below 44px in the tested states.
+2. Native 200% browser zoom has not been tested; the 720px viewport is only a layout-width proxy. Long Bengali/Latin strings and real user-font/zoom settings still need dedicated stress cases.
+3. Review SVG/glyph optical alignment using rendered screenshots; do not infer optical equivalence from CSS dimensions.
+4. Continue DUSS audit for remaining page-specific buttons, badges, cards/grids, tables, pagination, dialogs, toast and tooltip after mapping all consumers.
+5. Expand DUCS contrast checks beyond the four representative pairs and test state pairs, overlays and forced-colors.
+6. Expand DUPS beyond current header/drawer stacking assertions to positioned components, stacking contexts, anchors and collision fallbacks.
+7. Expand DUME beyond the shared mobile drawer controller to Profile, Live Users modal effects, Site Builder and dialogs; add rapid open/close and resize-during-transition tests.
 
 ## Application: API and Website Builder review
 

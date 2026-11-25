@@ -21,10 +21,10 @@ Verification date: 2026-11-25
 
 ## Existing subsystem status
 
-- DUME 0.2.0: shared mobile drawer controller integrated on four pages; broader motion migration and browser validation pending.
-- DUSS 0.7.0: foundation, selected form/profile geometry, public shell geometry, role badges, Admin action buttons and 20 audited SVG/glyph/icon-slot dimensions migrated to semantic tokens. Two missed icon variants and later hardcoded responsive search overrides were corrected; source dimensions of effective components remain unchanged. Visual/optical equivalence is not established without browser rendering.
-- DUPS 0.3.0: token foundation and selected positioning/layer migrations; browser validation pending.
-- DUCS 0.3.1: token foundation and partial page/component migration; residual literals, full computed-style audit, browser regression and complete contrast validation remain.
+- DUME 0.2.0: shared mobile drawer controller integrated on Homepage, Admin, Live Users and Upload Studio. Browser checks for normal/reduced-motion drawer lifecycle, cleanup and 760/761px behavior pass on those pages. Broader motion families and Profile drawer remain uncentralized.
+- DUSS 0.8.0: 20 audited icon/slot tokens and 20 mapped consumers, plus 44px interactive-target module on five pages. Static smoke run #20 and browser audit run #11 pass. Browser suite reported zero visible interactive targets below 44px in its 35 tested page/viewport states. Optical alignment, all dynamic controls and broader component coverage remain unfinished.
+- DUPS 0.3.0: token foundation and selected shell/overlay migrations. Browser audit verifies computed page-header layers and mobile drawer/sidebar/backdrop stacking on four drawer pages. General positioning, anchor collision/fallback and complete stacking-context coverage remain pending.
+- DUCS 0.3.1: token foundation and partial first-pass component migration. Browser audit validates four representative semantic contrast pairs; full token-pair/state contrast audit, residual literal review, light/high-contrast themes and forced-colors remain pending.
 
 ## Application code audit findings
 
@@ -34,15 +34,16 @@ Verification date: 2026-11-25
 
 ## Validation status
 
-- DUSS v0.7.0 run #14 passed the 20-token/20-consumer source checks; follow-up run #15 also passed and verifies the v0.7 component-section marker. Both runs cover audited duplicate overrides, Profile banner and Live Users drawer variants, mobile nav slot, prior badge/button tokens, seven CSS brace checks and five page cache keys. The workflow uses checkout/setup-python v7; run #11 independently confirmed the v7 actions without the prior Node 20 warning. This remains static source verification only.
-- Browser screenshots, computed dimensions, keyboard/touch checks, 200% zoom and Bengali/Latin overflow tests have not been run.
-- The source audit does not establish Cloudflare edge configuration or Production runtime behavior.
+- DUSS static source validation run #20 passed on `c423ea1fe0e35459d279f40bf444afa69fcd4c53`: [run #20](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765851). It checks the 20 icon/slot tokens and consumers, v0.8 header/marker, 44px target token, touch-target module wiring, five page cache keys, and CSS brace balance.
+- Browser audit run #11 passed on the same commit: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803). It covers 35 page/viewport states on five pages, reports zero horizontal overflow and zero undersized visible targets, and validates representative DUSS/DUPS/DUCS/DUME behaviors.
+- Native browser zoom, complete Bengali/Latin long-content stress cases, optical glyph alignment, full DUCS contrast matrix, every DUPS stacking/anchor context and all DUME animation families remain unverified.
+- These tests run against the checked-out static site. They do not establish Pages Functions, D1, live authentication, Cloudflare edge security, deployed Preview or Production behavior.
 
 ## Next direction
 
-1. Complete browser-based DUSS sizing and interaction validation when a browser test environment is available.
-2. Perform browser-based sizing and interaction validation before further geometry changes; no rendered-browser test has been run.
-3. Continue with icon optical review, then remaining page-specific controls, cards/grids and dialogs.
-4. Inspect Cloudflare edge rate-limits and establish normal heartbeat volume for public presence/analytics before designing quotas.
-5. Define analytics deduplication and retention before any runtime or D1 changes.
-5. Keep DUGA's revised-schema disposable D1 acceptance, independent review and Preview migration reconciliation on its separate review track.
+1. Expand DUCS contrast validation from the four representative pairs to all meaningful semantic foreground/background pairs and interaction states; keep page-scoped palette identity intact.
+2. Continue DUPS migration by mapping the remaining positioned elements, anchoring relationships, collision/fallback behavior and stacking contexts before tokenizing further.
+3. Continue DUME beyond the shared mobile drawer: Profile drawer, Live Users modal effects, Site Builder and dialog transitions; add resize-during-transition and rapid interaction checks.
+4. Continue DUSS component-family audit for remaining buttons, badges, cards, grids, tables, pagination, dialogs, toast and tooltip; review icon optical alignment with rendered evidence.
+5. Inspect Cloudflare edge/WAF rate-limit configuration and measure legitimate heartbeat/event volume before changing public endpoint controls; the Cloudflare account settings are not accessible from this repository connection.
+6. Keep DUGA revised-schema disposable D1 acceptance, independent review and Preview migration reconciliation on its separate review track. These database/resource actions require owner approval and remain unperformed.
