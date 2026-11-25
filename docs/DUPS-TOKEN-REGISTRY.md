@@ -193,3 +193,14 @@ The hero remains the relative containing block; both decorative elements remain 
 | `--dups-anchor-header-login-status-gap` | 8px | Desktop gap below the badge's `.top-actions` containing block |
 
 The compact header retains its existing 4px gap and 8px right inset through the compact spacing/offset tokens; the existing `--dups-layer-header-status` token preserves the effective layer of 110. Chromium compares rendered badge-to-header geometry, right offset and computed layer at every Homepage viewport, including the 760/761px breakpoint. No responsive coordinates or stacking values change.
+
+## Live Users account drawer viewport anchors — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-anchor-live-drawer-top` | 51.1% | Existing desktop drawer vertical anchor |
+| `--dups-anchor-live-drawer-left` | calc(54.4% - 90px) | Existing desktop drawer horizontal anchor aligned to the primary panel |
+| `--dups-anchor-live-drawer-top-compact` | 50% | Compact viewport vertical center anchor |
+| `--dups-anchor-live-drawer-left-compact` | 50% | Compact viewport horizontal center anchor |
+
+The original desktop coordinates and the existing 700px compact centering breakpoint are preserved. Chromium opens the static drawer fixture and checks its rendered center against the expected viewport coordinates and existing local layer at every Live Users viewport.
