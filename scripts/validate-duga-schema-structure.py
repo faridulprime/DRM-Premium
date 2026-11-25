@@ -42,6 +42,41 @@ EXPECTED_INDEXES = {
     "idx_duga_jobs_queue": ("duga_jobs", 0, 0),
 }
 
+EXPECTED_INDEX_COLUMNS = {
+    "uq_duga_assignment_human_active": ["scope_type", None, "role_id", "user_id"],
+    "uq_duga_assignment_ai_active": ["scope_type", None, "role_id", "principal_id"],
+    "uq_duga_single_platform_owner": ["scope_type", "role_id"],
+    "idx_duga_assignments_subject": ["user_id", "principal_id", "status"],
+    "idx_duga_changes_status_updated": ["status", "updated_at"],
+    "idx_duga_changes_created": ["created_at"],
+    "idx_duga_reviews_change_time": ["change_request_id", "created_at"],
+    "idx_duga_approvals_change_time": ["change_request_id", "created_at"],
+    "idx_duga_validation_change_time": ["change_request_id", "created_at"],
+    "idx_duga_validation_status": ["status", "created_at"],
+    "idx_duga_audit_aggregate_time": ["aggregate_type", "aggregate_id", "created_at"],
+    "idx_duga_audit_actor_time": ["actor_type", "actor_user_id", "actor_principal_id", "created_at"],
+    "idx_duga_audit_time": ["created_at"],
+    "idx_duga_findings_status_time": ["status", "created_at"],
+    "idx_duga_findings_file_commit": ["file_path", "repository_commit_sha"],
+    "idx_duga_jobs_queue": ["status", "available_at"],
+}
+
+# Explicit critical column declarations: (SQLite declared type, NOT NULL flag, PK ordinal).
+EXPECTED_COLUMN_DECLARATIONS = {
+    ("duga_assignments", "assigned_by_user_id"): ("TEXT", 1, 0),
+    ("duga_assignments", "created_at"): ("INTEGER", 1, 0),
+    ("duga_change_requests", "title"): ("TEXT", 1, 0),
+    ("duga_change_requests", "affected_systems_json"): ("TEXT", 1, 0),
+    ("duga_change_requests", "affected_paths_json"): ("TEXT", 1, 0),
+    ("duga_change_requests", "state_version"): ("INTEGER", 1, 0),
+    ("duga_reviews", "change_request_id"): ("TEXT", 1, 0),
+    ("duga_reviews", "evidence_json"): ("TEXT", 1, 0),
+    ("duga_audit_events", "event_type"): ("TEXT", 1, 0),
+    ("duga_audit_events", "payload_json"): ("TEXT", 1, 0),
+    ("duga_analysis_findings", "confidence"): ("REAL", 1, 0),
+    ("duga_jobs", "attempts"): ("INTEGER", 1, 0),
+    ("duga_jobs", "available_at"): ("INTEGER", 1, 0),
+}
 EXPECTED_TRIGGERS = {
     "duga_review_no_implementer_self_audit": ("duga_reviews", "Implementer cannot independently audit"),
     "duga_audit_no_update": ("duga_audit_events", "append-only"),
@@ -79,6 +114,17 @@ def main() -> int:
         for name, spec in EXPECTED_INDEXES.items():
             if actual_indexes.get(name) != spec:
                 fail(f"index {name} mismatch: expected={spec}, actual={actual_indexes.get(name)}")
+            table = spec[0]
+            actual_columns = [r[2] for r in db.execute(f'PRAGMA index_info("{name}")')]
+            if actual_columns != EXPECTED_INDEX_COLUMNS[name]:
+                fail(f"index {name} column order mismatch: expected={EXPECTED_INDEX_COLUMNS[name]}, actual={actual_columns}")
+
+        for (table, column), expected in EXPECTED_COLUMN_DECLARATIONS.items():
+            info = {r[1]: r for r in db.execute(f'PRAGMA table_info("{table}")')}
+            row = info.get(column)
+            actual = (str(row[2]).upper(), int(row[3]), int(row[5])) if row else None
+            if actual != expected:
+                fail(f"{table}.{column} declaration mismatch: expected={expected}, actual={actual}")
 
         for name, (table, marker) in EXPECTED_TRIGGERS.items():
             row = db.execute(
@@ -120,7 +166,7 @@ def main() -> int:
 
         print("DUGA deep schema validation: PASS")
         print(f"Tables: {len(actual_tables)} | Indexes: {len(EXPECTED_INDEXES)} | Triggers: {len(EXPECTED_TRIGGERS)}")
-        print("Columns, index uniqueness/partial flags, trigger bodies, critical foreign keys and selected CHECK constraints verified.")
+        print("Columns, critical type/nullability declarations, ordered index columns, uniqueness/partial flags, trigger markers, critical foreign keys and selected CHECK constraints verified.")
         print("LIMITATION: in-memory draft validation only; no live Preview D1 schema was inspected.")
         return 0
     except (sqlite3.Error, AssertionError) as exc:
