@@ -232,27 +232,43 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
         if name == "homepage" and width <= 900:
             builder_inspector = page.evaluate(
                 """() => {
+                  const shell = document.querySelector("#siteBuilder");
                   const element = document.querySelector(".sb-inspector");
                   const root = getComputedStyle(document.documentElement);
-                  if (!element) return {missing: true};
+                  if (!shell || !element) return {missing: true};
+                  shell.hidden = false;
                   const style = getComputedStyle(element);
+                  const shellRect = shell.getBoundingClientRect();
+                  const rect = element.getBoundingClientRect();
                   return {
+                    shellPosition: getComputedStyle(shell).position,
+                    shellWidth: shellRect.width,
+                    shellHeight: shellRect.height,
                     position: style.position,
                     zIndex: style.zIndex,
-                    token: root.getPropertyValue("--dups-layer-builder-inspector").trim()
+                    token: root.getPropertyValue("--dups-layer-builder-inspector").trim(),
+                    top: rect.top - shellRect.top,
+                    right: shellRect.right - rect.right,
+                    bottom: shellRect.bottom - rect.bottom,
+                    expectedTop: innerWidth <= 600 ? 112 : 66,
+                    expectedBottom: 34
                   };
                 }"""
             )
             if builder_inspector.get("missing"):
-                fail(f"{name}/{viewport_name}: Builder inspector element is missing")
+                fail(f"{name}/{viewport_name}: Builder inspector or shell is missing")
             else:
                 try:
+                    if builder_inspector["shellPosition"] != "fixed" or builder_inspector["shellWidth"] <= 0 or builder_inspector["shellHeight"] <= 0:
+                        fail(f"{name}/{viewport_name}: Website Builder shell is not a rendered fixed containing block ({builder_inspector})")
                     if builder_inspector["position"] != "absolute":
                         fail(f"{name}/{viewport_name}: responsive Builder inspector is not absolutely positioned ({builder_inspector})")
                     if float(builder_inspector["zIndex"]) != float(builder_inspector["token"]):
                         fail(f"{name}/{viewport_name}: Builder inspector z-index does not match its DUPS token ({builder_inspector})")
+                    if abs(builder_inspector["top"] - builder_inspector["expectedTop"]) > 1 or abs(builder_inspector["right"]) > 1 or abs(builder_inspector["bottom"] - builder_inspector["expectedBottom"]) > 1:
+                        fail(f"{name}/{viewport_name}: Builder inspector offsets do not match its fixed shell containing block ({builder_inspector})")
                 except (TypeError, ValueError, KeyError):
-                    fail(f"{name}/{viewport_name}: Builder inspector DUPS layer could not be resolved ({builder_inspector})")
+                    fail(f"{name}/{viewport_name}: Builder inspector DUPS layer/geometry could not be resolved ({builder_inspector})")
 
         if name == "homepage" and width <= 760:
             header_status_anchor = page.evaluate(
