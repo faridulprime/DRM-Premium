@@ -518,6 +518,30 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: visual editor DUPS geometry/layers could not be resolved ({visual_editor_anchor})")
 
+        if name == "admin":
+            admin_category_anchor = page.evaluate(
+                """() => {
+                  const bar = document.querySelector(".admin-category-bar");
+                  if (!bar) return {missing: true};
+                  const style = getComputedStyle(bar);
+                  const value = style.getPropertyValue("--dups-anchor-category-bar-top").trim();
+                  const token = value.endsWith("rem")
+                    ? parseFloat(value) * (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16)
+                    : parseFloat(value);
+                  return {position: style.position, top: parseFloat(style.top), token};
+                }"""
+            )
+            if admin_category_anchor.get("missing"):
+                fail(f"{name}/{viewport_name}: Admin Category Bar is missing")
+            else:
+                try:
+                    if admin_category_anchor["position"] != "fixed":
+                        fail(f"{name}/{viewport_name}: Admin Category Bar is not fixed-positioned ({admin_category_anchor})")
+                    if abs(admin_category_anchor["top"] - float(admin_category_anchor["token"])) > 1:
+                        fail(f"{name}/{viewport_name}: Admin Category Bar computed top does not match its DUPS token ({admin_category_anchor})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: Admin Category Bar anchor token could not be resolved ({admin_category_anchor})")
+
         if name == "homepage":
             category_anchor = page.evaluate(
                 """() => {
