@@ -122,3 +122,12 @@ Verification date: 2026-11-25
 - Migrated the corresponding declarations in `styles.css` and `theme.css` without changing coordinates: panel 56px/12px, desktop toggle edge 14px, compact edge 12px; existing z-index tokens are unchanged.
 - Expanded the Chromium browser audit to reveal the static hidden editor controls and verify computed fixed positioning, token-resolved geometry, and both existing local stacking layers at all Homepage viewport checks.
 - This is static geometry validation only; authenticated editor interaction, collision/fallback behavior, and native zoom remain unverified.
+
+
+## DUMC homepage integration — 2026-11-26
+
+- Added a public DUMC movie browser to the homepage with category roots, nested folder chips, movie cover cards, search and pagination.
+- Added public `GET /api/dumc/browse` for published-only movie browsing, recursive folder filtering and server-side search.
+- Added responsive styles and homepage script under `assets/dumc/home.css` and `assets/dumc/home.js`.
+- Enforced the media policy in DUMC audio/subtitle reference APIs and Upload Studio UI: HTTPS links only; no media asset-key registration. Video content remains link-based; only cover images may be uploaded.
+- Validation/deployment status must be checked separately. D1 migration 0009 has not been applied and no deployment has been performed.
