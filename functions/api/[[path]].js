@@ -46,7 +46,24 @@ const cookie=v=>`${COOKIE}=${v}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-
 const clearCookie=()=>`${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
 function cookieToken(req){return (req.headers.get("Cookie")||"").split(";").map(v=>v.trim()).find(v=>v.startsWith(COOKIE+"="))?.slice(COOKIE.length+1)||""}
 function visitorToken(req){return (req.headers.get("Cookie")||"").split(";").map(v=>v.trim()).find(v=>v.startsWith(VISITOR_COOKIE+"="))?.slice(VISITOR_COOKIE.length+1)||""}
-async function readBody(req){const len=Number(req.headers.get("content-length")||0);if(len>20000)return null;try{return await req.json()}catch{return null}}
+async function readBody(req){
+ const declaredLength=req.headers.get("content-length");
+ if(declaredLength!==null){const len=Number(declaredLength);if(Number.isFinite(len)&&len>20000)return null}
+ if(!req.body)return null;
+ const reader=req.body.getReader(),chunks=[];let total=0;
+ try{
+  while(true){
+   const {done,value}=await reader.read();if(done)break;
+   const chunk=value instanceof Uint8Array?value:new Uint8Array(value);
+   total+=chunk.byteLength;
+   if(total>20000){try{await reader.cancel()}catch{}return null}
+   chunks.push(chunk);
+  }
+  const bytes=new Uint8Array(total);let offset=0;
+  for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength}
+  return JSON.parse(new TextDecoder("utf-8",{fatal:true}).decode(bytes));
+ }catch{return null}finally{try{reader.releaseLock()}catch{}}
+}
 const emailOK=v=>typeof v==="string"&&v.length<255&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const passwordOK=v=>typeof v==="string"&&v.length>=8&&v.length<=200;
 const textOK=(v,n)=>typeof v==="string"&&v.trim().length>0&&v.length<=n;
