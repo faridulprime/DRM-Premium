@@ -275,6 +275,7 @@ async function handle(req,env){
    const rawLimit=u.searchParams.get("limit")||"25";
    if(!/^(?:[1-9]|[1-4][0-9]|50)$/.test(rawLimit))return fail("limit must be an integer from 1 to 50.",400);
    const limit=Number(rawLimit),status=u.searchParams.get("status")||"",q=u.searchParams.get("q")||"",cursor=u.searchParams.get("cursor")||"";
+   if(cursor.length>256)return fail("Pagination cursor is too long.",400);
    const allowedStatuses=new Set(["proposed","analyzing","impact_review","awaiting_ai_audit","awaiting_human_approval","approved","implementing","validating","final_review","accepted","rejected","cancelled","blocked"]);
    if(status&&!allowedStatuses.has(status))return fail("Invalid change request status filter.",400);
    if(q.length>120||[...q].some(ch=>ch.charCodeAt(0)<32))return fail("Search query is invalid or too long.",400);
@@ -320,6 +321,7 @@ async function handle(req,env){
    const rawLimit=u.searchParams.get("limit")||"25";
    if(!/^(?:[1-9]|[1-4][0-9]|50)$/.test(rawLimit))return fail("limit must be an integer from 1 to 50.",400);
    const limit=Number(rawLimit),status=u.searchParams.get("status")||"",classification=u.searchParams.get("classification")||"",q=u.searchParams.get("q")||"",cursor=u.searchParams.get("cursor")||"";
+   if(cursor.length>256)return fail("Finding pagination cursor is too long.",400);
    const allowedStatuses=new Set(["open","under_review","accepted","dismissed","quarantined"]);
    const allowedClassifications=new Set(["A","B","C","D","E"]);
    if(status&&!allowedStatuses.has(status))return fail("Invalid finding status filter.",400);
@@ -343,6 +345,7 @@ async function handle(req,env){
    const rawLimit=u.searchParams.get("limit")||"25";
    if(!/^(?:[1-9]|[1-4][0-9]|50)$/.test(rawLimit))return fail("limit must be an integer from 1 to 50.",400);
    const limit=Number(rawLimit),aggregateType=u.searchParams.get("aggregate_type")||"",cursor=u.searchParams.get("cursor")||"";
+   if(cursor.length>256)return fail("Audit pagination cursor is too long.",400);
    const allowedAggregates=new Set(["change_request","assignment","system","job","finding","platform"]);
    if(aggregateType&&!allowedAggregates.has(aggregateType))return fail("Invalid audit aggregate_type filter.",400);
    let cursorTime=null,cursorId=null;
