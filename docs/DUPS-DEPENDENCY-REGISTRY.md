@@ -73,4 +73,4 @@ Audited stacking-layer consumers have been migrated to semantic DUPS aliases in 
 
 ### Restricted Users modal follow-up — 2026-11-26
 
-The Restricted Users modal now consumes the existing `--dups-layer-live-drawer` token instead of a literal z-index. The design-system Chromium audit checks its computed fixed positioning, token-resolved z-index, and viewport-center geometry across the existing seven viewport widths. The check is scoped to this modal and does not imply complete DUPS migration or collision/fallback coverage.
+The Restricted Users modal now consumes the existing `--dups-layer-live-drawer` token instead of a literal z-index. The design-system Chromium audit checks its computed fixed positioning, token-resolved z-index, and viewport-center geometry across the existing seven viewport widths. The check passed in Chromium run #45676504120 at all seven viewport widths. It is scoped to this modal and does not imply complete DUPS migration or collision/fallback coverage.
