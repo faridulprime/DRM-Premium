@@ -109,3 +109,8 @@ Migrated the remaining literal `z-index: 5` on `.live-user-drawer.is-closing::be
 ### Website Builder inspector containing-block geometry — 2026-11-26
 
 Chromium run #45678321298 passed the expanded check that reveals the hidden static Builder shell, verifies the shell is fixed and rendered, and checks the inspector's absolute position plus top/right/bottom geometry relative to that shell (including the mobile top offset). This is stronger than checking computed `position` and `z-index` alone, but does not cover interactive Builder runtime behavior.
+
+
+### Live Users drawer effect pseudo-layer browser acceptance — 2026-11-26
+
+Chromium run #45678490915 passed the computed z-index checks for the closing drawer `::before` and `::after` pseudo-elements against `--dups-layer-live-effect` and `--dups-layer-live-effect-top`. The same run passed all 35 page/viewport checks and existing DUME drawer lifecycle checks. This validates token agreement, not visual effect quality.
