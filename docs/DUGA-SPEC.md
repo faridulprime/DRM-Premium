@@ -1,6 +1,6 @@
 # DUGA — DRM Universal Governance Architecture
 Version: 1.0.0
-Status: Foundation design and Git-based registry initialized; operational backend and enforcement are not implemented.
+Status: Git-based governance foundation and static validation are implemented; D1 operational backend is not deployed, and API enforcement remains at an initial health-probe stage.
 
 ## Purpose
 DUGA coordinates system ownership, dependency intelligence, change governance, auditability, recovery and AI continuity across DRM Premium. It does not replace subsystem responsibilities or become a runtime dependency of the public website.
@@ -55,7 +55,7 @@ DUGA and the future separate Super Admin Center must not be required for public 
 Server-side authorization, least privilege, session revocation, same-origin/CSRF protection where applicable, rate limiting, audit integrity, secrets isolation, explicit high-risk approval and recovery procedures. UI-only permission hiding is not authorization.
 
 ## Current implementation status
-The Git governance registry, role definitions, ownership boundaries, dependency baseline and policies are being initialized. D1 schema, API enforcement, Control Center UI, automated DACE and runtime validation are not implemented by this foundation commit series.
+The Git governance registry, role definitions, ownership boundaries, dependency baseline and policies are present and statically validated. A D1 operational schema draft has passed in-memory SQLite regression tests, but it is not a migration and has not been applied to Preview or Production. An initial authenticated Owner-only GET /api/governance/health probe exists and passed JavaScript syntax validation; it has not been exercised against a live Pages/D1 runtime. Full D1-backed API enforcement, Control Center UI, automated DACE and runtime integration validation remain unimplemented.
 
 ## Change policy
 All implementation remains on feature branches. Production main and Production D1 must remain untouched unless separately and explicitly authorized.
