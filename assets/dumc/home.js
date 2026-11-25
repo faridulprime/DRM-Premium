@@ -7,6 +7,18 @@ let roots=[],activeRoot="",activeFolder="",movies=[],offset=0,query="",loading=f
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
 function flatten(n,out=[]){for(const c of n.children||[]){out.push(c);flatten(c,out)}return out}
+async function loadTaxonomyFallback(){
+ try{
+  const response=await fetch("/assets/dumc/taxonomy.json",{cache:"force-cache"});
+  if(!response.ok)throw new Error("Folder taxonomy unavailable");
+  const data=await response.json();
+  roots=(data.children||[]).filter(x=>visibleRoots.has(x.id));
+  renderCategories();renderSubcategories();
+  $("#dumcHomeCount").textContent="DUMC folder catalog";
+  host.innerHTML='<p class="empty dumc-empty">ফোল্ডারগুলো প্রস্তুত। মুভির তালিকা চালু হবে D1 migration প্রয়োগের পর।</p>';
+  $("#dumcHomeMore").hidden=true;
+ }catch{host.innerHTML='<p class="empty dumc-empty">মুভি লাইব্রেরি সাময়িকভাবে পাওয়া যাচ্ছে না।</p>'}
+}
 function renderCategories(){
  const el=$("#dumcHomeCategories");
  const items=[{id:"",name:"সব মুভি"},...roots.map(x=>({id:x.id,name:labels[x.id]||x.name}))];
@@ -40,7 +52,7 @@ async function loadMovies(reset=true){
   movies=reset?(data.movies||[]):movies.concat(data.movies||[]);
   offset+=data.movies?.length||0;hasMore=(data.movies||[]).length===36;
   renderSubcategories();renderMovies();status.textContent="";
- }catch(e){status.textContent=e.message;host.innerHTML='<p class="empty dumc-empty">'+esc(e.message)+'</p>';$("#dumcHomeMore").hidden=true;}
+ }catch(e){if(!roots.length){await loadTaxonomyFallback();status.textContent="Folder catalog loaded in preview mode; movie data awaits database setup.";}else{status.textContent=e.message;host.innerHTML='<p class="empty dumc-empty">'+esc(e.message)+'</p>';$("#dumcHomeMore").hidden=true;}}
  finally{loading=false}
 }
 $("#dumcHomeCategories").addEventListener("click",e=>{
