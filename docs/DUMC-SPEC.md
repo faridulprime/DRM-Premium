@@ -47,3 +47,11 @@ DUMC provides one canonical classification model for the Movies section. It sepa
 The migration file is committed but has **not** been applied to any D1 database. The repository manifest is documentation-only; Wrangler migrations are not configured and it does not identify applied database history. The Upload Studio falls back to the static taxonomy until the D1 schema is installed. No Preview or Production deployment has been performed.
 
 Audio/subtitle APIs register references to an existing `movies/...` asset key or an external HTTPS URL. They do not upload media bytes; a dedicated DUMC media bucket binding and upload pipeline still need to be configured and tested. No external asset is fetched by the API.
+
+
+## Public homepage integration and media policy
+
+- The homepage now has a dedicated DUMC movie-browsing section with public-facing navigation for language, film industry, dubbed movies, genres, countries, collections and subtitles; nested folders are selectable and movies are shown as responsive cover cards.
+- Public browsing uses `GET /api/dumc/browse`, which returns published movies only and supports recursive folder filtering, server-side search and pagination.
+- **Media policy:** movie/video files are never uploaded to this website, regardless of whether they are 50 MB, 100 MB or another size. Movie playback uses external video links. Only cover/poster images may be uploaded. Audio and subtitle references are HTTPS links only; DUMC APIs reject asset-key based media registration.
+- DUMC homepage integration is committed to the feature branch but is not live until the D1 migration is applied and the branch is deployed.
