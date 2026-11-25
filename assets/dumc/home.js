@@ -25,8 +25,8 @@ function renderCategories(){
 }
 function renderSubcategories(){
  const el=$("#dumcHomeSubcategories"),root=roots.find(x=>x.id===activeRoot);
- if(!root){el.innerHTML="";el.hidden=true;return}
- const children=flatten(root,[]);
+ const children=root?flatten(root,[]):roots.flatMap(x=>flatten(x,[]));
+ if(!children.length){el.innerHTML="";el.hidden=true;return}
  el.hidden=!children.length;
  el.innerHTML=children.map(x=>'<button type="button" class="dumc-home-subchip'+(x.id===activeFolder?" active":"")+'" data-folder="'+esc(x.id)+'">'+esc(folderName(x.name))+(Number(x.movie_count||0)>0?' <span>'+Number(x.movie_count)+'</span>':'')+'</button>').join("");
 }
