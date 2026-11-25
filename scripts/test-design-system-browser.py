@@ -574,7 +574,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const gapValue = root.getPropertyValue(gapName).trim();
                   const gap = gapValue.endsWith("rem")
                     ? parseFloat(gapValue) * rootSize : parseFloat(gapValue);
-                  const rightValue = compact ? root.getPropertyValue("--dups-offset-2").trim() : "0px";
+                  const rightValue = compact ? root.getPropertyValue("--dups-offset-2").trim() : root.getPropertyValue("--dups-offset-0").trim();
                   const right = rightValue.endsWith("rem")
                     ? parseFloat(rightValue) * rootSize : parseFloat(rightValue);
                   const statusRect = status.getBoundingClientRect();
