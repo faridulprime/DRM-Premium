@@ -66,6 +66,8 @@ jobs:
         run: node scripts/validate-governance.mjs
       - name: Validate registry schema and dependency cycles
         run: node scripts/validate-registry-schema.mjs
+      - name: Test registry validator edge cases
+        run: node scripts/test-registry-validator.mjs
       - name: Validate D1 migration inventory (static only)
         run: node scripts/validate-migration-inventory.mjs
       - name: Set up Python
