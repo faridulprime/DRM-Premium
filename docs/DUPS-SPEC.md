@@ -240,3 +240,6 @@ The public registration dialog is included in the full-viewport edge audit. Its 
 ## Live Users avatar fill tokenization — 2026-11-26
 
 The Live Users row avatar and drawer avatar image layers now use the existing zero-offset primitive for all four parent-relative edges. Regression coverage checks both computed image rectangles and preserves the independent presence-indicator anchor contract.
+
+
+The registration dialog's base selector now declares `z-index:var(--dups-layer-register-dialog, 1001)`. This makes its component layer explicit without changing native modal top-layer behavior or dialog centering.
