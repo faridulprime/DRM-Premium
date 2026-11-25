@@ -16,6 +16,12 @@ on:
       - "scripts/duga-d1-disposable-acceptance-fixture.sql"
       - "scripts/duga-d1-disposable-acceptance-console.sql"
       - "scripts/test-duga-fixture-sync.py"
+      - "scripts/test-duga-target-registry.py"
+      - "docs/DUGA-D1-TARGET-REGISTRY.md"
+      - "docs/DUGA-API-INTEGRATION-READINESS.md"
+      - "scripts/duga-d1-acceptance-worker/README.md"
+      - "scripts/duga-d1-acceptance-worker/wrangler.toml"
+      - "scripts/duga-d1-revised-gap-probes.sql"
       - ".github/workflows/duga-schema-smoke.yml"
   pull_request:
     branches:
@@ -28,6 +34,12 @@ on:
       - "scripts/duga-d1-disposable-acceptance-fixture.sql"
       - "scripts/duga-d1-disposable-acceptance-console.sql"
       - "scripts/test-duga-fixture-sync.py"
+      - "scripts/test-duga-target-registry.py"
+      - "docs/DUGA-D1-TARGET-REGISTRY.md"
+      - "docs/DUGA-API-INTEGRATION-READINESS.md"
+      - "scripts/duga-d1-acceptance-worker/README.md"
+      - "scripts/duga-d1-acceptance-worker/wrangler.toml"
+      - "scripts/duga-d1-revised-gap-probes.sql"
       - ".github/workflows/duga-schema-smoke.yml"
   workflow_dispatch:
 
@@ -59,5 +71,6 @@ jobs:
         run: |
           python scripts/test-duga-schema.py
           python scripts/test-duga-fixture-sync.py
+          python scripts/test-duga-target-registry.py
           python scripts/validate-duga-registries.py
           python scripts/test-duga-validator.py

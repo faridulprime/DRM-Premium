@@ -4,6 +4,8 @@ This is an isolated, test-only Worker. It is not part of the app and must never 
 
 ## Fixed target
 
+> **Target identity warning — legacy v1 configuration.** This directory's checked-in `wrangler.toml` is pinned to `drm-duga-acceptance-disposable` / `6d512429-34a3-498b-9430-45f11d382da9`. The revised gap-probe SQL targets a separate v2 database, `drm-duga-acceptance-v2-disposable` / `716a4f20-25a5-4a59-9dd2-c764b193f385`. Running `wrangler deploy` from this directory does **not** target v2. Do not deploy this project or run the revised probes until the owner explicitly authorizes the disposable-D1 test and the Worker/database identity is reconciled. See [DUGA D1 Target Registry](../../docs/DUGA-D1-TARGET-REGISTRY.md).
+
 - Database name: `drm-duga-acceptance-disposable`
 - Database ID: `6d512429-34a3-498b-9430-45f11d382da9`
 - D1 binding: `DB`

@@ -1,4 +1,10 @@
 -- DUGA revised-schema acceptance gap probes
+-- TARGET IDENTITY WARNING:
+-- This revised v2 probe file is NOT the target configured in scripts/duga-d1-acceptance-worker/wrangler.toml.
+-- The checked-in Worker config is pinned to legacy v1 database ID 6d512429-34a3-498b-9430-45f11d382da9.
+-- This file is pinned to v2 database ID 716a4f20-25a5-4a59-9dd2-c764b193f385.
+-- Do not deploy the checked-in Worker expecting it to target this v2 database.
+-- Require explicit owner approval and a separately reconciled Worker binding before D1 operations.
 -- TARGET ONLY: drm-duga-acceptance-v2-disposable
 -- D1 ID: 716a4f20-25a5-4a59-9dd2-c764b193f385
 -- Execute ONE statement at a time in Cloudflare D1 Console.

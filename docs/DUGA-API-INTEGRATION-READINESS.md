@@ -24,3 +24,9 @@ Evidence qualification: these are owner-supplied screenshots, not independent ac
 The Preview D1 UUID is now recorded as `6821a135-9330-4537-9cf8-eb9ca90970b8`, and the Pages Preview `DB` binding label matches `drmdatabase-preview`. The Pages Production `DB` binding is separately labeled `drmdatabase`. The disposable acceptance Worker remains separately bound to the disposable database.
 
 **Decision remains NO-GO for Preview migration rollout and DUGA write endpoints.** The Preview inventory has no `duga_%` objects and the migration/meta-name query returned no rows, but the actual migration ledger and repository migration sequence still require reconciliation. Complete schema/index/trigger inventory, independent migration review, trusted service identity, and application integration tests remain outstanding. Do not infer that an empty name-filtered metadata query means the database has never been migrated.
+
+## 15. Disposable D1 identity reconciliation — repository review (2026-11-25)
+
+The checked-in `scripts/duga-d1-acceptance-worker/wrangler.toml` pins legacy v1 database `drm-duga-acceptance-disposable` / `6d512429-34a3-498b-9430-45f11d382da9`. The separately maintained `scripts/duga-d1-revised-gap-probes.sql` pins v2 database `drm-duga-acceptance-v2-disposable` / `716a4f20-25a5-4a59-9dd2-c764b193f385`. The existing owner-supplied evidence names a v2 Worker and binding; it does not make the checked-in v1 Wrangler config a v2 deployment config.
+
+**Deployment gate:** do not run `wrangler deploy` from the checked-in v1 Worker directory expecting to test v2, and do not execute the v2 gap probes against v1, Preview or Production. The v1 aggregate PASS predates the final parent-link and AI-review guard changes. The v2 name/ID must be re-confirmed from Cloudflare and a separate v2 Worker binding reconciled after explicit owner approval. See `docs/DUGA-D1-TARGET-REGISTRY.md`.
