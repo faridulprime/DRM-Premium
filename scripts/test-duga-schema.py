@@ -376,7 +376,7 @@ def main() -> int:
         "SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'duga_%'"
     ).fetchone()[0]
 
-    if (table_count, trigger_count) != (8, 3):
+    if (table_count, trigger_count) != (8, 5):
         raise AssertionError(
             f"Unexpected schema object counts: tables={table_count}, triggers={trigger_count}"
         )
