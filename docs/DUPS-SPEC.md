@@ -216,3 +216,8 @@ The Live Users drawer backdrop now consumes the shared DUPS zero-offset primitiv
 ## Compact Homepage and Admin viewport-edge tokenization — 2026-11-26
 
 The compact Homepage fixed header uses the shared zero-offset token for its top and horizontal viewport edges while retaining an automatic bottom edge. The Admin Category Bar uses the same token for horizontal edges and preserves its responsive top anchor. Browser assertions now check Admin Category Bar left/right geometry against the token. No fixed positioning, responsive dimensions, breakpoints or stacking order are intentionally changed; the new assertions await a confirmed Chromium workflow result.
+
+
+## Compact shared-shell edge tokenization — 2026-11-26
+
+The compact shared Category Bar and compact Homepage Category Bar horizontal viewport edges now reuse the existing DUPS zero-offset primitive. The desktop shared header login-status right edge also uses the primitive, with its compact Homepage 8px inset override preserved. The Homepage browser audit now checks the Category Bar's computed horizontal edges against the token across the existing viewport matrix and tested header visibility states. Existing top anchors, dimensions, breakpoints and stacking layers remain unchanged; a completed Chromium run for this addition is not yet confirmed.
