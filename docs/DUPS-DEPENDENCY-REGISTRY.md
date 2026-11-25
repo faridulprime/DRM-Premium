@@ -93,7 +93,7 @@ The header login status uses the existing DUPS anchor-gap and logical offset tok
 
 ### Live Users detail-dialog sticky header — 2026-11-26
 
-The sticky detail-dialog header now consumes `--dups-layer-live-dialog-sticky-header` (fallback 1). The Chromium audit checks computed sticky positioning and z-index/token agreement on the Live Users page at all existing viewport widths. Its layer is local to the dialog; it does not compete with page-level overlays.
+The sticky detail-dialog header now consumes `--dups-layer-live-dialog-sticky-header` (fallback 1) and `--dups-anchor-live-dialog-sticky-header-top` (0). The Chromium audit checks computed sticky positioning, top-anchor and z-index/token agreement on the Live Users page at all existing viewport widths. Its layer is local to the dialog; it does not compete with page-level overlays.
 
 
 ### Latest DUPS targeted Chromium verification — 2026-11-26
