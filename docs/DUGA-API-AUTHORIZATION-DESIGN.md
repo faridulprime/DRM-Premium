@@ -43,7 +43,7 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 - POST /api/governance/changes/:id/approvals — human Owner approval/rejection only.
 - POST /api/governance/changes/:id/validation-runs — trusted validation runner result, not arbitrary browser assertion.
 - GET /api/governance/audit — implemented Owner-only, read-only cursor-paginated append-only audit events. Supports bounded page size and allow-listed aggregate type filter; exposes explicit event/actor/payload fields only. No mutation is exposed.
-- GET /api/governance/findings — DACE evidence findings; no destructive endpoint.
+- GET /api/governance/findings — implemented Owner-only, read-only, cursor-paginated DACE evidence findings. Supports bounded status/classification filters and file/symbol/commit search; returns an explicit column set. No mutation is exposed.
 
 ## Security invariants
 - Never accept a browser-supplied role, approver identity, AI identity, implementation SHA or risk downgrade as authoritative.
