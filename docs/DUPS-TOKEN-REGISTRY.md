@@ -248,3 +248,6 @@ The public registration dialog also consumes the zero-offset primitive on all fo
 ## Live Users avatar image fill — 2026-11-26
 
 The `.live-avatar img` and `.live-drawer-avatar img` positioned image layers now use `--dups-offset-0` for all four parent-relative edges. This preserves full-frame image coverage and the existing avatar stacking layer.
+
+
+The public registration dialog now explicitly consumes `--dups-layer-register-dialog` (1001) in its base selector. Native modal top-layer behavior remains authoritative when opened; the numeric alias documents and preserves its in-document layer contract.
