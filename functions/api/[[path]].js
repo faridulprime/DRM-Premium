@@ -215,6 +215,18 @@ async function handle(req,env){
  }
  const user=await getSession(req,env);if(!user||!["owner","admin"].includes(user.role))return fail("Admin login required.",401);
 
+ // DUGA foundation health probe: authenticated Owner only; read-only and table-independent.
+ if(p[0]==="governance"){
+  if(user.role!=="owner")return fail("শুধু Owner Governance API ব্যবহার করতে পারবেন।",403);
+  if(p.length===2&&p[1]==="health"){
+   if(m!=="GET")return fail("Method not allowed.",405);
+   const probe=await env.DB.prepare("SELECT 1 AS ok").first();
+   if(Number(probe?.ok)!==1)return fail("Governance database probe failed.",503);
+   return json({ok:true,service:"DUGA",database:"reachable",access:"owner"});
+  }
+  return fail("Governance route not found.",404);
+ }
+
  if(p[0]==="builder"){
   if(!user||user.role!=="owner")return fail("শুধু Owner Website Builder ব্যবহার করতে পারবেন।",403);
   if(p.length===2&&p[1]==="style"&&m==="PUT"){
