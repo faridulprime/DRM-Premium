@@ -76,6 +76,12 @@ CREATE TABLE duga_change_requests (
 CREATE INDEX idx_duga_changes_parent ON duga_change_requests(parent_change_request_id);
 CREATE INDEX idx_duga_changes_status_updated ON duga_change_requests(status,updated_at DESC);
 CREATE INDEX idx_duga_changes_created ON duga_change_requests(created_at DESC);
+CREATE TRIGGER duga_change_parent_immutable
+BEFORE UPDATE OF parent_change_request_id ON duga_change_requests
+WHEN OLD.parent_change_request_id IS NOT NEW.parent_change_request_id
+BEGIN
+  SELECT RAISE(ABORT, 'change request parent link is immutable');
+END;
 
 CREATE TABLE duga_reviews (
   id TEXT PRIMARY KEY,
