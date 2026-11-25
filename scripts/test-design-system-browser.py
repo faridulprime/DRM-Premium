@@ -449,6 +449,82 @@ def inspect_breakpoint(browser, base_url, name, config):
         context.close()
 
 
+def inspect_resize_transition(browser, base_url, name, config):
+    route, toggle, sidebar, backdrop, uses_dume = config
+    if not uses_dume:
+        return
+    context = browser.new_context(
+        viewport={"width": 390, "height": 844},
+        locale="bn-BD",
+        is_mobile=True,
+        has_touch=True,
+        reduced_motion="no-preference",
+    )
+    context.route("https://**/*", lambda request_route: request_route.abort())
+    page = context.new_page()
+    try:
+        page.goto(base_url + route, wait_until="load", timeout=30000)
+        page.locator(toggle).dispatch_event("click")
+        page.wait_for_function(
+            """({toggle, sidebar}) => document.querySelector(toggle)?.getAttribute("aria-expanded") === "true"
+              && document.querySelector(sidebar)?.classList.contains("mobile-open")
+              && document.body.classList.contains("drawer-open")""",
+            arg={"toggle": toggle, "sidebar": sidebar},
+            timeout=5000,
+        )
+
+        # Crossing to desktop while the drawer is open must close it and
+        # synchronously clear the mobile backdrop and accessibility state.
+        page.set_viewport_size({"width": 761, "height": 900})
+        page.wait_for_function(
+            """({toggle, sidebar, backdrop}) => {
+              const button = document.querySelector(toggle);
+              const panel = document.querySelector(sidebar);
+              const overlay = document.querySelector(backdrop);
+              return button?.getAttribute("aria-expanded") === "false"
+                && !document.body.classList.contains("drawer-open")
+                && !document.body.classList.contains("sidebar-open")
+                && !panel?.classList.contains("mobile-open")
+                && !panel?.classList.contains("dume-mobile-drawer")
+                && overlay?.hidden === true
+                && !overlay?.classList.contains("dume-mobile-backdrop")
+                && !overlay?.classList.contains("is-closing");
+            }""",
+            arg={"toggle": toggle, "sidebar": sidebar, "backdrop": backdrop},
+            timeout=5000,
+        )
+
+        # Returning to mobile must leave a clean closed state and allow a
+        # fresh open/close cycle without stale transitions or timers.
+        page.set_viewport_size({"width": 390, "height": 844})
+        page.locator(toggle).dispatch_event("click")
+        page.wait_for_function(
+            """({toggle, sidebar}) => document.querySelector(toggle)?.getAttribute("aria-expanded") === "true"
+              && document.querySelector(sidebar)?.classList.contains("mobile-open")
+              && document.body.classList.contains("drawer-open")""",
+            arg={"toggle": toggle, "sidebar": sidebar},
+            timeout=5000,
+        )
+        page.locator(toggle).dispatch_event("click")
+        page.wait_for_function(
+            """({toggle}) => document.querySelector(toggle)?.getAttribute("aria-expanded") === "false"
+              && !document.body.classList.contains("drawer-open")""",
+            arg={"toggle": toggle},
+            timeout=5000,
+        )
+        page.wait_for_function(
+            """({sidebar, backdrop}) => !document.querySelector(sidebar)?.classList.contains("mobile-open")
+              && !document.body.classList.contains("drawer-open")
+              && document.querySelector(backdrop)?.hidden === true""",
+            arg={"sidebar": sidebar, "backdrop": backdrop},
+            timeout=2500,
+        )
+    except Exception as exc:
+        fail(f"{name}/mobile-to-desktop-resize: {type(exc).__name__}: {exc}")
+    finally:
+        context.close()
+
+
 def main() -> int:
     server, base_url = serve()
     checks = 0
@@ -465,6 +541,7 @@ def main() -> int:
                     inspect_drawer(browser, base_url, name, config, reduced_motion=False)
                     inspect_drawer(browser, base_url, name, config, reduced_motion=True)
                     inspect_breakpoint(browser, base_url, name, config)
+                    inspect_resize_transition(browser, base_url, name, config)
             browser.close()
     finally:
         server.shutdown()
@@ -483,7 +560,7 @@ def main() -> int:
     print(
         f"PASS: {checks} page/viewport checks across {len(PAGES)} pages; "
         "DUCS contrast samples; DUSS/DUPS/DUCS token loading; keyboard focus; "
-        "DUME normal/reduced-motion drawer lifecycle and the 760/761px breakpoint."
+        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, and mobile-to-desktop resize cleanup."
     )
     print(
         "LIMITATION: 720px is a 200%-zoom layout-width proxy, not native browser zoom. "

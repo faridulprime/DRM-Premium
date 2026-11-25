@@ -11,6 +11,7 @@
  const EASING=rootStyle.getPropertyValue("--dume-drawer-easing").trim()||"cubic-bezier(.16,1,.3,1)";
  const REDUCED=window.matchMedia("(prefers-reduced-motion: reduce)");
  const jobs=new WeakMap();
+ const instances=new Map();
  function mobile(){return window.matchMedia("(max-width:760px)").matches;}
  function clearJob(el){const job=jobs.get(el);if(job){clearTimeout(job.timer);jobs.delete(el);}}
  function setImportant(el,p,v){el.style.setProperty(p,v,"important");}
@@ -29,6 +30,8 @@
   const {sidebar,backdrop,toggle,open}=options||{};
   if(!sidebar)return;
   const state=Boolean(open),isMobile=mobile();
+  if(isMobile)instances.set(sidebar,{sidebar,backdrop,toggle});
+  else instances.delete(sidebar);
   clearJob(sidebar);setAria(toggle,state);
   if(!isMobile){
    sidebar.classList.remove("mobile-open","dume-mobile-drawer");clearInline(sidebar);
@@ -57,11 +60,18 @@
    const timer=setTimeout(()=>{
     sidebar.classList.remove("mobile-open");clearInline(sidebar);sidebar.classList.remove("dume-mobile-drawer");
     if(backdrop){backdrop.hidden=true;backdrop.classList.remove("is-closing","dume-mobile-backdrop");clearInline(backdrop);}
-    document.body.classList.remove("drawer-open");jobs.delete(sidebar);
+    document.body.classList.remove("drawer-open");jobs.delete(sidebar);instances.delete(sidebar);
    },duration+40);
    jobs.set(sidebar,{timer});
   }
  }
  window.DRMMotion=Object.freeze({drawer,config:Object.freeze({drawerDuration:DURATION,drawerOpacityDuration:OPACITY_DURATION,drawerEasing:EASING})});
- window.addEventListener("resize",()=>{if(!mobile())document.querySelectorAll(".yt-sidebar.dume-mobile-drawer").forEach(sidebar=>{clearJob(sidebar);sidebar.classList.remove("mobile-open","dume-mobile-drawer");clearInline(sidebar);document.body.classList.remove("drawer-open");});});
+ window.addEventListener("resize",()=>{
+  if(mobile())return;
+  for(const [sidebar,options] of instances){
+   if(!sidebar.isConnected){instances.delete(sidebar);continue;}
+   if(sidebar.classList.contains("dume-mobile-drawer"))drawer({...options,open:false});
+   else instances.delete(sidebar);
+  }
+ });
 })();
