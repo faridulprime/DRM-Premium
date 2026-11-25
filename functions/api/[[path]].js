@@ -220,7 +220,7 @@ async function handle(req,env){
  // DUGA foundation health probe: authenticated Owner only; read-only and table-independent.
  if(p[0]==="governance"){
   if(user.role!=="owner")return fail("শুধু Owner Governance API ব্যবহার করতে পারবেন।",403);
-  if((p[1]==="health"||p[1]==="changes"||p[1]==="audit")&&m!=="GET")return fail("Method not allowed.",405);
+  if((p[1]==="health"||p[1]==="changes"||p[1]==="audit"||p[1]==="findings")&&m!=="GET")return fail("Method not allowed.",405);
   if(p.length===2&&p[1]==="health"){
    if(m!=="GET")return fail("Method not allowed.",405);
    const expected={
@@ -300,6 +300,29 @@ async function handle(req,env){
     related={reviews:reviews.results||[],approvals:approvals.results||[],validationRuns:validations.results||[],auditEvents:audit.results||[]};
    }catch{return fail("Change request details are unavailable; verify the DUGA schema is installed.",503)}
    return json({ok:true,change:{...change,affected_systems:safeJsonArray(change.affected_systems_json),affected_paths:safeJsonArray(change.affected_paths_json)},...related,limits:{perRelatedCollection:50}});
+  }
+  if(p.length===2&&p[1]==="findings"&&m==="GET"){
+   const rawLimit=u.searchParams.get("limit")||"25";
+   if(!/^(?:[1-9]|[1-4][0-9]|50)$/.test(rawLimit))return fail("limit must be an integer from 1 to 50.",400);
+   const limit=Number(rawLimit),status=u.searchParams.get("status")||"",classification=u.searchParams.get("classification")||"",q=u.searchParams.get("q")||"",cursor=u.searchParams.get("cursor")||"";
+   const allowedStatuses=new Set(["open","under_review","accepted","dismissed","quarantined"]);
+   const allowedClassifications=new Set(["A","B","C","D","E"]);
+   if(status&&!allowedStatuses.has(status))return fail("Invalid finding status filter.",400);
+   if(classification&&!allowedClassifications.has(classification))return fail("Invalid finding classification filter.",400);
+   if(q.length>160||[...q].some(ch=>ch.charCodeAt(0)<32))return fail("Finding search query is invalid or too long.",400);
+   let cursorTime=null,cursorId=null;
+   if(cursor){try{const decoded=new TextDecoder().decode(un64(cursor)),split=decoded.indexOf(":");if(split<1)throw new Error("bad cursor");cursorTime=Number(decoded.slice(0,split));cursorId=decoded.slice(split+1);if(!Number.isSafeInteger(cursorTime)||cursorTime<0||!/^[-A-Za-z0-9_:.]{1,100}$/.test(cursorId))throw new Error("bad cursor");}catch{return fail("Invalid finding pagination cursor.",400)}}
+   const where=[],args=[];
+   if(status){where.push("status=?");args.push(status)}
+   if(classification){where.push("classification=?");args.push(classification)}
+   if(q){where.push("(file_path LIKE ? OR symbol LIKE ? OR repository_commit_sha LIKE ?)");const term="%"+q+"%";args.push(term,term,term)}
+   if(cursorTime!==null){where.push("(created_at<? OR (created_at=? AND id<?))");args.push(cursorTime,cursorTime,cursorId)}
+   const sql="SELECT id,analyzer_version,repository_commit_sha,file_path,symbol,classification,confidence,evidence_json,status,created_at,reviewed_at,reviewed_by_user_id FROM duga_analysis_findings"+(where.length?" WHERE "+where.join(" AND "):"")+" ORDER BY created_at DESC,id DESC LIMIT ?";
+   args.push(limit+1);
+   let result;try{result=await env.DB.prepare(sql).bind(...args).all()}catch{return fail("Analysis finding storage is unavailable; verify the DUGA schema is installed.",503)}
+   const rows=result.results||[],hasMore=rows.length>limit,items=rows.slice(0,limit),last=items[items.length-1];
+   const nextCursor=hasMore&&last?b64(new TextEncoder().encode(String(last.created_at)+":"+last.id)):null;
+   return json({ok:true,items,page:{limit,hasMore,nextCursor}});
   }
   if(p.length===2&&p[1]==="audit"&&m==="GET"){
    const rawLimit=u.searchParams.get("limit")||"25";
