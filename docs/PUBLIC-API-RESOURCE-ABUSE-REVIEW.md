@@ -79,6 +79,6 @@ No runtime API handler, D1 schema, Cloudflare setting, binding, or database was 
 
 The shared `readBody(req)` now consumes the request stream incrementally and rejects once the actual byte count exceeds 20,000 bytes. It retains the declared Content-Length fast rejection, but does not trust that header as the sole size control. Invalid UTF-8 and malformed JSON are rejected. The implementation is bounded to the existing 20 KB policy; the separate Builder and Profile body readers retain their route-specific limits.
 
-The governance API regression suite now sends streamed requests without a Content-Length header. It verifies that a valid small JSON body reaches the reserved-Owner validation path, while a body exceeding 20 KB is rejected before route validation or D1 access. CI must pass on the resulting branch head before this change is considered validated.
+The governance API regression suite sends streamed requests without a Content-Length header and with a deliberately understated Content-Length. It verifies that a valid small JSON body reaches the reserved-Owner validation path, while bodies exceeding 20 KB are rejected before route validation or D1 access. Both cases passed in DUGA Governance CI run #45710504527 on commit `e9155b8e23be50447cd272f41c392a605bc7797a`.
 
 This closes the source-level body-size gap for routes using the shared reader. It does not replace edge rate limiting, request concurrency controls, or deployed Cloudflare testing.
