@@ -373,13 +373,12 @@ async function handle(req,env){
   if(p.length===5&&p[2]==="movies"&&p[4]==="audio"&&m==="POST"){
    const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
    const d=await readBody(req);if(!d||!["original","dubbed"].includes(d.track_type)||!textOK(d.language_folder_id,120)||!await folderParent(d.language_folder_id,"02_LANGUAGE"))return fail("Valid audio type and language folder are required.",400);
-   const assetKey=typeof d.asset_key==="string"?d.asset_key.trim():"",sourceUrl=typeof d.source_url==="string"?d.source_url.trim():"";
-   if(!assetKey&&!sourceUrl)return fail("Provide an uploaded asset_key or HTTPS source_url.",400);
-   if(assetKey&&(!/^movies\/[A-Za-z0-9/_-]{1,240}$/.test(assetKey)||assetKey.split("/").includes("..")))return fail("Invalid movie asset key.",400);
-   if(sourceUrl){try{const parsed=new URL(sourceUrl);if(parsed.protocol!=="https:"||parsed.username||parsed.password||sourceUrl.length>2000)return fail("Audio source must be a valid HTTPS URL.",400)}catch{return fail("Audio source URL is invalid.",400)}}
+   const sourceUrl=typeof d.source_url==="string"?d.source_url.trim():"";
+   if(!sourceUrl)return fail("Provide an HTTPS audio source URL. Media files are not uploaded to this website.",400);
+   try{const parsed=new URL(sourceUrl);if(parsed.protocol!=="https:"||parsed.username||parsed.password||sourceUrl.length>2000)return fail("Audio source must be a valid HTTPS URL.",400)}catch{return fail("Audio source URL is invalid.",400)}
    const id=crypto.randomUUID(),now=Math.floor(Date.now()/1000),label=String(d.label||"").trim().slice(0,100),isDefault=d.is_default===true?1:0;
    const stmts=[];if(isDefault)stmts.push(env.DB.prepare("UPDATE dumc_audio_tracks SET is_default=0 WHERE video_id=? AND track_type=?").bind(videoId,d.track_type));
-   stmts.push(env.DB.prepare("INSERT INTO dumc_audio_tracks(id,video_id,language_folder_id,track_type,label,asset_key,source_url,is_default,sort_order,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)").bind(id,videoId,d.language_folder_id,d.track_type,label,assetKey||null,sourceUrl||null,isDefault,Number.isInteger(d.sort_order)?d.sort_order:now,now,now));
+   stmts.push(env.DB.prepare("INSERT INTO dumc_audio_tracks(id,video_id,language_folder_id,track_type,label,asset_key,source_url,is_default,sort_order,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)").bind(id,videoId,d.language_folder_id,d.track_type,label,null,sourceUrl,isDefault,Number.isInteger(d.sort_order)?d.sort_order:now,now,now));
    await env.DB.batch(stmts);return json({ok:true,id},201);
   }
   if(p.length===6&&p[2]==="movies"&&p[4]==="audio"&&m==="DELETE"){
@@ -390,13 +389,12 @@ async function handle(req,env){
   if(p.length===5&&p[2]==="movies"&&p[4]==="subtitles"&&m==="POST"){
    const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
    const d=await readBody(req);if(!d||!textOK(d.language_folder_id,120)||!await folderParent(d.language_folder_id,"09_SUBTITLES"))return fail("Valid subtitle language folder is required.",400);
-   const assetKey=typeof d.asset_key==="string"?d.asset_key.trim():"",sourceUrl=typeof d.source_url==="string"?d.source_url.trim():"";
-   if(!assetKey&&!sourceUrl)return fail("Provide an uploaded subtitle asset_key or HTTPS source_url.",400);
-   if(assetKey&&(!/^movies\/[A-Za-z0-9/_-]{1,240}$/.test(assetKey)||assetKey.split("/").includes("..")))return fail("Invalid subtitle asset key.",400);
-   if(sourceUrl){try{const parsed=new URL(sourceUrl);if(parsed.protocol!=="https:"||parsed.username||parsed.password||sourceUrl.length>2000)return fail("Subtitle source must be a valid HTTPS URL.",400)}catch{return fail("Subtitle source URL is invalid.",400)}}
+   const sourceUrl=typeof d.source_url==="string"?d.source_url.trim():"";
+   if(!sourceUrl)return fail("Provide an HTTPS subtitle source URL. Subtitle files are not uploaded to this website.",400);
+   try{const parsed=new URL(sourceUrl);if(parsed.protocol!=="https:"||parsed.username||parsed.password||sourceUrl.length>2000)return fail("Subtitle source must be a valid HTTPS URL.",400)}catch{return fail("Subtitle source URL is invalid.",400)}
    const id=crypto.randomUUID(),now=Math.floor(Date.now()/1000),label=String(d.label||"").trim().slice(0,100),isDefault=d.is_default===true?1:0;
    const stmts=[];if(isDefault)stmts.push(env.DB.prepare("UPDATE dumc_subtitles SET is_default=0 WHERE video_id=?").bind(videoId));
-   stmts.push(env.DB.prepare("INSERT INTO dumc_subtitles(id,video_id,language_folder_id,label,asset_key,source_url,is_default,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)").bind(id,videoId,d.language_folder_id,label,assetKey||null,sourceUrl||null,isDefault,now,now));
+   stmts.push(env.DB.prepare("INSERT INTO dumc_subtitles(id,video_id,language_folder_id,label,asset_key,source_url,is_default,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)").bind(id,videoId,d.language_folder_id,label,null,sourceUrl,isDefault,now,now));
    await env.DB.batch(stmts);return json({ok:true,id},201);
   }
   if(p.length===6&&p[2]==="movies"&&p[4]==="subtitles"&&m==="DELETE"){
