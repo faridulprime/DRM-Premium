@@ -202,6 +202,87 @@ def main() -> int:
         should_fail=True,
     )
 
+    insert_assignment(
+        "assignment-system-owner", "system", "DUSS",
+        "system-owner", "human", user_id="human-2"
+    )
+    check(
+        "approval accepted with active matching system-owner assignment",
+        lambda: db.execute(
+            """INSERT INTO duga_approvals
+               (id,change_request_id,approver_user_id,approver_role,
+                authorization_assignment_id,authorization_scope_type,authorization_scope_id,
+                policy_commit_sha,decision,approved_commit_sha,created_at)
+               VALUES ('approval-valid','change-self-audit','human-2','system-owner',
+                       'assignment-system-owner','system','DUSS','policy-sha',
+                       'approved','commit-1',3)"""
+        ),
+        should_fail=False,
+    )
+    check(
+        "approval rejects mismatched system scope",
+        lambda: db.execute(
+            """INSERT INTO duga_approvals
+               (id,change_request_id,approver_user_id,approver_role,
+                authorization_assignment_id,authorization_scope_type,authorization_scope_id,
+                policy_commit_sha,decision,approved_commit_sha,created_at)
+               VALUES ('approval-wrong-scope','change-self-audit','human-2','system-owner',
+                       'assignment-system-owner','system','OTHER','policy-sha',
+                       'approved','commit-1',4)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "approval rejects mismatched approver identity",
+        lambda: db.execute(
+            """INSERT INTO duga_approvals
+               (id,change_request_id,approver_user_id,approver_role,
+                authorization_assignment_id,authorization_scope_type,authorization_scope_id,
+                policy_commit_sha,decision,approved_commit_sha,created_at)
+               VALUES ('approval-wrong-user','change-self-audit','human-1','system-owner',
+                       'assignment-system-owner','system','DUSS','policy-sha',
+                       'approved','commit-1',4)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "approval rejects stale policy revision",
+        lambda: db.execute(
+            """INSERT INTO duga_approvals
+               (id,change_request_id,approver_user_id,approver_role,
+                authorization_assignment_id,authorization_scope_type,authorization_scope_id,
+                policy_commit_sha,decision,approved_commit_sha,created_at)
+               VALUES ('approval-stale-policy','change-self-audit','human-2','system-owner',
+                       'assignment-system-owner','system','DUSS','old-policy',
+                       'approved','commit-1',4)"""
+        ),
+        should_fail=True,
+    )
+    db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=5 WHERE id='assignment-system-owner'")
+    check(
+        "approval rejects revoked assignment",
+        lambda: db.execute(
+            """INSERT INTO duga_approvals
+               (id,change_request_id,approver_user_id,approver_role,
+                authorization_assignment_id,authorization_scope_type,authorization_scope_id,
+                policy_commit_sha,decision,approved_commit_sha,created_at)
+               VALUES ('approval-revoked','change-self-audit','human-2','system-owner',
+                       'assignment-system-owner','system','DUSS','policy-sha',
+                       'approved','commit-1',6)"""
+        ),
+        should_fail=True,
+    )
+    check(
+        "approval evidence cannot be updated",
+        lambda: db.execute("UPDATE duga_approvals SET decision='rejected' WHERE id='approval-valid'"),
+        should_fail=True,
+    )
+    check(
+        "approval evidence cannot be deleted",
+        lambda: db.execute("DELETE FROM duga_approvals WHERE id='approval-valid'"),
+        should_fail=True,
+    )
+
     check(
         "finding review metadata must be paired",
         lambda: db.execute(
@@ -376,7 +457,7 @@ def main() -> int:
         "SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'duga_%'"
     ).fetchone()[0]
 
-    if (table_count, trigger_count) != (8, 5):
+    if (table_count, trigger_count) != (8, 8):
         raise AssertionError(
             f"Unexpected schema object counts: tables={table_count}, triggers={trigger_count}"
         )
