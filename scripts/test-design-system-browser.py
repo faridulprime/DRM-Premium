@@ -250,8 +250,9 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     top: rect.top - shellRect.top,
                     right: shellRect.right - rect.right,
                     bottom: shellRect.bottom - rect.bottom,
-                    expectedTop: innerWidth <= 600 ? 112 : 66,
-                    expectedBottom: 34
+                    expectedTop: parseFloat(style.getPropertyValue("--dups-anchor-builder-inspector-top")),
+                    expectedRight: parseFloat(style.getPropertyValue("--dups-anchor-builder-inspector-right")),
+                    expectedBottom: parseFloat(style.getPropertyValue("--dups-anchor-builder-inspector-bottom"))
                   };
                 }"""
             )
@@ -265,7 +266,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                         fail(f"{name}/{viewport_name}: responsive Builder inspector is not absolutely positioned ({builder_inspector})")
                     if float(builder_inspector["zIndex"]) != float(builder_inspector["token"]):
                         fail(f"{name}/{viewport_name}: Builder inspector z-index does not match its DUPS token ({builder_inspector})")
-                    if abs(builder_inspector["top"] - builder_inspector["expectedTop"]) > 1 or abs(builder_inspector["right"]) > 1 or abs(builder_inspector["bottom"] - builder_inspector["expectedBottom"]) > 1:
+                    if abs(builder_inspector["top"] - builder_inspector["expectedTop"]) > 1 or abs(builder_inspector["right"] - builder_inspector["expectedRight"]) > 1 or abs(builder_inspector["bottom"] - builder_inspector["expectedBottom"]) > 1:
                         fail(f"{name}/{viewport_name}: Builder inspector offsets do not match its fixed shell containing block ({builder_inspector})")
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: Builder inspector DUPS layer/geometry could not be resolved ({builder_inspector})")
