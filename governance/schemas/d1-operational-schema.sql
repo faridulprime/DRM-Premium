@@ -117,6 +117,8 @@ WHEN
   OR (OLD.implementer_type IS NULL AND NEW.implementer_type IS NOT NULL
       AND NOT (OLD.status='approved' AND NEW.status='implementing'))
   OR (NEW.status='implementing' AND NEW.implementer_type IS NULL)
+  OR (OLD.status='implementing' AND NEW.status='validating'
+      AND (NEW.implementation_commit_sha IS NULL OR length(NEW.implementation_commit_sha)=0))
   OR (OLD.implementation_commit_sha IS NOT NULL
       AND NEW.implementation_commit_sha IS NOT OLD.implementation_commit_sha)
   OR (NEW.implementation_commit_sha IS NOT OLD.implementation_commit_sha
