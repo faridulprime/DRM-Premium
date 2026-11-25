@@ -497,6 +497,10 @@ def inspect_resize_transition(browser, base_url, name, config):
 
         stage = "reopening after returning to mobile"
         page.set_viewport_size({"width": 390, "height": 844})
+        # Let the matchMedia change event and each page's breakpoint-close
+        # handler finish before sending a new user interaction.
+        page.wait_for_function("() => innerWidth === 390 && matchMedia('(max-width:760px)').matches", timeout=5000)
+        page.wait_for_timeout(120)
         page.locator(toggle).dispatch_event("click")
         page.wait_for_function(
             """({toggle, sidebar}) => document.querySelector(toggle)?.getAttribute("aria-expanded") === "true"
