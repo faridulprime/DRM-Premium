@@ -14,6 +14,13 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 6. Expand DUPS beyond current header/drawer stacking assertions to positioned components, stacking contexts, anchors and collision fallbacks.
 7. Expand DUME beyond the shared mobile drawer controller to Profile, Live Users modal effects, Site Builder and dialogs; add rapid open/close and resize-during-transition tests.
 
+## Application: DUMC movie library
+
+1. [DONE — taxonomy only] DUMC v1.0.0 catalog and Upload Studio folder explorer are on `feature/full-admin-panel`; 12 top-level sections / 226 folder nodes. See `docs/DUMC-SPEC.md`.
+2. Design and independently review a D1 schema for canonical movie records, stable folder IDs, many-to-many movie-folder relations, original/dubbed audio variants, subtitles and metadata provenance.
+3. Add authenticated, role-scoped folder/movie CRUD and assignment APIs with validation, uniqueness constraints, auditability and regression tests.
+4. Keep folder assignment disabled until the persistence API is deployed and verified. Do not apply any migration or deploy without explicit Owner approval.
+
 ## Application: API and Website Builder review
 
 1. Inspect the actual Cloudflare edge/WAF/rate-limit rules for unauthenticated `POST /api/presence` and `POST /api/analytics/event`; repository source does not include this account configuration.
