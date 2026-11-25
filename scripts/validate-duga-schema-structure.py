@@ -16,7 +16,7 @@ EXPECTED_COLUMNS = {
     "duga_assignments": "id scope_type scope_id role_id subject_type user_id principal_id status assigned_by_user_id created_at revoked_at".split(),
     "duga_change_requests": "id title summary rationale status risk_level affected_systems_json affected_paths_json rollback_plan requested_by_type requested_by_user_id requested_by_principal_id source_branch base_commit_sha policy_commit_sha implementer_type implementer_user_id implementer_principal_id implementation_commit_sha state_version created_at updated_at".split(),
     "duga_reviews": "id change_request_id review_type reviewer_type reviewer_user_id reviewer_principal_id decision reviewed_commit_sha evidence_json created_at".split(),
-    "duga_approvals": "id change_request_id approver_user_id approver_role decision approved_commit_sha rationale created_at".split(),
+    "duga_approvals": "id change_request_id approver_user_id approver_role authorization_assignment_id authorization_scope_type authorization_scope_id policy_commit_sha decision approved_commit_sha rationale created_at".split(),
     "duga_validation_runs": "id change_request_id commit_sha status validator validator_version results_json started_at completed_at created_at".split(),
     "duga_audit_events": "id aggregate_type aggregate_id event_type actor_type actor_user_id actor_principal_id actor_system_id payload_json policy_commit_sha created_at".split(),
     "duga_analysis_findings": "id analyzer_version repository_commit_sha file_path symbol classification confidence evidence_json status created_at reviewed_at reviewed_by_user_id".split(),
@@ -81,6 +81,9 @@ EXPECTED_TRIGGERS = {
     "duga_review_no_implementer_self_audit": ("duga_reviews", "Implementer cannot independently audit"),
     "duga_reviews_no_update": ("duga_reviews", "immutable evidence"),
     "duga_reviews_no_delete": ("duga_reviews", "immutable evidence"),
+    "duga_approval_authorization_guard": ("duga_approvals", "active scoped assignment"),
+    "duga_approvals_no_update": ("duga_approvals", "immutable evidence"),
+    "duga_approvals_no_delete": ("duga_approvals", "immutable evidence"),
     "duga_audit_no_update": ("duga_audit_events", "append-only"),
     "duga_audit_no_delete": ("duga_audit_events", "append-only"),
 }
@@ -157,6 +160,9 @@ def main() -> int:
             "duga_review_no_implementer_self_audit": ("before insert on duga_reviews", "raise(abort"),
             "duga_reviews_no_update": ("before update on duga_reviews", "raise(abort"),
             "duga_reviews_no_delete": ("before delete on duga_reviews", "raise(abort"),
+            "duga_approval_authorization_guard": ("before insert on duga_approvals", "raise(abort"),
+            "duga_approvals_no_update": ("before update on duga_approvals", "raise(abort"),
+            "duga_approvals_no_delete": ("before delete on duga_approvals", "raise(abort"),
             "duga_audit_no_update": ("before update on duga_audit_events", "raise(abort"),
             "duga_audit_no_delete": ("before delete on duga_audit_events", "raise(abort"),
         }
@@ -170,6 +176,7 @@ def main() -> int:
             "duga_assignments": {("assigned_by_user_id", "users", "id"), ("user_id", "users", "id")},
             "duga_change_requests": {("requested_by_user_id", "users", "id"), ("implementer_user_id", "users", "id")},
             "duga_reviews": {("change_request_id", "duga_change_requests", "id"), ("reviewer_user_id", "users", "id")},
+            "duga_approvals": {("change_request_id", "duga_change_requests", "id"), ("approver_user_id", "users", "id"), ("authorization_assignment_id", "duga_assignments", "id")},
             "duga_approvals": {("change_request_id", "duga_change_requests", "id"), ("approver_user_id", "users", "id")},
             "duga_validation_runs": {("change_request_id", "duga_change_requests", "id")},
             "duga_audit_events": {("actor_user_id", "users", "id")},
@@ -200,7 +207,7 @@ def main() -> int:
 
         expected_fk_counts = {
             "duga_assignments": 2, "duga_change_requests": 2,
-            "duga_reviews": 2, "duga_approvals": 2,
+            "duga_reviews": 2, "duga_approvals": 3,
             "duga_validation_runs": 1, "duga_audit_events": 1,
             "duga_analysis_findings": 1, "duga_jobs": 0,
         }
