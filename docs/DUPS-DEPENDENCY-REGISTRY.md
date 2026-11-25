@@ -179,3 +179,8 @@ The fixed account drawer's existing desktop placement (51.1% vertical; calc(54.4
 
 The browser test now emits a diagnostic inventory of stacking-context-producing ancestors for visible fixed/sticky elements across the five static pages and seven viewport widths. It includes positioned/fixed/sticky z-index, opacity, blend mode, isolation, transforms, filters, perspective, containment, container queries, clip-path/masks, flex/grid-item z-index and relevant `will-change` values. This inventory is diagnostic only; it does not fail merely because an intentional context exists. The latest test expansion has not yet been verified by a completed Chromium run. It does not cover all pseudo-elements, shadow roots, iframe documents, dynamic application states, native browser zoom, physical iOS safe areas, or deployed runtime.
 
+
+
+### Upload Studio mobile global-header anchors — 2026-11-26
+
+The mobile fixed `.studio-global-topbar` now uses the existing `--dups-offset-0` primitive for its top, left and right viewport edges; its existing `--dups-layer-home-header-mobile` layer and 58px header geometry are unchanged. The Chromium audit checks computed fixed positioning, all three rendered viewport-edge offsets and layer-token agreement at the sampled Upload Studio widths up to 760 CSS px. This is a targeted source/geometry assertion, not a native browser zoom, physical safe-area or deployed-runtime test.
