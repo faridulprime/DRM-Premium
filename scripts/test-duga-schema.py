@@ -247,7 +247,7 @@ def main() -> int:
           should_fail=False)
 
     check(
-        "human implementer requires human user identity",
+        "request cannot be inserted with preassigned human implementer",
         lambda: db.execute(
             """INSERT INTO duga_change_requests
                (id,title,summary,rationale,status,risk_level,affected_systems_json,
@@ -261,7 +261,7 @@ def main() -> int:
         should_fail=True,
     )
     check(
-        "AI implementer requires AI principal identity",
+        "request cannot be inserted with preassigned AI implementer",
         lambda: db.execute(
             """INSERT INTO duga_change_requests
                (id,title,summary,rationale,status,risk_level,affected_systems_json,
