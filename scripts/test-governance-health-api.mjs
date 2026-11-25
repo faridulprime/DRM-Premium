@@ -29,7 +29,7 @@ const schemaSpec = {
 function tokenHash(token) {
   return createHash("sha256").update(token).digest("base64url");
 }
-function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, failChangeDetail = false, failAudit = false, auditRows = [], changeRows = [], changeDetail = null, relatedRows = {}, tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
+function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, failChangeDetail = false, failAudit = false, failFindings = false, findingRows = [], auditRows = [], changeRows = [], changeDetail = null, relatedRows = {}, tables = [], completeSchema = false, omitColumn = null, dbEnabled = true } = {}) {
   const users = new Map([
     [tokenHash("owner-token"), { id: "owner-1", email: "owner@example.test", username: "owner", role: "owner" }],
     [tokenHash("admin-token"), { id: "admin-1", email: "admin@example.test", username: "admin", role: "admin" }],
@@ -51,6 +51,7 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
           throw new Error("Unexpected SQL in test: " + sql);
         },
         async all() {
+          if (sql.includes("FROM duga_analysis_findings")) { if (failFindings) throw new Error("simulated findings query failure"); return { results: findingRows }; }
           if (sql.includes("FROM duga_reviews")) return { results: relatedRows.reviews || [] };
           if (sql.includes("FROM duga_approvals")) return { results: relatedRows.approvals || [] };
           if (sql.includes("FROM duga_validation_runs")) return { results: relatedRows.validationRuns || [] };
