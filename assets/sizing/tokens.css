@@ -1,4 +1,4 @@
-/* DRM Universal Sizing System (DUSS) — v0.4.0
+/* DRM Universal Sizing System (DUSS) — v0.5.0
  * Semantic sizing tokens are introduced incrementally. Component geometry
  * remains unchanged unless an audited selector explicitly consumes a token.
  */
@@ -296,6 +296,7 @@
   --duss-button-admin-padding-x: 1rem;
   --duss-button-admin-radius: 999px;
   --duss-button-admin-font-size: 0.875rem;
+  --duss-button-admin-font-size-mobile: 0.8125rem;
   --duss-button-admin-font-weight: 600;
   --duss-button-admin-small-padding-y: 0.5rem;
   --duss-button-admin-small-padding-x: 0.8125rem;
