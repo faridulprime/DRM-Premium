@@ -194,7 +194,7 @@ Allowed work now: static review, route-contract refinement, mock/SQLite test des
 
 ## 11. Health-readiness alignment — resolved in feature branch
 
-The earlier finding in this section has been resolved. `GET /api/governance/health` now requires all four `duga_change_requests` lifecycle triggers (`insert_guard`, `update_guard`, `no_delete`, and `transition_audit`) and the `blocked_from_status` / `block_reason_code` columns. It also checks selected SQL-definition markers for those triggers. The mocked handler suite includes regressions proving that omission of the transition-audit trigger or `block_reason_code` column yields `schema: partial`.
+The earlier finding in this section has been resolved. `GET /api/governance/health` now requires all four `duga_change_requests` lifecycle triggers (`insert_guard`, `update_guard`, `no_delete`, and `transition_audit`) and the `blocked_from_status` / `block_reason_code` columns. It also checks selected SQL-definition markers for those triggers. The mocked handler suite independently omits each of the four lifecycle triggers and proves every omission yields `schema: partial`; it also verifies the `block_reason_code` column is required. All cases passed in [run #45674314833](https://github.com/faridulprime/DRM-Premium/actions/runs/45674314833).
 
 The health endpoint checks expected tables, columns, named indexes, required triggers, and selected trigger-definition markers. It is still a targeted structural check—not full SQL equivalence, migration-ledger verification, data-integrity proof, or evidence that the schema exists in a live Cloudflare D1 database. The endpoint must not be used as a substitute for the disposable-D1 acceptance gates in Section 10.
 
