@@ -86,4 +86,4 @@ Verification date: 2026-11-25
 
 - Replaced the Restricted Users modal's literal `z-index: 120` with the existing `--dups-layer-live-drawer` token; numeric behavior is preserved.
 - Extended the Chromium design-system browser audit to verify computed fixed positioning, modal z-index/token agreement, and viewport-center geometry at all seven existing viewport widths.
-- Validation is pending the workflow run for the resulting commit. This is a targeted modal check, not full stacking-context, anchor-collision, or deployed-environment validation.
+- Chromium browser audit passed in [run #45676504120](https://github.com/faridulprime/DRM-Premium/actions/runs/45676504120) on commit `5cacd550b19b5d2e227b56de25d5fd235494e9a8`; the modal assertions passed at all seven viewport widths, alongside the existing 35 page/viewport checks. This is a targeted modal check, not full stacking-context, anchor-collision, or deployed-environment validation.
