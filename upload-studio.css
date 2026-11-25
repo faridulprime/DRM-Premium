@@ -193,3 +193,42 @@ body.upload-studio-page.sidebar-open{padding-left:240px!important}
  .upload-studio-page .panel,.upload-studio-page .list-panel{padding:12px 10px}
  .upload-studio-page .tab,.upload-studio-page .type{font-size:12px;padding-inline:9px}
 }
+
+
+/* DUMC — DRM Universal Movie Section */
+.dumc-workspace{display:grid;gap:18px}
+.dumc-intro,.dumc-tree-panel,.dumc-detail-panel{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:20px}
+.dumc-brandline{display:flex;align-items:center;gap:12px}
+.dumc-mark{display:grid;place-items:center;width:42px;height:42px;border:1px solid #8b79d855;border-radius:12px;background:#8b79d81a;color:#c6b8ff;font-weight:800;font-size:20px}
+.dumc-brandline .eyebrow{margin:0 0 5px}
+.dumc-brandline h3{margin:0;color:var(--text);font-size:21px}
+.dumc-intro>p:not(.eyebrow){max-width:900px;color:var(--muted);font-size:13px;line-height:1.7}
+.dumc-stats{display:flex;flex-wrap:wrap;gap:8px}
+.dumc-stats span{padding:7px 10px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:11px}
+.dumc-stats strong{color:var(--text);font-size:13px}
+.dumc-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.dumc-search-label{font-size:12px;color:var(--muted)}
+.dumc-toolbar input{flex:1 1 280px;min-width:180px;height:42px;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)}
+.dumc-toolbar button{min-height:42px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-size:12px}
+.dumc-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr);align-items:start;gap:14px}
+.dumc-tree-panel{max-height:680px;overflow:auto}
+.dumc-tree-node{margin:2px 0}
+.dumc-node-summary{display:flex;align-items:center;gap:9px;min-height:48px;padding:7px 10px;border-radius:9px;cursor:pointer;list-style:none}
+.dumc-node-summary::-webkit-details-marker{display:none}
+.dumc-node-summary:hover{background:#ffffff0a}
+.dumc-node-summary.is-selected{background:#8b79d81c;outline:1px solid #8b79d844}
+.dumc-folder-glyph{width:18px;flex:0 0 18px;color:#c6b8ff;font-size:17px;text-align:center}
+.dumc-node-copy{display:grid;gap:2px;min-width:0}
+.dumc-node-copy strong{font-size:13px;color:var(--text)}
+.dumc-node-copy small{font-size:11px;color:var(--muted);line-height:1.4}
+.dumc-node-count{margin-left:auto;color:var(--muted);font-size:11px}
+.dumc-children{margin-left:15px;padding-left:10px;border-left:1px solid var(--line)}
+.dumc-leaf{margin:2px 0}
+.dumc-detail-panel{position:sticky;top:18px}
+.dumc-detail-panel h3{margin:6px 0 10px;font-size:19px}
+.dumc-detail-panel>p:not(.eyebrow){color:var(--muted);font-size:13px;line-height:1.6}
+.dumc-selected-meta{padding-top:12px;border-top:1px solid var(--line);color:#c6b8ff;font-size:11px;overflow-wrap:anywhere}
+.dumc-storage-note{margin:0;padding:13px 15px;border:1px solid #a58cff33;border-radius:10px;background:#a58cff0b;color:var(--muted);font-size:12px;line-height:1.65}
+.dumc-storage-note strong{color:var(--text)}
+@media(max-width:900px){.dumc-layout{grid-template-columns:1fr}.dumc-detail-panel{position:static}}
+@media(max-width:600px){.dumc-intro,.dumc-tree-panel,.dumc-detail-panel{padding:14px}.dumc-toolbar{align-items:stretch}.dumc-toolbar button{flex:1}.dumc-brandline h3{font-size:18px}}
