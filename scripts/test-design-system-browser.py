@@ -872,6 +872,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const root = getComputedStyle(document.documentElement);
                   const contracts = [
                     ["site-builder", "#siteBuilder", "--dups-layer-site-builder"],
+                    ["register-dialog", "#registerDialog", "--dups-layer-register-dialog"],
                     ["suspension-screen", "#accountSuspensionScreen", "--dups-layer-suspension-screen"],
                     ["suspension-grain", ".suspension-grain", null],
                     ["profile-bar-backdrop", "#profileBarBackdrop", "--dups-layer-profile-complete-backdrop"],
@@ -909,7 +910,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                         fail(f"{name}/{viewport_name}: {layer['name']} is not fixed-positioned ({layer})")
                     if layer["token"] is not None and float(layer["zIndex"]) != float(layer["token"]):
                         fail(f"{name}/{viewport_name}: {layer['name']} z-index does not match its DUPS token ({layer})")
-                    if layer["name"] in ("site-builder", "suspension-screen", "suspension-grain"):
+                    if layer["name"] in ("site-builder", "register-dialog", "suspension-screen", "suspension-grain"):
                         if any(abs(float(layer[edge].replace("px", "")) - layer["expectedZero"]) > 1 for edge in ("top", "right", "bottom", "left")):
                             fail(f"{name}/{viewport_name}: {layer['name']} full-viewport edges differ from the DUPS zero-offset token ({layer})")
                 except (TypeError, ValueError, KeyError):
