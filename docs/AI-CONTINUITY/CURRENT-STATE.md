@@ -49,7 +49,7 @@ Verification date: 2026-11-25
 
 ## Next direction
 
-1. Expand DUCS contrast validation from the four representative pairs to all meaningful semantic foreground/background pairs and interaction states; keep page-scoped palette identity intact.
+1. Continue DUCS contrast review: 98 curated source-level pairs and 16 calculation-engine unit tests now pass CI; 93 pairs meet thresholds and five non-text boundaries need rendered-context review. Add only source-backed state pairs and complete forced-colors/browser checks.
 2. Continue DUPS migration by mapping the remaining positioned elements, anchoring relationships, collision/fallback behavior and stacking contexts before tokenizing further.
 3. Continue DUME beyond the shared mobile drawer: Profile drawer, Live Users modal effects, Site Builder and dialog transitions; add resize-during-transition and rapid interaction checks.
 4. Continue DUSS component-family audit for remaining buttons, badges, cards, grids, tables, pagination, dialogs, toast and tooltip; review icon optical alignment with rendered evidence.
@@ -70,3 +70,12 @@ Verification date: 2026-11-25
 - Complete DUGA Governance CI passed on `2481651798ef60c3793bfeafe81abff1cd9aeec6`: [run #45673718961](https://github.com/faridulprime/DRM-Premium/actions/runs/45673718961). Follow-up documentation CI also passed on `e0a85898697e159afccf38a575099a1d7ea307a4` (run #45673812326) and the then-current head `277f7aaf1752abe0c0ea478289e81c1611d555c1` (run #45673820027).
 - D1 `batch()` atomicity / `changes()` coupling remain unverified; Governance write APIs and shared Preview/Production migration remain NO-GO. The earlier health-route gap for change-request lifecycle triggers and blocked-state columns is resolved on the feature branch; see `docs/DUGA-API-WRITE-CONTRACT.md` Section 11 and `docs/DUGA-API-INTEGRATION-READINESS.md` Section 11.
 - Next: complete CI verification, then add exact D1 statement-semantics tests only in an explicitly approved disposable database after its identity, backup and migration history are verified. Do not create migration 0009 or touch shared Preview/Production.
+
+
+## DUCS contrast calculation hardening — 2026-11-25
+
+- Added `scripts/test-ducs-contrast-unit.py` with 16 tests covering HEX/RGB parsing, alpha channels, modern RGB syntax, invalid grammar/ranges, token fallback/nesting/cycles, WCAG reference math and alpha compositing.
+- Updated `.github/workflows/ducs-contrast-audit.yml` to run the unit suite before the 98-pair source audit and to trigger on unit-test file changes.
+- CI passed on `d77b339e5c0fcc1ec32fcb9c0f6adafb9914d18e`: [run #45675221898](https://github.com/faridulprime/DRM-Premium/actions/runs/45675221898). All 16 unit tests passed; the source audit reported 93/98 pairs meeting thresholds and five non-text boundary pairs for contextual review.
+- Updated DUCS contrast/accessibility documentation and next-task tracking. No color token values or page styling were changed in this pass.
+- Remaining: verify the follow-up docs-triggered CI, review the five boundary pairs in rendered component context, and add state/overlay/forced-colors checks. Do not call the source-level audit a full WCAG conformance test.
