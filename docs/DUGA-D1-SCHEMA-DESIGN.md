@@ -123,3 +123,10 @@ The draft now requires affected-system and affected-path payloads to be JSON arr
 `scripts/validate-duga-schema-structure.py` loads the design draft into an in-memory SQLite database and checks exact table/column inventories, index presence plus uniqueness/partial flags, trigger presence/body markers, critical foreign-key relationships, and selected CHECK constraints. It is a regression guard for the draft—not a live D1 comparison or migration preflight. The health endpoint's required index inventory also includes the single-active-platform-owner uniqueness index.
 
 The structural regression validator additionally checks the ordered columns of all 16 indexes and explicit declared types/nullability for critical columns. These checks protect the draft against silent index-order and critical-column contract drift; they remain local SQLite draft checks, not a live Preview D1 inspection.
+
+
+## 20. Approval authorization evidence and immutability
+
+The draft's approval record now references the exact human assignment used for authorization and snapshots its scope plus the request's policy commit SHA. A BEFORE INSERT trigger requires that assignment to be active, human, owned by the approver, role-matched, scope-matched and applicable to the change's affected systems; it also requires the recorded policy revision to match the change request. Platform Owner approvals require the platform-wide assignment; System Owner approvals require a system-scoped assignment covering an affected system. Approval rows reject UPDATE and DELETE; later assignment revocation does not rewrite historical approval evidence.
+
+This is database-level consistency evidence, not a replacement for server-side session authentication, trusted actor derivation, or policy evaluation. The trigger cannot establish that the API obtained the approver identity from a trusted session. The scope model also assumes affected_systems_json contains canonical system IDs.
