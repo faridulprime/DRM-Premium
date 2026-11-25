@@ -243,3 +243,8 @@ The Live Users row avatar and drawer avatar image layers now use the existing ze
 
 
 The registration dialog's base selector now declares `z-index:var(--dups-layer-register-dialog, 1001)`. This makes its component layer explicit without changing native modal top-layer behavior or dialog centering.
+
+
+## Homepage status and Upload Studio thumbnail geometry — 2026-11-26
+
+Two remaining meaningful zero-edge declarations were tokenized: the Homepage login-status notice's right anchor and the Upload Studio thumbnail play-overlay's four-edge fill. The browser audit now verifies the thumbnail overlay's computed geometry against `--dups-offset-0` without changing its positioning mode or centered content.
