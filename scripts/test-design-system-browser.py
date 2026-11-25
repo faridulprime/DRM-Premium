@@ -810,7 +810,10 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                       state,
                       position: style.position,
                       top: parseFloat(style.top),
-                      token: tokenPixels
+                      token: tokenPixels,
+                      left: parseFloat(style.left),
+                      right: parseFloat(style.right),
+                      expectedZero: parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--dups-offset-0"))
                     });
                   }
                   if (form) form.hidden = original.loginHidden;
@@ -827,6 +830,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                             fail(f"{name}/{viewport_name}: Category Bar is not fixed-positioned ({state})")
                         if abs(state["top"] - float(state["token"])) > 1:
                             fail(f"{name}/{viewport_name}: Category Bar computed top does not match its DUPS state token ({state})")
+                        if any(abs(state[edge] - state["expectedZero"]) > 1 for edge in ("left", "right")):
+                            fail(f"{name}/{viewport_name}: Category Bar horizontal edges differ from the DUPS zero-offset token ({state})")
                     except (TypeError, ValueError, KeyError):
                         fail(f"{name}/{viewport_name}: Category Bar anchor token could not be resolved ({state})")
 
