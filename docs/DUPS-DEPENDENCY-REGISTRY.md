@@ -148,3 +148,8 @@ The registration dialog close button now consumes dedicated top/right tokens (17
 
 
 The compact/mobile rule retains its existing 10px left and right insets through separate compact tokens; the test now distinguishes desktop center anchoring from the compact full-width inset layout at the 760px breakpoint.
+
+
+### Website Builder live-edit overlay migration — 2026-11-26
+
+The dynamically created `.sb-live-edit-overlay` now uses the zero-offset primitive for its full-wrapper inset and a dedicated local layer token (20). The actual parent selector remains a positioned, isolated wrapper. Chromium verifies the wrapper context, absolute fill geometry and computed layer using a DOM fixture that matches the runtime class structure; iframe pointer/event integration remains outside this static audit.

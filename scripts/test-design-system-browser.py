@@ -370,6 +370,42 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     fail(f"{name}/{viewport_name}: header login status anchor could not be resolved ({header_status_anchor})")
 
         if name == "homepage":
+            builder_live_overlay = page.evaluate(
+                """() => {
+                  const wrap = document.createElement("div");
+                  wrap.className = "sb-live-preview-wrap";
+                  wrap.style.width = "200px";
+                  wrap.style.height = "120px";
+                  const overlay = document.createElement("div");
+                  overlay.className = "sb-live-edit-overlay";
+                  wrap.appendChild(overlay);
+                  document.body.appendChild(wrap);
+                  const wrapStyle = getComputedStyle(wrap);
+                  const style = getComputedStyle(overlay);
+                  const root = getComputedStyle(document.documentElement);
+                  return {
+                    containingBlockPosition: wrapStyle.position,
+                    isolation: wrapStyle.isolation,
+                    position: style.position,
+                    top: style.top,
+                    right: style.right,
+                    bottom: style.bottom,
+                    left: style.left,
+                    zIndex: parseFloat(style.zIndex),
+                    expectedZ: parseFloat(root.getPropertyValue("--dups-layer-builder-live-overlay"))
+                  };
+                }"""
+            )
+            try:
+                if builder_live_overlay["containingBlockPosition"] != "relative" or builder_live_overlay["isolation"] != "isolate":
+                    fail(f"{name}/{viewport_name}: Builder live-edit overlay containing block/isolation changed ({builder_live_overlay})")
+                if builder_live_overlay["position"] != "absolute" or any(abs(float(builder_live_overlay[edge].replace("px", ""))) > 1 for edge in ("top", "right", "bottom", "left")):
+                    fail(f"{name}/{viewport_name}: Builder live-edit overlay no longer fills its preview wrapper ({builder_live_overlay})")
+                if builder_live_overlay["zIndex"] != builder_live_overlay["expectedZ"]:
+                    fail(f"{name}/{viewport_name}: Builder live-edit overlay layer differs from its DUPS token ({builder_live_overlay})")
+            except (TypeError, ValueError, KeyError):
+                fail(f"{name}/{viewport_name}: Builder live-edit overlay geometry/layer could not be resolved ({builder_live_overlay})")
+
             register_close_anchor = page.evaluate(
                 """() => {
                   const dialog = document.querySelector("#registerDialog");

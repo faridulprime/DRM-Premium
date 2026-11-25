@@ -46,7 +46,7 @@ body.visual-editor-active{cursor:crosshair}
 /* Parent-document interaction layer: the iframe itself never receives user clicks */
 .sb-live-preview-wrap{position:relative;width:100%;isolation:isolate}
 .sb-live-preview-wrap .sb-live-preview{display:block;pointer-events:none}
-.sb-live-edit-overlay{position:absolute;inset:0;z-index:20;background:transparent;cursor:crosshair;touch-action:pan-y}
+.sb-live-edit-overlay{position:absolute;inset:var(--dups-offset-0, 0);z-index:var(--dups-layer-builder-live-overlay, 20);background:transparent;cursor:crosshair;touch-action:pan-y}
 .sb-live-edit-overlay:active{cursor:crosshair}
 
 /* Public account registration — Live Users graphite modal language. */

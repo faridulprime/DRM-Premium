@@ -156,3 +156,12 @@ The existing translateX(-50%) centering behavior and local layer 140 are retaine
 | `--dups-anchor-live-presence-edge` | -1px | Presence indicator's slight outward overlap beyond its avatar |
 
 The migration preserves existing values. Chromium opens the static registration dialog and checks its close-control offsets, and creates a temporary Live Users avatar fixture to verify the presence dot's absolute positioning and negative edge offsets at each viewport.
+
+
+## Website Builder live-edit overlay layer — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-layer-builder-live-overlay` | 20 | Local interaction layer above the Website Builder preview iframe |
+
+The overlay keeps a zero inset via `--dups-offset-0` and remains absolutely positioned within `.sb-live-preview-wrap` (`position: relative; isolation: isolate`). Chromium builds a matching wrapper fixture and checks the containing block, full-edge coverage and local layer. This validates CSS composition, not the iframe preview's full event lifecycle.
