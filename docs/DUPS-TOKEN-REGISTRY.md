@@ -251,3 +251,8 @@ The `.live-avatar img` and `.live-drawer-avatar img` positioned image layers now
 
 
 The public registration dialog now explicitly consumes `--dups-layer-register-dialog` (1001) in its base selector. Native modal top-layer behavior remains authoritative when opened; the numeric alias documents and preserves its in-document layer contract.
+
+
+## Homepage status and Upload Studio thumbnail overlay — 2026-11-26
+
+The Homepage `.header-login-status` flush right edge and Upload Studio `.preview-thumb span` four-edge thumbnail overlay now reuse `--dups-offset-0`. The Upload Studio browser fixture checks the overlay's absolute positioning and computed four-edge fill against the token at each audited viewport.
