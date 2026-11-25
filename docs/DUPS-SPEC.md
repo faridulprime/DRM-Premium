@@ -235,3 +235,8 @@ The suspension grain texture is included in the four-edge viewport-coverage asse
 
 
 The public registration dialog is included in the full-viewport edge audit. Its four computed edges are compared with `--dups-offset-0`, while the existing `margin:auto` centering and component-specific layer remain intact.
+
+
+## Live Users avatar fill tokenization — 2026-11-26
+
+The Live Users row avatar and drawer avatar image layers now use the existing zero-offset primitive for all four parent-relative edges. Regression coverage checks both computed image rectangles and preserves the independent presence-indicator anchor contract.
