@@ -31,6 +31,8 @@ This review inspected the SQL draft and its stated lifecycle/authorization desig
 
 ### F-03 — Validation-run lifecycle has no timestamp/status consistency constraints
 
+**Resolution in current draft:** Status-specific CHECK constraints now require queued=(no timestamps), running=(started, not completed), passed/failed=(started and completed, ordered), and cancelled=(completed; start may be absent only for cancellation before execution). The in-memory regression suite covers valid and invalid cases for all five statuses. Trusted runner identity and result provenance remain API responsibilities.
+
 **Evidence:** `duga_validation_runs` allows `queued`, `running`, `passed`, `failed`, and `cancelled`, with nullable `started_at` and `completed_at`, but no CHECK pairing these fields with status. Rows can represent a passed run with no completion time, or a queued run with completion metadata.
 
 **Risk:** Consumers may treat inconsistent or incomplete validation records as evidence that a commit passed.
