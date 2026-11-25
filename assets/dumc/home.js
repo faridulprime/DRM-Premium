@@ -2,9 +2,9 @@
 const $=s=>document.querySelector(s),host=$("#dumcHomeGrid");
 if(!host)return;
 const labels={"01_MOVIE_LIBRARY":"মুভি লাইব্রেরি","02_LANGUAGE":"ভাষা","03_FILM_INDUSTRY":"ফিল্ম ইন্ডাস্ট্রি","04_DUBBED_MOVIES":"ডাবড মুভি","05_GENRES":"Genre","06_COUNTRIES":"দেশ","07_COLLECTIONS":"Collections","08_RELEASE_YEARS":"মুক্তির বছর","09_SUBTITLES":"সাবটাইটেল"};
-const visibleRoots=new Set(["01_MOVIE_LIBRARY","02_LANGUAGE","03_FILM_INDUSTRY","04_DUBBED_MOVIES","05_GENRES","06_COUNTRIES","07_COLLECTIONS","08_RELEASE_YEARS","09_SUBTITLES"]);
+const visibleRoots=new Set(["01_MOVIE_LIBRARY","02_LANGUAGE","03_FILM_INDUSTRY","04_DUBBED_MOVIES","05_GENRES","06_COUNTRIES","07_COLLECTIONS","08_RELEASE_YEARS","09_SUBTITLES","10_ARTWORK","11_METADATA"]);
 let roots=[],activeRoot="",activeFolder="",movies=[],offset=0,query="",loading=false,hasMore=false,searchTimer=null;
-const folderName=s=>String(s??"").replace(/^\\d+_/,"").replace(/_/g," ");
+const folderName=s=>String(s??"").replace(/^\d+_/,"").replace(/_/g," ");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
 function flatten(n,out=[]){for(const c of n.children||[]){if(c.id==="ARCHIVED")continue;out.push(c);flatten(c,out)}return out}
