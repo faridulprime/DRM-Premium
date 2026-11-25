@@ -202,3 +202,8 @@ The fixed `.live-drawer-backdrop` now uses `--dups-offset-0` for its four viewpo
 ### Compact Homepage header and Admin Category Bar edge anchors — 2026-11-26
 
 The compact Homepage fixed header replaces its zero-valued inset shorthand with explicit top/left/right `--dups-offset-0` declarations and preserves `bottom:auto`. The Admin Category Bar horizontal zero edges now consume the same token. Browser regression coverage extends the Admin static viewport matrix to compare both rendered horizontal edges with the token; the latest additions remain pending a confirmed Chromium run.
+
+
+### Compact shared-shell horizontal edge anchors — 2026-11-26
+
+The compact shared Category Bar and compact Homepage Category Bar now consume `--dups-offset-0` for left/right viewport edges, while preserving their existing top anchors and dimensions. The shared desktop header login-status notice uses the same primitive for its flush right edge; its compact Homepage override retains the existing 8px offset. Chromium regression coverage now checks the Homepage Category Bar's computed left/right offsets against the zero token in each tested header state. These source/test additions remain pending a confirmed Chromium workflow run.
