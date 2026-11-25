@@ -85,7 +85,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-drawer-protected{padding:12px;border:1px solid var(--ducs-live-border-strong, #383838);border-radius:7px;color:var(--ducs-live-drawer-protected-text);font-size:10px;line-height:1.6}
 .live-user-dialog{width:min(520px,calc(100vw - 28px));max-height:min(82vh,720px);overflow:auto;padding:0;border:1px solid var(--ducs-live-dialog-border, #3a3a3a);border-radius:11px;background:var(--ducs-live-dialog-bg, #171717);color:var(--ducs-live-dialog-text);box-shadow:0 24px 80px var(--ducs-live-dialog-shadow)}
 .live-user-dialog::backdrop{background:var(--ducs-live-dialog-backdrop, rgba(0,0,0,.72));backdrop-filter:blur(4px)}
-.live-user-dialog>header{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--ducs-live-field-border, #303030);background:var(--ducs-live-dialog-header-bg, #191919)}
+.live-user-dialog>header{position:sticky;top:0;z-index:var(--dups-layer-live-dialog-sticky-header, 1);display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--ducs-live-field-border, #303030);background:var(--ducs-live-dialog-header-bg, #191919)}
 .live-user-dialog>header h2{margin:0;font-size:14px;font-weight:600}
 .live-user-dialog>header button{width:30px;height:30px;border:1px solid var(--ducs-live-dialog-close-border, #3b3b3b);border-radius:6px;background:var(--ducs-live-dialog-close-bg, #222);color:var(--ducs-live-dialog-close-text, #ddd);font-size:19px;cursor:pointer}
 .live-dialog-body{padding:12px 19px 20px}
