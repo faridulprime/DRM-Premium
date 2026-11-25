@@ -19,7 +19,7 @@ GitHub remains authoritative for desired-state system definitions, roles/policie
 
 ## 4. Proposed tables
 1. duga_assignments: scoped human or AI principal role assignments. Exactly one of user_id or principal_id is populated. Human references use users(id); AI principals are identifiers, not fake user accounts or login credentials.
-2. duga_change_requests: request metadata, state, risk, affected systems/paths, source branch, base commit, policy commit, rollback plan and optional implementer identity/commit.
+2. duga_change_requests: request metadata, state, risk, affected systems/paths, source branch, base commit, policy commit, rollback plan, optional implementer identity/commit, and nullable self-referencing `parent_change_request_id` for a renewed attempt linked to a terminal original request. The parent must exist, must not equal the new request ID, and is immutable after creation; a new request never inherits predecessor evidence or authorization.
 3. duga_reviews: independent AI audit or human review, reviewer identity, decision, reviewed commit and evidence. The implementer must not review their own change.
 4. duga_approvals: human-only approval/rejection records. AI identities cannot satisfy human approval.
 5. duga_validation_runs: machine validation status, tool/version, commit, evidence and timestamps.
@@ -49,8 +49,8 @@ Do not create a D1 copy of the Git system registry as an independent writable so
 ## 6. State machine
 Change request states:
 proposed → analyzing → impact_review → awaiting_ai_audit → awaiting_human_approval → approved → implementing → validating → final_review → accepted.
-Terminal alternatives: rejected, cancelled, blocked.
-Only documented transitions are allowed. A state transition must append an audit event in the same D1 batch where feasible. API validates actor permission and transition preconditions; SQL CHECK only validates the allowed state value.
+`accepted`, `rejected` and `cancelled` are terminal. `blocked` is a resumable hold state, not terminal; its prior workflow state and blocking reason/condition/actor/time must be preserved in an immutable block audit event. Unblock is a dedicated authorized human Owner operation that derives the candidate resume state from the latest valid block event, requires rationale and evidence the condition cleared, uses CAS + append-only audit, and re-evaluates all gates before resuming. Any renewed attempt after `rejected` or `cancelled` is a new linked Change Request with independent evidence/approvals and preserved original history.
+Only the Owner-approved transitions in `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` are allowed. Rework edges are bounded and evidence-preserving. AI audit may approve its independent audit or request changes, but cannot make a terminal rejection decision. A state transition must append an audit event in the same D1 batch where feasible. API validates actor permission and transition preconditions; SQL CHECK only validates the allowed state value.
 
 Approval gates:
 - Independent AI review must be recorded against the implementation commit.
