@@ -63,6 +63,7 @@ All implementation remains on feature branches. Production main and Production D
 
 ## D1 schema and API design references
 - Operational schema design: docs/DUGA-D1-SCHEMA-DESIGN.md.
+- Change-request lifecycle and database enforcement design: docs/DUGA-CHANGE-REQUEST-ENFORCEMENT-DESIGN.md.
 - Non-executable SQL draft: governance/schemas/d1-operational-schema.sql. Do not execute this file.
 - API authorization contract: docs/DUGA-API-AUTHORIZATION-DESIGN.md.
 - Proposed migration name after review: migrations/0009_duga_governance_foundation.sql.
