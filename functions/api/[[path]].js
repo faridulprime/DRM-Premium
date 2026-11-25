@@ -210,7 +210,11 @@ async function handle(req,env){
    if(searchTerm){movieSql+=" AND lower(v.title||' '||coalesce(v.description,'')||' '||coalesce(v.category,'')) LIKE ?";binds.push("%"+searchTerm.toLowerCase()+"%");}
    if(folderId==="FEATURED"){movieSql+=" AND v.featured=1";}
    else if(folderId==="UNCLASSIFIED"){movieSql+=" AND (dm.video_id IS NULL OR (dm.original_language_folder_id IS NULL AND dm.industry_folder_id IS NULL AND dm.production_country_folder_id IS NULL AND NOT EXISTS(SELECT 1 FROM dumc_movie_folder_assignments a WHERE a.video_id=v.id)))";}
-   else if(folderId&&!["01_MOVIE_LIBRARY","ALL_MOVIES","DUMC"].includes(folderId)){
+   else if(/^YEAR_[0-9]{4}$/.test(folderId)){movieSql+=" AND dm.release_year=?";binds.push(Number(folderId.slice(5)));}
+   else if(/^YEAR_[0-9]{4}S$/.test(folderId)){const decade=Number(folderId.slice(5,9));movieSql+=" AND dm.release_year BETWEEN ? AND ?";binds.push(decade,decade+9);}
+   else if(folderId==="YEAR_BEFORE_1960"){movieSql+=" AND dm.release_year<1960";}
+   else if(folderId==="YEAR_UNKNOWN_YEAR"){movieSql+=" AND dm.release_year IS NULL";}
+   else if(folderId&&!["01_MOVIE_LIBRARY","ALL_MOVIES","DUMC","08_RELEASE_YEARS"].includes(folderId)){
     movieSql+=` AND EXISTS(
      WITH RECURSIVE descendants(id) AS (
       SELECT id FROM dumc_folders WHERE id=? AND is_archived=0
