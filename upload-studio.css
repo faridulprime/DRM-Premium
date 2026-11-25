@@ -130,7 +130,7 @@ body.upload-studio-page.sidebar-open{padding-left:240px!important}
 @media(max-width:760px){
  body.upload-studio-page{width:100%;max-width:100%;padding:58px 0 0!important;overflow-x:clip}
  .upload-studio-page .studio-global-topbar{
-  position:fixed!important;top:0;left:0;right:0;z-index:var(--dups-layer-home-header-mobile, 150);
+  position:fixed!important;top:var(--dups-offset-0, 0);left:var(--dups-offset-0, 0);right:var(--dups-offset-0, 0);z-index:var(--dups-layer-home-header-mobile, 150);
   display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
   align-items:center!important;gap:8px!important;width:100%;min-height:58px;height:auto;
   padding:8px 10px!important;background:var(--ducs-upload-header-bg, #0f0f0f)!important;border-bottom:1px solid var(--ducs-upload-header-border, #292929)
