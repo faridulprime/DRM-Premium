@@ -85,8 +85,8 @@ function initVisualEditor(){
  $("#veClose").onclick=()=>{visualMode=false;panel.hidden=true;document.body.classList.remove("visual-editor-active");toggle.classList.remove("active");};
  document.addEventListener("click",e=>{if(!visualMode||panel.contains(e.target)||e.target===toggle)return;const el=e.target.closest("h1,h2,h3,h4,p,a,button,label,span,small,strong,li");if(!el||el.closest("#visualEditorPanel")||el.children.length)return;e.preventDefault();e.stopPropagation();selectVisualElement(el);},{capture:true});
  $("#veApply").onclick=()=>{const item=visualDraft();if(!item){$("#veStatus").textContent="আগে একটি লেখা নির্বাচন করুন।";return;}applyVisualDraft(item);visualConfig[item.selector]=item;$("#veStatus").textContent="Preview প্রয়োগ হয়েছে। Save Changes চাপলে স্থায়ী হবে।";};
- $("#veSave").onclick=async()=>{const item=visualDraft();if(!item){$("#veStatus").textContent="আগে একটি লেখা নির্বাচন করুন।";return;}applyVisualDraft(item);visualConfig[item.selector]=item;const button=$("#veSave");button.disabled=true;$("#veStatus").textContent="সংরক্ষণ হচ্ছে…";try{const r=await fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:JSON.stringify(visualConfig)})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Save করা যায়নি।");$("#veStatus").textContent="পরিবর্তন সংরক্ষিত হয়েছে।";}catch(err){$("#veStatus").textContent=err.message;}finally{button.disabled=false;}};
- $("#veReset").onclick=()=>{if(!visualSelected)return;const id=visualSelector(visualSelected);delete visualConfig[id];visualSelected.removeAttribute("style");fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:JSON.stringify(visualConfig)})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Reset save failed");$("#veStatus").textContent="নির্বাচিত element reset ও সংরক্ষণ হয়েছে।";}).catch(e=>$("#veStatus").textContent=e.message);};
+ $("#veSave").onclick=async()=>{const item=visualDraft();if(!item){$("#veStatus").textContent="আগে একটি লেখা নির্বাচন করুন।";return;}if(!confirm("এই style পরিবর্তন বর্তমান environment-এর public website-এ প্রয়োগ হবে। Save করবেন?"))return;applyVisualDraft(item);visualConfig[item.selector]=item;const button=$("#veSave");button.disabled=true;$("#veStatus").textContent="সংরক্ষণ হচ্ছে…";try{const r=await fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:JSON.stringify(visualConfig)})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Save করা যায়নি।");$("#veStatus").textContent="Public website style সংরক্ষিত হয়েছে; পরবর্তী page load-এ দেখা যাবে।";}catch(err){$("#veStatus").textContent=err.message;}finally{button.disabled=false;}};
+ $("#veReset").onclick=()=>{if(!visualSelected)return;if(!confirm("নির্বাচিত element-এর saved style বর্তমান public website থেকে reset হবে। Continue?"))return;const id=visualSelector(visualSelected);delete visualConfig[id];visualSelected.removeAttribute("style");fetch("/api/admin/settings",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify({visual_editor_config:JSON.stringify(visualConfig)})}).then(async r=>{const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Reset save failed");$("#veStatus").textContent="নির্বাচিত public website style reset ও সংরক্ষণ হয়েছে।";}).catch(e=>$("#veStatus").textContent=e.message);};
 }
 
 function videoCardHTML(v){
@@ -322,7 +322,7 @@ restoreAccount();$("#videoRows").addEventListener("click",e=>{const card=e.targe
  applySettings();restoreHomeFilters();visualConfig={};try{visualConfig=JSON.parse(settings.visual_editor_config||"{}");}catch{}applyVisualConfig();initVisualEditor();render();syncHomeFilterUrl();
 }
 
-/* Full Website Builder — draft-only visual editor. */
+/* Builder document JSON remains draft-only; legacy visual style overrides are saved separately to public settings. */
 let sbDoc=null,sbRevision=0,sbSelected=null,sbPageIndex=0,sbUndoStack=[],sbRedoStack=[],sbPreviewMode=false,sbDirty=false;
 let sbLiveSelected=null,sbLiveHover=null,sbLiveFrame=null;
 let sbLiveDraftDirty=false;
@@ -423,6 +423,7 @@ function sbApplyLiveChanges(save){
  if(color)el.style.setProperty("color",color,"important");
  if(bg)el.style.setProperty("background-color",bg,"important");
  if(!save){$("#sbMessage").textContent="Preview updated · পরিবর্তনটি Preview-তে প্রয়োগ হয়েছে, এখনো সংরক্ষিত হয়নি।";return;}
+ if(!confirm("এই website style পরিবর্তন বর্তমান environment-এর public website-এ প্রয়োগ হবে। Continue?"))return;
  const selector=visualSelector(el);
  const item={selector,text:el.children.length===0?(el.innerText||el.textContent||"").slice(0,2000):"",replaceText:el.children.length===0,style:{fontSize:font,color,background:bg,shadow:{color:"#000000",x:0,y:0,blur:0}}};
  const config={...visualConfig,[selector]:item},encoded=JSON.stringify(config);
@@ -438,7 +439,7 @@ function sbApplyLiveChanges(save){
   if(body.ok!==true||body.saved!==true)throw new Error(body.error||"API save confirmation পাওয়া যায়নি।");
   if(JSON.stringify(body.config)!==encoded)throw new Error("D1-এ সংরক্ষিত configuration মিলেনি।");
   visualConfig=body.config;
-  $("#sbMessage").textContent="সফল: Style Cloudflare D1-এ সংরক্ষিত এবং পুনরায় পড়ে যাচাই করা হয়েছে।";
+  $("#sbMessage").textContent="সফল: Style Cloudflare D1-এ সংরক্ষিত ও যাচাই হয়েছে; public website-এ এটি পরবর্তী page load-এ প্রয়োগ হবে।";
  })
  .catch(error=>{$("#sbMessage").textContent="Save failed: "+(error?.message||String(error));})
  .finally(()=>{if(applyButton)applyButton.disabled=false;if(saveButton){saveButton.disabled=false;saveButton.textContent="Save website style";}});
@@ -482,7 +483,7 @@ function sbRender(){
  $("#sbSelectedType").textContent=sbSelected?(SB_LABELS[sbFind(sbSelected)?.node?.type]||"Selected"):"Nothing selected";
  canvas.querySelectorAll("[data-sb-node]").forEach(el=>{el.classList.toggle("sb-selected",el.dataset.sbNode===sbSelected);el.draggable=true;});sbRenderInspector();
 }
-async function openSiteBuilder(){const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json()).catch(()=>({}));if(!me.authenticated||me.user?.role!=="owner"){alert("শুধু Owner Website Builder ব্যবহার করতে পারবেন।");return;}$("#siteBuilder").hidden=false;document.body.classList.add("sb-open");$("#sbSaveState").textContent="Loading draft…";try{const r=await fetch("/api/builder/state",{credentials:"same-origin"}),d=await r.json();if(!r.ok)throw new Error(d.error||"Builder load failed");sbDoc=d.document;sbRevision=d.revision||0;sbSelected=null;sbUndoStack=[];sbRedoStack=[];sbDirty=false;$("#sbSaveState").textContent="Draft revision "+sbRevision;$("#sbMessage").textContent="Draft only · public website unchanged";sbBindEvents();sbRender();}catch(e){$("#sbMessage").textContent=e.message;}}
+async function openSiteBuilder(){const me=await fetch("/api/auth/me",{credentials:"same-origin"}).then(r=>r.json()).catch(()=>({}));if(!me.authenticated||me.user?.role!=="owner"){alert("শুধু Owner Website Builder ব্যবহার করতে পারবেন।");return;}$("#siteBuilder").hidden=false;document.body.classList.add("sb-open");$("#sbSaveState").textContent="Loading draft…";try{const r=await fetch("/api/builder/state",{credentials:"same-origin"}),d=await r.json();if(!r.ok)throw new Error(d.error||"Builder load failed");sbDoc=d.document;sbRevision=d.revision||0;sbSelected=null;sbUndoStack=[];sbRedoStack=[];sbDirty=false;$("#sbSaveState").textContent="Draft revision "+sbRevision;$("#sbMessage").textContent="Builder document edits remain unpublished drafts. “Save website style” separately updates the public styling in this environment.";sbBindEvents();sbRender();}catch(e){$("#sbMessage").textContent=e.message;}}
 async function sbSaveDraft(){
  if(!sbDoc){$("#sbMessage").textContent="Draft এখনও load হয়নি। Builder বন্ধ করে আবার খোলো।";return;}
  const b=$("#sbSave");if(b.disabled)return;
