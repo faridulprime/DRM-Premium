@@ -238,7 +238,7 @@ def main() -> int:
             ],
             "duga_reviews": [
                 "reviewer_type='human' and reviewer_user_id is not null and reviewer_principal_id is null and review_type='human_review'",
-                "reviewer_type='ai' and reviewer_user_id is null and reviewer_principal_id is not null and review_type='independent_ai_audit'",
+                "reviewer_type='ai' and reviewer_user_id is null and reviewer_principal_id is not null and length(reviewer_principal_id)>0 and review_type='independent_ai_audit'",
             ],
             "duga_audit_events": [
                 "length(event_type)>0",
