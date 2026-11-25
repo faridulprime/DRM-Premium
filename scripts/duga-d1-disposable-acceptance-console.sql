@@ -1,6 +1,4 @@
-CREATE TABLE users (
-  id TEXT PRIMARY KEY NOT NULL
-);
+CREATE TABLE users (id TEXT PRIMARY KEY);
 
 CREATE TABLE duga_assignments (
   id TEXT PRIMARY KEY CHECK (length(trim(id))>0),
@@ -33,12 +31,14 @@ CREATE INDEX idx_duga_assignments_subject ON duga_assignments(user_id,principal_
 CREATE UNIQUE INDEX uq_duga_single_platform_owner
   ON duga_assignments(scope_type,role_id)
   WHERE scope_type='platform' AND role_id='platform-owner' AND status='active';
+
 CREATE UNIQUE INDEX uq_duga_single_system_owner
   ON duga_assignments(scope_id,role_id)
   WHERE scope_type='system' AND role_id='system-owner' AND status='active';
 
 CREATE TABLE duga_change_requests (
   id TEXT PRIMARY KEY CHECK (length(trim(id))>0),
+  parent_change_request_id TEXT REFERENCES duga_change_requests(id) ON DELETE RESTRICT,
   title TEXT NOT NULL CHECK (length(trim(title)) BETWEEN 1 AND 200),
   summary TEXT NOT NULL CHECK (length(trim(summary)) BETWEEN 1 AND 10000),
   rationale TEXT NOT NULL DEFAULT '',
@@ -65,10 +65,18 @@ CREATE TABLE duga_change_requests (
   CHECK ((implementer_type IS NULL AND implementer_user_id IS NULL AND implementer_principal_id IS NULL) OR
          (implementer_type='human' AND implementer_user_id IS NOT NULL AND implementer_principal_id IS NULL) OR
          (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL AND length(trim(implementer_principal_id))>0)),
-  CHECK (updated_at>=created_at)
+  CHECK (updated_at>=created_at),
+  CHECK (parent_change_request_id IS NULL OR parent_change_request_id<>id)
 );
+CREATE INDEX idx_duga_changes_parent ON duga_change_requests(parent_change_request_id);
 CREATE INDEX idx_duga_changes_status_updated ON duga_change_requests(status,updated_at DESC);
 CREATE INDEX idx_duga_changes_created ON duga_change_requests(created_at DESC);
+CREATE TRIGGER duga_change_parent_immutable
+BEFORE UPDATE OF parent_change_request_id ON duga_change_requests
+WHEN OLD.parent_change_request_id IS NOT NEW.parent_change_request_id
+BEGIN
+  SELECT RAISE(ABORT, 'change request parent link is immutable');
+END;
 
 CREATE TABLE duga_reviews (
   id TEXT PRIMARY KEY,
@@ -82,7 +90,8 @@ CREATE TABLE duga_reviews (
   evidence_json TEXT NOT NULL CHECK (CASE WHEN json_valid(evidence_json) THEN json_type(evidence_json)='object' ELSE 0 END),
   created_at INTEGER NOT NULL,
   CHECK ((reviewer_type='human' AND reviewer_user_id IS NOT NULL AND reviewer_principal_id IS NULL AND review_type='human_review') OR
-         (reviewer_type='ai' AND reviewer_user_id IS NULL AND reviewer_principal_id IS NOT NULL AND length(trim(reviewer_principal_id))>0 AND review_type='independent_ai_audit'))
+         (reviewer_type='ai' AND reviewer_user_id IS NULL AND reviewer_principal_id IS NOT NULL AND length(trim(reviewer_principal_id))>0 AND review_type='independent_ai_audit')),
+  CHECK (reviewer_type='human' OR decision<>'rejected')
 );
 CREATE INDEX idx_duga_reviews_change_time ON duga_reviews(change_request_id,created_at DESC);
 
@@ -140,6 +149,7 @@ CREATE TABLE duga_audit_events (
 CREATE INDEX idx_duga_audit_aggregate_time ON duga_audit_events(aggregate_type,aggregate_id,created_at DESC);
 CREATE INDEX idx_duga_audit_actor_time ON duga_audit_events(actor_type,actor_user_id,actor_principal_id,created_at DESC);
 CREATE INDEX idx_duga_audit_time ON duga_audit_events(created_at DESC);
+
 CREATE UNIQUE INDEX uq_duga_audit_transition_id
   ON duga_audit_events(transition_id)
   WHERE transition_id IS NOT NULL;
