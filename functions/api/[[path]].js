@@ -283,6 +283,23 @@ async function handle(req,env){
    const last=items[items.length-1],nextCursor=hasMore&&last?b64(new TextEncoder().encode(String(last.created_at)+":"+last.id)):null;
    return json({ok:true,items:items.map(row=>({...row,affected_systems:safeJsonArray(row.affected_systems_json),affected_paths:safeJsonArray(row.affected_paths_json)})),page:{limit,hasMore,nextCursor}});
   }
+  if(p.length===3&&p[1]==="changes"&&m==="GET"){
+   const id=p[2];
+   if(!/^[-A-Za-z0-9_:.]{1,100}$/.test(id))return fail("Invalid change request ID.",400);
+   let change,related;
+   try{
+    change=await env.DB.prepare("SELECT id,title,summary,rationale,status,risk_level,affected_systems_json,affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,requested_by_principal_id,source_branch,base_commit_sha,policy_commit_sha,implementer_type,implementer_user_id,implementer_principal_id,implementation_commit_sha,state_version,created_at,updated_at FROM duga_change_requests WHERE id=?").bind(id).first();
+    if(!change)return fail("Change request not found.",404);
+    const [reviews,approvals,validations,audit]=await Promise.all([
+     env.DB.prepare("SELECT id,review_type,reviewer_type,reviewer_user_id,reviewer_principal_id,decision,reviewed_commit_sha,evidence_json,created_at FROM duga_reviews WHERE change_request_id=? ORDER BY created_at DESC,id DESC LIMIT 50").bind(id).all(),
+     env.DB.prepare("SELECT id,approver_user_id,approver_role,decision,approved_commit_sha,rationale,created_at FROM duga_approvals WHERE change_request_id=? ORDER BY created_at DESC,id DESC LIMIT 50").bind(id).all(),
+     env.DB.prepare("SELECT id,commit_sha,status,validator,validator_version,results_json,started_at,completed_at,created_at FROM duga_validation_runs WHERE change_request_id=? ORDER BY created_at DESC,id DESC LIMIT 50").bind(id).all(),
+     env.DB.prepare("SELECT id,event_type,actor_type,actor_user_id,actor_principal_id,actor_system_id,payload_json,policy_commit_sha,created_at FROM duga_audit_events WHERE aggregate_type='change_request' AND aggregate_id=? ORDER BY created_at DESC,id DESC LIMIT 50").bind(id).all()
+    ]);
+    related={reviews:reviews.results||[],approvals:approvals.results||[],validationRuns:validations.results||[],auditEvents:audit.results||[]};
+   }catch{return fail("Change request details are unavailable; verify the DUGA schema is installed.",503)}
+   return json({ok:true,change:{...change,affected_systems:safeJsonArray(change.affected_systems_json),affected_paths:safeJsonArray(change.affected_paths_json)},...related,limits:{perRelatedCollection:50}});
+  }
   return fail("Governance route not found.",404);
  }
 
