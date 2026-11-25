@@ -6,7 +6,7 @@ const visibleRoots=new Set(Object.keys(labels));
 let roots=[],activeRoot="",activeFolder="",movies=[],offset=0,query="",loading=false,hasMore=false,searchTimer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
-function flatten(n,out=[]){for(const c of n.children||[]){out.push(c);flatten(c,out)}return out}
+function flatten(n,out=[]){for(const c of n.children||[]){if(c.id==="ARCHIVED")continue;out.push(c);flatten(c,out)}return out}
 async function loadTaxonomyFallback(){
  try{
   const response=await fetch("/assets/dumc/taxonomy.json",{cache:"force-cache"});
