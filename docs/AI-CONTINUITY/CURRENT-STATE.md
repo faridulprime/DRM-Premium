@@ -101,3 +101,6 @@ Verification date: 2026-11-25
 
 
 - Strengthened the responsive Builder inspector browser test to reveal the static Builder shell and verify the shell is a rendered fixed containing block, then check the inspector's top/right/bottom offsets against it. Passed in [run #45678321298](https://github.com/faridulprime/DRM-Premium/actions/runs/45678321298) across existing viewport widths up to 900 CSS px.
+
+
+- Migrated the closing Live Users drawer `::before` pseudo-element's remaining literal z-index 5 to the existing `--dups-layer-live-effect` token. Chromium run [#45678490915](https://github.com/faridulprime/DRM-Premium/actions/runs/45678490915) passed computed z-index checks for both closing pseudo-elements against the base/top tokens, alongside the full existing browser suite.
