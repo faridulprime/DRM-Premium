@@ -185,3 +185,12 @@ The overlay keeps a zero inset via `--dups-offset-0` and remains absolutely posi
 | `--dups-anchor-hero-overlay-inset` | 0 | Full-containing-block inset for the hero pseudo-element overlay |
 
 The hero remains the relative containing block; both decorative elements remain absolute. Chromium checks the computed containing-block relationship, corner edge coordinates and full pseudo-element coverage at every Homepage viewport.
+
+## Homepage login-status responsive anchor and layer — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-anchor-header-login-status-gap` | 8px | Desktop gap below the Homepage header |
+| `--dups-layer-home-login-status` | 20 | Existing Homepage login-status local stacking level |
+
+The compact header retains its existing 4px gap and 8px right inset through the compact spacing/offset tokens. Chromium now checks the computed top/right offsets and local layer at every Homepage viewport, including the 760/761px breakpoint. No responsive coordinates or stacking values change.
