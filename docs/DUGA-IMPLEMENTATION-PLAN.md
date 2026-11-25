@@ -56,6 +56,10 @@ Exit criteria: versioned DUGA specification and policy files.
 
 Exit criteria: registry is internally consistent and traceable to inspected repository sources; no D1 migration or runtime API is introduced in this phase.
 
+## Registry publication gate — 2026-11-25
+
+The canonical registry remains `governance/registry/systems.json` in GitHub desired state. A runtime publication endpoint is deferred: the inspected repository root has no `package.json`, `wrangler.toml`, `wrangler.jsonc`, or `_routes.json`, so the Pages build output directory and asset binding are not established by repository evidence. Do not assume `env.ASSETS`, JSON module import support, or a build pipeline. Before publishing the registry, verify the Cloudflare Pages build command/output directory, exact asset binding and route behavior, then choose either a static JSON asset or an Owner-only API backed by that verified asset. No D1 copy or migration is needed for this purpose. Static CI success does not prove deployed Pages asset access.
+
 ## Deferred phases
 - Phase 3: D1 schema and migration design/Preview testing.
 - Phase 4: permission and authorization APIs.
