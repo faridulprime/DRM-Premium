@@ -37,8 +37,10 @@
   --dups-layer-critical: 900;
 
   /* Audited viewport placement coordinates for Live Users overlays. */
-  --dups-live-drawer-top: 51.1%;
-  --dups-live-drawer-left: calc(54.4% - 90px);
+  --dups-anchor-live-drawer-top: 51.1%;
+  --dups-anchor-live-drawer-left: calc(54.4% - 90px);
+  --dups-anchor-live-drawer-top-compact: 50%;
+  --dups-anchor-live-drawer-left-compact: 50%;
   --dups-viewport-center: 50%;
 
   /* Shared category-bar anchor; responsive/state overrides are consumer-scoped. */
