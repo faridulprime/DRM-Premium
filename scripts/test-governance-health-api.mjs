@@ -105,7 +105,7 @@ await test("Shared JSON reader enforces the 20 KB streaming limit without Conten
     GOOGLE_APPS_SCRIPT_TOKEN: "test-token",
     DB: { prepare() { throw new Error("DB must not be queried for the reserved Owner email"); } },
   };
-  async function post(raw) {
+  async function post(raw, declaredLength = null) {
     const encoded = new TextEncoder().encode(raw);
     let offset = 0;
     const body = new ReadableStream({
@@ -118,7 +118,7 @@ await test("Shared JSON reader enforces the 20 KB streaming limit without Conten
     });
     const request = new Request("https://example.test/api/auth/register-otp", {
       method: "POST",
-      headers: { Origin: "https://example.test", "Content-Type": "application/json" },
+      headers: { Origin: "https://example.test", "Content-Type": "application/json", ...(declaredLength === null ? {} : { "Content-Length": String(declaredLength) }) },
       body,
       duplex: "half",
     });
@@ -126,8 +126,11 @@ await test("Shared JSON reader enforces the 20 KB streaming limit without Conten
   }
   const accepted = await post(payload);
   assert.equal(accepted.status, 409, "a valid small JSON body should reach reserved-Owner validation");
-  const oversized = await post(payload + " ".repeat(21000));
-  assert.equal(oversized.status, 400, "an oversized streamed body must be rejected before route validation");
+  const oversizedBody = payload + " ".repeat(21000);
+  const oversizedWithoutLength = await post(oversizedBody);
+  assert.equal(oversizedWithoutLength.status, 400, "an oversized streamed body without Content-Length must be rejected");
+  const oversizedWithFalseLength = await post(oversizedBody, 1);
+  assert.equal(oversizedWithFalseLength.status, 400, "an oversized streamed body with an understated Content-Length must be rejected");
 });
 
 await test("Owner can read D1 health", async () => {
