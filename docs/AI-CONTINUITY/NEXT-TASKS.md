@@ -114,3 +114,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 
 
 - DUPS visual-editor fixed anchors migrated and covered by computed Chromium geometry/layer assertions: base toggle, panel, and desktop/compact edge offsets. Next batch: inspect Category Bar responsive top-anchor states and verify the Profile Completion overlay's actual containing block/offsets; do not alter the existing responsive coordinates without state-specific browser evidence.
+
+- Profile Completion overlay now has tokenized 74px top, 50% viewport-center and zero-inset backdrop anchors, with computed Chromium geometry/coverage checks. Next: batch the remaining Category Bar responsive state offsets into explicit state-scoped DUPS anchor tokens and validate guest/signed-in/profile-menu states at their actual breakpoints.
