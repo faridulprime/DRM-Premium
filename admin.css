@@ -206,7 +206,7 @@ body.admin-gate-state .live-layout.admin-login-layout>.admin-login-panel{grid-co
  .admin-main h2{font-size:20px;line-height:1.3}
  .admin-main h3{font-size:16px;line-height:1.35}
  .admin-main p,.admin-main label,.admin-main .hint,.admin-main .muted{font-size:13px;line-height:1.55}
- .admin-main button,.admin-main .primary,.admin-main .outline,.admin-main .delete{min-height:var(--duss-button-admin-mobile-min-height, 42px);font-size:13px}
+ .admin-main button,.admin-main .primary,.admin-main .outline,.admin-main .delete{min-height:var(--duss-button-admin-mobile-min-height, 42px);font-size:var(--duss-button-admin-font-size-mobile, 13px)}
  .admin-main input:not([type=checkbox]),.admin-main select,.admin-main textarea{min-height:44px;max-width:100%;font-size:16px}
  .admin-main textarea{min-height:100px}
  .admin-main .role-badge{min-height:var(--duss-role-badge-mobile-min-height, 22px);padding:var(--duss-role-badge-mobile-padding-y, 3px) var(--duss-role-badge-mobile-padding-x, 7px);font-size:var(--duss-role-badge-mobile-font-size, 11px);line-height:var(--duss-role-badge-line-height, 1.2)}
