@@ -288,6 +288,29 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 f"filtered, contained, or will-change ancestors "
                 f"({metrics['fixedAncestorIssues']})"
             )
+        if name == "upload-studio":
+            thumbnail_overlay = page.evaluate(
+                """() => {
+                  const fixture = document.createElement("div");
+                  fixture.className = "preview-thumb";
+                  fixture.style.position = "relative";
+                  fixture.innerHTML = "<span></span>";
+                  document.body.appendChild(fixture);
+                  const overlay = getComputedStyle(fixture.querySelector("span"));
+                  const root = getComputedStyle(document.documentElement);
+                  const result = {
+                    position: overlay.position,
+                    edges: [overlay.top, overlay.right, overlay.bottom, overlay.left],
+                    expectedZero: parseFloat(root.getPropertyValue("--dups-offset-0"))
+                  };
+                  fixture.remove();
+                  return result;
+                }"""
+            )
+            if thumbnail_overlay["position"] != "absolute":
+                fail(f"{name}/{viewport_name}: thumbnail overlay is not absolutely anchored ({thumbnail_overlay})")
+            if any(abs(float(edge.replace("px", "")) - thumbnail_overlay["expectedZero"]) > 1 for edge in thumbnail_overlay["edges"]):
+                fail(f"{name}/{viewport_name}: thumbnail overlay fill edges differ from DUPS zero-offset token ({thumbnail_overlay})")
         if name == "upload-studio" and width <= 760:
             upload_header = page.evaluate(
                 """() => {
