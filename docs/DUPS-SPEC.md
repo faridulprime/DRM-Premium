@@ -163,3 +163,9 @@ The new Restricted Users modal assertions passed at all seven viewport widths in
 
 
 The expanded Chromium suite passed in run #45677961245 on commit `d9953b483c21eaf2dd8ba0011c61d50cf9b5edf6`: [run #45677961245](https://github.com/faridulprime/DRM-Premium/actions/runs/45677961245). This includes the mobile Homepage header-status anchor gap/right offset and Live Users dialog sticky-header position/layer assertions, in addition to the previous Homepage overlays, responsive Builder inspector and Restricted Users modal checks. All 35 page/viewport checks and existing DUME lifecycle checks passed. Native browser zoom, visual collision/fallback and deployed behavior remain unverified.
+
+
+## Live Users drawer closing-effect layer acceptance — 2026-11-26
+
+- Replaced the closing drawer `::before` pseudo-element's literal layer 5 with the existing `--dups-layer-live-effect` token; the `::after` layer continues to use `--dups-layer-live-effect-top` (6).
+- Chromium checks computed pseudo-element z-index values against both tokens. This is a local effect-layer check, not an animation quality or cross-context collision test.
