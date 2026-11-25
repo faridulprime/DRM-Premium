@@ -38,9 +38,9 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 - Added `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` covering bootstrap Owner-session authorization, future scoped assignments, AI/validation trust boundaries, risk approval, commit-bound evidence staleness, guarded commit updates, a candidate transition matrix, route payload rules and security/regression tests.
 - Added an explicit candidate transition matrix from the existing DUGA lifecycle states. It is not approved executable policy.
-- Owner decision recorded: `blocked` is resumable (option B). The implementation contract requires immutable prior-state provenance in the block event, authorized unblock with rationale and proof the condition cleared, CAS + audit, and re-evaluation of all evidence gates before resuming. Still awaiting Owner decisions on rejected/cancelled reopening and the proposed rework edges.
+- Owner decisions recorded: `blocked` is resumable (option B); `rejected` and `cancelled` are terminal, and renewed attempts require a new linked Change Request with independent evidence/approvals and preserved original history. Unblock requires immutable prior-state provenance, authorized action with rationale and proof the condition cleared, CAS + audit, and re-evaluation of all gates. Proposed rework edges still await Owner review.
 - API integration readiness remains NO-GO for Preview write endpoints. No API runtime code, migration or binding was changed.
-- Next: review/confirm the transition matrix; then specify canonical Git ref/PR-base verification and the policy/registry revision pinning contract. Only after those reviews and Preview migration-history reconciliation should implementation planning be revisited.
+- Next: review/confirm the remaining proposed rework edges and complete the transition matrix; then specify canonical Git ref/PR-base verification and policy/registry revision pinning. Only after those reviews and Preview migration-history reconciliation should implementation planning be revisited.
 
 ## Immediate blockers / required evidence
 1. Disposable D1 CAS + audit acceptance is PASS for the isolated Worker/database only. Production and shared Preview remain untested and untouched.
@@ -48,7 +48,7 @@ Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Next review sequence
 1. Independently review the disposable D1 evidence and Worker implementation; retain the run ID and aggregate PASS qualification.
-2. Complete the API transition matrix with optimistic `state_version` checks, including explicit block/unblock paths and stale-gate re-entry.
+2. Complete Owner review of proposed rework edges and the API transition matrix, retaining optimistic `state_version` checks, explicit block/unblock paths, terminal rejected/cancelled states and new-linked-request semantics.
 3. Specify commit-bound gate invalidation: changed implementation SHA must stale prior review, approval and validation evidence.
 4. Specify active assignment/scope checks, reviewer/implementer separation, trusted CI validation, canonical Git-ref verification and server-derived audit actors.
 5. Review Preview D1 migration history read-only; do not infer applied history from filenames or table shape.
