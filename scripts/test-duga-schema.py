@@ -245,6 +245,21 @@ def main() -> int:
     check("cancelled validation requires completion",
           lambda: insert_validation("validation-bad-cancelled","cancelled",11,None),
           should_fail=True)
+    check("queued validation can start and is audited",
+          lambda: db.execute("""UPDATE duga_validation_runs SET status='running',started_at=11
+            WHERE id='validation-queued' AND status='queued'"""), should_fail=False)
+    check("running validation can finish and is audited",
+          lambda: db.execute("""UPDATE duga_validation_runs SET status='passed',completed_at=12
+            WHERE id='validation-queued' AND status='running'"""), should_fail=False)
+    check("terminal validation evidence cannot be changed",
+          lambda: db.execute("UPDATE duga_validation_runs SET results_json='{}' WHERE id='validation-queued'"),
+          should_fail=True)
+    check("validation transition audit records queued-to-running",
+          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='validation-transition:validation-queued:running'"),
+          should_fail=False)
+    check("validation transition audit records terminal result",
+          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='validation-transition:validation-queued:passed'"),
+          should_fail=False)
     check("cancelled validation completion cannot precede start",
           lambda: insert_validation("validation-bad-cancel-order","cancelled",12,11),
           should_fail=True)
@@ -305,7 +320,20 @@ def main() -> int:
         ),
         should_fail=True,
     )
-    db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=5 WHERE id='assignment-system-owner'")
+    db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=5,revoked_by_user_id='human-1' WHERE id='assignment-system-owner'
+    check("assignment grant automatically writes audit evidence",
+          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='assignment-grant:assignment-system-owner'"),
+          should_fail=False)
+    check("assignment revocation automatically writes audit evidence",
+          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='assignment-revoke:assignment-system-owner'"),
+          should_fail=False)
+    check("assignment cannot be silently edited after grant",
+          lambda: db.execute("UPDATE duga_assignments SET role_id='platform-owner' WHERE id='assignment-human-owner'"),
+          should_fail=True)
+    check("assignment revocation requires revoker identity",
+          lambda: db.execute("UPDATE duga_assignments SET status='revoked',revoked_at=6 WHERE id='assignment-ai-maintainer'"),
+          should_fail=True)
+")
     check(
         "approval rejects revoked assignment",
         lambda: db.execute(
@@ -330,6 +358,28 @@ def main() -> int:
         should_fail=True,
     )
 
+    db.execute("""INSERT INTO duga_analysis_findings
+       (id,analyzer_version,repository_commit_sha,file_path,classification,
+        confidence,evidence_json,status,created_at)
+       VALUES ('finding-review','1','abc','src/a.js','A',0.9,'[]','open',1)""")
+    check("finding can enter review with version increment",
+          lambda: db.execute("""UPDATE duga_analysis_findings SET status='under_review',
+            reviewed_at=2,reviewed_by_user_id='human-1',state_version=2
+            WHERE id='finding-review' AND status='open' AND state_version=1"""),
+          should_fail=False)
+    check("finding review transition is audited",
+          lambda: db.execute("SELECT 1 FROM duga_audit_events WHERE id='finding-review:finding-review:2'"),
+          should_fail=False)
+    check("finding analyzer evidence cannot be altered during review",
+          lambda: db.execute("UPDATE duga_analysis_findings SET evidence_json='{}' WHERE id='finding-review'"),
+          should_fail=True)
+    check("finding cannot skip review version",
+          lambda: db.execute("""UPDATE duga_analysis_findings SET status='accepted',
+            reviewed_at=3,reviewed_by_user_id='human-2',state_version=4
+            WHERE id='finding-review'"""), should_fail=True)
+    check("finding cannot be deleted after evidence creation",
+          lambda: db.execute("DELETE FROM duga_analysis_findings WHERE id='finding-review'"),
+          should_fail=True)
     check(
         "finding review metadata must be paired",
         lambda: db.execute(
