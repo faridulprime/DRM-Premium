@@ -1,11 +1,11 @@
 {
   "manifest_version": 1,
-  "purpose": "Documentation-only inventory and fresh-database execution order for the existing D1 SQL migrations.",
+  "purpose": "Documentation-only inventory and fresh-database execution order for existing D1 SQL migrations, including DUMC.",
   "execution_policy": {
     "automatic": false,
     "wrangler_migrations_configured": false,
     "requires_human_review": true,
-    "warning": "This manifest is not a Wrangler migrations directory configuration and does not record which migrations have been applied to any database. Never infer applied state from this file."
+    "warning": "This manifest does not record which migrations have been applied to any database. Never infer applied state from this file."
   },
   "fresh_database_order": [
     {
@@ -100,6 +100,20 @@
       "purpose": "Create user_profiles and its index.",
       "depends_on": [
         "0001_admin.sql"
+      ]
+    },
+    {
+      "order": 11,
+      "file": "0009_dumc_movie_library.sql",
+      "purpose": "Create DUMC folder taxonomy, canonical movie metadata, multi-folder assignments, audio tracks and subtitles; seed 226 stable taxonomy nodes and backfill metadata rows for existing videos.",
+      "depends_on": [
+        "0001_admin.sql",
+        "0002_owner_roles_and_content_ownership.sql"
+      ],
+      "notes": [
+        "Additive migration; does not alter existing videos or categories.",
+        "Existing video metadata remains unknown unless verified; no language/industry is inferred.",
+        "Apply only after confirming the target D1 migration history."
       ]
     }
   ]
