@@ -288,6 +288,37 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 f"filtered, contained, or will-change ancestors "
                 f"({metrics['fixedAncestorIssues']})"
             )
+        if name == "upload-studio" and width <= 760:
+            upload_header = page.evaluate(
+                """() => {
+                  const element = document.querySelector(".studio-global-topbar");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!element) return {missing: true};
+                  const style = getComputedStyle(element);
+                  const rect = element.getBoundingClientRect();
+                  return {
+                    position: style.position,
+                    top: rect.top,
+                    left: rect.left,
+                    right: innerWidth - rect.right,
+                    expectedZero: parseFloat(root.getPropertyValue("--dups-offset-0")),
+                    zIndex: parseFloat(style.zIndex),
+                    expectedLayer: parseFloat(root.getPropertyValue("--dups-layer-home-header-mobile"))
+                  };
+                }"""
+            )
+            if upload_header.get("missing"):
+                fail(f"{name}/{viewport_name}: global Upload Studio header is missing")
+            else:
+                try:
+                    if upload_header["position"] != "fixed":
+                        fail(f"{name}/{viewport_name}: mobile Upload Studio header is not fixed ({upload_header})")
+                    if any(abs(upload_header[key] - upload_header["expectedZero"]) > 1 for key in ("top", "left", "right")):
+                        fail(f"{name}/{viewport_name}: mobile Upload Studio header edge anchors differ from DUPS zero-inset token ({upload_header})")
+                    if upload_header["zIndex"] != upload_header["expectedLayer"]:
+                        fail(f"{name}/{viewport_name}: mobile Upload Studio header layer differs from DUPS token ({upload_header})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: mobile Upload Studio header DUPS geometry could not be resolved ({upload_header})")
         for entry in metrics["stackingContextAncestors"]:
             for context in entry["contexts"]:
                 for reason in context["reasons"]:
