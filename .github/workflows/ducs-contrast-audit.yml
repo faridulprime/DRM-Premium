@@ -1,0 +1,36 @@
+name: DUCS contrast pair audit
+
+on:
+  push:
+    branches:
+      - feature/full-admin-panel
+    paths:
+      - "assets/colors/**"
+      - "scripts/test-ducs-contrast.py"
+      - "docs/DUCS-*.md"
+      - ".github/workflows/ducs-contrast-audit.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "assets/colors/**"
+      - "scripts/test-ducs-contrast.py"
+      - "docs/DUCS-*.md"
+      - ".github/workflows/ducs-contrast-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ducs-contrast-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Audit registered DUCS contrast pairs
+        run: python scripts/test-ducs-contrast.py
