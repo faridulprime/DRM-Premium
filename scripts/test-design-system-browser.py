@@ -267,8 +267,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     top: parseFloat(style.top),
                     right: parseFloat(style.right),
                     headerHeight: header.getBoundingClientRect().height,
-                    gap: parseFloat(root.getPropertyValue("--dups-anchor-gap-status")) * (root.fontSize ? parseFloat(root.fontSize) : 16),
-                    offset: parseFloat(root.getPropertyValue("--dups-offset-2")) * (root.fontSize ? parseFloat(root.fontSize) : 16)
+                    gap: parseFloat(root.getPropertyValue("--dups-anchor-gap-status")) * (parseFloat(root.getPropertyValue("font-size")) || 16),
+                    offset: parseFloat(root.getPropertyValue("--dups-offset-2")) * (parseFloat(root.getPropertyValue("font-size")) || 16)
                   };
                 }"""
             )
