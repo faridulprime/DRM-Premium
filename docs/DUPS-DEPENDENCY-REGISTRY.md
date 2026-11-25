@@ -76,9 +76,9 @@ Audited stacking-layer consumers have been migrated to semantic DUPS aliases in 
 The Restricted Users modal now consumes the existing `--dups-layer-live-drawer` token instead of a literal z-index. The design-system Chromium audit checks its computed fixed positioning, token-resolved z-index, and viewport-center geometry across the existing seven viewport widths. The check passed in Chromium run #45676504120 at all seven viewport widths. It is scoped to this modal and does not imply complete DUPS migration or collision/fallback coverage.
 
 
-### Website Builder responsive inspector — 2026-11-26
+### Website Builder responsive inspector layer and anchors — 2026-11-26
 
-The inspector's responsive absolute-positioning layer now uses `--dups-layer-builder-inspector` with fallback 2. Chromium browser assertions check its computed `position:absolute` and z-index/token agreement at the existing widths up to 900 CSS px. This is a local layer inside the fixed Website Builder shell, not a global overlay layer.
+The inspector's responsive absolute-positioning layer now uses `--dups-layer-builder-inspector` with fallback 2. Its top/right/bottom offsets now consume explicit DUPS anchors (66px/0/34px, with the existing compact 112px top override). Chromium resolves these custom properties from the positioned inspector and compares computed geometry against the shell's bounding box at the existing desktop/tablet/mobile widths. This is a local layer inside the fixed Website Builder shell, not a global overlay layer.
 
 
 ### Homepage overlay and responsive inspector browser acceptance — 2026-11-26
