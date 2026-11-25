@@ -13,7 +13,7 @@ CREATE TABLE duga_assignments (
   user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
   principal_id TEXT,
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','revoked')),
-  assigned_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
+  assigned_by_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   created_at INTEGER NOT NULL,
   revoked_at INTEGER,
   CHECK ((scope_type='platform' AND scope_id IS NULL) OR (scope_type='system' AND scope_id IS NOT NULL AND length(scope_id)>0)),
@@ -148,7 +148,9 @@ CREATE TABLE duga_analysis_findings (
   status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','under_review','accepted','dismissed','quarantined')),
   created_at INTEGER NOT NULL,
   reviewed_at INTEGER,
-  reviewed_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT
+  reviewed_by_user_id TEXT REFERENCES users(id) ON DELETE RESTRICT,
+  CHECK ((reviewed_at IS NULL AND reviewed_by_user_id IS NULL) OR
+         (reviewed_at IS NOT NULL AND reviewed_by_user_id IS NOT NULL))
 );
 CREATE INDEX idx_duga_findings_status_time ON duga_analysis_findings(status,created_at DESC);
 CREATE INDEX idx_duga_findings_file_commit ON duga_analysis_findings(file_path,repository_commit_sha);
@@ -163,6 +165,8 @@ CREATE TABLE duga_jobs (
   available_at INTEGER NOT NULL,
   lease_expires_at INTEGER,
   created_at INTEGER NOT NULL,
-  updated_at INTEGER NOT NULL
+  updated_at INTEGER NOT NULL,
+  CHECK ((status='running' AND lease_expires_at IS NOT NULL) OR
+         (status<>'running' AND lease_expires_at IS NULL))
 );
 CREATE INDEX idx_duga_jobs_queue ON duga_jobs(status,available_at);
