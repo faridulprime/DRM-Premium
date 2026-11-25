@@ -38,7 +38,7 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 - GET /api/governance/systems — versioned registry snapshot, read-only.
 - GET /api/governance/changes — implemented Owner-only, read-only cursor-paginated list. Supports a bounded 1–50 page size, allow-listed status filter and title/summary search; returns only an explicit set of change-request columns and parsed affected-system/path arrays. Uses descending `(created_at,id)` keyset pagination and returns an opaque cursor. No write operations are exposed.
 - POST /api/governance/changes — create a proposal; server assigns actor and ID.
-- GET /api/governance/changes/:id — request plus related reviews, approvals and validations.
+- GET /api/governance/changes/:id — implemented Owner-only, read-only detail endpoint. Returns one request plus up to 50 reviews, approvals, validation runs and audit events per collection.
 - POST /api/governance/changes/:id/reviews — AI audit/human review record; identity derived from trusted execution context.
 - POST /api/governance/changes/:id/approvals — human Owner approval/rejection only.
 - POST /api/governance/changes/:id/validation-runs — trusted validation runner result, not arbitrary browser assertion.
@@ -63,6 +63,10 @@ The catch-all API now handles `GET /api/governance/health` after normal session 
 
 ## 17. DUGA schema readiness response
 The Owner health route reports `schema: not_installed` when none of the expected tables exist, `partial` when only some exist, and `ready` when all eight are present. This is a structural presence check only: it does not prove that table definitions, indexes, triggers, migration order or data integrity match the reviewed draft. A separate schema fingerprint/validation step is still required before declaring a Preview database accepted.
+
+## 20. Read-only change request detail — 2026-11-25
+
+`GET /api/governance/changes/:id` now returns a single change request and its related review, approval, validation-run and audit-event records. It requires the authenticated application Owner role, validates the path ID, uses parameter-bound queries, returns 404 for a missing request, and caps each related collection at 50 rows. The endpoint performs no writes and exposes no approval or state-transition action. Handler tests use mocked D1; live Preview D1 and deployed runtime remain unverified.
 
 ## 19. Read-only change request listing — 2026-11-25
 
