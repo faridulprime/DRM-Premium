@@ -252,6 +252,43 @@ def main() -> int:
         should_fail=True,
     )
     check(
+        "AI implementer principal cannot be empty",
+        lambda: db.execute(
+            """INSERT INTO duga_change_requests
+               (id,title,summary,rationale,status,risk_level,affected_systems_json,
+                affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+                source_branch,policy_commit_sha,implementer_type,implementer_principal_id,
+                created_at,updated_at)
+               VALUES ('change-empty-implementer','Title','Summary','','proposed','low',
+                       '[]','[]','rollback','human','human-1',
+                       'feature/test','policy-sha','ai','',1,1)"""
+        ),
+        should_fail=True,
+    )
+
+    check(
+        "AI audit actor principal cannot be empty",
+        lambda: db.execute(
+            """INSERT INTO duga_audit_events
+               (id,aggregate_type,aggregate_id,event_type,actor_type,
+                actor_principal_id,payload_json,created_at)
+               VALUES ('event-empty-ai','platform','platform','test','ai','','{}',1)"""
+        ),
+        should_fail=True,
+    )
+
+    check(
+        "system audit actor ID cannot be empty",
+        lambda: db.execute(
+            """INSERT INTO duga_audit_events
+               (id,aggregate_type,aggregate_id,event_type,actor_type,
+                actor_system_id,payload_json,created_at)
+               VALUES ('event-empty-system','platform','platform','test','system','','{}',1)"""
+        ),
+        should_fail=True,
+    )
+
+    check(
         "AI reviewer principal cannot be empty",
         lambda: db.execute(
             """INSERT INTO duga_reviews
