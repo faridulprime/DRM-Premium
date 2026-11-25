@@ -710,6 +710,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const style = getComputedStyle(header);
                   return {
                     position: style.position,
+                    top: parseFloat(style.top),
+                    anchorTop: parseFloat(style.getPropertyValue("--dups-anchor-live-dialog-sticky-header-top")),
                     zIndex: style.zIndex,
                     token: root.getPropertyValue("--dups-layer-live-dialog-sticky-header").trim()
                   };
@@ -721,6 +723,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 try:
                     if dialog_header_layer["position"] != "sticky":
                         fail(f"{name}/{viewport_name}: dialog header is not sticky ({dialog_header_layer})")
+                    if abs(dialog_header_layer["top"] - dialog_header_layer["anchorTop"]) > 1:
+                        fail(f"{name}/{viewport_name}: dialog sticky header top offset differs from its DUPS anchor ({dialog_header_layer})")
                     if float(dialog_header_layer["zIndex"]) != float(dialog_header_layer["token"]):
                         fail(f"{name}/{viewport_name}: dialog sticky header z-index does not match its local DUPS token ({dialog_header_layer})")
                 except (TypeError, ValueError, KeyError):
