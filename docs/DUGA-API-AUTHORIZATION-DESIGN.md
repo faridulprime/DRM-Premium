@@ -31,7 +31,7 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 12. Return minimum necessary data; paginate audit and findings endpoints.
 
 ## Implemented initial route
-- GET /api/governance/health — authenticated Owner-only, read-only D1 connectivity probe using `SELECT 1`. It is independent of the not-yet-applied DUGA tables and does not claim that the DUGA schema is installed.
+- GET /api/governance/health — authenticated Owner-only, read-only D1 connectivity and schema-readiness probe. It checks `SELECT 1`, then inspects `sqlite_master` for the eight expected DUGA tables and reports `not_installed`, `partial` or `ready`; it never mutates the database.
 
 ## Remaining proposed route contracts
 - GET /api/governance/overview — Owner-only operational summary.
@@ -56,7 +56,10 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 
 
 ## 14. Initial health endpoint — 2026-11-25
-The catch-all API now handles `GET /api/governance/health` after normal session authentication and before generic admin route handling. It explicitly requires the existing application Owner role, returns 403 for Admin, probes D1 with a read-only `SELECT 1`, and returns no schema/table claims. Unknown governance paths return 404. This is a minimal routing/authentication foothold, not evidence of a deployed or runtime-tested endpoint; the branch has not been deployed to Preview.
+The catch-all API now handles `GET /api/governance/health` after normal session authentication and before generic admin route handling. It explicitly requires the existing application Owner role, returns 403 for Admin, probes D1 with a read-only `SELECT 1`, and reports the count/names of the expected eight DUGA tables from `sqlite_master`. Unknown governance paths return 404. This is a minimal routing/authentication foothold, not evidence of a deployed or runtime-tested endpoint; the branch has not been deployed to Preview.
 
 ## 16. Mocked health API test coverage
 `scripts/test-governance-health-api.mjs` imports the Pages handler and tests the route with a minimal mock D1 binding. It verifies Owner success, Admin denial, unauthenticated/User denial, unknown-route 404, non-GET rejection, cross-origin mutation rejection, D1 probe failure 503 and missing-binding 503. This is handler-level integration coverage with mocked D1, not a live Cloudflare Preview test.
+
+## 17. DUGA schema readiness response
+The Owner health route reports `schema: not_installed` when none of the expected tables exist, `partial` when only some exist, and `ready` when all eight are present. This is a structural presence check only: it does not prove that table definitions, indexes, triggers, migration order or data integrity match the reviewed draft. A separate schema fingerprint/validation step is still required before declaring a Preview database accepted.
