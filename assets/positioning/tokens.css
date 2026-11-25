@@ -80,6 +80,7 @@
   /* Anchor relationship spacing. */
   --dups-anchor-gap-xs: 0.25rem;
   --dups-anchor-gap-status: var(--dups-anchor-gap-xs);
+  --dups-anchor-header-login-status-gap: 8px;
   --dups-anchor-gap-sm: 0.5rem;
   --dups-anchor-gap-md: 0.75rem;
   --dups-anchor-gap-lg: 1rem;
@@ -95,6 +96,7 @@
   --dups-layer-sidebar: 95;
   --dups-layer-page-header: 100;
   --dups-layer-header-status: 110;
+  --dups-layer-home-login-status: 20;
   --dups-layer-sidebar-backdrop: 110;
   --dups-layer-sidebar-mobile: 120;
   --dups-layer-home-header-mobile: 150;
