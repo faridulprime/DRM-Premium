@@ -118,6 +118,12 @@ The closing drawer's lower smoke pseudo-element now consumes the existing `--dup
 The base toggle coordinates are overridden by the theme's fixed bottom-right placement on the Homepage. The browser audit reveals the static hidden controls and checks the computed positions and existing local layers against these tokens at the established viewport set. Values preserve the previous geometry.
 
 
+## Profile drawer displacement anchor — 2026-11-26
+
+| Token | Value | Responsibility |
+|---|---:|---|
+| `--dups-anchor-profile-drawer-clearance` | 390px desktop; 0px compact | Right-side clearance applied to the fixed Category Bar while the Profile drawer is open |
+
 ## Profile completion overlay anchors — 2026-11-26
 
 | Token | Value | Intent |
