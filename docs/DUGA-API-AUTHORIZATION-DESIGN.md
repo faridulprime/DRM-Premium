@@ -36,9 +36,9 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 - GET /api/governance/overview — Owner-only operational summary.
 - GET /api/governance/systems — versioned registry snapshot, read-only.
 - GET /api/governance/changes — cursor-paginated requests.
-- POST /api/governance/changes — create a proposal; server assigns actor and ID.
+- POST /api/governance/changes — create a proposal; server assigns actor and ID. An optional `parent_change_request_id` may link a renewed attempt only to an existing terminal `rejected`/`cancelled` request; the server validates the parent, stores the immutable link, and never copies predecessor evidence or authorization.
 - GET /api/governance/changes/:id — request plus related reviews, approvals and validations.
-- POST /api/governance/changes/:id/reviews — AI audit/human review record; identity derived from trusted execution context.
+- POST /api/governance/changes/:id/reviews — AI audit/human review record; identity derived from trusted execution context. AI decisions are limited to `approved` or `changes_requested`; only an authorized human may record `rejected`.
 - POST /api/governance/changes/:id/approvals — human Owner approval/rejection only.
 - POST /api/governance/changes/:id/validation-runs — trusted validation runner result, not arbitrary browser assertion.
 - GET /api/governance/audit — cursor-paginated append-only audit events.
@@ -54,7 +54,7 @@ A state transition must be a compare-and-swap operation, not a read-then-uncondi
 - In the same D1 batch, use `INSERT ... SELECT` to create the audit event only when the request row now has that exact token and incremented version, and no audit row already has the token.
 - Require the conditional UPDATE's individual `meta.changes` to equal 1 and the audit INSERT's individual `meta.changes` to equal 1 before reporting success. Zero means conflict/replay; do not report success.
 - A unique partial index on non-null audit `transition_id` prevents duplicate audit events for a token. If the audit INSERT fails, D1 batch transactionality must roll back the state update.
-- Treat evidence rows as immutable history. If `implementation_commit_sha` changes, all prior review, approval and validation evidence is stale until re-recorded against the new commit.
+- Treat evidence rows as immutable history. If `implementation_commit_sha` changes, all prior review, approval and validation evidence is stale until re-recorded against the new commit. A renewed request's predecessor link is immutable and does not transfer evidence or authority.
 
 The reason for the conditional audit INSERT is important: a zero-row UPDATE is not itself a SQL error. Transactional batch behavior alone does not stop a later unconditional INSERT. The proposed token pattern is documented in `docs/DUGA-CAS-AUDIT-PATTERN.md` and modeled by local SQLite tests for success, stale writer, replay, token reuse and audit-failure rollback. These local tests are not Cloudflare D1 evidence. The exact D1 statement results, concurrency serialization and rollback behavior still require the disposable-D1 acceptance plan.
 
