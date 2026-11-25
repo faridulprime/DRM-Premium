@@ -211,8 +211,10 @@ await test("Audit endpoint is Owner-only and returns controlled storage errors",
 await test("Change list and detail reject non-GET methods explicitly", async () => {
   const list = await call({ token: "owner-token", method: "POST", path: "/api/governance/changes" });
   const detail = await call({ token: "owner-token", method: "POST", path: "/api/governance/changes/change-42" });
+  const audit = await call({ token: "owner-token", method: "POST", path: "/api/governance/audit" });
   assert.equal(list.response.status, 405);
   assert.equal(detail.response.status, 405);
+  assert.equal(audit.response.status, 405);
 });
 await test("Unknown governance route is not exposed", async () => {
   const { response } = await call({ token: "owner-token", path: "/api/governance/changes/unknown" });
