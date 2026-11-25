@@ -34,7 +34,7 @@ Verification date: 2026-11-25
 
 ## Validation status
 
-- DUSS v0.7.0 workflow run #10 passed: 16 icon tokens/references, compact override coverage, prior badge/button tokens, seven CSS brace checks and five page cache keys. Follow-up source audit also tokenized the duplicate Admin search rule, Homepage mobile nav icon slot, Homepage profile-completion shield, and Live Users action-drawer icon slot/glyph; the latest CI run must verify those additions. This is static source verification only. The workflow now uses actions/checkout@v7 and actions/setup-python@v7; a separate run verifies the action upgrade.
+- DUSS v0.7.0 workflow run #10 passed: 16 icon tokens/references, compact override coverage, prior badge/button tokens, seven CSS brace checks and five page cache keys. Follow-up source audit also tokenized the duplicate Admin search rule, Homepage mobile nav icon slot, Homepage profile-completion shield, and Live Users action-drawer icon slot/glyph. Run #13 passed the 20-definition/20-consumer checks, but its human-readable success count was stale; the next run verifies dynamically generated counts. This is static source verification only. The workflow now uses actions/checkout@v7 and actions/setup-python@v7; a separate run verifies the action upgrade.
 - Browser screenshots, computed dimensions, keyboard/touch checks, 200% zoom and Bengali/Latin overflow tests have not been run.
 - The source audit does not establish Cloudflare edge configuration or Production runtime behavior.
 

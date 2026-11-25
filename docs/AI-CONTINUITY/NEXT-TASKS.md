@@ -6,7 +6,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## Application: DUSS
 
-1. Verify the latest DUSS run after expanded 20-token coverage for the profile-completion banner and Live Users drawer; checkout/setup-python v7 action upgrade already passed in run #11.
+1. Verify the latest DUSS run after correcting the success-message count to derive from the 20-token/20-consumer registries; run #13 passed the underlying checks.
 2. Perform browser screenshots and computed-style/bounding-box comparisons for Homepage, Admin, Live Users, Upload Studio and Profile; no browser-runner integration is currently available in this work session.
 3. Test mobile/tablet/desktop, 200% zoom, keyboard focus, touch targets and Bengali/Latin overflow.
 4. Review SVG/glyph optical alignment using rendered evidence; do not infer optical equivalence from CSS dimensions.

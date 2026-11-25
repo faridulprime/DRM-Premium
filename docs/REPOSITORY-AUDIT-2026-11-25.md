@@ -19,7 +19,7 @@ This is a source-level audit. It is not a browser test, penetration test, Cloudf
 - Tokenized the two remaining audited icon variants and the later hardcoded responsive search overrides; removed one superseded 25px Profile brand declaration.
 - Completed the Admin search token wiring in both `admin.css` and `theme.css`, and migrated the Homepage mobile sidebar's 24px icon slot to the existing navigation-size token.
 - Strengthened regression checks to require token references in every matching compact-search and Profile brand selector block.
-- Confirmed DUSS v0.7.0 GitHub Actions run #10 passed all static source checks.
+- Confirmed DUSS v0.7.0 GitHub Actions run #10 and expanded runs #12–#13 passed static source checks. Run #13 validated 20 token definitions and 20 mapped consumers; its printed summary still said 16, so the test output was corrected to calculate counts dynamically and a follow-up run is required.
 - Updated the DUSS workflow actions to current v7 majors after run #10 exposed a Node 20 deprecation/forced Node 24 warning.
 - Added confirmation prompts to both the legacy visual-style save/reset actions and the Builder's direct live-style save action.
 - Clarified the Builder's draft/live-style distinction in the UI and README.

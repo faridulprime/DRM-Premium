@@ -41,7 +41,11 @@ def check_reference(source: str, name: str, path: str) -> None:
 
 
 def check_selector_icon_token(
-    source: str, selector: str, token: str, expected_blocks: int = 1, properties: tuple = ('width', 'height')
+    source: str,
+    selector: str,
+    token: str,
+    expected_blocks: int = 1,
+    properties: tuple = ("width", "height"),
 ) -> None:
     pattern = re.compile(re.escape(selector) + r"\s*\{([^{}]*)\}")
     blocks = pattern.findall(source)
@@ -134,6 +138,10 @@ def main() -> int:
         "--duss-icon-slot-size-live-drawer-action": "live-users.css",
         "--duss-icon-size-live-drawer-action": "live-users.css",
     }
+    if set(token_values) != set(consumers):
+        missing = sorted(set(token_values) - set(consumers))
+        extra = sorted(set(consumers) - set(token_values))
+        fail(f"Token/consumer registry mismatch; missing consumers={missing}, unknown consumers={extra}")
     for name, path in consumers.items():
         check_reference(source_files[path], name, path)
 
@@ -219,8 +227,10 @@ def main() -> int:
         fail("DUSS specification is not aligned with the v0.7 icon-sizing migration")
 
     print(
-        "PASS: 16 icon tokens, 16 selector references, all audited duplicate overrides, profile-banner and Live Users drawer variants, mobile nav slot, "
-        "prior badge/button tokens, 7 CSS brace checks, 5 page cache keys, and DUSS v0.7 documentation."
+        f"PASS: {len(token_values)} icon/slot tokens, {len(consumers)} selector references, "
+        "all audited duplicate overrides, profile-banner and Live Users drawer variants, "
+        "mobile nav slot, prior badge/button tokens, 7 CSS brace checks, "
+        "5 page cache keys, and DUSS v0.7 documentation."
     )
     print("NOTE: Static source verification only; no browser geometry is inferred.")
     return 0
