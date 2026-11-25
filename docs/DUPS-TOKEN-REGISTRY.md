@@ -76,3 +76,12 @@ The token file also includes component-specific aliases for shared shell, Profil
 | `--dups-layer-builder-inspector` | 2 | Local overlay order for the Website Builder inspector when it becomes absolutely positioned at widths up to 900 CSS px |
 
 This is a component-scoped alias preserving the existing numeric value. It does not establish a global layer above unrelated content; it is scoped within the fixed Website Builder shell.
+
+
+## Header login status anchor — 2026-11-26
+
+| Token | Value | Intent |
+|---|---|---|
+| `--dups-anchor-gap-status` | `var(--dups-anchor-gap-xs)` (4px at the default root size) | Separation between the mobile Homepage header and its anchored login status |
+
+The existing `--dups-offset-2` (0.5rem; 8px at the default root size) supplies the right-edge offset. The mobile Homepage status selector consumes both tokens; no layout or visibility behavior is changed.
