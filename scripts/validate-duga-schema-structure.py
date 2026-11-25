@@ -79,6 +79,8 @@ EXPECTED_COLUMN_DECLARATIONS = {
 }
 EXPECTED_TRIGGERS = {
     "duga_review_no_implementer_self_audit": ("duga_reviews", "Implementer cannot independently audit"),
+    "duga_reviews_no_update": ("duga_reviews", "immutable evidence"),
+    "duga_reviews_no_delete": ("duga_reviews", "immutable evidence"),
     "duga_audit_no_update": ("duga_audit_events", "append-only"),
     "duga_audit_no_delete": ("duga_audit_events", "append-only"),
 }
@@ -153,6 +155,8 @@ def main() -> int:
         }
         trigger_requirements = {
             "duga_review_no_implementer_self_audit": ("before insert on duga_reviews", "raise(abort"),
+            "duga_reviews_no_update": ("before update on duga_reviews", "raise(abort"),
+            "duga_reviews_no_delete": ("before delete on duga_reviews", "raise(abort"),
             "duga_audit_no_update": ("before update on duga_audit_events", "raise(abort"),
             "duga_audit_no_delete": ("before delete on duga_audit_events", "raise(abort"),
         }
