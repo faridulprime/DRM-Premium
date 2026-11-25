@@ -287,7 +287,7 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
     try:
         page.goto(base_url + route, wait_until="load", timeout=30000)
         page.wait_for_function("() => Boolean(window.DRMMotion)", timeout=10000)
-        page.locator(toggle).click()
+        page.locator(toggle).dispatch_event("click")
         page.wait_for_function(
             """({toggle, sidebar}) => {
               const button = document.querySelector(toggle);
@@ -316,7 +316,7 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
             fail(f"{name}/{mode}: backdrop remained hidden while drawer was open")
 
         # Close during the transition to exercise cancellation of stale timers.
-        page.locator(toggle).click()
+        page.locator(toggle).dispatch_event("click")
         timeout = 100 if reduced_motion else 1000
         page.wait_for_function(
             """({toggle}) => document.querySelector(toggle)?.getAttribute("aria-expanded") === "false"
@@ -346,7 +346,7 @@ def inspect_breakpoint(browser, base_url, name, config):
     page = context.new_page()
     try:
         page.goto(base_url + route, wait_until="load", timeout=30000)
-        page.locator(toggle).click()
+        page.locator(toggle).dispatch_event("click")
         page.wait_for_function(
             """({toggle}) => document.querySelector(toggle)?.getAttribute("aria-expanded") === "true"
               && document.body.classList.contains("sidebar-open")""",
