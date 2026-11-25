@@ -220,9 +220,15 @@ async function handle(req,env){
   if(user.role!=="owner")return fail("শুধু Owner Governance API ব্যবহার করতে পারবেন।",403);
   if(p.length===2&&p[1]==="health"){
    if(m!=="GET")return fail("Method not allowed.",405);
-   let probe;try{probe=await env.DB.prepare("SELECT 1 AS ok").first()}catch{return fail("Governance database probe failed.",503)}
-   if(Number(probe?.ok)!==1)return fail("Governance database probe failed.",503);
-   return json({ok:true,service:"DUGA",database:"reachable",access:"owner"});
+   let probe,tables;try{
+    probe=await env.DB.prepare("SELECT 1 AS ok").first();
+    if(Number(probe?.ok)!==1)return fail("Governance database probe failed.",503);
+    tables=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'duga_%'").all();
+   }catch{return fail("Governance database/schema probe failed.",503)}
+   const expected=["duga_assignments","duga_change_requests","duga_reviews","duga_approvals","duga_validation_runs","duga_audit_events","duga_analysis_findings","duga_jobs"];
+   const found=[...new Set((tables.results||[]).map(row=>String(row.name||"")).filter(name=>expected.includes(name)))].sort();
+   const schemaStatus=found.length===0?"not_installed":found.length===expected.length?"ready":"partial";
+   return json({ok:true,service:"DUGA",database:"reachable",schema:schemaStatus,schemaTables:found,expectedSchemaTables:expected.length,access:"owner"});
   }
   return fail("Governance route not found.",404);
  }
