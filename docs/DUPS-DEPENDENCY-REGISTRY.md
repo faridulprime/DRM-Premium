@@ -167,3 +167,8 @@ The hero corner decoration and its `::before` overlay now use zero-inset DUPS to
 ### Homepage login-status responsive anchor/layer migration — 2026-11-26
 
 The Homepage login-status badge now consumes a semantic 8px desktop gap token and the existing header-status layer token (110), matching the effective theme cascade. The compact rule continues to use the existing 4px gap and 8px right offset tokens. Chromium temporarily supplies fixture text so the normally empty/hidden badge renders, measures its gap from the actual `offsetParent` (`.top-actions` on desktop and the fixed header on compact layouts), then checks the right offset and layer across the Homepage viewport matrix, including both sides of the 760px breakpoint. The fixture text is restored immediately. This is a behavior-preserving token migration.
+
+
+### Live Users account drawer responsive anchor migration — 2026-11-26
+
+The fixed account drawer's existing desktop placement (51.1% vertical; calc(54.4% - 90px) horizontal) and compact 50%/50% centering are now represented by semantic DUPS anchor tokens. The 700px breakpoint, translate-based center alignment and local layer remain unchanged. Chromium reveals the static drawer via its is-open state and checks rendered center coordinates against the viewport-derived targets across the existing Live Users viewport matrix.
