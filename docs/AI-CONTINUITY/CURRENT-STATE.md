@@ -14,7 +14,7 @@ Verification date: 2026-11-25
 - DUGA architecture, roles, ownership, dependency metadata and policies are present on this branch.
 - D1 operational schema remains a design draft here. No DUGA API or separate Control Center is implemented in the website runtime.
 - A separate branch, `duga-foundation-review`, contains Draft PR #4 based on `main`; it is open and unmerged.
-- PR #4 GitHub Actions run `45594551319` completed successfully, including the disposable Worker syntax check and local Python schema/registry tests.
+- DUGA PR #4 GitHub Actions run `45601804933` (run 244) completed successfully on the review branch's source/test update before the latest documentation-only continuity commit. Logs confirm disposable Worker syntax, local DUGA schema SQLite tests, the new draft/fixture/Console parity test, governance validation and malformed-input tests all passed.
 - PR #4 records an earlier disposable-D1 Worker acceptance PASS (run `53d70371-008c-46a0-8bc3-33522be990eb`). The DUGA lifecycle review explicitly notes that the schema was subsequently extended with predecessor-link and AI-review constraints, and revised-schema disposable D1 acceptance has NOT RUN.
 - Shared Preview migration-history reconciliation, independent third-party review, trusted AI/validation identity, Git provenance and application integration tests remain outstanding. Preview migration and DUGA write endpoints remain NO-GO.
 - Human identity assignments remain unassigned. AI principal IDs are not credentials.
