@@ -217,6 +217,10 @@ def main() -> int:
             "duga_assignments": [
                 "scope_type='platform' and scope_id is null",
                 "scope_type='system' and scope_id is not null and length(scope_id)>0",
+                "role_id in ('platform-owner','governance-manager','system-owner','read-only-observer') and subject_type='human'",
+                "role_id in ('ai-maintainer','independent-ai-auditor') and subject_type='ai'",
+                "role_id in ('platform-owner','governance-manager') and scope_type='platform'",
+                "role_id in ('system-owner','ai-maintainer','independent-ai-auditor') and scope_type='system'",
                 "subject_type='human' and user_id is not null and principal_id is null",
                 "subject_type='ai' and user_id is null and principal_id is not null and length(principal_id)>0",
                 "status='active' and revoked_at is null",
@@ -227,12 +231,14 @@ def main() -> int:
                 "json_type(affected_paths_json)='array'",
                 "requested_by_type='human' and requested_by_user_id is not null and requested_by_principal_id is null",
                 "requested_by_type='ai' and requested_by_user_id is null and requested_by_principal_id is not null",
+                "implementer_type='human' and implementer_user_id is not null and implementer_principal_id is null",
+                "implementer_type='ai' and implementer_user_id is null and implementer_principal_id is not null",
                 "source_branch<>'main'",
                 "state_version>0",
             ],
             "duga_reviews": [
-                "reviewer_type='human' and reviewer_user_id is not null and reviewer_principal_id is null",
-                "reviewer_type='ai' and reviewer_user_id is null and reviewer_principal_id is not null",
+                "reviewer_type='human' and reviewer_user_id is not null and reviewer_principal_id is null and review_type='human_review'",
+                "reviewer_type='ai' and reviewer_user_id is null and reviewer_principal_id is not null and review_type='independent_ai_audit'",
             ],
             "duga_audit_events": [
                 "length(event_type)>0",
