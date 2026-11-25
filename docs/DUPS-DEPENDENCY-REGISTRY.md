@@ -218,3 +218,6 @@ The Homepage Website Builder shell, public registration dialog, account suspensi
 
 
 The full-viewport audit also includes the decorative suspension grain layer. Because it has no stacking role (`z-index:auto`), it is checked for fixed positioning and zero-offset viewport coverage but deliberately excluded from numeric overlay-order comparisons.
+
+
+The Homepage overlay geometry test now includes the public registration dialog alongside the Website Builder and suspension surfaces. It checks fixed positioning, its existing DUPS layer, and all four zero-offset viewport edges; native dialog centering remains controlled by `margin:auto`.
