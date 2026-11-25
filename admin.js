@@ -85,7 +85,7 @@ function openAdminMenu(open){
  }
 }
 function closeAdminMenu(){openAdminMenu(false);}
-$("#adminMenuToggle").onclick=()=>openAdminMenu(!document.body.classList.contains("sidebar-open"));
+$("#adminMenuToggle").onclick=()=>openAdminMenu(!(document.body.classList.contains("sidebar-open")||$("#adminSidebar")?.classList.contains("mobile-open")));
 $("#adminSidebarBackdrop").onclick=closeAdminMenu;
 document.addEventListener("pointerdown",e=>{if(!document.body.classList.contains("sidebar-open"))return;if($("#adminSidebar").contains(e.target)||$("#adminMenuToggle").contains(e.target))return;closeAdminMenu();},true);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAdminMenu();});

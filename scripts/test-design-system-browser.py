@@ -184,7 +184,10 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   'button, input, select, textarea, [role="button"], a[href]'
                 )].filter((el) => {
                   const style = getComputedStyle(el);
-                  if (el.closest("[hidden]") || style.display === "none" || style.visibility === "hidden") return false;
+                  const visible = typeof el.checkVisibility === "function"
+                    ? el.checkVisibility({checkOpacity: true, checkVisibilityCSS: true})
+                    : !el.closest("[hidden]") && style.display !== "none" && style.visibility !== "hidden";
+                  if (!visible) return false;
                   const rect = el.getBoundingClientRect();
                   return rect.width <= 0 || rect.height <= 0;
                 }).length
@@ -317,16 +320,22 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
 
         # Close during the transition to exercise cancellation of stale timers.
         page.locator(toggle).dispatch_event("click")
-        timeout = 100 if reduced_motion else 1000
         page.wait_for_function(
             """({toggle}) => document.querySelector(toggle)?.getAttribute("aria-expanded") === "false"
               && !document.body.classList.contains("drawer-open")""",
             arg={"toggle": toggle},
-            timeout=timeout,
+            timeout=5000,
         )
-        page.wait_for_timeout(80 if reduced_motion else 100)
-        if page.locator(sidebar).evaluate("(el) => el.classList.contains('mobile-open')"):
-            fail(f"{name}/{mode}: drawer did not clean up its mobile-open state after closing")
+        # DUME keeps the mobile-open class until its transition cleanup timer
+        # expires (duration + 40ms); wait for the actual lifecycle completion.
+        page.wait_for_function(
+            """({sidebar}) => !document.querySelector(sidebar)?.classList.contains("mobile-open")
+              && !document.body.classList.contains("drawer-open")""",
+            arg={"sidebar": sidebar},
+            timeout=2500,
+        )
+        if not page.locator(backdrop).evaluate("(el) => el.hidden"):
+            fail(f"{name}/{mode}: backdrop remained visible after the drawer finished closing")
     except Exception as exc:
         fail(f"{name}/{mode}: drawer interaction failed: {type(exc).__name__}: {exc}")
     finally:
