@@ -302,6 +302,56 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     fail(f"{name}/{viewport_name}: header login status anchor could not be resolved ({header_status_anchor})")
 
         if name == "homepage":
+            visual_editor_anchor = page.evaluate(
+                """() => {
+                  const toggle = document.querySelector(".visual-editor-toggle");
+                  const panel = document.querySelector(".visual-editor-panel");
+                  const rootStyle = getComputedStyle(document.documentElement);
+                  const rootSize = parseFloat(rootStyle.fontSize) || 16;
+                  const px = (name) => {
+                    const value = rootStyle.getPropertyValue(name).trim();
+                    return value.endsWith("rem") ? parseFloat(value) * rootSize : parseFloat(value);
+                  };
+                  if (!toggle || !panel) return {missing: true};
+                  toggle.hidden = false;
+                  panel.hidden = false;
+                  const button = getComputedStyle(toggle);
+                  const drawer = getComputedStyle(panel);
+                  return {
+                    togglePosition: button.position,
+                    toggleRight: parseFloat(button.right),
+                    toggleBottom: parseFloat(button.bottom),
+                    toggleZ: button.zIndex,
+                    panelPosition: drawer.position,
+                    panelTop: parseFloat(drawer.top),
+                    panelLeft: parseFloat(drawer.left),
+                    panelZ: drawer.zIndex,
+                    expectedEdge: px(innerWidth <= 600
+                      ? "--dups-anchor-visual-editor-edge-compact"
+                      : "--dups-anchor-visual-editor-edge"),
+                    expectedPanelTop: px("--dups-anchor-visual-editor-panel-top"),
+                    expectedPanelLeft: px("--dups-anchor-visual-editor-panel-left"),
+                    expectedToggleZ: parseFloat(rootStyle.getPropertyValue("--dups-layer-visual-editor")),
+                    expectedPanelZ: parseFloat(rootStyle.getPropertyValue("--dups-layer-visual-editor-panel-legacy"))
+                  };
+                }"""
+            )
+            if visual_editor_anchor.get("missing"):
+                fail(f"{name}/{viewport_name}: visual editor toggle or panel is missing")
+            else:
+                try:
+                    if visual_editor_anchor["togglePosition"] != "fixed" or visual_editor_anchor["panelPosition"] != "fixed":
+                        fail(f"{name}/{viewport_name}: visual editor controls are not fixed-positioned ({visual_editor_anchor})")
+                    if abs(visual_editor_anchor["toggleRight"] - visual_editor_anchor["expectedEdge"]) > 1 or abs(visual_editor_anchor["toggleBottom"] - visual_editor_anchor["expectedEdge"]) > 1:
+                        fail(f"{name}/{viewport_name}: visual editor toggle edge offsets differ from DUPS tokens ({visual_editor_anchor})")
+                    if abs(visual_editor_anchor["panelTop"] - visual_editor_anchor["expectedPanelTop"]) > 1 or abs(visual_editor_anchor["panelLeft"] - visual_editor_anchor["expectedPanelLeft"]) > 1:
+                        fail(f"{name}/{viewport_name}: visual editor panel anchor offsets differ from DUPS tokens ({visual_editor_anchor})")
+                    if float(visual_editor_anchor["toggleZ"]) != visual_editor_anchor["expectedToggleZ"] or float(visual_editor_anchor["panelZ"]) != visual_editor_anchor["expectedPanelZ"]:
+                        fail(f"{name}/{viewport_name}: visual editor stacking layers differ from DUPS tokens ({visual_editor_anchor})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: visual editor DUPS geometry/layers could not be resolved ({visual_editor_anchor})")
+
+        if name == "homepage":
             homepage_layers = page.evaluate(
                 """() => {
                   const root = getComputedStyle(document.documentElement);
