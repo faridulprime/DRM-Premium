@@ -19,7 +19,7 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
 .live-subtitle{margin:6px 0 0;color:var(--ducs-live-subtitle);font-size:11px}
 .live-search{display:flex;align-items:center;gap:10px;margin:15px 16px 13px;padding:0 12px;height:39px;border:1px solid var(--ducs-live-field-border, #303030);border-radius:7px;background:var(--ducs-live-field-bg, #171717);color:var(--ducs-live-text-secondary, #888)}
 .live-search:focus-within{border-color:var(--ducs-live-field-border-focus, #555);box-shadow:0 0 0 2px rgba(255,255,255,.035)}
-.live-search svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;flex:none}
+.live-search svg{width:var(--duss-icon-size-live-search, 15px);height:var(--duss-icon-size-live-search, 15px);fill:none;stroke:currentColor;stroke-width:1.7;flex:none}
 .live-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ducs-live-field-text, #eee);font:12px "Space Grotesk","Hind Siliguri",sans-serif}
 .live-search input::placeholder{color:var(--ducs-live-field-placeholder, #6f6f6f)}.live-search button{border:0;background:transparent;color:#888;font-size:20px;cursor:pointer}
 .live-list-meta{display:flex;align-items:center;justify-content:space-between;padding:0 19px 9px;color:var(--ducs-live-list-meta);font-size:9px;font-weight:600;letter-spacing:.11em}
