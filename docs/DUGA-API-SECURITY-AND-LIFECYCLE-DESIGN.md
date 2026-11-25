@@ -75,7 +75,7 @@ Only these candidate transitions are allowed; all unlisted pairs are denied:
 | impact_review | cancelled | Authorized human cancellation with rationale |
 | awaiting_ai_audit | awaiting_human_approval | Trusted independent audit passed for current commit; reviewer differs from implementer |
 | awaiting_ai_audit | impact_review | Audit requests changes; rationale/evidence recorded |
-| awaiting_ai_audit | rejected | Explicit rejection and rationale |
+| awaiting_ai_audit | impact_review | Audit identifies a material gap requiring revised impact/scope/risk assessment; findings and rationale recorded |
 | awaiting_ai_audit | blocked | Blocking reason recorded |
 | awaiting_human_approval | approved | Required human approver authorized for scope/risk; same implementation commit |
 | awaiting_human_approval | impact_review | Human reviewer requests changes; rationale recorded |
@@ -95,6 +95,20 @@ Only these candidate transitions are allowed; all unlisted pairs are denied:
 | final_review | rejected | Authorized human rejection with rationale |
 | final_review | blocked | Blocking reason recorded |
 
+### Rework-edge policy and invariants
+
+The rework edges in the table are the only in-place return paths. They do not reopen terminal requests:
+
+- `impact_review → analyzing`: use only when new evidence changes the problem statement, affected systems/paths, assumptions or technical analysis. Record the requested correction and why the existing analysis is no longer reliable.
+- `awaiting_ai_audit → impact_review`: use when the independent audit identifies a material omission or defect in impact, scope or risk assessment. Store the finding and evidence. An AI auditor may report findings and request rework, but cannot make a terminal `rejected` decision.
+- `awaiting_human_approval → impact_review`: the authorized human reviewer/approver requests a material change to scope, risk, impact or rationale. Record the decision and rationale; do not treat a request for changes as approval or rejection.
+- `validating → implementing`: use only after a failed validation or a verified implementation change. Open a new implementation/validation cycle; the failed run remains immutable evidence and cannot count as a pass.
+- `final_review → implementing`: use only when final review identifies a defect requiring code changes. Record findings; the subsequent implementation commit must be re-reviewed and revalidated before acceptance.
+
+Every rework transition must be an authorized, versioned CAS transition with a non-empty rationale and append-only audit event. Increment the request's revision/state version as applicable. Preserve prior reviews, approvals, validation runs and findings as immutable history; determine whether each item remains applicable by its request revision, implementation SHA and policy/registry revision. Any changed implementation SHA invalidates all prior commit-bound review, approval and validation gates. A material scope/risk/policy change requires re-evaluation of affected gates even if the code SHA is unchanged. No rework edge may bypass independent AI audit, human approval, successful validation or final human acceptance.
+
+The matrix deliberately does not add generic backward transitions, direct `approved → impact_review`, `implementing → impact_review`, or any transition out of `accepted`, `rejected` or `cancelled`. If a new attempt follows rejection/cancellation, create a new linked Change Request instead.
+
 Candidate terminal and resumption semantics (Owner decision recorded: B — resumable):
 - `accepted`, `rejected`, and `cancelled` are terminal. A rejected or cancelled request is never reopened or reset in place. Any renewed attempt must be created as a new Change Request linked to the original request through an immutable parent/supersedes reference; the new request receives its own state version, evidence, approvals and audit history. The original decision, rationale and events remain unchanged. A linked request does not inherit approval, review, validation or implementation authorization from its predecessor.
 - `blocked` is a resumable hold state, not a terminal state. It may leave `blocked` only through an explicit, authorized `unblock` operation after the blocking condition is demonstrably cleared.
@@ -104,7 +118,7 @@ Candidate terminal and resumption semantics (Owner decision recorded: B — resu
 - A repeated block/unblock cycle creates new audit events; no historical event is edited or deleted. Concurrent unblock attempts must be protected by CAS and one-time transition tokens.
 - The unblock operation does not itself authorize implementation, merge, deployment or any other separately gated action.
 
-**Owner decisions recorded:** `blocked` is resumable (option B); `rejected` and `cancelled` are terminal, and any renewed attempt must be a new linked Change Request. The proposed rework edges still require Owner review; therefore the full matrix remains proposed and is not executable policy.
+**Owner decisions recorded:** `blocked` is resumable (option B); `rejected` and `cancelled` are terminal, and any renewed attempt must be a new linked Change Request. The rework-edge semantics are now specified as a proposed design. The full matrix remains proposed and is not executable policy pending independent review and explicit Owner approval.
 
 ## 5. Risk and approval gates
 
