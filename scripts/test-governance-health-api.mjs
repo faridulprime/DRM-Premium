@@ -84,12 +84,12 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
   };
   return dbEnabled ? { DB } : {};
 }
-async function call({ token, method = "GET", path = "/api/governance/health", env = mockEnv(), origin = "https://example.test", contentType = "application/json" } = {}) {
+async function call({ token, method = "GET", path = "/api/governance/health", env = mockEnv(), origin = "https://example.test", contentType = "application/json", body } = {}) {
   const headers = new Headers();
   if (token) headers.set("Cookie", "frame_admin_session=" + token);
   if (origin) headers.set("Origin", origin);
   if (contentType) headers.set("Content-Type", contentType);
-  const request = new Request("https://example.test" + path, { method, headers });
+  const request = new Request("https://example.test" + path, { method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
   const response = await onRequest({ request, env });
   return { response, body: await response.json() };
 }
@@ -440,6 +440,18 @@ await test("Owner-only application account routes deny Admin, Member and anonymo
     assert.equal(member.response.status, 401, "Member must be denied: " + path);
     assert.equal(anonymous.response.status, 401, "Anonymous caller must be denied: " + path);
   }
+});
+
+await test("Only Owner can mutate account roles and Owner self-protection is enforced", async () => {
+  const body = { role: "user" };
+  const adminPatch = await call({ token: "admin-token", method: "PATCH", path: "/api/admin/users/member-1", body });
+  const adminDelete = await call({ token: "admin-token", method: "DELETE", path: "/api/admin/users/admin-2" });
+  const ownerSelfPatch = await call({ token: "owner-token", method: "PATCH", path: "/api/admin/users/owner-1", body });
+  const ownerSelfDelete = await call({ token: "owner-token", method: "DELETE", path: "/api/admin/users/owner-1" });
+  assert.equal(adminPatch.response.status, 403, "Admin must not change account roles");
+  assert.equal(adminDelete.response.status, 403, "Admin must not remove accounts");
+  assert.equal(ownerSelfPatch.response.status, 400, "Owner must not change their own role");
+  assert.equal(ownerSelfDelete.response.status, 400, "Owner must not delete their own account");
 });
 
 await test("Every governance read endpoint rejects mutation methods", async () => {
