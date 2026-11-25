@@ -104,3 +104,8 @@ Run #45677961245 passed the mobile Homepage header-status anchor token checks an
 ### Live Users drawer closing-effect pseudo layers — 2026-11-26
 
 Migrated the remaining literal `z-index: 5` on `.live-user-drawer.is-closing::before` to the existing `--dups-layer-live-effect` token. Chromium reads both closing pseudo-element computed z-index values and checks them against the base/top DUPS tokens. These layers remain local to the drawer; no global overlay ordering is implied.
+
+
+### Website Builder inspector containing-block geometry — 2026-11-26
+
+Chromium run #45678321298 passed the expanded check that reveals the hidden static Builder shell, verifies the shell is fixed and rendered, and checks the inspector's absolute position plus top/right/bottom geometry relative to that shell (including the mobile top offset). This is stronger than checking computed `position` and `z-index` alone, but does not cover interactive Builder runtime behavior.
