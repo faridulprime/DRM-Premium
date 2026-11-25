@@ -153,3 +153,10 @@ The new Restricted Users modal assertions passed at all seven viewport widths in
 - Replaced the status notice's literal 4px anchor gap and 8px right offset with `--dups-anchor-gap-status` and `--dups-offset-2`.
 - Added Chromium checks at existing Homepage viewports up to 760 CSS px for absolute positioning, computed header-relative gap and right-edge offset.
 - This validates the one known header/status relationship; it does not establish collision handling, viewport flipping, or general popover behavior.
+
+
+## Live Users detail-dialog sticky-header acceptance — 2026-11-26
+
+- Migrated the dialog header's component-local `z-index: 1` to `--dups-layer-live-dialog-sticky-header` without changing its value or sticky behavior.
+- Chromium checks verify computed sticky positioning and token agreement at the existing Live Users viewport widths.
+- This is a local dialog layer assertion, not a complete dialog scroll/interaction test or global overlay-order proof.
