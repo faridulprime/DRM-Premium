@@ -93,6 +93,13 @@ BEFORE UPDATE ON duga_change_requests
 WHEN
   OLD.status IN ('accepted','rejected','cancelled')
   OR NEW.id<>OLD.id
+  OR NEW.title<>OLD.title
+  OR NEW.summary<>OLD.summary
+  OR NEW.rationale<>OLD.rationale
+  OR NEW.risk_level<>OLD.risk_level
+  OR NEW.affected_systems_json<>OLD.affected_systems_json
+  OR NEW.affected_paths_json<>OLD.affected_paths_json
+  OR NEW.rollback_plan<>OLD.rollback_plan
   OR NEW.requested_by_type<>OLD.requested_by_type
   OR NEW.requested_by_user_id IS NOT OLD.requested_by_user_id
   OR NEW.requested_by_principal_id IS NOT OLD.requested_by_principal_id
