@@ -68,6 +68,7 @@ function renderCategories(){const select=$("#categorySelect");select.innerHTML=s
 
 let dumcTaxonomy=null;
 let dumcSelectedNode=null;
+let dumcLive=false;
 function dumcCount(node){return 1+(node.children||[]).reduce((n,c)=>n+dumcCount(c),0);}
 function dumcFind(node,id){if(node.id===id)return node;for(const child of node.children||[]){const found=dumcFind(child,id);if(found)return found;}return null;}
 function dumcNodeHTML(node,depth=0,query=""){
