@@ -123,4 +123,4 @@ Do not rely on read-then-write authorization without compare-and-swap. Do not ac
 - Test the new schema in SQLite, then disposable D1, then Preview D1/runtime.
 - Keep Production untouched absent separate explicit authorization.
 
-The feature-branch operational schema draft and in-memory test/validator definitions now include lifecycle enforcement. The tests have not yet been executed in this session. No API write route, OIDC flow, migration, Preview D1 access, or deployment was performed.
+The feature-branch operational schema draft and in-memory test/validator definitions now include lifecycle enforcement. Both the in-memory SQLite smoke suite and deep structural validator passed GitHub Actions on commit `d0d21d774689417624d75cd255f9f7e2f4485966` (runs [#45672305048](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305048) and [#45672305053](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305053)). The smoke suite covers all 29 allowed lifecycle edges and rejects 127 other source/target pairs. No API write route, OIDC flow, migration, Preview D1 access, or deployment was performed.
