@@ -256,3 +256,8 @@ The public registration dialog now explicitly consumes `--dups-layer-register-di
 ## Homepage status and Upload Studio thumbnail overlay — 2026-11-26
 
 The Homepage `.header-login-status` flush right edge and Upload Studio `.preview-thumb span` four-edge thumbnail overlay now reuse `--dups-offset-0`. The Upload Studio browser fixture checks the overlay's absolute positioning and computed four-edge fill against the token at each audited viewport.
+
+
+## Upload Studio fixed sidebar anchors — 2026-11-26
+
+The desktop Upload Studio sidebar now uses `--dups-offset-0` for its top, bottom, and left viewport anchors, preserving its `right:auto` sizing behavior. The browser audit checks the computed fixed-position geometry on desktop viewport states.
