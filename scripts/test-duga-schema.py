@@ -295,7 +295,7 @@ def main() -> int:
 
     check("valid human change request", lambda: insert_change("change-1"),
           should_fail=False)
-    check("new request may link to an existing predecessor",
+    check("SQL accepts a referentially valid predecessor link (terminal-state validation is API-owned)",
           lambda: insert_change("change-followup", parent_id="change-1"),
           should_fail=False)
     check("linked request cannot reference a missing predecessor",
@@ -352,6 +352,23 @@ def main() -> int:
                  VALUES ('review-ai-reject','change-1','independent_ai_audit','ai','auditor-x',
                          'rejected','commit-a','{}',2)"""
           ), should_fail=True)
+    check("AI audit may request changes without terminal rejection",
+          lambda: db.execute(
+              """INSERT INTO duga_reviews
+                 (id,change_request_id,review_type,reviewer_type,reviewer_principal_id,
+                  decision,reviewed_commit_sha,evidence_json,created_at)
+                 VALUES ('review-ai-changes','change-1','independent_ai_audit','ai','auditor-x',
+                         'changes_requested','commit-a','{}',2)"""
+          ), should_fail=False)
+    check("authorized human review may record terminal rejection",
+          lambda: db.execute(
+              """INSERT INTO duga_reviews
+                 (id,change_request_id,review_type,reviewer_type,reviewer_user_id,
+                  decision,reviewed_commit_sha,evidence_json,created_at)
+                 VALUES ('review-human-reject','change-1','human_review','human','human-2',
+                         'rejected','commit-a','{}',2)"""
+          ), should_fail=False)
+
     check("AI principal cannot submit human review",
           lambda: db.execute(
               """INSERT INTO duga_reviews
