@@ -227,7 +227,7 @@ def main() -> int:
                     )
 
         expected_fk_counts = {
-            "duga_assignments": 2, "duga_change_requests": 2,
+            "duga_assignments": 3, "duga_change_requests": 2,
             "duga_reviews": 2, "duga_approvals": 3,
             "duga_validation_runs": 1, "duga_audit_events": 1,
             "duga_analysis_findings": 1, "duga_jobs": 0,
