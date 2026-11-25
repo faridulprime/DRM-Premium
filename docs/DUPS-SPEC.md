@@ -248,3 +248,8 @@ The registration dialog's base selector now declares `z-index:var(--dups-layer-r
 ## Homepage status and Upload Studio thumbnail geometry — 2026-11-26
 
 Two remaining meaningful zero-edge declarations were tokenized: the Homepage login-status notice's right anchor and the Upload Studio thumbnail play-overlay's four-edge fill. The browser audit now verifies the thumbnail overlay's computed geometry against `--dups-offset-0` without changing its positioning mode or centered content.
+
+
+## Upload Studio desktop sidebar placement — 2026-11-26
+
+The fixed Upload Studio desktop sidebar now uses the DUPS zero-offset primitive for its top, left, and bottom anchors while retaining `right:auto`. Browser coverage verifies the three viewport-edge coordinates without altering width, stacking order, or compact drawer behavior.
