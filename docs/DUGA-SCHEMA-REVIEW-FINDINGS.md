@@ -21,6 +21,8 @@ This review inspected the SQL draft and its stated lifecycle/authorization desig
 
 ### F-02 — Approval records are mutable and lack database-level assignment binding
 
+**Resolution in current draft:** `duga_approvals` now records the exact authorization assignment ID, scope snapshot and policy commit SHA. A `BEFORE INSERT` trigger checks that the assignment is active, human, belongs to the approver, matches the stated role and scope, and covers an affected system (or is the platform-wide Platform Owner assignment). Approval UPDATE/DELETE are rejected. SQLite regression cases cover valid approval, mismatched scope/user, stale policy, revoked assignment and evidence mutation/deletion. This remains defense in depth: trusted session authentication and server-side actor derivation are still API responsibilities.
+
 **Evidence:** `duga_approvals` has no UPDATE/DELETE protection. `approver_user_id` is a foreign key to `users`, while `approver_role` is a caller-populated enum; no SQL constraint or trigger proves that the user held the stated active `system-owner` or `platform-owner` assignment for the relevant scope at approval time.
 
 **Risk:** The table alone cannot prove the approver was authorized, and stored approval evidence can be silently changed or removed. The design correctly requires API authorization, but database rows do not independently attest to it.
