@@ -218,7 +218,9 @@ body.live-users-page.sidebar-open{padding-left:240px!important}
  .live-search{margin-inline:12px}
  .live-list-meta{padding-inline:14px}
  .live-list{min-width:0}
- .live-user-drawer,.live-restrictions-modal{left:var(--dups-viewport-center, 50%)!important;top:var(--dups-viewport-center, 50%)!important;width:min(460px,calc(100vw - 24px));max-height:88dvh}
+ .live-user-drawer{left:var(--dups-anchor-live-drawer-left-compact, 50%)!important;top:var(--dups-anchor-live-drawer-top-compact, 50%)!important}
+ .live-restrictions-modal{left:var(--dups-viewport-center, 50%)!important;top:var(--dups-viewport-center, 50%)!important}
+ .live-user-drawer,.live-restrictions-modal{width:min(460px,calc(100vw - 24px));max-height:88dvh}
 }
 @media(max-width:360px){
  .live-topbar .brand-admin-suffix{display:none}
