@@ -80,7 +80,7 @@ The public-facing product name is DRM- Premium. The current UI still has a few l
 
 ## Governance foundation (DUGA)
 
-DUGA is being introduced as a separate governance layer. The Git-based governance foundation and CI checks are implemented. The D1 operational schema remains a non-executable draft; an initial Owner-only health probe exists, but the full governance API and Control Center are not implemented. DUGA does not replace the existing Owner/Admin/User authorization or become a runtime dependency of the public website.
+DUGA is being introduced as a separate governance layer. The Git-based governance foundation and CI checks are implemented. The D1 operational schema remains a non-executable draft; an initial Owner-only health probe exists, but the full governance API and Control Center are not implemented. DUGA does not replace the existing Owner/Admin/User authorization or become a runtime dependency of the public website. The read-only API foothold now includes `GET /api/governance/changes` (Owner-only filtered/keyset-paginated list) and `GET /api/governance/changes/:id` (Owner-only detail with bounded reviews, approvals, validation runs and audit events). These endpoints do not mutate governance state; their handler tests use mocked D1 and do not establish Preview readiness.
 
 - [DUGA architecture](docs/DUGA-SPEC.md)
 - [DUGA implementation plan](docs/DUGA-IMPLEMENTATION-PLAN.md)
