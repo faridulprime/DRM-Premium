@@ -24,7 +24,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 
 ## DUGA review track — Draft PR #4
 
-0. DUGA workflow action upgrade verified by review-branch runs #251/#252 and feature-branch run #253; no D1 execution is part of this change.
+0. DUGA workflow action upgrade verified: review-branch runs #251/#252 and #254 plus feature-branch run #253 passed; no D1 execution is part of this change.
 1. Obtain independent third-party review of the SQL schema, lifecycle transitions, authorization policy and CAS/audit design.
 2. Run full revised-schema acceptance against a fresh disposable D1 after the parent-change-request and AI-review constraints; the older Worker PASS does not cover these later schema additions.
 3. Reconcile the actual shared Preview D1 migration history and repository migration sequence, including duplicate `0004` and `0007` prefixes.
