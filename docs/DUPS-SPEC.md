@@ -221,3 +221,6 @@ The compact Homepage fixed header uses the shared zero-offset token for its top 
 ## Compact shared-shell edge tokenization — 2026-11-26
 
 The compact shared Category Bar and compact Homepage Category Bar horizontal viewport edges now reuse the existing DUPS zero-offset primitive. The desktop shared header login-status right edge also uses the primitive, with its compact Homepage 8px inset override preserved. The Homepage browser audit now checks the Category Bar's computed horizontal edges against the token across the existing viewport matrix and tested header visibility states. Existing top anchors, dimensions, breakpoints and stacking layers remain unchanged; a completed Chromium run for this addition is not yet confirmed.
+
+
+The header login-status regression now resolves its desktop right-edge expectation from `--dups-offset-0` and its compact expectation from `--dups-offset-2`. This keeps the test coupled to the actual token values while preserving the current 0px/8px geometry.
