@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "docs/DUGA-API-AUTHORIZATION-DESIGN.md"
+      - "docs/DUGA-API-WRITE-CONTRACT.md"
       - "docs/DUGA-API-INTEGRATION-READINESS.md"
       - "docs/DUGA-D1-SCHEMA-DESIGN.md"
       - "docs/DUGA-IMPLEMENTATION-PLAN.md"
