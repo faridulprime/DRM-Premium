@@ -288,6 +288,27 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 f"filtered, contained, or will-change ancestors "
                 f"({metrics['fixedAncestorIssues']})"
             )
+        if name == "upload-studio" and width > 760:
+            studio_sidebar = page.evaluate(
+                """() => {
+                  const element = document.querySelector(".sidebar");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!element) return {missing: true};
+                  const style = getComputedStyle(element);
+                  const rect = element.getBoundingClientRect();
+                  return {
+                    position: style.position,
+                    top: rect.top,
+                    left: rect.left,
+                    bottom: innerHeight - rect.bottom,
+                    expectedZero: parseFloat(root.getPropertyValue("--dups-offset-0"))
+                  };
+                }"""
+            )
+            if studio_sidebar.get("missing"):
+                fail(f"{name}/{viewport_name}: Upload Studio sidebar is missing")
+            elif studio_sidebar["position"] != "fixed" or any(abs(studio_sidebar[key] - studio_sidebar["expectedZero"]) > 1 for key in ("top", "left", "bottom")):
+                fail(f"{name}/{viewport_name}: Upload Studio fixed sidebar edges differ from DUPS zero-offset token ({studio_sidebar})")
         if name == "upload-studio":
             thumbnail_overlay = page.evaluate(
                 """() => {
