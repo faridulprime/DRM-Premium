@@ -1,7 +1,7 @@
 # DRM Premium — Current State
 Verified ref: duga-foundation-review
 Verification date: 2026-11-25
-Verified commit: pending final CI verification after disposable D1 Worker additions
+Verified commit: documentation update follows disposable D1 Worker acceptance; see latest branch head
 
 ## DUGA foundation
 - Isolated review branch is based directly on `main`; it contains only DUGA foundation assets and excludes unrelated Admin/application work.
@@ -10,7 +10,7 @@ Verified commit: pending final CI verification after disposable D1 Worker additi
 - Validator checks role structure, dependency metadata, system/ownership references, dependency/page-asset endpoints, cycle detection, risk policy contracts, approval stage order, registry rules and the system JSON Schema envelope.
 - Validator guards malformed JSON shapes and unhashable values, returning validation errors instead of crashing for covered cases.
 - Local SQLite schema smoke tests, governance validation and malformed-input unit cases passed in GitHub Actions. Latest expanded schema suite passed in run `45508682329` on commit `d012b10f34e62a7895bebc4c0af6a31a9ea49230`, covering active System Owner uniqueness/reassignment, temporal ordering, validation lifecycle states, job lease/status/result consistency and rejection of blank required values.
-- An isolated, bearer-secret-protected D1 acceptance Worker source and Wrangler config are now present under `scripts/duga-d1-acceptance-worker/`, pinned to the disposable D1 ID. Source only; not deployed or run. CI now syntax-checks its JavaScript.
+- An isolated, bearer-secret-protected D1 acceptance Worker under `scripts/duga-d1-acceptance-worker/` was deployed only to `duga-d1-acceptance-disposable`, pinned to the disposable D1 ID. The temporary diagnostic route was removed before the final redeployment. CI syntax-checks its JavaScript.
 - D1 design review documents server-side gates still required: legal state transitions, stale-commit invalidation, active assignment checks, reviewer/implementer separation, trusted validation, canonical Git-ref validation, role-specific approval authorization and server-derived audit actors.
 - SQL draft now also checks validation lifecycle timestamps, job lease/status/result consistency, assignment revocation ordering, change/job update ordering and nonblank identity/rollback fields.
 - JSON constraints now enforce arrays for affected systems/paths and objects for review/finding evidence, validation results, audit payloads and job input/result. Added malformed/type-shape probes; GitHub Actions run `45509071788` has completed the test step successfully (run finalization pending at last check).
@@ -22,7 +22,8 @@ Verified commit: pending final CI verification after disposable D1 Worker additi
 - Added `last_transition_id` to the change-request schema draft, nullable `transition_id` to audit events, and a unique partial index for non-null transition tokens.
 - Added a documented CAS + conditional `INSERT ... SELECT` pattern. Local SQLite tests now cover success (1 update/1 audit), stale writer (0/0), token replay (0/0), token reuse (0/0), and audit-insert failure rollback.
 - CI on latest verified commit `f5db6c1776de301395fd6e3221d4c3fde0f15972`: push run `45510333338` passed; the sqlite-smoke-test job and local schema/registry/validator step completed successfully.
-- These results are local SQLite evidence only. Owner then created and populated disposable D1 `drm-duga-acceptance-disposable` (`6d512429-34a3-498b-9430-45f11d382da9`). Screenshots show eight DUGA tables, two audit triggers, clean `PRAGMA foreign_key_check`, successful synthetic audit INSERT, and UPDATE/DELETE blocked by the append-only trigger. CAS batch semantics and per-statement `meta.changes` remain untested.
+- These results are local SQLite evidence only. Owner then created and populated disposable D1 `drm-duga-acceptance-disposable` (`6d512429-34a3-498b-9430-45f11d382da9`). Screenshots show eight DUGA tables, two audit triggers, clean `PRAGMA foreign_key_check`, successful synthetic audit INSERT, and UPDATE/DELETE blocked by the append-only trigger.
+- Authenticated Worker acceptance on the disposable D1 returned `results.pass = true` at `2026-11-25T01:04:19.420Z` (run ID `53d70371-008c-46a0-8bc3-33522be990eb`). The Worker aggregates assertions for success (1 update/1 audit), stale writer/replay/token reuse (0/0), forced audit CHECK failure rollback with unchanged state, and two competing writers (exactly one winner and one loser, one audit event). PowerShell displayed the aggregate PASS rather than nested individual counts; see `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md` for the exact qualification.
 - CI path filters cover `governance/**`, DUGA design and continuity docs, schema/validator tests and workflow files.
 - Cloudflare Pages automatically published a branch Preview: https://duga-foundation-review.drm-premium.pages.dev. This is not Production and does not establish D1 migration or runtime governance validation.
 
@@ -31,7 +32,7 @@ Verified commit: pending final CI verification after disposable D1 Worker additi
 - No DUGA API or Control Center is implemented.
 - DACE remains analysis-only; no executable analyzer or AI service authentication exists.
 - Human identity assignments remain unassigned.
-- Local SQLite tests do not prove Cloudflare D1 transactional, trigger or foreign-key behavior.
+- Local SQLite tests do not prove Cloudflare D1 transactional, trigger or foreign-key behavior; the disposable Worker result does not establish Production or shared Preview acceptance.
 - Policy checks are structural consistency checks; they do not enforce runtime authorization or replace human review.
 - No browser-level or application regression testing is implied by governance CI.
 
