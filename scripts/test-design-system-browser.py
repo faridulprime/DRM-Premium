@@ -761,7 +761,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   drawer.classList.add("is-open");
                   const style = getComputedStyle(drawer);
                   const rect = drawer.getBoundingClientRect();
-                  const compact = innerWidth <= 700;
+                  const compact = innerWidth <= 760;
                   return {
                     position: style.position,
                     zIndex: style.zIndex,
@@ -791,11 +791,11 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                         fail(f"{name}/{viewport_name}: Live Users account drawer vertical anchor differs from its DUPS token ({account_drawer_anchor})")
                     if float(account_drawer_anchor["zIndex"]) != float(account_drawer_anchor["layerToken"]):
                         fail(f"{name}/{viewport_name}: Live Users account drawer layer differs from its DUPS token ({account_drawer_anchor})")
-                    if account_drawer_anchor["topToken"] != ("50%" if width <= 700 else "51.1%"):
+                    if account_drawer_anchor["topToken"] != ("50%" if width <= 760 else "51.1%"):
                         fail(f"{name}/{viewport_name}: Live Users account drawer top anchor token changed unexpectedly ({account_drawer_anchor})")
-                    if width <= 700 and account_drawer_anchor["leftToken"] != "50%":
+                    if width <= 760 and account_drawer_anchor["leftToken"] != "50%":
                         fail(f"{name}/{viewport_name}: compact Live Users account drawer left anchor is not centered ({account_drawer_anchor})")
-                    if width > 700 and "54.4%" not in account_drawer_anchor["leftToken"]:
+                    if width > 760 and "54.4%" not in account_drawer_anchor["leftToken"]:
                         fail(f"{name}/{viewport_name}: desktop Live Users account drawer left anchor token changed unexpectedly ({account_drawer_anchor})")
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: Live Users account drawer anchor/layer could not be resolved ({account_drawer_anchor})")
