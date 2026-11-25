@@ -15,7 +15,7 @@ The operational schema draft contains 13 statuses, `state_version`, requester/im
 
 The draft-level lifecycle gap is closed structurally: new requests must begin as `proposed` at version 1 with no implementer/commit; transitions follow an explicit allow-list and increment the version exactly once; requester and original source/base/policy bindings are immutable; terminal requests cannot be updated; requests cannot be physically deleted; and transitions create a database-generated audit event.
 
-The migration manifest describes only fresh-database ordering. It does not prove which migrations have been applied to any D1 database. The SQL file remains a design draft, not an executable migration. The updated in-memory tests and structural validator have been authored but have not yet been executed in this session.
+The migration manifest describes only fresh-database ordering. It does not prove which migrations have been applied to any D1 database. The SQL file remains a design draft, not an executable migration. The updated in-memory tests and structural validator both passed GitHub Actions on commit `d0d21d774689417624d75cd255f9f7e2f4485966`: [DUGA Governance Metadata run #45672305048](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305048) and [DUGA schema smoke run #45672305053](https://github.com/faridulprime/DRM-Premium/actions/runs/45672305053). The smoke suite exhaustively checks 29 allow-listed edges and 127 rejected source/target pairs.
 
 ## 3. Conservative policy defaults recommended for the next implementation
 
@@ -144,7 +144,7 @@ When the design is accepted:
 
 - Direct insert into any status other than `proposed` fails.
 - Insert with non-1 state version or pre-populated implementer/commit fails.
-- Every allowed graph edge succeeds structurally; every unlisted edge fails.
+- Every allowed graph edge succeeds structurally and every unlisted source/target pair fails (29 allowed + 127 rejected matrix cases in the in-memory smoke suite).
 - Version unchanged, skipped or decremented on a transition fails.
 - Requester, identity, creation time, source branch, base commit or policy SHA mutation fails.
 - Any update to accepted/rejected/cancelled fails.
@@ -170,10 +170,10 @@ When the design is accepted:
 This design's schema-draft phase is ready for local/CI validation. API implementation remains gated until:
 - The product workflow is reconciled with the transition graph.
 - The recommended policy defaults are accepted or explicitly amended.
-- Both updated in-memory SQLite scripts pass against the exact branch-head schema.
+- Both updated in-memory SQLite scripts pass against the exact tested commit; the latest matrix run is recorded above.
 - API actor attribution, CAS and transactional audit rollback are implemented and tested.
 - The migration history/backup gate is separately completed before Preview operations.
 
 ## 11. Explicit non-actions
 
-The operational schema draft, smoke-test definitions and structural-validator expectations were changed on the feature branch. No test execution result is claimed yet. No D1 database was read or written. No migration was created or executed. No write API was added. No Preview or Production deployment occurred. This document does not authorize any of those actions.
+The operational schema draft, smoke-test definitions and structural-validator expectations were changed on the feature branch. Both local SQLite scripts passed in GitHub Actions against commit `d0d21d774689417624d75cd255f9f7e2f4485966` (runs #45672305048 and #45672305053). No D1 database was read or written. No migration was created or executed. No write API was added. No Preview or Production deployment occurred. This document does not authorize any of those actions.
