@@ -19,6 +19,7 @@ on:
       - "docs/DUGA-SPEC.md"
       - "docs/AI-CONTINUITY/**"
       - "scripts/validate-governance.mjs"
+      - "scripts/validate-migration-inventory.mjs"
       - ".github/workflows/duga-governance.yml"
   workflow_dispatch:
 
