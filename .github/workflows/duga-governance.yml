@@ -9,6 +9,7 @@ on:
       - "docs/AI-CONTINUITY/**"
       - "scripts/validate-governance.mjs"
       - "scripts/validate-migration-inventory.mjs"
+      - "scripts/test-duga-schema.py"
       - ".github/workflows/duga-governance.yml"
   push:
     branches:
@@ -42,3 +43,9 @@ jobs:
         run: node scripts/validate-governance.mjs
       - name: Validate D1 migration inventory (static only)
         run: node scripts/validate-migration-inventory.mjs
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test DUGA schema draft in in-memory SQLite
+        run: python scripts/test-duga-schema.py
