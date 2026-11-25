@@ -228,7 +228,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     if (cs.containerType && cs.containerType !== "normal") reasons.push("container-type");
                     if (cs.clipPath !== "none") reasons.push("clip-path");
                     if (cs.maskImage && cs.maskImage !== "none") reasons.push("mask");
-                    if (willChange.some(v => ["opacity", "transform", "translate", "rotate", "scale", "filter", "backdrop-filter", "perspective", "mix-blend-mode"].includes(v))) reasons.push("will-change");
+                    if (willChange.some(v => ["opacity", "transform", "translate", "rotate", "scale", "filter", "backdrop-filter", "perspective", "mix-blend-mode", "clip-path", "mask", "contain", "container-type", "z-index"].includes(v))) reasons.push("will-change");
                     const parentDisplay = getComputedStyle(ancestor.parentElement || document.documentElement).display;
                     if (cs.zIndex !== "auto" && ["flex", "inline-flex", "grid", "inline-grid"].includes(parentDisplay)) reasons.push("flex-grid-item-z-index");
                     if (reasons.length) contexts.push({
