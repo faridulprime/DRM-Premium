@@ -198,3 +198,7 @@ The shared desktop sidebar's left/bottom edges, compact Homepage sidebar's top e
 ### Live Users drawer backdrop viewport edges — 2026-11-26
 
 The fixed `.live-drawer-backdrop` now uses `--dups-offset-0` for its four viewport edges. Its existing layer, blur, opacity animation and shared overlay lifecycle are unchanged. The dynamic Live Users Chromium fixture now checks fixed positioning and all four computed edge offsets while the drawer is open. The new assertion has not yet been verified by a completed Chromium workflow run.
+
+### Compact Homepage header and Admin Category Bar edge anchors — 2026-11-26
+
+The compact Homepage fixed header replaces its zero-valued inset shorthand with explicit top/left/right `--dups-offset-0` declarations and preserves `bottom:auto`. The Admin Category Bar horizontal zero edges now consume the same token. Browser regression coverage extends the Admin static viewport matrix to compare both rendered horizontal edges with the token; the latest additions remain pending a confirmed Chromium run.
