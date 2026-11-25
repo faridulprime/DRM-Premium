@@ -124,3 +124,12 @@ The base toggle coordinates are overridden by the theme's fixed bottom-right pla
 | `--dups-anchor-profile-backdrop-inset` | `var(--dups-offset-0)` (0) | Full-viewport backdrop edge inset |
 
 The values preserve the existing fixed overlay geometry. Chromium checks the computed top/center anchors, full-viewport backdrop insets and existing bar-above-backdrop layer ordering at all Homepage viewport states.
+
+
+## Responsive Category Bar anchor — 2026-11-26
+
+| Token | Default | Intent |
+|---|---|---|
+| `--dups-anchor-category-bar-top` | Desktop: DUSS header height; mobile: DUSS mobile header height | Shared fixed Category Bar top coordinate |
+
+Homepage state selectors override this token for the existing guest, login-form, profile-menu and narrow-viewport header arrangements. Admin mobile Category Bar selectors also use the token with their existing 86px coordinate. The Chromium audit toggles the static Homepage header controls through three supported visibility states and checks computed fixed positioning/top against the active token at each mobile viewport. Existing coordinates are preserved.

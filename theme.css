@@ -264,7 +264,7 @@ footer span+span{margin-left:12px;font-size:13px;font-weight:400}
   .yt-search input{padding:0 10px;font-size:13px}
   .yt-search button{flex-basis:42px;width:42px}
   .topbar .yt-account-actions,.topbar .account-controls{display:none!important}
-  .category-bar{top:var(--duss-header-height-mobile, 58px);left:0!important;height:var(--duss-category-bar-height-mobile, 50px);padding:0 10px}
+  .category-bar{top:var(--dups-anchor-category-bar-top, var(--duss-header-height-mobile, 58px));left:0!important;height:var(--duss-category-bar-height-mobile, 50px);padding:0 10px}
    .yt-sidebar{z-index:var(--dups-layer-sidebar-mobile, 120);top:0;bottom:0;width:min(var(--duss-sidebar-width-mobile-max, 280px),82vw);padding:18px 12px}
   .yt-sidebar.mobile-open{transform:translateX(0);visibility:visible;pointer-events:auto}
   .sidebar-backdrop:not([hidden]){
@@ -703,8 +703,8 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .topbar>#headerLoginForm>.yt-login-action,
  .home-page .topbar .yt-create-button{width:100%;min-width:0;height:38px;min-height:38px;padding:0 10px;font-size:13px}
  .home-page .topbar .header-login-status{position:absolute;top:calc(100% + var(--dups-anchor-gap-status, 4px));right:var(--dups-offset-2, 8px);max-width:calc(100vw - 20px)}
- .home-page .category-bar{top:150px;left:0!important;right:0;height:50px;padding:0 10px}
- .home-page:has(#headerLoginForm[hidden]) .category-bar{top:58px}
+ .home-page .category-bar{--dups-anchor-category-bar-top:150px;top:var(--dups-anchor-category-bar-top);left:0!important;right:0;height:50px;padding:0 10px}
+ .home-page:has(#headerLoginForm[hidden]) .category-bar{--dups-anchor-category-bar-top:58px;top:var(--dups-anchor-category-bar-top)}
  .home-page #home{min-width:0;padding:0 12px}
  .home-page .content,.home-page .resource-section,.home-page .admin-section{min-width:0}
  .home-page .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -754,8 +754,8 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .topbar .yt-auth-field input{font-size:14px}
  .home-page .topbar>#headerLoginForm>.yt-login-action,
  .home-page .topbar .yt-create-button{height:44px;min-height:44px;border-radius:12px;font-size:14px}
- .home-page .category-bar{top:164px;height:50px;padding:0 10px}
- .home-page:has(#headerLoginForm[hidden]) .category-bar{top:58px}
+ .home-page .category-bar{--dups-anchor-category-bar-top:164px;top:var(--dups-anchor-category-bar-top);height:50px;padding:0 10px}
+ .home-page:has(#headerLoginForm[hidden]) .category-bar{--dups-anchor-category-bar-top:58px;top:var(--dups-anchor-category-bar-top)}
  .home-page .category-tabs{gap:8px}
  .home-page .category-chip{min-height:40px;padding:8px 12px;font-size:13px;border-radius:9px}
  .home-page #home{padding:0 14px}
@@ -890,8 +890,8 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page:has(#headerLoginForm[hidden]){padding-top:108px!important}
  .home-page:has(#headerLoginForm:not([hidden])) .topbar{min-height:198px!important}
  .home-page:has(#headerLoginForm:not([hidden])){padding-top:202px!important}
- .home-page .category-bar{top:106px!important}
- .home-page:has(#headerLoginForm:not([hidden])) .category-bar{top:202px!important}
+ .home-page .category-bar{--dups-anchor-category-bar-top:106px!important;top:var(--dups-anchor-category-bar-top)!important}
+ .home-page:has(#headerLoginForm:not([hidden])) .category-bar{--dups-anchor-category-bar-top:202px!important;top:var(--dups-anchor-category-bar-top)!important}
 }
 @media(max-width:380px){
  .home-page .topbar{grid-template-columns:42px minmax(0,1fr);padding-inline:8px!important}
@@ -917,7 +917,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
 @media(max-width:760px){
  .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .topbar{min-height:150px!important}
  .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]){padding-top:154px!important}
- .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .category-bar{top:152px!important}
+ .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .category-bar{--dups-anchor-category-bar-top:152px!important;top:var(--dups-anchor-category-bar-top)!important}
  .home-page .topbar .account-controls:has(#profileMenuToggle:not([hidden])){display:flex!important;grid-column:1/-1;grid-row:3;justify-self:end;align-self:center}
 }
 
@@ -940,13 +940,13 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .topbar .account-controls:has(#profileMenuToggle:not([hidden])){grid-row:3}
  .home-page:has(#headerLoginForm[hidden]) .topbar{min-height:86px!important}
  .home-page:has(#headerLoginForm[hidden]){padding-top:90px!important}
- .home-page:has(#headerLoginForm[hidden]) .category-bar{top:88px!important}
+ .home-page:has(#headerLoginForm[hidden]) .category-bar{--dups-anchor-category-bar-top:88px!important;top:var(--dups-anchor-category-bar-top)!important}
  .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .topbar{min-height:128px!important}
  .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]){padding-top:132px!important}
- .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .category-bar{top:130px!important}
+ .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .category-bar{--dups-anchor-category-bar-top:130px!important;top:var(--dups-anchor-category-bar-top)!important}
  .home-page:has(#headerLoginForm:not([hidden])) .topbar{min-height:170px!important}
  .home-page:has(#headerLoginForm:not([hidden])){padding-top:174px!important}
- .home-page:has(#headerLoginForm:not([hidden])) .category-bar{top:174px!important}
+ .home-page:has(#headerLoginForm:not([hidden])) .category-bar{--dups-anchor-category-bar-top:174px!important;top:var(--dups-anchor-category-bar-top)!important}
 }
 @media(max-width:380px){
  .home-page .topbar{grid-template-columns:40px minmax(0,1fr)!important;grid-template-rows:44px 32px auto!important}
@@ -1021,11 +1021,11 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .topbar .account-controls #profileMenuToggle{width:34px!important;height:34px!important;min-width:34px!important;flex:0 0 34px!important}
  .home-page:has(#headerLoginForm[hidden]) .topbar{min-height:86px!important}
  .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]){padding-top:90px!important}
- .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .category-bar{top:88px!important}
- .home-page:has(#headerLoginForm[hidden]) .category-bar{top:88px!important}
+ .home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]) .category-bar{--dups-anchor-category-bar-top:88px!important;top:var(--dups-anchor-category-bar-top)!important}
+ .home-page:has(#headerLoginForm[hidden]) .category-bar{--dups-anchor-category-bar-top:88px!important;top:var(--dups-anchor-category-bar-top)!important}
  .home-page:has(#headerLoginForm:not([hidden])) .topbar{min-height:170px!important}
  .home-page:has(#headerLoginForm:not([hidden])){padding-top:174px!important}
- .home-page:has(#headerLoginForm:not([hidden])) .category-bar{top:174px!important}
+ .home-page:has(#headerLoginForm:not([hidden])) .category-bar{--dups-anchor-category-bar-top:174px!important;top:var(--dups-anchor-category-bar-top)!important}
 }
 /* Admin mobile search: explicitly place it below the complete brand row. */
 @media (max-width:760px){

@@ -41,6 +41,9 @@
   --dups-live-drawer-left: calc(54.4% - 90px);
   --dups-viewport-center: 50%;
 
+  /* Shared category-bar anchor; responsive/state overrides are consumer-scoped. */
+  --dups-anchor-category-bar-top: var(--duss-header-height-desktop, 64px);
+
   /* Profile completion overlay anchors. */
   --dups-anchor-profile-complete-top: 74px;
   --dups-anchor-profile-complete-center: 50%;
@@ -104,6 +107,10 @@
   --dups-layer-studio-inspector: 2;
   --dups-layer-builder-inspector: 2;
   --dups-layer-live-dialog-sticky-header: 1;
+}
+
+@media (max-width: 760px) {
+  :root { --dups-anchor-category-bar-top: var(--duss-header-height-mobile, 58px); }
 }
 
 /* DUPS intentionally ships no global position, inset, z-index, or transform

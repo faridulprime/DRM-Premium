@@ -352,6 +352,45 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     fail(f"{name}/{viewport_name}: visual editor DUPS geometry/layers could not be resolved ({visual_editor_anchor})")
 
         if name == "homepage":
+            category_anchor = page.evaluate(
+                """() => {
+                  const bar = document.querySelector(".category-bar");
+                  const form = document.querySelector("#headerLoginForm");
+                  const profile = document.querySelector("#profileMenuToggle");
+                  if (!bar) return {missing: true};
+                  const states = [{loginHidden: false, profileHidden: true},
+                    {loginHidden: true, profileHidden: true},
+                    {loginHidden: true, profileHidden: false}];
+                  const original = {loginHidden: form?.hidden, profileHidden: profile?.hidden};
+                  const results = [];
+                  for (const state of (innerWidth <= 760 ? states : [states[0]])) {
+                    if (form) form.hidden = state.loginHidden;
+                    if (profile) profile.hidden = state.profileHidden;
+                    const style = getComputedStyle(bar);
+                    results.push({
+                      state,
+                      position: style.position,
+                      top: parseFloat(style.top),
+                      token: style.getPropertyValue("--dups-anchor-category-bar-top").trim()
+                    });
+                  }
+                  if (form) form.hidden = original.loginHidden;
+                  if (profile) profile.hidden = original.profileHidden;
+                  return results;
+                }"""
+            )
+            if isinstance(category_anchor, dict) and category_anchor.get("missing"):
+                fail(f"{name}/{viewport_name}: Homepage Category Bar is missing")
+            else:
+                for state in category_anchor:
+                    try:
+                        if state["position"] != "fixed":
+                            fail(f"{name}/{viewport_name}: Category Bar is not fixed-positioned ({state})")
+                        if abs(state["top"] - float(state["token"].replace("px", ""))) > 1:
+                            fail(f"{name}/{viewport_name}: Category Bar computed top does not match its DUPS state token ({state})")
+                    except (TypeError, ValueError, KeyError):
+                        fail(f"{name}/{viewport_name}: Category Bar anchor token could not be resolved ({state})")
+
             homepage_layers = page.evaluate(
                 """() => {
                   const root = getComputedStyle(document.documentElement);

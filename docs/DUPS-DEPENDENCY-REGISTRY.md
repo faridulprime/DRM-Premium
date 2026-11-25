@@ -127,3 +127,8 @@ The fixed profile-completion bar now consumes DUPS top and viewport-center ancho
 
 
 The responsive compact/mobile override retains its pre-existing 66px top coordinate through the same component-scoped token. The browser test reveals the hidden static bar/backdrop before reading computed geometry, so it validates actual pixel positioning rather than the unresolved percentage returned for a display:none element.
+
+
+### Responsive Category Bar anchor migration — 2026-11-26
+
+Migrated all 13 numeric Homepage Category Bar top declarations in `theme.css` to a state-scoped `--dups-anchor-category-bar-top` token. The token defaults to DUSS desktop/mobile header heights and is overridden only by the pre-existing responsive/state selectors; Admin mobile overrides use the same semantic anchor token. Chromium now checks computed fixed positioning and token agreement across the Homepage's guest, login-hidden and profile-menu-visible states at each mobile viewport. This is a token migration only: all previous numeric top coordinates and selector precedence are retained.
