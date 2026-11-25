@@ -90,3 +90,11 @@ Verification date: 2026-11-25
 
 
 - Follow-up DUPS work: added `--dups-layer-builder-inspector: 2` and migrated the responsive Website Builder inspector's existing local layer without changing its value. Chromium run #45677034569 passed Homepage fixed-layer/token assertions (Builder, suspension screen, profile-completion backdrop/bar), responsive inspector checks through 900 CSS px, and the prior Live Users Restricted Users modal placement checks. Full DUPS coverage remains incomplete.
+
+
+## DUPS anchor and local sticky-layer follow-up — 2026-11-26
+
+- Mobile Homepage header login status now uses `--dups-anchor-gap-status` and the existing `--dups-offset-2`; Chromium verifies computed absolute placement, header-relative 4px gap and 8px right offset at existing mobile viewport widths.
+- Live Users detail-dialog sticky header now uses `--dups-layer-live-dialog-sticky-header`; Chromium verifies sticky positioning and local z-index/token agreement.
+- Browser suite passed in [run #45677961245](https://github.com/faridulprime/DRM-Premium/actions/runs/45677961245) on commit `d9953b483c21eaf2dd8ba0011c61d50cf9b5edf6`, including all 35 page/viewport checks and DUME lifecycle assertions.
+- These checks cover named components only. Complete positioned-element inventory, ancestor stacking-context analysis, anchor collision/fallback, native zoom, safe-area and deployed behavior remain open.
