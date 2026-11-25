@@ -29,7 +29,7 @@ function renderSubcategories(){
  if(!root){el.innerHTML="";el.hidden=true;return}
  const children=flatten(root,[]);
  el.hidden=!children.length;
- el.innerHTML=children.map(x=>'<button type="button" class="dumc-home-subchip'+(x.id===activeFolder?" active":"")+'" data-folder="'+esc(x.id)+'">'+esc(x.name)+' <span>'+Number(x.movie_count||0)+'</span></button>').join("");
+ el.innerHTML=children.map(x=>'<button type="button" class="dumc-home-subchip'+(x.id===activeFolder?" active":"")+'" data-folder="'+esc(x.id)+'">'+esc(x.name)+(Number(x.movie_count||0)>0?' <span>'+Number(x.movie_count)+'</span>':'')+'</button>').join("");
 }
 function renderMovies(){
  const filtered=movies;
