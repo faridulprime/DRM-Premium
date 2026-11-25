@@ -301,8 +301,13 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
         )
         transition = page.locator(sidebar).evaluate("(el) => getComputedStyle(el).transitionDuration")
         first_duration = transition.split(",")[0].strip()
-        seconds = float(first_duration.removesuffix("s").removesuffix("ms") or "0")
-        is_zero = first_duration in ("0s", "0ms")
+        if first_duration.endswith("ms"):
+            seconds = float(first_duration[:-2]) / 1000
+        elif first_duration.endswith("s"):
+            seconds = float(first_duration[:-1])
+        else:
+            seconds = float(first_duration or "0")
+        is_zero = seconds == 0
         if reduced_motion and not is_zero:
             fail(f"{name}/{mode}: expected zero-duration drawer transition, found {transition}")
         if not reduced_motion and (is_zero or seconds < 0.5):
