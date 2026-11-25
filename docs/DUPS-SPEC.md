@@ -128,3 +128,10 @@ This is limited to the tested header/drawer layers and their active rendered cas
 The latest browser audit run #16 passed on commit `13b7132c865d8ca04c627be37fc9337d5eb108a0`: [run #16](https://github.com/faridulprime/DRM-Premium/actions/runs/45633016197). It retains the earlier computed header/sidebar/backdrop z-index checks and DUME drawer lifecycle checks, and reports no sub-44px visible targets in its sampled states.
 
 DUPS validation remains deliberately scoped: it checks the shared page headers and four mobile drawer/backdrop stacks, not all positioned selectors, all containing-block contexts, popover/tooltip collision handling, native zoom, or every overlay interaction.
+
+
+## Restricted Users modal placement acceptance — 2026-11-26
+
+- Replaced the Restricted Users modal's remaining literal `z-index: 120` with the existing `--dups-layer-live-drawer` token and preserved the numeric fallback.
+- Extended the Chromium browser audit to inspect the actual computed modal positioning mode, computed z-index versus its DUPS token, and viewport-center geometry at the seven existing viewport widths (1440, 900, 390, 320, 720, 760 and 761 CSS px).
+- This validates the modal's source-backed fixed placement and center alignment in the checked-out static site. It does not prove visual collision handling, every ancestor stacking context, or deployed behavior.
