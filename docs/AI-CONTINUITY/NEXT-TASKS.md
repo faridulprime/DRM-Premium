@@ -84,3 +84,9 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Updated its expected contract to all eight draft tables, current columns/indexes, and all 23 named triggers. Trigger checks require the expected operation/table and a distinguishing SQL marker; trigger attachment to the wrong table or a modified definition is reported missing.
 - Updated `scripts/test-governance-health-api.mjs` mock schema and trigger fixtures to match the same full contract.
 - This is a read-only endpoint/test change only. It does not apply the draft schema or prove live Preview D1 compatibility. Health checks verify presence/markers, not full SQL equivalence; static structural validator and SQLite regression suite remain separate controls.
+
+### Change-request state machine and authorization contract
+- Audited the actual DUGA draft/API. The change-request table has a status CHECK and `state_version`, but unlike assignments/findings/validation-runs/jobs it has no lifecycle INSERT/UPDATE/DELETE guards or transition audit trigger.
+- Added `docs/DUGA-CHANGE-REQUEST-STATE-MACHINE.md` documenting this gap, a conservative proposed transition graph, stage-specific authorization, database invariants, API CAS contract and adversarial regression cases.
+- Explicitly called out unresolved product/security decisions: blocked-state resume rules, terminal semantics, approval revocation/supersession, risk-based review gates, separation of duties and implementation-attempt history. No permissive transition fallback should be implemented before these are decided.
+- Design only: no route, migration, D1 mutation, OIDC flow or deployment. Next: review the state graph and policy decisions; only then design an isolated schema revision after Preview D1 migration-history and backup preflight.
