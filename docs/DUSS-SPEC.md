@@ -201,3 +201,5 @@ Validation boundary:
 ### Phase 8 follow-up — rendered target audit
 
 The first 35-state Chromium audit exposed remaining undersized controls in the public login row and Admin sign-in/setup panels. The DUSS touch-target consumer module now applies the existing 44px token to those authentication inputs/actions, the Home/Admin search icon buttons, and the Home mobile menu/search slots. This was done as a hit-area adjustment; typography and icon glyph sizing remain unchanged. The next browser run is the acceptance check for viewport overflow and the revised target dimensions.
+
+The first touch-target pass also showed that a broad width override could collapse the responsive Home search field at narrow widths. That page-wide width/grid override has been removed; only the specific menu/search action hit areas are enlarged, preserving the original responsive search layout. Search-clear buttons and compact category chips receive explicit 44px inline targets. The browser audit is used to re-check 320px overflow and visible control geometry.

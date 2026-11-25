@@ -101,17 +101,6 @@
   min-block-size:var(--duss-touch-target-min, 44px)!important;
 }
 
-@media(max-width:760px) {
-  .home-page .topbar {
-    grid-template-columns:44px minmax(0,1fr) 44px!important;
-  }
-  .home-page .yt-search {
-    inline-size:44px!important;
-    min-inline-size:44px!important;
-    max-inline-size:44px!important;
-  }
-}
-
 .admin-main .gate-panel input:not([type="checkbox"]),
 .admin-main .gate-panel select,
 .admin-main .gate-panel textarea,
@@ -124,5 +113,33 @@
 .admin-main .gate-panel .primary,
 .admin-main .admin-login-panel .primary {
   min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+/* High-specificity component overrides: preserve each page's responsive layout. */
+#menuToggle {
+  inline-size:44px!important;
+  block-size:44px!important;
+  min-inline-size:44px!important;
+  min-block-size:44px!important;
+  flex:0 0 44px!important;
+}
+
+#searchSubmit,
+#adminSearchClear {
+  inline-size:44px!important;
+  block-size:44px!important;
+  min-inline-size:44px!important;
+  min-block-size:44px!important;
+  flex:0 0 44px!important;
+}
+
+.category-chip {
+  min-inline-size:44px!important;
+  justify-content:center;
+}
+
+.admin-main .gate-panel .primary,
+.admin-main .admin-login-panel .primary {
+  min-block-size:calc(var(--duss-touch-target-min, 44px) + 1px)!important;
 }
 
