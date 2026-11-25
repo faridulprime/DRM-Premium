@@ -220,7 +220,7 @@ No database, Production environment, `main` branch, or shared Preview runtime wa
 
 The following read-only endpoints are implemented in `functions/api/[[path]].js` and covered by the mocked handler suite: `GET /api/governance/health`, `/overview`, `/changes`, `/changes/:id`, `/audit`, and `/findings`. All are Owner-only. No governance write route is implemented.
 
-The health route now requires all four `duga_change_requests` lifecycle triggers and both blocked-state metadata columns. Missing the transition-audit trigger or `block_reason_code` column is covered by regression tests and returns `schema: partial`.
+The health route now requires all four `duga_change_requests` lifecycle triggers and both blocked-state metadata columns. The mocked suite independently omits each lifecycle trigger and confirms `schema: partial`; it also tests missing `block_reason_code`. All passed in [run #45674314833](https://github.com/faridulprime/DRM-Premium/actions/runs/45674314833).
 
 CI on the latest branch head `277f7aaf1752abe0c0ea478289e81c1611d555c1` passed in [run #45673820027](https://github.com/faridulprime/DRM-Premium/actions/runs/45673820027). This includes JavaScript syntax, mocked Owner-only health API tests, registry validators, static migration inventory, in-memory SQLite schema smoke tests and structural validation. It does not test a live D1 database or deployed Pages runtime.
 
