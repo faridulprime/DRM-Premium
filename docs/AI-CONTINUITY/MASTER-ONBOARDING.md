@@ -33,3 +33,10 @@ Separate implemented, partially implemented, planned, unknown and tested states.
 
 ## Governance metadata validation\nRun `node scripts/validate-governance.mjs` from the repository root after changing the system registry, ownership roles or dependency baseline. This is a static repository check only; it does not validate D1, API authorization, browser behavior or deployment.\n\n## Access limitations
 These documents do not grant GitHub, Cloudflare, database or other service permissions. A new AI account needs access granted independently by the project owner.
+
+## Verified repository work — 2026-11-25
+- Added `scripts/validate-governance.mjs` to check governance JSON parsing, unique system/role IDs, role references, dependency references, page assets and declared source paths.
+- Added `.github/workflows/duga-governance.yml` to run that validator on relevant pull requests, pushes to `main` or `feature/full-admin-panel`, and manual dispatch.
+- The workflow file and validator are present on `feature/full-admin-panel`. GitHub has not yet reported a workflow run or status for the latest commit at the time of this note; do not describe CI as passing.
+- This work is repository-only. It does not apply migrations, access D1, deploy Pages, or implement the proposed governance API.
+- Next safe step: run/inspect the CI result, then prepare a separately reviewed D1 migration only after reconciling the actual Preview migration history and backup. Keep Production untouched.
