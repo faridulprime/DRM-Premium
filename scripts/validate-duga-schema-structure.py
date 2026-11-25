@@ -108,7 +108,7 @@ def main() -> int:
             "SELECT name,sql FROM sqlite_master WHERE type='table' AND name LIKE 'duga_%'"
         )}
         required_fragments = {
-            "duga_change_requests": ["json_type(affected_systems_json)='array'", "json_type(affected_paths_json)='array',"],
+            "duga_change_requests": ["json_type(affected_systems_json)='array'", "json_type(affected_paths_json)='array')"],
             "duga_jobs": ["status='running' AND lease_expires_at IS NOT NULL", "status<>'running' AND lease_expires_at IS NULL"],
             "duga_analysis_findings": ["reviewed_at is null and reviewed_by_user_id is null"],
             "duga_audit_events": ["length(event_type)>0"],
