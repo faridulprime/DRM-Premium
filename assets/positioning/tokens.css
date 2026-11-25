@@ -90,6 +90,7 @@
   --dups-layer-studio-sidebar: 5;
   --dups-layer-studio-inspector: 2;
   --dups-layer-builder-inspector: 2;
+  --dups-layer-live-dialog-sticky-header: 1;
 }
 
 /* DUPS intentionally ships no global position, inset, z-index, or transform
