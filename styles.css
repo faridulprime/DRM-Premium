@@ -114,10 +114,10 @@ body.account-suspended{overflow:hidden}
 
 
 /* Discord-inspired profile prompt with the Live Users modal backdrop treatment. */
-.profile-bar-backdrop{position:fixed;z-index:var(--dups-layer-profile-complete-backdrop, 10040);inset:0;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity .26s ease}
+.profile-bar-backdrop{position:fixed;z-index:var(--dups-layer-profile-complete-backdrop, 10040);inset:var(--dups-anchor-profile-backdrop-inset, 0);background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity .26s ease}
 .profile-bar-backdrop[hidden]{display:none}
 .profile-bar-backdrop.is-visible{opacity:1}
-.profile-complete-bar{position:fixed;z-index:var(--dups-layer-profile-complete-bar, 10050);top:74px;left:50%;width:min(900px,calc(100vw - 32px));min-height:48px;display:flex;align-items:center;gap:12px;padding:7px 9px 7px 14px;border:1px solid var(--ducs-home-profilebar-border, #343b43);border-radius:9px;background:linear-gradient(105deg,var(--ducs-home-profilebar-bg-start, #202832),var(--ducs-home-profilebar-bg-end, #171d25));color:var(--ducs-home-profilebar-text, #e8edf3);box-shadow:0 12px 38px rgba(0,0,0,.38);opacity:0;transform:translate(-50%,-9px);pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+.profile-complete-bar{position:fixed;z-index:var(--dups-layer-profile-complete-bar, 10050);top:var(--dups-anchor-profile-complete-top, 74px);left:var(--dups-anchor-profile-complete-center, 50%);width:min(900px,calc(100vw - 32px));min-height:48px;display:flex;align-items:center;gap:12px;padding:7px 9px 7px 14px;border:1px solid var(--ducs-home-profilebar-border, #343b43);border-radius:9px;background:linear-gradient(105deg,var(--ducs-home-profilebar-bg-start, #202832),var(--ducs-home-profilebar-bg-end, #171d25));color:var(--ducs-home-profilebar-text, #e8edf3);box-shadow:0 12px 38px rgba(0,0,0,.38);opacity:0;transform:translate(-50%,-9px);pointer-events:none;transition:opacity .22s ease,transform .22s ease}
 .profile-complete-bar[hidden]{display:none}
 .profile-complete-bar.is-visible{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 .profile-complete-bar.is-hiding{opacity:0;transform:translate(-50%,-8px);pointer-events:none}
