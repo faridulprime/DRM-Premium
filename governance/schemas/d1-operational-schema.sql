@@ -83,6 +83,21 @@ CREATE TABLE duga_reviews (
 );
 CREATE INDEX idx_duga_reviews_change_time ON duga_reviews(change_request_id,created_at DESC);
 
+CREATE TRIGGER duga_review_no_implementer_self_audit
+BEFORE INSERT ON duga_reviews
+WHEN NEW.review_type='independent_ai_audit'
+ AND NEW.reviewer_type='ai'
+ AND EXISTS (
+   SELECT 1 FROM duga_change_requests c
+   WHERE c.id=NEW.change_request_id
+     AND c.implementer_type='ai'
+     AND c.implementer_principal_id=NEW.reviewer_principal_id
+ )
+BEGIN
+  SELECT RAISE(ABORT,'Implementer cannot independently audit the same change');
+END;
+
+
 CREATE TABLE duga_approvals (
   id TEXT PRIMARY KEY,
   change_request_id TEXT NOT NULL REFERENCES duga_change_requests(id) ON DELETE RESTRICT,
