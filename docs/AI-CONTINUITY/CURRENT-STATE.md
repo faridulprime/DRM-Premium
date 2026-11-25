@@ -36,12 +36,13 @@ Verification date: 2026-11-25
 
 ## DUMC — DRM Universal Movie Section — 2026-11-26
 
-- Added `assets/dumc/taxonomy.json` v1.0.0 with 12 top-level sections and 226 total folder nodes, including language, film industry, dubbed audio, genres, production countries, collections, release decades/years, subtitles, artwork and metadata.
-- Added `docs/DUMC-SPEC.md` describing stable folder IDs, independent classification dimensions, one canonical movie identity and virtual multi-folder relationships.
-- Replaced the Upload Studio Folders placeholder with a searchable, expandable DUMC taxonomy explorer; updated the page's versioned CSS/JS assets.
-- Static validation performed through the repository connector: JSON parses; all 226 folder IDs are unique; Upload Studio markup/assets and DUMC styling anchors are present; `upload-studio.js` passes JavaScript syntax parsing.
-- This is a browsable taxonomy/catalog only. The current schema still stores one category string per video and has no folder table, movie metadata model, or many-to-many folder/media relationships. Folder assignment and audio/subtitle asset storage remain disabled and are not claimed as implemented.
-- No D1 migration, database write, Preview deployment, Production change or live-browser test was performed. A reviewed migration and authenticated API phase requires explicit Owner approval.
+- DUMC v1.0.0 taxonomy is committed at `assets/dumc/taxonomy.json`: 12 top-level sections and 226 stable folder nodes.
+- Added additive D1 migration `migrations/0009_dumc_movie_library.sql`, plus manifest entry. It seeds all taxonomy nodes, backfills one `dumc_movies` metadata row for each existing video without inferring language/industry/country/year, and creates many-to-many assignments, audio-track references and subtitle references.
+- Added authenticated Owner/Admin APIs under `/api/admin/dumc` for folder browsing/custom folder management, movie metadata, multi-folder classification, and audio/subtitle references. New video creation attempts to create its canonical DUMC metadata row when the migration is installed.
+- Upload Studio now loads `dumc-manager.js`: live database folder tree when available, static taxonomy fallback otherwise; movie metadata editor; multi-select genres/dubs/subtitles/collections; custom folders; audio/subtitle reference registration; optional folder assignment on video creation.
+- Added `scripts/test-dumc-migration.py` and `.github/workflows/dumc-validation.yml` for SQLite migration regression, inventory and JavaScript syntax checks. Source-level syntax checks were performed on the changed API code; the GitHub Actions run has not yet been observed.
+- **Not executed:** migration 0009 has not been applied to any D1 database. The manifest is documentation-only and Wrangler migrations remain unconfigured; applied migration history and target database identity are not available through the connected tools. No Preview/Production deployment or live-browser verification was performed.
+- Audio/subtitle APIs store an existing `movies/...` asset key or HTTPS source reference only. Actual upload/playback requires a configured movie media bucket and upload pipeline; this is not yet implemented.
 
 ## Application code audit findings
 
