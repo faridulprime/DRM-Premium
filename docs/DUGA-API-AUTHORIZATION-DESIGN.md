@@ -30,7 +30,10 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 11. Persist state transition and audit event atomically where possible.
 12. Return minimum necessary data; paginate audit and findings endpoints.
 
-## Proposed route contracts
+## Implemented initial route
+- GET /api/governance/health — authenticated Owner-only, read-only D1 connectivity probe using `SELECT 1`. It is independent of the not-yet-applied DUGA tables and does not claim that the DUGA schema is installed.
+
+## Remaining proposed route contracts
 - GET /api/governance/overview — Owner-only operational summary.
 - GET /api/governance/systems — versioned registry snapshot, read-only.
 - GET /api/governance/changes — cursor-paginated requests.
@@ -50,3 +53,7 @@ AI principal IDs in D1 are labels for attribution and review separation, not cre
 - Keep audit actor references under ON DELETE RESTRICT.
 - No public unauthenticated governance endpoint.
 - Governance API outage must not affect public content, auth, profile or website rendering.
+
+
+## 14. Initial health endpoint — 2026-11-25
+The catch-all API now handles `GET /api/governance/health` after normal session authentication and before generic admin route handling. It explicitly requires the existing application Owner role, returns 403 for Admin, probes D1 with a read-only `SELECT 1`, and returns no schema/table claims. Unknown governance paths return 404. This is a minimal routing/authentication foothold, not evidence of a deployed or runtime-tested endpoint; the branch has not been deployed to Preview.
