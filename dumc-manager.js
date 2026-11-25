@@ -67,7 +67,7 @@ async function linkSelectedFolder(videoId,folderId){
 window.DUMCLinkFolder=linkSelectedFolder;
 function bind(){
  $("#dumcSearch")?.addEventListener("input",renderTree);
- $("#dumcTree")?.addEventListener("click",e=>{const n=e.target.closest("[data-dumc-id]");if(n){selected=n.dataset.dumcId;renderTree();}});
+ $("#dumcTree")?.addEventListener("click",e=>{const n=e.target.closest("[data-dumc-id]");if(n){selected=n.dataset.dumcId;const detail=find(root,selected);if(detail){$("#dumcSelectedName").textContent=detail.name;$("#dumcSelectedDescription").textContent=detail.description||"";$("#dumcSelectedMeta").textContent=(detail.kind||"Folder")+" · "+(detail.children?.length||0)+" subfolders · "+detail.id;}document.querySelectorAll(".dumc-node-summary").forEach(x=>x.classList.toggle("is-selected",x.dataset.dumcId===selected));}});
  $("#dumcExpandAll")?.addEventListener("click",()=>$("#dumcTree").querySelectorAll("details").forEach(x=>x.open=true));
  $("#dumcCollapseAll")?.addEventListener("click",()=>$("#dumcTree").querySelectorAll("details").forEach(x=>x.open=false));
  const toolbar=$(".dumc-toolbar");if(toolbar&&!$("#dumcAddFolder")){const b=document.createElement("button");b.id="dumcAddFolder";b.type="button";b.textContent="＋ New folder";toolbar.append(b);}
