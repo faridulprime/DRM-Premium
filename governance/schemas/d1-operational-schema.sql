@@ -43,6 +43,8 @@ CREATE TABLE duga_change_requests (
   summary TEXT NOT NULL CHECK (length(summary) BETWEEN 1 AND 10000),
   rationale TEXT NOT NULL DEFAULT '',
   status TEXT NOT NULL CHECK (status IN ('proposed','analyzing','impact_review','awaiting_ai_audit','awaiting_human_approval','approved','implementing','validating','final_review','accepted','rejected','cancelled','blocked')),
+  blocked_from_status TEXT,
+  block_reason_code TEXT CHECK (block_reason_code IS NULL OR block_reason_code IN ('security_review','missing_evidence','policy_changed','dependency_unavailable','scope_conflict','external_incident','other')),
   risk_level TEXT NOT NULL CHECK (risk_level IN ('low','medium','high','critical')),
   affected_systems_json TEXT NOT NULL CHECK (json_valid(affected_systems_json) AND json_type(affected_systems_json)='array'),
   affected_paths_json TEXT NOT NULL CHECK (json_valid(affected_paths_json) AND json_type(affected_paths_json)='array'),
@@ -63,10 +65,88 @@ CREATE TABLE duga_change_requests (
   CHECK ((requested_by_type='human' AND requested_by_user_id IS NOT NULL AND requested_by_principal_id IS NULL) OR (requested_by_type='ai' AND requested_by_user_id IS NULL AND requested_by_principal_id IS NOT NULL AND length(requested_by_principal_id)>0)),
   CHECK ((implementer_type IS NULL AND implementer_user_id IS NULL AND implementer_principal_id IS NULL) OR
          (implementer_type='human' AND implementer_user_id IS NOT NULL AND implementer_principal_id IS NULL) OR
-         (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL AND length(implementer_principal_id)>0))
+         (implementer_type='ai' AND implementer_user_id IS NULL AND implementer_principal_id IS NOT NULL AND length(implementer_principal_id)>0)),
+  CHECK ((status='blocked' AND blocked_from_status IN ('proposed','analyzing','impact_review','awaiting_ai_audit','awaiting_human_approval','approved','implementing','validating','final_review') AND block_reason_code IS NOT NULL) OR
+         (status<>'blocked' AND blocked_from_status IS NULL AND block_reason_code IS NULL))
 );
 CREATE INDEX idx_duga_changes_status_updated ON duga_change_requests(status,updated_at DESC);
 CREATE INDEX idx_duga_changes_created ON duga_change_requests(created_at DESC);
+
+-- Change requests are the root of the governance evidence graph. They must
+-- start in the initial state and cannot be physically removed.
+CREATE TRIGGER duga_change_requests_insert_guard
+BEFORE INSERT ON duga_change_requests
+WHEN NEW.status<>'proposed' OR NEW.state_version<>1
+  OR NEW.implementer_type IS NOT NULL
+  OR NEW.implementer_user_id IS NOT NULL
+  OR NEW.implementer_principal_id IS NOT NULL
+  OR NEW.implementation_commit_sha IS NOT NULL
+  OR NEW.blocked_from_status IS NOT NULL
+  OR NEW.block_reason_code IS NOT NULL
+  OR NEW.created_at<>NEW.updated_at
+BEGIN
+  SELECT RAISE(ABORT,'DUGA change requests must begin proposed, version one and unassigned');
+END;
+
+CREATE TRIGGER duga_change_requests_update_guard
+BEFORE UPDATE ON duga_change_requests
+WHEN
+  OLD.status IN ('accepted','rejected','cancelled')
+  OR NEW.id<>OLD.id
+  OR NEW.requested_by_type<>OLD.requested_by_type
+  OR NEW.requested_by_user_id IS NOT OLD.requested_by_user_id
+  OR NEW.requested_by_principal_id IS NOT OLD.requested_by_principal_id
+  OR NEW.created_at<>OLD.created_at
+  OR NEW.source_branch<>OLD.source_branch
+  OR NEW.base_commit_sha IS NOT OLD.base_commit_sha
+  OR NEW.policy_commit_sha<>OLD.policy_commit_sha
+  OR NEW.updated_at<OLD.updated_at
+  OR (NEW.status=OLD.status AND NEW.state_version<>OLD.state_version)
+  OR (NEW.status<>OLD.status AND NEW.state_version<>OLD.state_version+1)
+  OR (OLD.implementer_type IS NOT NULL AND (
+       NEW.implementer_type IS NOT OLD.implementer_type
+       OR NEW.implementer_user_id IS NOT OLD.implementer_user_id
+       OR NEW.implementer_principal_id IS NOT OLD.implementer_principal_id))
+  OR (OLD.implementer_type IS NULL AND NEW.implementer_type IS NOT NULL
+      AND NOT (OLD.status='approved' AND NEW.status='implementing'))
+  OR (NEW.status='implementing' AND NEW.implementer_type IS NULL)
+  OR (OLD.implementation_commit_sha IS NOT NULL
+      AND NEW.implementation_commit_sha IS NOT OLD.implementation_commit_sha)
+  OR (NEW.implementation_commit_sha IS NOT OLD.implementation_commit_sha
+      AND NOT (OLD.status='implementing' AND NEW.status='validating'
+        AND NEW.implementation_commit_sha IS NOT NULL))
+  OR (NEW.status<>OLD.status AND NOT (
+       (OLD.status='proposed' AND NEW.status IN ('analyzing','cancelled','blocked'))
+       OR (OLD.status='analyzing' AND NEW.status IN ('impact_review','cancelled','blocked'))
+       OR (OLD.status='impact_review' AND NEW.status IN ('awaiting_ai_audit','awaiting_human_approval','cancelled','blocked'))
+       OR (OLD.status='awaiting_ai_audit' AND NEW.status IN ('awaiting_human_approval','impact_review','blocked'))
+       OR (OLD.status='awaiting_human_approval' AND NEW.status IN ('approved','rejected','impact_review','blocked'))
+       OR (OLD.status='approved' AND NEW.status IN ('implementing','blocked'))
+       OR (OLD.status='implementing' AND NEW.status IN ('validating','blocked'))
+       OR (OLD.status='validating' AND NEW.status IN ('final_review','implementing','blocked'))
+       OR (OLD.status='final_review' AND NEW.status IN ('accepted','implementing','blocked'))
+       OR (OLD.status='blocked' AND NEW.status IN ('impact_review','cancelled'))
+  ))
+  OR (NEW.status='blocked' AND (
+       NEW.blocked_from_status<>OLD.status
+       OR NEW.block_reason_code IS NULL
+  ))
+  OR (OLD.status='blocked' AND NEW.status IN ('impact_review','cancelled') AND (
+       NEW.blocked_from_status IS NOT NULL OR NEW.block_reason_code IS NOT NULL
+  ))
+  OR (OLD.status<>'blocked' AND NEW.status<>'blocked' AND (
+       NEW.blocked_from_status IS NOT OLD.blocked_from_status
+       OR NEW.block_reason_code IS NOT OLD.block_reason_code
+  ))
+BEGIN
+  SELECT RAISE(ABORT,'Invalid DUGA change-request lifecycle transition or immutable-field mutation');
+END;
+
+CREATE TRIGGER duga_change_requests_no_delete
+BEFORE DELETE ON duga_change_requests
+BEGIN
+  SELECT RAISE(ABORT,'DUGA change requests are immutable evidence roots');
+END;
 
 CREATE TABLE duga_reviews (
   id TEXT PRIMARY KEY,
@@ -216,6 +296,27 @@ BEGIN SELECT RAISE(ABORT,'DUGA audit events are append-only'); END;
 CREATE TRIGGER duga_audit_no_delete
 BEFORE DELETE ON duga_audit_events
 BEGIN SELECT RAISE(ABORT,'DUGA audit events are append-only'); END;
+
+-- This database-generated event proves that a state transition committed.
+-- It is deliberately attributed to the database trigger, NOT to the human or
+-- service principal; the authenticated API must add its own actor-attributed
+-- event in the same D1 batch.
+CREATE TRIGGER duga_change_request_transition_audit AFTER UPDATE ON duga_change_requests
+WHEN OLD.status<>NEW.status
+BEGIN
+ INSERT INTO duga_audit_events
+ (id,aggregate_type,aggregate_id,event_type,actor_type,actor_system_id,
+  payload_json,policy_commit_sha,created_at)
+ VALUES ('change-request-transition:'||NEW.id||':'||NEW.state_version,
+ 'change_request',NEW.id,'change_request.status_changed','system',
+ 'duga-db-trigger',
+ json_object('previous_status',OLD.status,'status',NEW.status,
+ 'previous_state_version',OLD.state_version,'state_version',NEW.state_version,
+ 'blocked_from_status',NEW.blocked_from_status,
+ 'block_reason_code',NEW.block_reason_code,
+ 'implementation_commit_sha',NEW.implementation_commit_sha),
+ NEW.policy_commit_sha,NEW.updated_at);
+END;
 
 CREATE TRIGGER duga_assignment_grant_audit AFTER INSERT ON duga_assignments
 BEGIN
