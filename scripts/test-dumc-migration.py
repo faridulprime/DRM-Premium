@@ -37,6 +37,20 @@ class DumcMigrationTests(unittest.TestCase):
         for marker in ('p[2]==="folders"', 'p[2]==="movies"', '"dubbed_language"', '"subtitle_language"'):
             self.assertIn(marker, api)
 
+    def test_public_homepage_browse_is_read_only_and_link_based(self):
+        api = (ROOT / "functions" / "api" / "[[path]].js").read_text(encoding="utf-8")
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        home = (ROOT / "assets" / "dumc" / "home.js").read_text(encoding="utf-8")
+        self.assertIn('p[0]==="dumc"&&p[1]==="browse"', api)
+        self.assertIn('id="movies"', html)
+        self.assertIn('/assets/dumc/home.js?v=dumc-home-01', html)
+        self.assertIn('/assets/dumc/home.css?v=dumc-home-01', html)
+        self.assertIn('params.set("folder_id",activeFolder)', home)
+        self.assertIn('params.set("q",query)', home)
+        self.assertIn('Provide an HTTPS audio source URL', api)
+        self.assertIn('Provide an HTTPS subtitle source URL', api)
+        self.assertNotIn('asset_key=reference', (ROOT / "dumc-manager.js").read_text(encoding="utf-8"))
+
     def test_upload_studio_loads_the_interactive_manager(self):
         html = (ROOT / "upload-studio.html").read_text(encoding="utf-8")
         manager = (ROOT / "dumc-manager.js").read_text(encoding="utf-8")
@@ -118,12 +132,12 @@ class DumcMigrationTests(unittest.TestCase):
                 "VALUES('s1','movie-1','SUBTITLE_BANGLA',1,1)"
             )
         self.db.execute(
-            "INSERT INTO dumc_audio_tracks(id,video_id,language_folder_id,track_type,asset_key,created_at,updated_at) "
-            "VALUES('a2','movie-1','LANG_HINDI','dubbed','movies/movie-1/hindi.aac',1,1)"
+            "INSERT INTO dumc_audio_tracks(id,video_id,language_folder_id,track_type,source_url,created_at,updated_at) "
+            "VALUES('a2','movie-1','LANG_HINDI','dubbed','https://media.example/audio.aac',1,1)"
         )
         self.db.execute(
-            "INSERT INTO dumc_subtitles(id,video_id,language_folder_id,asset_key,created_at,updated_at) "
-            "VALUES('s2','movie-1','SUBTITLE_BANGLA','movies/movie-1/bn.srt',1,1)"
+            "INSERT INTO dumc_subtitles(id,video_id,language_folder_id,source_url,created_at,updated_at) "
+            "VALUES('s2','movie-1','SUBTITLE_BANGLA','https://media.example/subtitles/bn.srt',1,1)"
         )
 
     def test_video_delete_cascades_movie_relations_but_preserves_taxonomy(self):
