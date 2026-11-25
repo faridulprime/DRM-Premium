@@ -215,3 +215,6 @@ The desktop header login-status browser assertion now reads its expected right-e
 ### Full-viewport overlay edge primitive — 2026-11-26
 
 The Homepage Website Builder shell, public registration dialog, account suspension screen, and its fixed grain layer now consume `--dups-offset-0` for full-viewport coverage. Browser regression coverage checks all four computed edges for the shell and suspension surfaces at every existing Homepage viewport. The registration dialog keeps its native centering behavior; no layer or visibility semantics were changed. The new browser assertions are awaiting their own completed Chromium run.
+
+
+The full-viewport audit also includes the decorative suspension grain layer. Because it has no stacking role (`z-index:auto`), it is checked for fixed positioning and zero-offset viewport coverage but deliberately excluded from numeric overlay-order comparisons.
