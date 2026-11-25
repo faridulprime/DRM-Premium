@@ -177,7 +177,6 @@ def main() -> int:
             "duga_change_requests": {("requested_by_user_id", "users", "id"), ("implementer_user_id", "users", "id")},
             "duga_reviews": {("change_request_id", "duga_change_requests", "id"), ("reviewer_user_id", "users", "id")},
             "duga_approvals": {("change_request_id", "duga_change_requests", "id"), ("approver_user_id", "users", "id"), ("authorization_assignment_id", "duga_assignments", "id")},
-            "duga_approvals": {("change_request_id", "duga_change_requests", "id"), ("approver_user_id", "users", "id")},
             "duga_validation_runs": {("change_request_id", "duga_change_requests", "id")},
             "duga_audit_events": {("actor_user_id", "users", "id")},
             "duga_analysis_findings": {("reviewed_by_user_id", "users", "id")},
