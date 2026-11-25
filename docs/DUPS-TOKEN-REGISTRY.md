@@ -99,3 +99,17 @@ The alias preserves the existing component-local value and must not be interpret
 ## Live Users drawer closing-effect layers — 2026-11-26
 
 The closing drawer's lower smoke pseudo-element now consumes the existing `--dups-layer-live-effect` token (5), while its upper pseudo-element already consumes `--dups-layer-live-effect-top` (6). These are component-local layers within the drawer's isolated effect context.
+
+
+## Visual editor anchors — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-anchor-visual-editor-legacy-top` | `var(--dups-offset-3)` (12px) | Legacy top anchor retained for the base toggle declaration |
+| `--dups-anchor-visual-editor-legacy-left` | `var(--dups-offset-3)` (12px) | Legacy left anchor retained for the base toggle declaration |
+| `--dups-anchor-visual-editor-panel-top` | 3.5rem (56px) | Fixed panel top coordinate |
+| `--dups-anchor-visual-editor-panel-left` | `var(--dups-offset-3)` (12px) | Fixed panel left coordinate |
+| `--dups-anchor-visual-editor-edge` | 0.875rem (14px) | Desktop floating toggle right/bottom clearance |
+| `--dups-anchor-visual-editor-edge-compact` | `var(--dups-offset-3)` (12px) | Compact viewport toggle right/bottom clearance |
+
+The base toggle coordinates are overridden by the theme's fixed bottom-right placement on the Homepage. The browser audit reveals the static hidden controls and checks the computed positions and existing local layers against these tokens at the established viewport set. Values preserve the previous geometry.
