@@ -114,3 +114,6 @@ The D1 draft now includes a `BEFORE INSERT` trigger that rejects an independent 
 
 ## 15. Identifier and JSON shape constraints
 The draft now requires affected-system and affected-path payloads to be JSON arrays (not merely any valid JSON value). AI requester, implementer, reviewer and audit actor principal identifiers must be non-empty. Audit event types must also be non-empty. The in-memory regression suite covers representative invalid values. These database constraints complement, but do not replace, API-level schema validation and authorization.
+
+## 19. Deep structural regression validator
+`scripts/validate-duga-schema-structure.py` loads the design draft into an in-memory SQLite database and checks exact table/column inventories, index presence plus uniqueness/partial flags, trigger presence/body markers, critical foreign-key relationships, and selected CHECK constraints. It is a regression guard for the draft—not a live D1 comparison or migration preflight. The health endpoint's required index inventory also includes the single-active-platform-owner uniqueness index.
