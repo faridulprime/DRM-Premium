@@ -339,7 +339,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             except (TypeError, ValueError, KeyError):
                 fail(f"{name}/{viewport_name}: Live Users presence dot anchor could not be resolved ({presence_dot_anchor})")
 
-        if name == "homepage" and width <= 760:
+        if name == "homepage":
             header_status_anchor = page.evaluate(
                 """() => {
                   const status = document.querySelector("#headerLoginStatus");
@@ -347,13 +347,26 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   const root = getComputedStyle(document.documentElement);
                   if (!status || !header) return {missing: true};
                   const style = getComputedStyle(status);
+                  const compact = innerWidth <= 760;
+                  const rootSize = parseFloat(root.fontSize) || 16;
+                  const gapName = compact
+                    ? "--dups-anchor-gap-status"
+                    : "--dups-anchor-header-login-status-gap";
+                  const gapValue = root.getPropertyValue(gapName).trim();
+                  const gap = gapValue.endsWith("rem")
+                    ? parseFloat(gapValue) * rootSize : parseFloat(gapValue);
+                  const rightValue = compact ? root.getPropertyValue("--dups-offset-2").trim() : "0px";
+                  const right = rightValue.endsWith("rem")
+                    ? parseFloat(rightValue) * rootSize : parseFloat(rightValue);
                   return {
                     position: style.position,
                     top: parseFloat(style.top),
                     right: parseFloat(style.right),
+                    zIndex: style.zIndex,
                     headerHeight: header.getBoundingClientRect().height,
-                    gap: parseFloat(root.getPropertyValue("--dups-anchor-gap-status")) * (parseFloat(root.getPropertyValue("font-size")) || 16),
-                    offset: parseFloat(root.getPropertyValue("--dups-offset-2")) * (parseFloat(root.getPropertyValue("font-size")) || 16)
+                    gap,
+                    expectedRight: right,
+                    expectedLayer: parseFloat(root.getPropertyValue("--dups-layer-home-login-status"))
                   };
                 }"""
             )
@@ -364,11 +377,13 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     if header_status_anchor["position"] != "absolute":
                         fail(f"{name}/{viewport_name}: header login status is not absolutely anchored ({header_status_anchor})")
                     if abs(header_status_anchor["top"] - (header_status_anchor["headerHeight"] + header_status_anchor["gap"])) > 1:
-                        fail(f"{name}/{viewport_name}: header login status anchor gap differs from its DUPS token ({header_status_anchor})")
-                    if abs(header_status_anchor["right"] - header_status_anchor["offset"]) > 1:
-                        fail(f"{name}/{viewport_name}: header login status right offset differs from its DUPS token ({header_status_anchor})")
+                        fail(f"{name}/{viewport_name}: header login status anchor gap differs from its responsive DUPS token ({header_status_anchor})")
+                    if abs(header_status_anchor["right"] - header_status_anchor["expectedRight"]) > 1:
+                        fail(f"{name}/{viewport_name}: header login status right offset differs from its responsive DUPS value ({header_status_anchor})")
+                    if float(header_status_anchor["zIndex"]) != header_status_anchor["expectedLayer"]:
+                        fail(f"{name}/{viewport_name}: header login status layer differs from its DUPS token ({header_status_anchor})")
                 except (TypeError, ValueError, KeyError):
-                    fail(f"{name}/{viewport_name}: header login status anchor could not be resolved ({header_status_anchor})")
+                    fail(f"{name}/{viewport_name}: header login status anchor/layer could not be resolved ({header_status_anchor})")
 
         if name == "homepage":
             hero_anchor = page.evaluate(
