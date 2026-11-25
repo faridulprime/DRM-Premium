@@ -71,7 +71,7 @@
   --ducs-home-nav-text: #292725;
   --ducs-home-hero-text: #252321;
   --ducs-home-footer-text: #5f5a54;
-  --ducs-home-card-muted: #777;
+  --ducs-home-card-muted: #737373;
   --ducs-home-editor-text: #183d5c;
   --ducs-home-builder-text: #243142;
   --ducs-home-suspension-text: #edf1f6;
@@ -87,7 +87,7 @@
   --ducs-shell-profile-drawer-view-text: #9de0b8;
   --ducs-shell-profile-drawer-detail-label: #7f8b9b;
   --ducs-shell-profile-drawer-detail-text: #e1e6ed;
-  --ducs-shell-profile-drawer-footer-text: #697585;
+  --ducs-shell-profile-drawer-footer-text: #7d8999;
   --ducs-shell-role-owner-text: #d8b4fe;
   --ducs-shell-role-owner-bg: rgba(168,85,247,.14);
   --ducs-shell-role-owner-border: rgba(192,132,252,.42);
@@ -110,7 +110,7 @@
   --ducs-live-kicker: #777;
   --ducs-live-count-muted: #858585;
   --ducs-live-subtitle: #777;
-  --ducs-live-list-meta: #737373;
+  --ducs-live-list-meta: #858585;
   --ducs-live-row-text: #e7e7e7;
   --ducs-live-avatar-text: #ddd;
   --ducs-live-role-text: #858585;

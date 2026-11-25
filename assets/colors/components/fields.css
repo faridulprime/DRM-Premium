@@ -9,7 +9,7 @@
   /* Live Users search field — exact legacy values preserved. */
   --ducs-live-field-bg: #171717;
   --ducs-live-field-text: #eee;
-  --ducs-live-field-placeholder: #6f6f6f;
+  --ducs-live-field-placeholder: #858585;
   --ducs-live-field-border: #303030;
   --ducs-live-field-border-focus: #555;
 
@@ -32,7 +32,7 @@
   --ducs-profile-field-text: #eee;
   --ducs-profile-field-border: #383838;
   --ducs-profile-field-focus-border: #718c7a;
-  --ducs-profile-field-placeholder: #666;
+  --ducs-profile-field-placeholder: #7d7d7d;
 
   /* Upload Studio form controls. */
   --ducs-upload-field-border: #353535;

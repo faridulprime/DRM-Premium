@@ -18,7 +18,7 @@
   --ducs-live-overlay: rgba(0, 0, 0, .58);
   --ducs-live-text: #ededed;
   --ducs-live-text-secondary: #aaa;
-  --ducs-live-text-muted: #777;
+  --ducs-live-text-muted: #808080;
   --ducs-live-text-subtle: #858585;
   --ducs-live-dialog-bg: #171717;
   --ducs-live-dialog-header-bg: #191919;
@@ -59,7 +59,7 @@
   --ducs-admin-login-title: #ededed;
   --ducs-admin-login-field-bg: #171717;
   --ducs-admin-login-field-text: #eee;
-  --ducs-admin-login-placeholder: #6f6f6f;
+  --ducs-admin-login-placeholder: #858585;
   --ducs-admin-login-focus-ring: rgba(255, 255, 255, .035);
   --ducs-admin-login-button-bg: #242424;
   --ducs-admin-login-button-text: #eee;

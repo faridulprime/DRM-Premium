@@ -1,6 +1,6 @@
 # DRM Universal Color System (DUCS)
-Version: 0.3.1 — Upload Studio palette aliasing and refreshed static validation
-Status: Token foundation, page mappings, source inventory, dependency registry and component aliases are in place. First-pass component migrations exist across all five pages. Chromium validates token loading and four representative semantic contrast pairings; residual literal cleanup, full contrast matrix, computed-style coverage and theme/forced-colors validation remain pending.
+Version: 0.3.2 — explicit contrast candidate audit and text-token remediation
+Status: Token foundation, page mappings, source inventory, dependency registry and component aliases are in place. First-pass component migrations exist across all five pages. Chromium validates token loading and representative semantic contrast pairings. A source-level audit covers 98 explicit foreground/background candidates; seven text-token values were remediated and five non-text boundary candidates remain under contextual review. Residual literal cleanup, computed-style contrast coverage and theme/forced-colors validation remain pending.
 
 ## Purpose
 DUCS centralizes color decisions for DRM Premium. It separates raw palette values from semantic meaning and component implementation so color changes can be reviewed across their dependencies.
@@ -88,3 +88,7 @@ The initial shared shell migration replaces the legacy root aliases in `theme.cs
 Browser audit run #11 passed on commit `c423ea1fe0e35459d279f40bf444afa69fcd4c53`: [run #11](https://github.com/faridulprime/DRM-Premium/actions/runs/45620765803). It parses and checks representative semantic foreground/background pairs for primary text, secondary text, action color and border against the canvas on the five principal pages across seven viewport widths.
 
 This is a representative sample, not a full DUCS contrast audit. It does not measure every component/state pair, overlays, gradients, image-backed text, light/high-contrast themes, forced-colors, or color-vision simulation. Do not treat the run as complete WCAG conformance.
+
+## Explicit contrast audit and first remediation — 2026-11-25
+
+The registered source-level contrast review is maintained in `DUCS-CONTRAST-REVIEW.md`. Its 98 explicit token pairs are diagnostic candidates, not a complete selector/runtime inventory. Seven text-role token values were adjusted to satisfy their registered 4.5:1 candidate targets. Five non-text border candidates remain review-only pending inspection of the actual rendered component boundaries. Do not infer full WCAG conformance from the source-level candidate count or ratios.
