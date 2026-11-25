@@ -221,7 +221,7 @@ async function handle(req,env){
   if(p.length===2&&p[1]==="health"){
    if(m!=="GET")return fail("Method not allowed.",405);
    const expected={
-    duga_assignments:{columns:["id","scope_type","scope_id","role_id","subject_type","user_id","principal_id","status","assigned_by_user_id","created_at","revoked_at"],indexes:["uq_duga_assignment_human_active","uq_duga_assignment_ai_active","idx_duga_assignments_subject"],triggers:[]},
+    duga_assignments:{columns:["id","scope_type","scope_id","role_id","subject_type","user_id","principal_id","status","assigned_by_user_id","created_at","revoked_at"],indexes:["uq_duga_assignment_human_active","uq_duga_assignment_ai_active","uq_duga_single_platform_owner","idx_duga_assignments_subject"],triggers:[]},
     duga_change_requests:{columns:["id","title","summary","rationale","status","risk_level","affected_systems_json","affected_paths_json","rollback_plan","requested_by_type","requested_by_user_id","requested_by_principal_id","source_branch","base_commit_sha","policy_commit_sha","implementer_type","implementer_user_id","implementer_principal_id","implementation_commit_sha","state_version","created_at","updated_at"],indexes:["idx_duga_changes_status_updated","idx_duga_changes_created"],triggers:[]},
     duga_reviews:{columns:["id","change_request_id","review_type","reviewer_type","reviewer_user_id","reviewer_principal_id","decision","reviewed_commit_sha","evidence_json","created_at"],indexes:["idx_duga_reviews_change_time"],triggers:["duga_review_no_implementer_self_audit"]},
     duga_approvals:{columns:["id","change_request_id","approver_user_id","approver_role","decision","approved_commit_sha","rationale","created_at"],indexes:["idx_duga_approvals_change_time"],triggers:[]},
