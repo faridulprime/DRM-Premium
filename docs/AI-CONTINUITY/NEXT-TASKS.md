@@ -19,7 +19,7 @@ DUGA Draft PR: https://github.com/faridulprime/DRM-Premium/pull/4
 1. Inspect the actual Cloudflare edge/WAF/rate-limit rules for unauthenticated `POST /api/presence` and `POST /api/analytics/event`; repository source does not include this account configuration.
 2. Measure legitimate 30-second heartbeat and tab-event traffic before selecting endpoint-specific limits; avoid blocking users behind shared NATs.
 3. Define privacy-preserving analytics event deduplication and retention/aggregation rules. No analytics cleanup path was found in the inspected Pages catch-all API source.
-4. Review the 20 KB `Content-Length` guard in `readBody(req)`; it does not measure actual streamed body bytes when the header is absent or inaccurate.
+4. [DONE] Replace the shared 20 KB header-only body guard with incremental stream byte counting. Regression tests cover absent and understated Content-Length; DUGA Governance CI run #45710504527 passed. Remaining public-endpoint abuse controls still require Cloudflare edge/WAF inspection and legitimate traffic measurement.
 5. If edge protections are absent or insufficient, design bounded controls and route-level regression tests before changing runtime behavior.
 6. Maintain the separation between unpublished Builder JSON (`/api/builder/draft`) and separately persisted live style settings (`/api/builder/style`, legacy `/api/admin/settings`).
 7. Add application regression tests for authentication, registration OTP, role management, presence, analytics, profile images and Builder style/draft flows.
