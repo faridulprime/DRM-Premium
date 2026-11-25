@@ -230,3 +230,24 @@ The overall D1 acceptance remains PARTIAL because the complete plan in sections 
 - The Worker runtime suite passed, but that alone does not satisfy every structural and FK checklist item above.
 
 Do not mark the full plan PASS until these gaps are closed and recorded. Do not create a production migration, change any application binding, implement state-changing API routes, merge PR #4, or deploy Production as a consequence of this evidence. No Production or shared Preview database was used; no live Pages binding was changed. PR #4 remains Draft and unmerged.
+
+
+## 10. Remaining revised-schema gap probes — prepared 2026-11-25
+
+A targeted follow-up SQL script was added at `scripts/duga-d1-revised-gap-probes.sql`. It is deliberately not represented as executed evidence. It targets only `drm-duga-acceptance-v2-disposable` / `716a4f20-25a5-4a59-9dd2-c764b193f385` and is designed for one-statement-at-a-time execution in the D1 Console.
+
+It covers:
+- assignment `user_id` orphan rejection;
+- assignment `assigned_by_user_id` orphan rejection;
+- review `reviewer_user_id` orphan rejection;
+- positive valid assignment and human-rejected review counterparts;
+- positive object JSON inserts for validation results, finding evidence and job input;
+- positive array JSON values for change-request affected-system/path fields;
+- complete named DUGA index and trigger SQL inventory;
+- final `PRAGMA foreign_key_check` and positive-row count verification.
+
+The reviewed SQL draft defines 19 explicitly named DUGA indexes and 3 triggers. The earlier owner-reported “20 indexes” inventory may include an SQLite-generated internal autoindex; retain the raw `sqlite_master` output to reconcile the count rather than silently treating 20 as the expected named-index count.
+
+SQLite engine version remains unverified. The D1 Console rejected `sqlite_version()`; public Cloudflare D1 SQL documentation and current third-party technical observations do not provide a supported SQL method to query the embedded engine version. Do not substitute a guessed version. Record it as unavailable unless Cloudflare provides an authoritative version for the relevant runtime/build.
+
+Execution status of this follow-up script: NOT RUN as of this commit. Overall revised-schema D1 acceptance therefore remains PARTIAL.
