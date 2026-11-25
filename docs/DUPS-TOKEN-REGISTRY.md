@@ -143,3 +143,14 @@ Homepage state selectors override this token for the existing guest, login-form,
 | `--dups-anchor-live-notice-bottom` | 18px | Bottom viewport clearance for the fixed live notice |
 
 The existing translateX(-50%) centering behavior and local layer 140 are retained. Chromium checks computed fixed positioning, viewport-center coordinate, bottom clearance and layer at every Live Users viewport.
+
+
+## Registration close and Live Users presence anchors — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-anchor-register-close-top` | 17px | Registration dialog close-control top offset within its form |
+| `--dups-anchor-register-close-right` | 18px | Registration dialog close-control right offset within its form |
+| `--dups-anchor-live-presence-edge` | -1px | Presence indicator's slight outward overlap beyond its avatar |
+
+The migration preserves existing values. Chromium opens the static registration dialog and checks its close-control offsets, and creates a temporary Live Users avatar fixture to verify the presence dot's absolute positioning and negative edge offsets at each viewport.

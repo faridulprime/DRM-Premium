@@ -306,6 +306,32 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: Live Users notice anchor could not be resolved ({live_notice_anchor})")
 
+        if name == "live-users":
+            presence_dot_anchor = page.evaluate(
+                """() => {
+                  const fixture = document.createElement("span");
+                  fixture.className = "live-avatar";
+                  fixture.style.position = "relative";
+                  fixture.innerHTML = '<i class="live-presence-dot"></i>';
+                  document.body.appendChild(fixture);
+                  const dot = getComputedStyle(fixture.querySelector(".live-presence-dot"));
+                  const root = getComputedStyle(document.documentElement);
+                  return {
+                    position: dot.position,
+                    right: parseFloat(dot.right),
+                    bottom: parseFloat(dot.bottom),
+                    expected: parseFloat(root.getPropertyValue("--dups-anchor-live-presence-edge"))
+                  };
+                }"""
+            )
+            try:
+                if presence_dot_anchor["position"] != "absolute":
+                    fail(f"{name}/{viewport_name}: Live Users presence dot is not absolutely anchored ({presence_dot_anchor})")
+                if abs(presence_dot_anchor["right"] - presence_dot_anchor["expected"]) > 1 or abs(presence_dot_anchor["bottom"] - presence_dot_anchor["expected"]) > 1:
+                    fail(f"{name}/{viewport_name}: Live Users presence dot offsets differ from DUPS token ({presence_dot_anchor})")
+            except (TypeError, ValueError, KeyError):
+                fail(f"{name}/{viewport_name}: Live Users presence dot anchor could not be resolved ({presence_dot_anchor})")
+
         if name == "homepage" and width <= 760:
             header_status_anchor = page.evaluate(
                 """() => {
@@ -338,6 +364,34 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     fail(f"{name}/{viewport_name}: header login status anchor could not be resolved ({header_status_anchor})")
 
         if name == "homepage":
+            register_close_anchor = page.evaluate(
+                """() => {
+                  const dialog = document.querySelector("#registerDialog");
+                  const close = document.querySelector("#registerClose");
+                  if (!dialog || !close) return {missing: true};
+                  if (!dialog.open) dialog.showModal();
+                  const style = getComputedStyle(close);
+                  const root = getComputedStyle(document.documentElement);
+                  return {
+                    position: style.position,
+                    top: parseFloat(style.top),
+                    right: parseFloat(style.right),
+                    expectedTop: parseFloat(root.getPropertyValue("--dups-anchor-register-close-top")),
+                    expectedRight: parseFloat(root.getPropertyValue("--dups-anchor-register-close-right"))
+                  };
+                }"""
+            )
+            if register_close_anchor.get("missing"):
+                fail(f"{name}/{viewport_name}: registration dialog close control is missing")
+            else:
+                try:
+                    if register_close_anchor["position"] != "absolute":
+                        fail(f"{name}/{viewport_name}: registration close control is not absolutely anchored ({register_close_anchor})")
+                    if abs(register_close_anchor["top"] - register_close_anchor["expectedTop"]) > 1 or abs(register_close_anchor["right"] - register_close_anchor["expectedRight"]) > 1:
+                        fail(f"{name}/{viewport_name}: registration close-control offsets differ from DUPS tokens ({register_close_anchor})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: registration close-control anchor could not be resolved ({register_close_anchor})")
+
             visual_editor_anchor = page.evaluate(
                 """() => {
                   const toggle = document.querySelector(".visual-editor-toggle");

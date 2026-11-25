@@ -120,3 +120,5 @@ The read-only diagnostic script is `governance/schemas/d1-preview-preflight.sql`
 - Responsive Homepage/Admin Category Bar top offsets are now tokenized without changing their 13 existing Homepage state-specific coordinates or Admin's 86px mobile value. Chromium checks three Homepage header visibility states at each mobile viewport. Next: complete the wider positioned-selector/ancestor-context inventory and investigate remaining Builder live-edit overlay layer and any untested profile/safe-area cases.
 
 - Live Users fixed status notice now uses semantic DUPS center/bottom anchor tokens (50% / 18px); computed Chromium geometry and layer checks added across the existing viewport matrix. Continue with remaining absolute micro-anchors only where the live DOM/containing block is verified.
+
+- Registration dialog close-control (17px/18px) and Live Users presence-dot (-1px/-1px) micro-anchors tokenized with computed Chromium checks. Continue remaining positioned selectors after validating their real containing blocks and lifecycle.

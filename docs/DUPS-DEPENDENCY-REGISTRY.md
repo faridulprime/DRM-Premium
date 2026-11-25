@@ -140,3 +140,8 @@ The compact/mobile 66px override exists in both the base stylesheet and the late
 ### Live Users notice anchor migration — 2026-11-26
 
 The fixed Live Users status notice now consumes semantic DUPS tokens for its 50% horizontal anchor and 18px bottom clearance. The existing horizontal centering transform and local z-index 140 are unchanged. Chromium verifies computed geometry and layer at all existing Live Users desktop, tablet, mobile, narrow and breakpoint viewport checks. This validates static rendering, not the authenticated notice lifecycle or timing.
+
+
+### Registration close and Live Users presence micro-anchor migration — 2026-11-26
+
+The registration dialog close button now consumes dedicated top/right tokens (17px/18px); the Live Users presence dot consumes one shared -1px edge token for right/bottom. Computed Chromium checks cover the dialog's opened state and a temporary avatar fixture across the viewport matrix. These are local component coordinates; no visual geometry changed.

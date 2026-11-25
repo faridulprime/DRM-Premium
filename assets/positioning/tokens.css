@@ -57,6 +57,13 @@
   --dups-anchor-visual-editor-edge: 0.875rem;
   --dups-anchor-visual-editor-edge-compact: var(--dups-offset-3);
 
+  /* Live Users presence indicator micro-anchor. */
+  --dups-anchor-live-presence-edge: -1px;
+
+  /* Registration dialog close-control anchor. */
+  --dups-anchor-register-close-top: 17px;
+  --dups-anchor-register-close-right: 18px;
+
   /* Live Users fixed notice anchor. */
   --dups-anchor-live-notice-center: 50%;
   --dups-anchor-live-notice-bottom: 18px;
