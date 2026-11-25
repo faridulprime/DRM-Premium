@@ -98,3 +98,6 @@ Verification date: 2026-11-25
 - Live Users detail-dialog sticky header now uses `--dups-layer-live-dialog-sticky-header`; Chromium verifies sticky positioning and local z-index/token agreement.
 - Browser suite passed in [run #45677961245](https://github.com/faridulprime/DRM-Premium/actions/runs/45677961245) on commit `d9953b483c21eaf2dd8ba0011c61d50cf9b5edf6`, including all 35 page/viewport checks and DUME lifecycle assertions.
 - These checks cover named components only. Complete positioned-element inventory, ancestor stacking-context analysis, anchor collision/fallback, native zoom, safe-area and deployed behavior remain open.
+
+
+- Strengthened the responsive Builder inspector browser test to reveal the static Builder shell and verify the shell is a rendered fixed containing block, then check the inspector's top/right/bottom offsets against it. Passed in [run #45678321298](https://github.com/faridulprime/DRM-Premium/actions/runs/45678321298) across existing viewport widths up to 900 CSS px.
