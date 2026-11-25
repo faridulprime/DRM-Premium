@@ -174,7 +174,18 @@ CREATE TABLE duga_validation_runs (
   results_json TEXT NOT NULL CHECK (json_valid(results_json)),
   started_at INTEGER,
   completed_at INTEGER,
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  CHECK (
+    (status='queued' AND started_at IS NULL AND completed_at IS NULL)
+    OR
+    (status='running' AND started_at IS NOT NULL AND completed_at IS NULL)
+    OR
+    (status IN ('passed','failed') AND started_at IS NOT NULL
+      AND completed_at IS NOT NULL AND completed_at>=started_at)
+    OR
+    (status='cancelled' AND completed_at IS NOT NULL
+      AND (started_at IS NULL OR completed_at>=started_at))
+  )
 );
 CREATE INDEX idx_duga_validation_change_time ON duga_validation_runs(change_request_id,created_at DESC);
 CREATE INDEX idx_duga_validation_status ON duga_validation_runs(status,created_at);
