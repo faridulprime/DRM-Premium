@@ -47,11 +47,9 @@ This review inspected the SQL draft and its stated lifecycle/authorization desig
 
 ### F-05 — Operational evidence tables do not share the audit table's append-only protection
 
-**Evidence:** Only `duga_audit_events` has UPDATE/DELETE rejection triggers. Reviews, approvals, validation runs, assignments and findings have no comparable immutability or audited-transition enforcement in this draft.
+**Resolution in current draft:** Evidence/state classification is documented. Reviews, approvals and audit events are fully immutable. Assignment grant identity is immutable; only one-way revocation is allowed and the revoker is recorded. Validation identity is immutable and lifecycle transitions are restricted; terminal rows cannot change. Finding analyzer evidence is immutable, review status is versioned and reviewer-attributed, and findings cannot be deleted. Assignment, validation and finding state changes automatically create audit rows through database triggers in the same statement.
 
-**Risk:** Audit events may say an approval/review/assignment occurred while the corresponding operational row is later changed or removed. An append-only audit log is not sufficient if the evidence it describes remains freely mutable.
-
-**Recommendation:** Classify each table/field as immutable evidence versus mutable operational state. Add append-only or explicit versioning/supersession semantics for evidence records; for mutable state, require versioned conditional updates and an audit event in the same transaction/batch where supported. Verify D1 batch atomicity before relying on it.
+**Important limitation:** Validation audit actor `duga-db-trigger` records that a transition occurred but does not authenticate the external runner. API/session actor derivation, state-version compare-and-swap, runner provenance and genuine result verification remain runtime requirements. This is in-memory SQLite design validation, not live D1 acceptance.
 
 ## Positive controls already present
 
@@ -66,7 +64,7 @@ This review inspected the SQL draft and its stated lifecycle/authorization desig
 ## Required next steps
 
 1. Obtain an independent reviewer for SQL, API authorization, state machine, CAS, and audit semantics.
-2. F-01 through F-04 have draft-level resolutions; F-05 remains open. Resolve all evidence mutability classifications before proposing an executable migration or write endpoints.
+2. F-01 through F-05 have draft-level schema resolutions; independent review, runtime authorization/provenance and Preview D1 acceptance remain open.
 3. Extend the schema regression tests and structural validator to cover the chosen invariants.
 4. Only after design review, test the revised draft on a fresh disposable D1. First verify the shared Preview migration history and backup; do not infer either from repository filenames or the manifest.
 5. Keep Production untouched and do not deploy or apply migrations without explicit authorization.
