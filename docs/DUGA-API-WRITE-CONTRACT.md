@@ -192,13 +192,15 @@ Do not expose SQL, stack traces, session data, credentials or internal policy se
 
 Allowed work now: static review, route-contract refinement, mock/SQLite test design and CI documentation. The next runtime gate is an explicitly approved disposable D1 acceptance exercise, not a migration to shared Preview.
 
-## 11. Known schema/API alignment issue to resolve before coding
+## 11. Health-readiness alignment — resolved in feature branch
 
-The current `duga_change_requests` insert guard enforces initial status/version/assignment invariants, but the health route's expected trigger list currently declares no triggers for `duga_change_requests`. The read-only health endpoint can therefore report a schema as `ready` while omitting the critical lifecycle triggers. Before any Preview readiness claim, add the three change-request trigger names and their critical SQL markers to the health contract and test that a missing or altered lifecycle trigger makes readiness fail closed. The health result must remain explicitly described as targeted structural verification, not full schema equivalence.
+The earlier finding in this section has been resolved. `GET /api/governance/health` now requires all four `duga_change_requests` lifecycle triggers (`insert_guard`, `update_guard`, `no_delete`, and `transition_audit`) and the `blocked_from_status` / `block_reason_code` columns. It also checks selected SQL-definition markers for those triggers. The mocked handler suite includes regressions proving that omission of the transition-audit trigger or `block_reason_code` column yields `schema: partial`.
+
+The health endpoint checks expected tables, columns, named indexes, required triggers, and selected trigger-definition markers. It is still a targeted structural check—not full SQL equivalence, migration-ledger verification, data-integrity proof, or evidence that the schema exists in a live Cloudflare D1 database. The endpoint must not be used as a substitute for the disposable-D1 acceptance gates in Section 10.
 
 ## 12. Validation evidence
 
-The read-only health-route hardening and its mocked regression suite passed the complete DUGA Governance workflow on commit `2481651798ef60c3793bfeafe81abff1cd9aeec6`: [GitHub Actions run #45673718961](https://github.com/faridulprime/DRM-Premium/actions/runs/45673718961). The run includes JavaScript syntax, Owner-only health API tests, registry validators, static migration inventory, in-memory SQLite schema smoke tests and deep structural schema validation. The health tests specifically verify that a missing change-request transition-audit trigger or missing `block_reason_code` column produces `schema: partial`.
+The read-only health-route hardening and mocked regression suite passed on commit `2481651798ef60c3793bfeafe81abff1cd9aeec6` ([run #45673718961](https://github.com/faridulprime/DRM-Premium/actions/runs/45673718961)). The subsequent documentation commits were also checked: run #45673812326 passed on `e0a85898697e159afccf38a575099a1d7ea307a4`, and run #45673820027 passed on the current branch head `277f7aaf1752abe0c0ea478289e81c1611d555c1`. The latest run completed every step successfully, including JS syntax, mocked Owner-only health API tests, registry validators, static migration inventory, in-memory SQLite schema tests and structural validation.
 
 This CI run does not verify Cloudflare D1 batch semantics, live Preview schema, migrations or deployed runtime.
 
