@@ -113,12 +113,139 @@ def main() -> int:
         """INSERT INTO duga_change_requests
            (id,title,summary,rationale,status,risk_level,affected_systems_json,
             affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
-            source_branch,policy_commit_sha,implementer_type,implementer_principal_id,
-            created_at,updated_at)
+            source_branch,policy_commit_sha,created_at,updated_at)
            VALUES ('change-self-audit','Title','Summary','','proposed','low',
                    '["DUSS"]','[]','rollback','human','human-1',
-                   'feature/test','policy-sha','ai','agent-same',1,1)"""
+                   'feature/test','policy-sha',1,1)"""
     )
+    # Change-request lifecycle: insert invariants, allow-list, versioning and audit.
+    check("change request must start in proposed",
+          lambda: db.execute("""INSERT INTO duga_change_requests
+            (id,title,summary,rationale,status,risk_level,affected_systems_json,
+             affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+             source_branch,policy_commit_sha,created_at,updated_at)
+            VALUES ('change-forged-approved','Title','Summary','','approved','low',
+                    '[]','[]','rollback','human','human-1','feature/test','policy-sha',1,1)"""),
+          should_fail=True)
+    check("change request initial version must be one",
+          lambda: db.execute("""INSERT INTO duga_change_requests
+            (id,title,summary,rationale,status,risk_level,affected_systems_json,
+             affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+             source_branch,policy_commit_sha,state_version,created_at,updated_at)
+            VALUES ('change-forged-version','Title','Summary','','proposed','low',
+                    '[]','[]','rollback','human','human-1','feature/test','policy-sha',2,1,1)"""),
+          should_fail=True)
+    check("change request cannot begin with implementer assigned",
+          lambda: db.execute("""INSERT INTO duga_change_requests
+            (id,title,summary,rationale,status,risk_level,affected_systems_json,
+             affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+             source_branch,policy_commit_sha,implementer_type,implementer_principal_id,
+             created_at,updated_at)
+            VALUES ('change-forged-implementer','Title','Summary','','proposed','low',
+                    '[]','[]','rollback','human','human-1','feature/test','policy-sha',
+                    'ai','agent-x',1,1)"""),
+          should_fail=True)
+    check("change request creation/update timestamps must match",
+          lambda: db.execute("""INSERT INTO duga_change_requests
+            (id,title,summary,rationale,status,risk_level,affected_systems_json,
+             affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+             source_branch,policy_commit_sha,created_at,updated_at)
+            VALUES ('change-bad-created-at','Title','Summary','','proposed','low',
+                    '[]','[]','rollback','human','human-1','feature/test','policy-sha',1,2)"""),
+          should_fail=True)
+
+    def transition_request(request_id, old_status, new_status, old_version,
+                           timestamp, extra_sql="", extra_params=()):
+        db.execute(
+            f"UPDATE duga_change_requests SET status=?,state_version=?,updated_at=? {extra_sql} "
+            "WHERE id=? AND status=? AND state_version=?",
+            (new_status, old_version + 1, timestamp, *extra_params,
+             request_id, old_status, old_version),
+        )
+
+    # Move the self-audit fixture through the permitted gates; assign its
+    # implementer only when the approved request enters implementation.
+    transition_request("change-self-audit","proposed","analyzing",1,2)
+    transition_request("change-self-audit","analyzing","impact_review",2,3)
+    transition_request("change-self-audit","impact_review","awaiting_ai_audit",3,4)
+    transition_request("change-self-audit","awaiting_ai_audit","awaiting_human_approval",4,5)
+    transition_request("change-self-audit","awaiting_human_approval","approved",5,6)
+    transition_request("change-self-audit","approved","implementing",6,7,
+                       ",implementer_type='ai',implementer_principal_id='agent-same'")
+    check("change-request transitions create database audit events",
+          lambda: require_audit_event("change-request-transition:change-self-audit:7"),
+          should_fail=False)
+    check("change-request audit identifies itself as database trigger, not human",
+          lambda: db.execute("""SELECT 1 FROM duga_audit_events
+            WHERE id='change-request-transition:change-self-audit:7'
+              AND actor_type='system' AND actor_system_id='duga-db-trigger'""").fetchone()
+            or (_ for _ in ()).throw(AssertionError("synthetic actor attribution missing")),
+          should_fail=False)
+    check("illegal state skip rejected",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET status='accepted',state_version=8,updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
+    check("status change without version increment rejected",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET status='validating',updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
+    check("non-status update cannot increment state version",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET rationale='changed',state_version=8,updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
+    check("requester identity is immutable",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET requested_by_user_id='human-2',updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
+    check("policy binding is immutable",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET policy_commit_sha='new-policy',updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
+    check("implementation commit cannot be overwritten",
+          lambda: db.execute("""UPDATE duga_change_requests
+            SET implementation_commit_sha='forged-commit',updated_at=8
+            WHERE id='change-self-audit'"""),
+          should_fail=True)
+    check("change request cannot be physically deleted",
+          lambda: db.execute("DELETE FROM duga_change_requests WHERE id='change-self-audit'"),
+          should_fail=True)
+
+    db.execute("""INSERT INTO duga_change_requests
+       (id,title,summary,rationale,status,risk_level,affected_systems_json,
+        affected_paths_json,rollback_plan,requested_by_type,requested_by_user_id,
+        source_branch,policy_commit_sha,created_at,updated_at)
+       VALUES ('change-blocked','Title','Summary','','proposed','low','[]','[]',
+               'rollback','human','human-1','feature/test','policy-sha',1,1)""")
+    check("block requires recorded prior state and stable reason",
+          lambda: db.execute("""UPDATE duga_change_requests SET status='blocked',
+            state_version=2,updated_at=2 WHERE id='change-blocked'"""),
+          should_fail=True)
+    check("block transition records prior state and reason",
+          lambda: db.execute("""UPDATE duga_change_requests SET status='blocked',
+            blocked_from_status='proposed',block_reason_code='security_review',
+            state_version=2,updated_at=2 WHERE id='change-blocked'
+              AND status='proposed' AND state_version=1"""),
+          should_fail=False)
+    check("blocked request cannot resume directly to implementation",
+          lambda: db.execute("""UPDATE duga_change_requests SET status='implementing',
+            blocked_from_status=NULL,block_reason_code=NULL,state_version=3,updated_at=3
+            WHERE id='change-blocked'"""),
+          should_fail=True)
+    check("blocked request resumes through impact review only",
+          lambda: db.execute("""UPDATE duga_change_requests SET status='impact_review',
+            blocked_from_status=NULL,block_reason_code=NULL,state_version=3,updated_at=3
+            WHERE id='change-blocked' AND status='blocked' AND state_version=2"""),
+          should_fail=False)
+    check("block and resume both generate audit events",
+          lambda: (require_audit_event("change-request-transition:change-blocked:2"),
+                   require_audit_event("change-request-transition:change-blocked:3")),
+          should_fail=False)
+
     check(
         "human implementer requires human user identity",
         lambda: db.execute(
@@ -693,7 +820,7 @@ def main() -> int:
         "SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name LIKE 'duga_%'"
     ).fetchone()[0]
 
-    if (table_count, trigger_count) != (8, 23):
+    if (table_count, trigger_count) != (8, 27):
         raise AssertionError(
             f"Unexpected schema object counts: tables={table_count}, triggers={trigger_count}"
         )
