@@ -29,7 +29,7 @@ Verification date: 2026-11-25
 
 ## Shared Preview and Production safety
 
-- Shared Preview D1 is recorded as `drmdatabase-preview`, UUID `6821a135-f386-4a1f-bb5c-09350b966b17` is NOT the recorded database ID; the owner-supplied evidence records `6821a135-9330-4537-9cf8-eb9ca90970b8`.
+- Shared Preview D1 is recorded as `drmdatabase-preview`, UUID `6821a135-9330-4537-9cf8-eb9ca90970b8`, based on owner-supplied screenshots.
 - Production D1 is separately recorded as `drmdatabase`.
 - No DUGA object or migration is confirmed in shared Preview. Migration-history reconciliation remains incomplete; a name-filter query with no rows is not proof that no migration history exists.
 - Preview migration rollout and DUGA write endpoints remain NO-GO.
