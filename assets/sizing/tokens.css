@@ -287,3 +287,20 @@
 
   --duss-role-badge-studio-font-size: 0.625rem;
 }
+
+
+/* DUSS v0.5 — Admin action-button geometry.
+   Values mirror the audited Admin action and row-action cascade. */
+:root {
+  --duss-button-admin-padding-y: 0.625rem;
+  --duss-button-admin-padding-x: 1rem;
+  --duss-button-admin-radius: 999px;
+  --duss-button-admin-font-size: 0.875rem;
+  --duss-button-admin-font-weight: 600;
+  --duss-button-admin-small-padding-y: 0.5rem;
+  --duss-button-admin-small-padding-x: 0.8125rem;
+  --duss-button-admin-row-padding-y: 0.5rem;
+  --duss-button-admin-row-padding-x: 0.75rem;
+  --duss-button-admin-mobile-min-height: 2.625rem;
+  --duss-button-admin-row-mobile-min-height: 2.375rem;
+}
