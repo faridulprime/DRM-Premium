@@ -109,7 +109,7 @@ def main() -> int:
         )}
         required_fragments = {
             "duga_change_requests": ["json_type(affected_systems_json)='array'", "json_type(affected_paths_json)='array')"],
-            "duga_jobs": ["status='running' AND lease_expires_at IS NOT NULL", "status<>'running' AND lease_expires_at IS NULL"],
+            "duga_jobs": ["status='running' and lease_expires_at is not null", "status<>'running' and lease_expires_at is null"],
             "duga_analysis_findings": ["reviewed_at is null and reviewed_by_user_id is null"],
             "duga_audit_events": ["length(event_type)>0"],
         }
