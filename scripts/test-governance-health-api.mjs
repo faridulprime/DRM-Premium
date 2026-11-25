@@ -54,7 +54,7 @@ function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = fal
           if (sql.includes("FROM duga_reviews")) return { results: relatedRows.reviews || [] };
           if (sql.includes("FROM duga_approvals")) return { results: relatedRows.approvals || [] };
           if (sql.includes("FROM duga_validation_runs")) return { results: relatedRows.validationRuns || [] };
-          if (sql.includes("FROM duga_audit_events")) { if (failAudit) throw new Error("simulated audit query failure"); return { results: sql.includes("aggregate_type") || sql.includes("ORDER BY created_at DESC,id DESC") ? auditRows : (relatedRows.auditEvents || []) }; }
+          if (sql.includes("FROM duga_audit_events")) { if (failAudit) throw new Error("simulated audit query failure"); return { results: sql.includes("aggregate_type=?") ? auditRows : (relatedRows.auditEvents || []) }; }
           if (sql.includes("FROM duga_change_requests")) {
             if (failChanges) throw new Error("simulated DUGA query failure");
             return { results: changeRows };
