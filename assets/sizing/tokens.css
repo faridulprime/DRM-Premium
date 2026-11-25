@@ -251,3 +251,39 @@
   --duss-page-gutter-home-desktop: 1.375rem;
   --duss-page-gutter-home-mobile: 0.75rem;
 }
+
+
+/* DUSS v0.4 — semantic role-badge geometry.
+   Token values map exactly to the current role-badge cascade. This is a
+   source-level migration only; it does not intentionally alter rendered sizes. */
+:root {
+  --duss-role-badge-gap: 0.375rem;
+  --duss-role-badge-padding-y: 0.25rem;
+  --duss-role-badge-padding-x: 0.5rem;
+  --duss-role-badge-radius: 999px;
+  --duss-role-badge-font-size: 0.6875rem;
+  --duss-role-badge-line-height: 1.2;
+  --duss-role-badge-font-weight: 650;
+  --duss-role-badge-letter-spacing: 0.035em;
+
+  --duss-role-badge-dashboard-padding-y: 0.4375rem;
+  --duss-role-badge-dashboard-padding-x: 0.6875rem;
+  --duss-role-badge-dashboard-font-size: 0.6875rem;
+  --duss-role-badge-dashboard-letter-spacing: 0.08em;
+
+  --duss-role-badge-mobile-min-height: 1.375rem;
+  --duss-role-badge-mobile-padding-y: 0.1875rem;
+  --duss-role-badge-mobile-padding-x: 0.4375rem;
+  --duss-role-badge-mobile-font-size: 0.6875rem;
+
+  --duss-role-badge-live-padding-y: 0.125rem;
+  --duss-role-badge-live-padding-x: 0.4375rem;
+  --duss-role-badge-live-font-size: 0.5625rem;
+  --duss-role-badge-live-letter-spacing: 0.015em;
+
+  --duss-role-badge-drawer-padding-y: 0.3125rem;
+  --duss-role-badge-drawer-padding-x: 0.5rem;
+  --duss-role-badge-drawer-font-size: 0.5625rem;
+
+  --duss-role-badge-studio-font-size: 0.625rem;
+}
