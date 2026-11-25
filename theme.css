@@ -702,7 +702,7 @@ body.profile-drawer-open .category-bar{right:390px;transition:right 700ms cubic-
  .home-page .topbar .yt-auth-field input{font-size:13px}
  .home-page .topbar>#headerLoginForm>.yt-login-action,
  .home-page .topbar .yt-create-button{width:100%;min-width:0;height:38px;min-height:38px;padding:0 10px;font-size:13px}
- .home-page .topbar .header-login-status{position:absolute;top:calc(100% + 4px);right:8px;max-width:calc(100vw - 20px)}
+ .home-page .topbar .header-login-status{position:absolute;top:calc(100% + var(--dups-anchor-gap-status, 4px));right:var(--dups-offset-2, 8px);max-width:calc(100vw - 20px)}
  .home-page .category-bar{top:150px;left:0!important;right:0;height:50px;padding:0 10px}
  .home-page:has(#headerLoginForm[hidden]) .category-bar{top:58px}
  .home-page #home{min-width:0;padding:0 12px}
