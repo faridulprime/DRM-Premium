@@ -253,3 +253,8 @@ Two remaining meaningful zero-edge declarations were tokenized: the Homepage log
 ## Upload Studio desktop sidebar placement — 2026-11-26
 
 The fixed Upload Studio desktop sidebar now uses the DUPS zero-offset primitive for its top, left, and bottom anchors while retaining `right:auto`. Browser coverage verifies the three viewport-edge coordinates without altering width, stacking order, or compact drawer behavior.
+
+
+## Compact Live Users topbar edge tokenization — 2026-11-26
+
+The mobile Live Users topbar now uses the existing zero-offset primitive for its fixed left/right viewport anchors. Regression coverage checks the computed horizontal edges without changing its responsive height or content layout.
