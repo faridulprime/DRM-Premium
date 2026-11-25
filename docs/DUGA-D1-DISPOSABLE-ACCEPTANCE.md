@@ -232,22 +232,39 @@ The overall D1 acceptance remains PARTIAL because the complete plan in sections 
 Do not mark the full plan PASS until these gaps are closed and recorded. Do not create a production migration, change any application binding, implement state-changing API routes, merge PR #4, or deploy Production as a consequence of this evidence. No Production or shared Preview database was used; no live Pages binding was changed. PR #4 remains Draft and unmerged.
 
 
-## 10. Remaining revised-schema gap probes — prepared 2026-11-25
+## 10. Revised-schema gap probes — owner-reported execution 2026-11-25
 
-A targeted follow-up SQL script was added at `scripts/duga-d1-revised-gap-probes.sql`. It is deliberately not represented as executed evidence. It targets only `drm-duga-acceptance-v2-disposable` / `716a4f20-25a5-4a59-9dd2-c764b193f385` and is designed for one-statement-at-a-time execution in the D1 Console.
+The follow-up script `scripts/duga-d1-revised-gap-probes.sql` was supplied to the owner as comment-free, individual SQL statements for the D1 Console. On 2026-11-25, the owner reported that every statement produced the expected outcome:
 
-It covers:
-- assignment `user_id` orphan rejection;
-- assignment `assigned_by_user_id` orphan rejection;
-- review `reviewer_user_id` orphan rejection;
-- positive valid assignment and human-rejected review counterparts;
-- positive object JSON inserts for validation results, finding evidence and job input;
-- positive array JSON values for change-request affected-system/path fields;
-- complete named DUGA index and trigger SQL inventory;
-- final `PRAGMA foreign_key_check` and positive-row count verification.
+- synthetic user and change-request setup: expected success;
+- valid assignment: expected success;
+- orphan assignment `user_id`: expected rejection;
+- orphan assignment `assigned_by_user_id`: expected rejection;
+- orphan review `reviewer_user_id`: expected rejection;
+- valid human-rejected review: expected success;
+- positive validation, finding and job JSON-object inserts: expected success;
+- change-request JSON array type query: expected array types;
+- named index/trigger inventory query: executed and reported as expected;
+- `PRAGMA foreign_key_check`: expected zero rows;
+- positive-row count query: expected one row for each of its five probes.
 
-The reviewed SQL draft defines 19 explicitly named DUGA indexes and 3 triggers. The earlier owner-reported “20 indexes” inventory may include an SQLite-generated internal autoindex; retain the raw `sqlite_master` output to reconcile the count rather than silently treating 20 as the expected named-index count.
+Evidence qualification: these outcomes are recorded as owner-reported execution, not independently captured raw Console output. The conversation record does not contain the actual inventory rows, SQL error text for the three expected FK failures, or the numeric result table from the final count query. Therefore the individual tests are reported as owner-confirmed, but the raw evidence package is incomplete. Do not claim an independently audited exact index count based solely on the summary “as expected”.
 
-SQLite engine version remains unverified. The D1 Console rejected `sqlite_version()`; public Cloudflare D1 SQL documentation and current third-party technical observations do not provide a supported SQL method to query the embedded engine version. Do not substitute a guessed version. Record it as unavailable unless Cloudflare provides an authoritative version for the relevant runtime/build.
+The reviewed schema draft defines 19 explicitly named DUGA indexes and 3 triggers. The earlier reported total of 20 indexes may include an SQLite-generated internal autoindex. Reconcile this against the actual `sqlite_master` output before asserting the exact total.
 
-Execution status of this follow-up script: NOT RUN as of this commit. Overall revised-schema D1 acceptance therefore remains PARTIAL.
+SQLite engine version remains unverified. The D1 Console rejected `sqlite_version()`; do not substitute a guessed version.
+
+## 11. Current acceptance assessment — 2026-11-25
+
+The owner reports that all statements in the comment-free gap-probe sequence returned the expected outcomes. Together with the previously recorded revised-schema structural/constraint observations and the authenticated Worker response (`results.pass = true`), this closes the *execution gaps as reported by the owner*.
+
+Overall status: **CONDITIONALLY COMPLETE / EVIDENCE PACKAGE INCOMPLETE**.
+
+Why this is not an unqualified PASS:
+- The latest gap-probe output was summarized by the owner rather than preserved as raw result/error captures in the record.
+- The exact index/trigger inventory rows and count reconciliation are not present here.
+- SQLite engine version is unavailable through the attempted D1 Console query.
+
+The runtime CAS + audit suite itself remains PASS on the isolated disposable D1. The owner's report supports that all follow-up SQL statements behaved as expected. Do not conflate this disposable acceptance with Preview or Production migration readiness.
+
+No Production or shared Preview database was used; no live Pages binding was changed; no production migration was applied. Synthetic rows and append-only audit events are retained in the disposable database. PR #4 remains Draft and unmerged. Do not merge or deploy Production solely on the basis of this disposable test.
