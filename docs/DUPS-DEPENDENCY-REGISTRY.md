@@ -69,3 +69,8 @@ Audited stacking-layer consumers have been migrated to semantic DUPS aliases in 
 ### Viewport placement migration — DUPS v0.3.0
 
 `live-users.css` now consumes DUPS tokens for the established Live Users drawer desktop coordinates, modal viewport center, and mobile center overrides. Values preserve the prior `51.1%`, `calc(54.4% - 90px)`, and `50%` behavior. No automatic anchor collision handling or viewport repositioning engine was introduced. Browser placement validation remains pending.
+
+
+### Restricted Users modal follow-up — 2026-11-26
+
+The Restricted Users modal now consumes the existing `--dups-layer-live-drawer` token instead of a literal z-index. The design-system Chromium audit checks its computed fixed positioning, token-resolved z-index, and viewport-center geometry across the existing seven viewport widths. The check is scoped to this modal and does not imply complete DUPS migration or collision/fallback coverage.
