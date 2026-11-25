@@ -17,7 +17,7 @@ This review inspected the SQL draft and its stated lifecycle/authorization desig
 
 **Risk:** A row could be inserted with a valid independent reviewer and later updated so that `reviewer_principal_id` matches the AI implementer, while the insert-only trigger is not re-evaluated. The draft also has no review-row immutability trigger, so existing review evidence can be updated or deleted without a corresponding database-level block.
 
-**Recommendation:** Decide whether reviews are immutable evidence. If yes, add UPDATE/DELETE rejection triggers (corrections as new rows/events) and an UPDATE self-audit guard as defense in depth. Add regression cases for both UPDATE and DELETE. If amendments are required, model them as explicit superseding records with provenance rather than silent mutation.
+**Resolution in current draft:** Reviews are now explicitly immutable evidence. New `BEFORE UPDATE` and `BEFORE DELETE` triggers reject mutation/deletion; corrections must be represented as new review records with provenance. Regression tests cover attempts to mutate reviewer identity and delete a review, and the structural validator checks both trigger operations. This is defense in depth, not reviewer authentication; trusted actor derivation and commit binding remain API responsibilities.
 
 ### F-02 — Approval records are mutable and lack database-level assignment binding
 
