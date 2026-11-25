@@ -203,3 +203,8 @@ The fixed mobile Upload Studio global header now consumes the shared zero-offset
 ## Shared shell viewport-edge anchor migration — 2026-11-26
 
 The fixed shared header now uses the DUPS zero-offset primitive for its viewport edges. The Category Bar uses that primitive for horizontal edges while preserving its DUSS header-height vertical anchor. The mobile navigation drawer uses the same primitive for top/bottom and its backdrop for full-viewport insets. A targeted Chromium assertion checks the rendered Homepage header and Category Bar geometry across the seven static viewport samples. No shell sizing, responsive breakpoint, stacking layer or interaction behavior is intentionally changed.
+
+
+## Profile drawer and navigation edge anchors — 2026-11-26
+
+The shared sidebar and Profile drawer now use the DUPS zero-offset primitive for their viewport-edge coordinates. The desktop sidebar retains its header-relative top offset; compact Homepage navigation retains its existing zero top anchor. The compact Profile drawer backdrop uses the same primitive for all four viewport edges. Browser assertions cover the corresponding fixed geometry without changing widths, breakpoints, visibility, transitions or stacking order.
