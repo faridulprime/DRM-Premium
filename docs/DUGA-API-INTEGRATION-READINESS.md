@@ -242,3 +242,16 @@ Added `docs/DUGA-API-SECURITY-AND-LIFECYCLE-DESIGN.md` as a proposed contract, n
 The document includes an explicit candidate old-state → new-state matrix. This matrix is not yet approved policy. The Owner selected resumable `blocked` handling (option B). The design now requires an immutable block event recording the prior state, an authorized unblock operation with rationale and proof the condition cleared, fresh CAS/audit, and re-evaluation of all gates before resumption. Owner has now decided that `rejected` and `cancelled` are terminal: any renewed attempt must be a new Change Request linked to the original, with independent evidence/approvals and preserved original history. The Owner approved the lifecycle policy on 2026-11-25. A consistency review against DUGA-SPEC, the D1 schema design and role definitions closed missing block-entry edges from `proposed` and `awaiting_human_approval`. The matrix specifies impact/analysis rework, audit-to-impact rework, human-approval-to-impact rework, validation-to-implementation retry, final-review-to-implementation correction, and resumable blocking. AI audit may request rework but cannot issue terminal rejection. Rework requires rationale, CAS + audit, preserved history and re-evaluation/invalidation of affected evidence. This is design approval only; independent technical review and all other no-go conditions remain before implementation. No write endpoint should be implemented until they are cleared.
 
 The existing NO-GO decision for Preview write endpoints remains unchanged. No API, migration, Preview binding, Production resource or runtime code was changed.
+
+
+## 13. Revised disposable D1 evidence update — 2026-11-25
+
+The revised-schema disposable D1 acceptance is now owner-reported as executed on the isolated database `drm-duga-acceptance-v2-disposable` (`716a4f20-25a5-4a59-9dd2-c764b193f385`). The authenticated CAS + audit Worker suite returned `results.pass = true`; the owner also reported expected outcomes for the follow-up assignment/reviewer orphan-FK probes, valid positive counterparts, JSON shape inserts, index/trigger inventory, and final foreign-key check. See `docs/DUGA-D1-DISPOSABLE-ACCEPTANCE.md` for evidence qualification and remaining raw-output gaps.
+
+This closes the earlier gap of having no revised-schema disposable D1 run, but it does **not** establish Preview migration readiness:
+- the shared Preview D1 database identity and its `d1_migrations` history still need to be inspected and reconciled;
+- the Preview preflight SQL is read-only and has not yet been executed against the correct Preview database;
+- raw output for the latest owner-operated gap probes is not retained in this repository;
+- independent third-party review, trusted AI/validation-runner identity, Git provenance and application integration tests remain outstanding.
+
+Updated decision: **NO-GO remains for Preview migration rollout and all DUGA write endpoints.** The disposable acceptance supports the isolated D1 schema/CAS/audit design only. No migration should be authored/applied to Preview until its actual migration history and schema are reconciled, independently reviewed, and separately approved.
