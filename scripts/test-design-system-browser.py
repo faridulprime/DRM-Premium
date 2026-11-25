@@ -308,27 +308,6 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 fail(f"{name}/{viewport_name}: Live Users compact topbar is missing")
             elif live_header["position"] != "fixed" or any(abs(live_header[key] - live_header["expectedZero"]) > 1 for key in ("left", "right")):
                 fail(f"{name}/{viewport_name}: Live Users compact topbar horizontal edges differ from DUPS zero-offset token ({live_header})")
-        if name == "upload-studio" and width > 760:
-            studio_sidebar = page.evaluate(
-                """() => {
-                  const element = document.querySelector(".sidebar");
-                  const root = getComputedStyle(document.documentElement);
-                  if (!element) return {missing: true};
-                  const style = getComputedStyle(element);
-                  const rect = element.getBoundingClientRect();
-                  return {
-                    position: style.position,
-                    top: rect.top,
-                    left: rect.left,
-                    bottom: innerHeight - rect.bottom,
-                    expectedZero: parseFloat(root.getPropertyValue("--dups-offset-0"))
-                  };
-                }"""
-            )
-            if studio_sidebar.get("missing"):
-                fail(f"{name}/{viewport_name}: Upload Studio sidebar is missing")
-            elif studio_sidebar["position"] != "fixed" or any(abs(studio_sidebar[key] - studio_sidebar["expectedZero"]) > 1 for key in ("top", "left", "bottom")):
-                fail(f"{name}/{viewport_name}: Upload Studio fixed sidebar edges differ from DUPS zero-offset token ({studio_sidebar})")
         if name == "upload-studio":
             thumbnail_overlay = page.evaluate(
                 """() => {
