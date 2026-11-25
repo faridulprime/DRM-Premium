@@ -195,7 +195,7 @@ def main() -> int:
 
         # Verify critical foreign-key relationships, including human actor references.
         expected_fks = {
-            "duga_assignments": {("assigned_by_user_id", "users", "id"), ("user_id", "users", "id")},
+            "duga_assignments": {("assigned_by_user_id", "users", "id"), ("user_id", "users", "id"), ("revoked_by_user_id", "users", "id")},
             "duga_change_requests": {("requested_by_user_id", "users", "id"), ("implementer_user_id", "users", "id")},
             "duga_reviews": {("change_request_id", "duga_change_requests", "id"), ("reviewer_user_id", "users", "id")},
             "duga_approvals": {("change_request_id", "duga_change_requests", "id"), ("approver_user_id", "users", "id"), ("authorization_assignment_id", "duga_assignments", "id")},
