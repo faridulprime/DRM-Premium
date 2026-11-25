@@ -29,6 +29,22 @@ class DumcMigrationTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def test_api_routes_are_behind_admin_authentication(self):
+        api = (ROOT / "functions" / "api" / "[[path]].js").read_text(encoding="utf-8")
+        auth_gate = api.index('const user=await getSession(req,env);if(!user||!["owner","admin"].includes(user.role))')
+        dumc_routes = api.index('if(p[0]==="admin"&&p[1]==="dumc")')
+        self.assertLess(auth_gate, dumc_routes)
+        for marker in ('p[2]==="folders"', 'p[2]==="movies"', '"dubbed_language"', '"subtitle_language"'):
+            self.assertIn(marker, api)
+
+    def test_upload_studio_loads_the_interactive_manager(self):
+        html = (ROOT / "upload-studio.html").read_text(encoding="utf-8")
+        manager = (ROOT / "dumc-manager.js").read_text(encoding="utf-8")
+        upload = (ROOT / "upload-studio.js").read_text(encoding="utf-8")
+        self.assertIn("dumc-manager.js?v=dumc-02", html)
+        self.assertIn("window.DUMCLinkFolder", manager)
+        self.assertIn("DUMCLinkFolder(created.id", upload)
+
     def test_seed_matches_versioned_taxonomy(self):
         expected = []
         def walk(node, parent=None):
