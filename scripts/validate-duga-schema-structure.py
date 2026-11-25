@@ -289,7 +289,7 @@ def main() -> int:
                 "implementer_type='human' and implementer_user_id is not null and implementer_principal_id is null",
                 "implementer_type='ai' and implementer_user_id is null and implementer_principal_id is not null and length(implementer_principal_id)>0",
             ],
-            "duga_reviews": [_reviews": [
+            "duga_reviews": [
                 "reviewer_type='human' and reviewer_user_id is not null and reviewer_principal_id is null and review_type='human_review'",
                 "reviewer_type='ai' and reviewer_user_id is null and reviewer_principal_id is not null and length(reviewer_principal_id)>0 and review_type='independent_ai_audit'",
             ],
