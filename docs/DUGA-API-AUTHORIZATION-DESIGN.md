@@ -1,9 +1,9 @@
 # DUGA API & Authorization Design
 Version: 0.1.0
-Status: Initial Owner-only health endpoint implemented and mocked-integration-tested; remaining governance API contract is proposed.
+Status: Owner-only read-only health, change-list and change-detail endpoints implemented and mocked-handler-tested; all governance write endpoints remain proposed.
 
 ## Existing API behavior observed
-The current API is implemented in one Cloudflare Pages catch-all file: functions/api/[[path]].js.
+The current API is implemented in one Cloudflare Pages catch-all file: `functions/api/[[path]].js`.
 - It requires env.DB.
 - Non-GET requests require matching same-origin Origin and JSON content type.
 - Session lookup reads the frame_admin_session cookie, hashes the opaque token and joins sessions to users.
