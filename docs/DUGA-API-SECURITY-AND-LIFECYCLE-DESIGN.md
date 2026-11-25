@@ -175,8 +175,8 @@ Routes in `DUGA-API-AUTHORIZATION-DESIGN.md` remain proposals:
 - Explicitly enumerate method/path pairs; unknown methods/paths return controlled 404/405.
 - GET routes still require authentication and Owner authorization.
 - Mutation payloads use strict allowlists; server-owned fields are generated/resolved server-side.
-- Proposal creation accepts title, summary, rationale, affected system IDs, normalized paths, rollback plan and source ref; not status, actor, approval, implementation SHA or policy SHA as authoritative.
-- Review creation does not accept reviewer identity or arbitrary `reviewer_type`; AI review requires trusted context.
+- Proposal creation accepts title, summary, rationale, affected system IDs, normalized paths, rollback plan and source ref; an optional `parent_change_request_id` is accepted only as a reference to an existing terminal `rejected`/`cancelled` request and is validated server-side. It does not copy predecessor evidence or authorization. The request does not accept status, actor, approval, implementation SHA or policy SHA as authoritative.
+- Review creation does not accept reviewer identity or arbitrary `reviewer_type`; AI review requires trusted context and is limited to `approved` or `changes_requested`. A terminal `rejected` decision is human-only.
 - Approval creation does not accept approver identity or role claims.
 - Validation writes do not exist until trusted runner authentication exists.
 - Audit/findings reads are cursor-paginated with bounded limits and field minimization.
