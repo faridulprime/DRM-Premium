@@ -359,14 +359,50 @@ def main() -> int:
         should_fail=True,
     )
     check(
-        "running job with lease accepted",
+        "running job requires owner token and positive fencing generation",
         lambda: db.execute(
             """INSERT INTO duga_jobs
                (id,job_type,status,input_json,available_at,lease_expires_at,created_at,updated_at)
-               VALUES ('job-running-lease','validation','running','{}',1,99,1,1)"""
+               VALUES ('job-running-no-owner','validation','running','{}',1,99,1,1)"""
         ),
-        should_fail=False,
+        should_fail=True,
     )
+    db.execute(
+        """INSERT INTO duga_jobs
+           (id,job_type,status,input_json,available_at,attempts,lease_owner,
+            lease_token,lease_generation,lease_expires_at,created_at,updated_at)
+           VALUES ('job-lease','validation','running','{}',1,1,'worker-a',
+                   'token-a',1,100,1,1)"""
+    )
+    check("heartbeat preserves lease identity and generation",
+        lambda: db.execute("""UPDATE duga_jobs SET lease_expires_at=120,updated_at=2
+          WHERE id='job-lease' AND status='running' AND lease_token='token-a'
+            AND lease_generation=1 AND lease_expires_at>50"""), should_fail=False)
+    check("stale worker completion after expiry changes no row",
+        lambda: db.execute("""UPDATE duga_jobs SET status='succeeded',result_json='{}',
+          lease_owner=NULL,lease_token=NULL,lease_expires_at=NULL
+          WHERE id='job-lease' AND status='running' AND lease_token='token-a'
+            AND lease_generation=1 AND lease_expires_at>200"""), should_fail=False)
+    db.execute("""UPDATE duga_jobs SET lease_owner='worker-b',lease_token='token-b',
+          lease_generation=2,attempts=2,lease_expires_at=300,updated_at=3
+          WHERE id='job-lease' AND status='running' AND lease_token='token-a'
+            AND lease_generation=1 AND lease_expires_at<=200""")
+    check("old lease token cannot heartbeat after reclaim",
+        lambda: db.execute("""UPDATE duga_jobs SET lease_expires_at=400
+          WHERE id='job-lease' AND status='running' AND lease_token='token-a'
+            AND lease_generation=1"""), should_fail=False)
+    check("fencing generation cannot be skipped",
+        lambda: db.execute("""UPDATE duga_jobs SET lease_generation=4,attempts=3,
+          lease_token='token-c',lease_owner='worker-c',lease_expires_at=500
+          WHERE id='job-lease'"""), should_fail=True)
+    check("lease identity cannot change without fencing increment",
+        lambda: db.execute("""UPDATE duga_jobs SET lease_token='token-c',lease_owner='worker-c'
+          WHERE id='job-lease'"""), should_fail=True)
+    check("current worker can complete and clear lease",
+        lambda: db.execute("""UPDATE duga_jobs SET status='succeeded',result_json='{}',
+          lease_owner=NULL,lease_token=NULL,lease_expires_at=NULL,updated_at=4
+          WHERE id='job-lease' AND status='running' AND lease_token='token-b'
+            AND lease_generation=2 AND lease_expires_at>250"""), should_fail=False)
 
     check(
         "affected systems must be a JSON array",
