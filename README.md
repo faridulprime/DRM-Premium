@@ -80,7 +80,7 @@ The public-facing product name is DRM- Premium. The current UI still has a few l
 
 ## Governance foundation (DUGA)
 
-DUGA is being introduced as a separate governance layer. Its initial Foundation scope is documentation and version-controlled governance metadata only; it does not replace the existing Owner/Admin/User authorization or become a runtime dependency of the public website.
+DUGA is being introduced as a separate governance layer. The Git-based governance foundation and CI checks are implemented. The D1 operational schema remains a non-executable draft; an initial Owner-only health probe exists, but the full governance API and Control Center are not implemented. DUGA does not replace the existing Owner/Admin/User authorization or become a runtime dependency of the public website.
 
 - [DUGA architecture](docs/DUGA-SPEC.md)
 - [DUGA implementation plan](docs/DUGA-IMPLEMENTATION-PLAN.md)
@@ -90,4 +90,4 @@ DUGA is being introduced as a separate governance layer. Its initial Foundation 
 - [Dependency baseline](governance/dependencies/systems.json)
 - [AI onboarding entry point](docs/AI-CONTINUITY/MASTER-ONBOARDING.md)
 
-The D1 governance schema, APIs, Control Center UI and executable Deep Cleaner are not implemented by this foundation stage. Keep Preview and Production databases isolated; do not apply a governance migration to Production without a separately approved change.
+The D1 schema draft has passed in-memory SQLite regression tests only; it has not been applied to Preview or Production. `GET /api/governance/health` is an authenticated Owner-only read-only D1 connectivity probe, not proof that DUGA tables exist. Full D1-backed governance APIs, Control Center UI and executable Deep Cleaner remain unimplemented. Preview migration history and backup must be verified before proposing or applying a migration. Keep Preview and Production databases isolated; do not apply a governance migration to Production without a separately approved change.
