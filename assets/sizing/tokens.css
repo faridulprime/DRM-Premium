@@ -1,6 +1,6 @@
-/* DRM Universal Sizing System (DUSS) — v0.1.0
- * Token foundation only. These variables intentionally do not override
- * existing component dimensions until each component is audited and migrated.
+/* DRM Universal Sizing System (DUSS) — v0.4.0
+ * Semantic sizing tokens are introduced incrementally. Component geometry
+ * remains unchanged unless an audited selector explicitly consumes a token.
  */
 :root {
   /* Typography */
