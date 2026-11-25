@@ -229,6 +229,31 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     f"{name}/{viewport_name}: DUPS header layer could not be resolved "
                     f"(computed={metrics['headerZIndex']!r}, token={expected_layer!r})"
                 )
+        if name == "homepage" and width <= 900:
+            builder_inspector = page.evaluate(
+                """() => {
+                  const element = document.querySelector(".sb-inspector");
+                  const root = getComputedStyle(document.documentElement);
+                  if (!element) return {missing: true};
+                  const style = getComputedStyle(element);
+                  return {
+                    position: style.position,
+                    zIndex: style.zIndex,
+                    token: root.getPropertyValue("--dups-layer-builder-inspector").trim()
+                  };
+                }"""
+            )
+            if builder_inspector.get("missing"):
+                fail(f"{name}/{viewport_name}: Builder inspector element is missing")
+            else:
+                try:
+                    if builder_inspector["position"] != "absolute":
+                        fail(f"{name}/{viewport_name}: responsive Builder inspector is not absolutely positioned ({builder_inspector})")
+                    if float(builder_inspector["zIndex"]) != float(builder_inspector["token"]):
+                        fail(f"{name}/{viewport_name}: Builder inspector z-index does not match its DUPS token ({builder_inspector})")
+                except (TypeError, ValueError, KeyError):
+                    fail(f"{name}/{viewport_name}: Builder inspector DUPS layer could not be resolved ({builder_inspector})")
+
         if name == "homepage":
             homepage_layers = page.evaluate(
                 """() => {
