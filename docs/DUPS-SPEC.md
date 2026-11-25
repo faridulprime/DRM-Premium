@@ -177,6 +177,14 @@ The responsive Website Builder inspector geometry assertion also passed in Chrom
 The closing drawer pseudo-layer assertion passed in Chromium run #45678490915 on commit `f327ca4c0120c292a6047002057881a188208d33`: both computed `::before` and `::after` z-index values matched their DUPS tokens. [Run #45678490915](https://github.com/faridulprime/DRM-Premium/actions/runs/45678490915). The full 35 page/viewport and DUME lifecycle suite passed.
 
 
+## Stacking-context ancestry inventory — 2026-11-26
+
+- The Chromium browser audit now inventories stacking-context-producing ancestors for every visible `position: fixed` or `position: sticky` element across the five static pages and seven sampled viewport widths.
+- The diagnostic inventory recognizes positioned non-auto z-index, fixed/sticky positioning, opacity below 1, non-normal mix-blend-mode, isolation, transform/individual transform properties, filter/backdrop-filter, perspective, layout/paint containment, container-type, clip-path, masks, flex/grid-item z-index, and relevant `will-change` values.
+- The inventory is diagnostic, not an automatic failure: a stacking context can be intentional. Findings must be reviewed against actual overlay order and clipping/containing-block behavior before changing CSS.
+- The inventory does not claim to test every DOM state, pseudo-element, shadow root, iframe document, browser engine, or deployed runtime. Targeted computed layer assertions and containing-block checks remain separate.
+- Native desktop browser zoom and physical iOS safe-area behavior remain unverified.
+
 ## Fixed/sticky ancestor and mobile viewport audit — 2026-11-26
 
 - Expanded the Chromium audit to inspect every visible fixed or sticky element on the five static pages at all seven existing viewport widths.
