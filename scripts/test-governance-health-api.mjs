@@ -326,6 +326,40 @@ await test("All paginated governance routes reject oversized cursors before deco
   assert.equal(audit.response.status, 400);
 });
  
+await test("Every governance read endpoint enforces Owner-only authorization", async () => {
+  const routes = [
+    "/api/governance/health",
+    "/api/governance/overview",
+    "/api/governance/changes",
+    "/api/governance/changes/change-42",
+    "/api/governance/findings",
+    "/api/governance/audit",
+  ];
+  for (const path of routes) {
+    const admin = await call({ token: "admin-token", path });
+    const user = await call({ token: "user-token", path });
+    const anonymous = await call({ path });
+    assert.equal(admin.response.status, 403, "Admin must be denied: " + path);
+    assert.equal(user.response.status, 401, "User must be denied: " + path);
+    assert.equal(anonymous.response.status, 401, "Anonymous caller must be denied: " + path);
+  }
+});
+
+await test("Every governance read endpoint rejects mutation methods", async () => {
+  const routes = [
+    "/api/governance/health",
+    "/api/governance/overview",
+    "/api/governance/changes",
+    "/api/governance/changes/change-42",
+    "/api/governance/findings",
+    "/api/governance/audit",
+  ];
+  for (const path of routes) {
+    const { response } = await call({ token: "owner-token", method: "POST", path });
+    assert.equal(response.status, 405, "POST must be rejected: " + path);
+  }
+});
+
 console.log("DUGA health, read-only change, findings, overview and audit API tests: PASS");
 for (const name of tests) console.log("PASS: " + name);
 console.log("LIMITATION: mocked D1 and local handler only; no live Cloudflare Pages deployment tested.");
