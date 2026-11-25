@@ -113,3 +113,14 @@ The closing drawer's lower smoke pseudo-element now consumes the existing `--dup
 | `--dups-anchor-visual-editor-edge-compact` | `var(--dups-offset-3)` (12px) | Compact viewport toggle right/bottom clearance |
 
 The base toggle coordinates are overridden by the theme's fixed bottom-right placement on the Homepage. The browser audit reveals the static hidden controls and checks the computed positions and existing local layers against these tokens at the established viewport set. Values preserve the previous geometry.
+
+
+## Profile completion overlay anchors — 2026-11-26
+
+| Token | Value | Intent |
+|---|---:|---|
+| `--dups-anchor-profile-complete-top` | 74px | Top coordinate of the fixed profile-completion bar |
+| `--dups-anchor-profile-complete-center` | `var(--dups-viewport-center)` (50%) | Horizontal viewport-center anchor |
+| `--dups-anchor-profile-backdrop-inset` | `var(--dups-offset-0)` (0) | Full-viewport backdrop edge inset |
+
+The values preserve the existing fixed overlay geometry. Chromium checks the computed top/center anchors, full-viewport backdrop insets and existing bar-above-backdrop layer ordering at all Homepage viewport states.
