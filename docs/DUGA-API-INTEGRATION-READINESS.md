@@ -233,3 +233,40 @@ python scripts/test-duga-schema.py
 ```
 
 This is a local test harness only. It neither connects to Cloudflare nor changes Preview/Production. The harness is intended as an early regression check before a separate disposable D1 test is designed and approved.
+
+
+## 12. Implementation status reconciliation — 2026-11-25
+
+This section supersedes implementation-status statements in Sections 1, 2, 6 and 10 where they describe the original audit baseline. The audit remains a historical snapshot; it is not the current route inventory.
+
+### Current branch implementation
+
+The current `feature/full-admin-panel` branch contains these Owner-only, read-only routes in `functions/api/[[path]].js`:
+
+| Route | Implementation | Evidence boundary |
+|---|---|---|
+| `GET /api/governance/health` | D1 probe and named table/column/index/trigger presence report | Mocked D1 only |
+| `GET /api/governance/overview` | Grouped status counts for four operational tables | Mocked D1 only |
+| `GET /api/governance/findings` | Bounded filters, search and keyset pagination | Mocked D1 only |
+| `GET /api/governance/changes` | Bounded filters, search and keyset pagination | Mocked D1 only |
+| `GET /api/governance/changes/:id` | Detail and bounded related collections | Mocked D1 only |
+| `GET /api/governance/audit` | Bounded aggregate filter and keyset pagination | Mocked D1 only |
+
+The handler-level suite is `scripts/test-governance-health-api.mjs`. It exercises Owner/Admin/User/unauthenticated access, GET-only restrictions, selected malformed inputs/cursors, pagination, missing schema, mocked query failures and unknown route behavior. CI runs this suite and checks handler syntax.
+
+### Explicit non-implementation
+
+The following remain absent:
+- `GET /api/governance/systems` (canonical Git registry publication endpoint);
+- all Governance write routes (proposal, review, approval, validation-run, assignment and state transitions);
+- trusted AI principal or validation-runner authentication;
+- deployed Pages/Functions acceptance against a real Preview binding;
+- live D1 schema equivalence, migration-ledger and data-integrity acceptance.
+
+### Updated go/no-go decision
+
+- **GO:** static analysis, mock-based regression tests, read-only route hardening and documentation.
+- **NO-GO:** Governance write endpoints, DUGA migrations to shared Preview, or claims of deployed runtime acceptance.
+- **Publication gate:** do not add a registry-serving endpoint until Cloudflare Pages build/output configuration, Functions routing and asset binding are confirmed. The inspected branch tree has no expected build/config manifests; Cloudflare Dashboard settings remain unverified.
+
+The original security requirements in Sections 3–9 remain applicable. Mocked handler tests do not establish Cloudflare D1 semantics, production-grade rate limiting or deployed authorization behavior.
