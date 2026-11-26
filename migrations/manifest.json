@@ -115,6 +115,18 @@
         "Existing video metadata remains unknown unless verified; no language/industry is inferred.",
         "Apply only after confirming the target D1 migration history."
       ]
+    },
+    {
+      "order": 12,
+      "file": "0010_dumc_release_years_1956_1959.sql",
+      "purpose": "Add the missing 1956–1959 release-year folders under the pre-1960 year group, completing the public 1950–2026 range.",
+      "depends_on": [
+        "0009_dumc_movie_library.sql"
+      ],
+      "notes": [
+        "Additive and idempotent; inserts only four system folder records.",
+        "Existing 2027–2029 taxonomy nodes remain stored but are excluded from the public Year selector."
+      ]
     }
   ]
 }
