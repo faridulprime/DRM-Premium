@@ -3,7 +3,7 @@
 .dumc-home-intro{margin:8px 0 0;color:#c5cbd3!important;font-size:.96rem;text-shadow:0 2px 3px rgba(0,0,0,.98),0 0 8px rgba(0,0,0,.95)}
 .dumc-home-count{align-self:center;color:#f0d69e!important;font-size:.88rem;font-weight:650;white-space:nowrap;text-shadow:0 2px 4px #000,0 0 8px #000}
 .dumc-home-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;min-height:42px;margin:18px 0 13px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.16);color:#cbd2dc;font-size:.9rem}
-.dumc-home-breadcrumb button{border:0;padding:0;background:transparent;color:#f0c674;font:inherit;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.dumc-home-breadcrumb button{border:0;padding:0;background:transparent;color:#f0c674;font:inherit;font-weight:700;cursor:pointer;text-decoration:underline;min-height:44px;display:inline-flex;align-items:center;text-underline-offset:4px}
 .dumc-home-breadcrumb strong{color:#fff;font-weight:700;text-shadow:0 2px 4px #000}
 .dumc-crumb-separator{color:#7e8794}
 .dumc-crumb-hint{color:#aeb7c3;font-size:.84rem}
@@ -18,7 +18,7 @@
 .dumc-category-group:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
 .dumc-category-group-title{margin:0 0 8px;color:#d8b879;font-size:.73rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase;text-shadow:0 2px 4px #000}
 .dumc-folder-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px}
-.dumc-nav-item{display:flex;align-items:center;gap:9px;width:100%;min-width:0;min-height:36px;padding:6px 5px;border:0;border-radius:5px;background:transparent;color:#edf1f5;text-align:left;font:600 .88rem/1.35 "Hind Siliguri","Space Grotesk",sans-serif;cursor:pointer;text-shadow:0 2px 3px rgba(0,0,0,.98),0 0 7px rgba(0,0,0,.95);transition:color .15s ease,background-color .15s ease,padding-left .15s ease}
+.dumc-nav-item{display:flex;align-items:center;gap:9px;width:100%;min-width:0;min-height:44px;padding:8px 5px;border:0;border-radius:5px;background:transparent;color:#edf1f5;text-align:left;font:600 .88rem/1.35 "Hind Siliguri","Space Grotesk",sans-serif;cursor:pointer;text-shadow:0 2px 3px rgba(0,0,0,.98),0 0 7px rgba(0,0,0,.95);transition:color .15s ease,background-color .15s ease,padding-left .15s ease}
 .dumc-nav-item:hover,.dumc-nav-item:focus-visible{color:#ffe1a5;background:rgba(255,255,255,.055);outline:none}
 .dumc-nav-item:focus-visible{box-shadow:inset 0 0 0 1px rgba(231,184,95,.7)}
 .dumc-nav-item.active{color:#ffd27a;background:transparent;box-shadow:inset 2px 0 #dca94f}
@@ -33,7 +33,7 @@
 .dumc-year-period-label{flex:1}
 .dumc-year-period-count{color:#a9b2bf;font-size:.72rem;font-weight:500}
 .dumc-year-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px 8px;padding:4px 3px 11px 12px}
-.dumc-year-item{min-height:34px;font-variant-numeric:tabular-nums;font-family:"Space Grotesk","Hind Siliguri",sans-serif;font-size:.82rem}
+.dumc-year-item{min-height:44px;font-variant-numeric:tabular-nums;font-family:"Space Grotesk","Hind Siliguri",sans-serif;font-size:.82rem}
 .dumc-year-item .dumc-folder-icon{width:15px;height:15px;flex-basis:15px}
 .dumc-year-special{padding:6px 2px}
 .dumc-nav-empty{padding:16px 5px;color:#c5cbd3;font-size:.86rem}
