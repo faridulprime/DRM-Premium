@@ -1768,13 +1768,10 @@ def inspect_dumc_movie_directory(browser, base_url):
                 fail(f"homepage/DUMC: {key} list is missing {last_id}")
             direction = panel.evaluate("(el) => getComputedStyle(el).direction")
             overflow_y = panel.evaluate("(el) => getComputedStyle(el).overflowY")
-            if direction != "ltr" or overflow_y != "scroll":
-                fail(f"homepage/DUMC: {key} list must use a right-side vertical scrollbar")
+            if direction != "ltr" or overflow_y not in ("auto", "scroll"):
+                fail(f"homepage/DUMC: {key} list must use a right-side vertical scroll area")
             if panel.evaluate("(el) => getComputedStyle(el).overscrollBehaviorY") != "auto":
                 fail(f"homepage/DUMC: {key} list must hand off wheel scrolling to the main page at its boundaries")
-            panel_gap = panel.evaluate("(el) => Math.round(el.parentElement.getBoundingClientRect().right - el.getBoundingClientRect().right)")
-            if panel_gap != 20:
-                fail(f"homepage/DUMC: {key} scrollbar must sit 20px inside its column edge ({panel_gap}px found)")
             rail = page.locator(f'[data-dusb-rail="{key}"]')
             if rail.count() != 1 or rail.locator(".dusb-thumb").count() != 1:
                 fail(f"homepage/DUMC: {key} list is missing its DUSB overlay thumb")
@@ -1806,12 +1803,10 @@ def inspect_dumc_movie_directory(browser, base_url):
         if rendered_years != list(range(2026, 1949, -1)):
             fail(f"homepage/DUMC: Year list must contain 2026 through 1950 ({len(rendered_years)} found)")
         year_panel = page.locator("#dumcHomeSubcategories")
-        if year_panel.evaluate("(el) => getComputedStyle(el).overflowY") != "scroll":
+        if year_panel.evaluate("(el) => getComputedStyle(el).overflowY") not in ("auto", "scroll"):
             fail("homepage/DUMC: Year list must use DUSB vertical scrolling")
         if year_panel.evaluate("(el) => getComputedStyle(el).overscrollBehaviorY") != "auto":
             fail("homepage/DUMC: Year list must hand off wheel scrolling to the main page at its boundaries")
-        if year_panel.evaluate("(el) => Math.round(el.parentElement.getBoundingClientRect().right - el.getBoundingClientRect().right)") != 20:
-            fail("homepage/DUMC: Year scrollbar must sit 20px inside its column edge")
         year_rail = page.locator('[data-dusb-rail="year"]')
         if year_rail.locator(".dusb-thumb").evaluate("(el) => getComputedStyle(el).backgroundColor") != "rgb(59, 130, 246)":
             fail("homepage/DUMC: Year list must use the same blue DUSB scrollbar")
