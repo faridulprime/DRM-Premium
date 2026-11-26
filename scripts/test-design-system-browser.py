@@ -1727,6 +1727,9 @@ def inspect_dumc_movie_directory(browser, base_url):
         rendered_years = [int(value) for value in year_buttons.evaluate_all("(els) => els.map(el => el.dataset.year)")]
         if rendered_years != list(range(1950, 2027)):
             fail(f"homepage/DUMC: Year panel must show every folder from 1950 through 2026 ({len(rendered_years)} rendered)")
+        year_columns = page.locator(".dumc-year-grid").evaluate("(el) => getComputedStyle(el).gridTemplateColumns.split(' ').length")
+        if year_columns != 7:
+            fail(f"homepage/DUMC: desktop Year grid should use 7 compact columns ({year_columns} found)")
         if page.locator("#dumcHomeSubcategories details").count() != 0:
             fail("homepage/DUMC: year folders must not be hidden inside decade accordions")
         if page.locator('#dumcHomeSubcategories [data-year="2027"]').count() != 0:
