@@ -41,7 +41,7 @@
 .dumc-contents-title h3{font-size:1.05rem}
 .dumc-home-search{display:flex;align-items:center;gap:9px;width:100%;padding:0 14px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(255,255,255,.045)}
 .dumc-home-search>span{font-size:1.35rem;color:#d8bd8a}
-.dumc-home-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#fff;padding:11px 0;font:inherit}
+.dumc-home-search input{width:100%;min-width:0;min-height:44px;border:0;outline:0;background:transparent;color:#fff;padding:11px 0;font:inherit}
 .dumc-home-search input::placeholder{color:#adb4bf}
 #dumcHomeStatus{font-size:.84rem;color:#f0d69e;text-shadow:0 2px 4px #000}
 .dumc-home-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
