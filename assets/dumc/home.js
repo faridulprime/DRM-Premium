@@ -132,7 +132,7 @@ async function loadMovies(reset=true){
 }
 $("#dumcHomeCategories").addEventListener("click",e=>{
  const b=e.target.closest("[data-category-folder]");if(!b)return;
- activeFolder=b.dataset.categoryFolder==="ALL_MOVIES"?"":b.dataset.categoryFolder;
+ activeFolder=b.dataset.categoryFolder;
  activeYear="";
  renderCategories();renderYears();renderBreadcrumb();loadMovies(true);
 });
