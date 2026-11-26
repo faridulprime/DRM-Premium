@@ -1820,9 +1820,14 @@ def inspect_dumc_movie_directory(browser, base_url):
         combined_url = year_request.value.url
         if "folder_id=INDUSTRY_TELUGU_CINEMA" not in combined_url or "year=2018" not in combined_url:
             fail("homepage/DUMC: Year selection did not preserve the selected All Movies folder")
-        breadcrumb = page.locator("#dumcHomeBreadcrumb").inner_text()
-        if "Telugu Cinema" not in breadcrumb or "2018" not in breadcrumb:
-            fail(f"homepage/DUMC: selected folder/year breadcrumb is incomplete ({breadcrumb})")
+        if page.locator("#dumcHomeBreadcrumb, #dumcHomeTitle, .dumc-home-intro").count() != 0:
+            fail("homepage/DUMC: intro title, description and breadcrumb must not separate the tab bar from the directory")
+        count = page.locator(".dumc-year-directory-panel #dumcHomeCount")
+        if count.count() != 1 or "folders" not in count.inner_text():
+            fail("homepage/DUMC: folder/movie count must appear beside the Year heading")
+        year_header = page.locator(".dumc-year-directory-panel .dumc-directory-panel-head")
+        if year_header.evaluate("(el) => getComputedStyle(el).justifyContent") != "space-between":
+            fail("homepage/DUMC: folder/movie count must be aligned to the right of the Year heading")
 
         movies_link = page.locator('#categoryTabs a[data-category="__movies__"]')
         if movies_link.count() != 1 or movies_link.get_attribute("href") != "/movies":
@@ -1837,6 +1842,10 @@ def inspect_dumc_movie_directory(browser, base_url):
         if not page.url.rstrip("/").endswith("/movies"):
             fail(f"homepage/navigation: Movies did not navigate to /movies ({page.url})")
         page.wait_for_selector("body.movies-route #movies", timeout=10000)
+        nav_bottom = page.locator("#categoryTabs").evaluate("(el) => el.getBoundingClientRect().bottom")
+        directory_top = page.locator("#dumcDirectoryLayout").evaluate("(el) => el.getBoundingClientRect().top")
+        if directory_top - nav_bottom > 12:
+            fail(f"movies route: directory tab bar is not directly below Universal Tab Bar (gap {directory_top - nav_bottom:.1f}px)")
         if page.locator(".movies-route #home > #browse").is_visible():
             fail("movies route: homepage Videos section should not appear on /movies")
         movies_tab = page.locator('#categoryTabs a[data-category="__movies__"].active[aria-current="page"]')
