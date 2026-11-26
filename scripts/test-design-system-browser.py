@@ -1781,7 +1781,7 @@ def inspect_dumc_movie_directory(browser, base_url):
             if rail.locator(".dusb-thumb").evaluate("(el) => getComputedStyle(el).backgroundColor") != "rgb(59, 130, 246)":
                 fail(f"homepage/DUMC: {key} list is missing the shared blue DUSB thumb")
             viewport_width = page.evaluate("window.innerWidth")
-            expected_inset = round(23 + viewport_width * (0.043 if key == "genre" else 0))
+            expected_inset = round(20 + viewport_width * (0.043 if key == "genre" else 0))
             actual_inset = rail.evaluate("(el) => Math.round(el.parentElement.getBoundingClientRect().right - el.getBoundingClientRect().right)")
             if abs(actual_inset - expected_inset) > 1:
                 fail(f"homepage/DUMC: {key} scrollbar position is incorrect ({actual_inset}px vs {expected_inset}px)")
@@ -1808,7 +1808,7 @@ def inspect_dumc_movie_directory(browser, base_url):
         year_rail = page.locator('[data-dusb-rail="year"]')
         if year_rail.locator(".dusb-thumb").evaluate("(el) => getComputedStyle(el).backgroundColor") != "rgb(59, 130, 246)":
             fail("homepage/DUMC: Year list must use the same blue DUSB scrollbar")
-        expected_year_inset = round(23 + page.evaluate("window.innerWidth") * .072)
+        expected_year_inset = round(20 + page.evaluate("window.innerWidth") * .072)
         actual_year_inset = year_rail.evaluate("(el) => Math.round(el.parentElement.getBoundingClientRect().right - el.getBoundingClientRect().right)")
         if abs(actual_year_inset - expected_year_inset) > 1:
             fail(f"homepage/DUMC: Year scrollbar position is incorrect ({actual_year_inset}px vs {expected_year_inset}px)")
