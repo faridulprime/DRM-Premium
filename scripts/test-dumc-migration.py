@@ -7,6 +7,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATION = ROOT / "migrations" / "0009_dumc_movie_library.sql"
+YEAR_MIGRATION = ROOT / "migrations" / "0010_dumc_release_years_1956_1959.sql"
 TAXONOMY = ROOT / "assets" / "dumc" / "taxonomy.json"
 
 
@@ -15,6 +16,7 @@ class DumcMigrationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.taxonomy = json.loads(TAXONOMY.read_text(encoding="utf-8"))
         cls.sql = MIGRATION.read_text(encoding="utf-8")
+        cls.year_sql = YEAR_MIGRATION.read_text(encoding="utf-8")
         cls.db = sqlite3.connect(":memory:")
         cls.db.execute("PRAGMA foreign_keys=ON")
         cls.db.executescript("""
@@ -24,6 +26,7 @@ class DumcMigrationTests(unittest.TestCase):
             INSERT INTO videos(id,title) VALUES ('movie-1','Sample Movie'),('movie-2','Unclassified Movie');
         """)
         cls.db.executescript(cls.sql)
+        cls.db.executescript(cls.year_sql)
 
     @classmethod
     def tearDownClass(cls):
@@ -105,12 +108,28 @@ class DumcMigrationTests(unittest.TestCase):
         actual = self.db.execute(
             "SELECT id,parent_id FROM dumc_folders ORDER BY id"
         ).fetchall()
-        self.assertEqual(len(expected), 226)
+        self.assertEqual(len(expected), 230)
         self.assertEqual(len(actual), len(expected))
         self.assertEqual(set(actual), set(expected))
         self.assertEqual(self.db.execute(
             "SELECT COUNT(DISTINCT id) FROM dumc_folders"
-        ).fetchone()[0], 226)
+        ).fetchone()[0], 230)
+
+    def test_year_taxonomy_is_contiguous_from_1950_through_2026(self):
+        root = next(node for node in self.taxonomy["children"] if node["id"] == "08_RELEASE_YEARS")
+        years = []
+        def walk(nodes):
+            for node in nodes:
+                if node["id"].startswith("YEAR_") and node["id"][5:9].isdigit() and len(node["id"]) == 9:
+                    years.append(int(node["id"][5:]))
+                walk(node.get("children", []))
+        walk(root.get("children", []))
+        public_years = sorted(year for year in years if 1950 <= year <= 2026)
+        self.assertEqual(public_years, list(range(1950, 2027)))
+        db_years = self.db.execute(
+            "SELECT id FROM dumc_folders WHERE id GLOB 'YEAR_[0-9][0-9][0-9][0-9]'"
+        ).fetchall()
+        self.assertEqual(len(db_years), 80)  # 1950–2029 remain stored; public navigation ends at 2026.
 
     def test_existing_videos_are_backfilled_without_guessing(self):
         rows = self.db.execute(
