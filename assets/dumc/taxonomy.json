@@ -1047,6 +1047,26 @@
               "id": "YEAR_1955",
               "name": "1955",
               "description": "Movies released in 1955."
+            },
+            {
+              "id": "YEAR_1956",
+              "name": "1956",
+              "description": "Movies released in 1956."
+            },
+            {
+              "id": "YEAR_1957",
+              "name": "1957",
+              "description": "Movies released in 1957."
+            },
+            {
+              "id": "YEAR_1958",
+              "name": "1958",
+              "description": "Movies released in 1958."
+            },
+            {
+              "id": "YEAR_1959",
+              "name": "1959",
+              "description": "Movies released in 1959."
             }
           ]
         },
