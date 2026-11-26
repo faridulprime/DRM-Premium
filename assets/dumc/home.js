@@ -42,6 +42,66 @@ function yearFolders(){
  visit(root?.children||[]);
  return values.sort((a,b)=>b.year-a.year);
 }
+const dusbBound=new WeakSet();
+function refreshDusb(el){
+ const rail=el?.parentElement?.querySelector(":scope > .dusb-rail");
+ const thumb=rail?.querySelector(".dusb-thumb");
+ if(!rail||!thumb)return;
+ const trackHeight=rail.clientHeight;
+ if(trackHeight<1)return;
+ const viewportHeight=el.clientHeight;
+ const contentHeight=el.scrollHeight;
+ const maxScroll=Math.max(0,contentHeight-viewportHeight);
+ const thumbHeight=maxScroll>0?Math.max(26,Math.min(trackHeight,trackHeight*viewportHeight/contentHeight)):trackHeight;
+ const travel=Math.max(0,trackHeight-thumbHeight);
+ const top=maxScroll>0?(el.scrollTop/maxScroll)*travel:0;
+ thumb.style.height=thumbHeight+"px";
+ thumb.style.transform="translateY("+top+"px)";
+}
+function bindDusb(el){
+ const rail=el?.parentElement?.querySelector(":scope > .dusb-rail");
+ const thumb=rail?.querySelector(".dusb-thumb");
+ if(!el||!rail||!thumb)return;
+ if(!dusbBound.has(el)){
+  el.addEventListener("scroll",()=>refreshDusb(el),{passive:true});
+  let drag=null;
+  thumb.addEventListener("pointerdown",event=>{
+   if(event.button!==0)return;
+   event.preventDefault();
+   const trackHeight=rail.clientHeight;
+   const thumbHeight=thumb.offsetHeight;
+   const maxScroll=Math.max(0,el.scrollHeight-el.clientHeight);
+   if(trackHeight<=thumbHeight||maxScroll<=0)return;
+   drag={pointerId:event.pointerId,startY:event.clientY,startScroll:el.scrollTop,travel:trackHeight-thumbHeight,maxScroll};
+   thumb.setPointerCapture(event.pointerId);
+   thumb.style.cursor="grabbing";
+  });
+  thumb.addEventListener("pointermove",event=>{
+   if(!drag||drag.pointerId!==event.pointerId)return;
+   el.scrollTop=drag.startScroll+((event.clientY-drag.startY)/drag.travel)*drag.maxScroll;
+  });
+  const endDrag=event=>{
+   if(!drag||drag.pointerId!==event.pointerId)return;
+   drag=null;thumb.style.cursor="grab";
+  };
+  thumb.addEventListener("pointerup",endDrag);
+  thumb.addEventListener("pointercancel",endDrag);
+  thumb.addEventListener("lostpointercapture",()=>{drag=null;thumb.style.cursor="grab"});
+  rail.addEventListener("pointerdown",event=>{
+   if(event.target!==rail)return;
+   const trackHeight=rail.clientHeight,thumbHeight=thumb.offsetHeight;
+   const maxScroll=Math.max(0,el.scrollHeight-el.clientHeight);
+   const travel=trackHeight-thumbHeight;
+   if(travel<=0||maxScroll<=0)return;
+   const rect=rail.getBoundingClientRect();
+   const target=Math.max(0,Math.min(travel,event.clientY-rect.top-thumbHeight/2));
+   el.scrollTop=(target/travel)*maxScroll;
+  });
+  dusbBound.add(el);
+ }
+ refreshDusb(el);
+}
+window.addEventListener("resize",()=>document.querySelectorAll("[data-dusb]").forEach(refreshDusb),{passive:true});
 function renderCategories(){
  const el=$("#dumcHomeCategories");
  el.innerHTML=categoryGroups().map((group,index)=>{
@@ -50,13 +110,16 @@ function renderCategories(){
   const items=groupItems(group);
   return '<section class="dumc-directory-panel dumc-category-panel" aria-labelledby="'+titleId+'">'+
    '<header class="dumc-directory-panel-head"><h3 id="'+titleId+'">'+esc(group.title)+'</h3></header>'+
-   '<div class="dumc-directory-panel-body dumc-category-list dusb-scrollbar" id="'+listId+'" data-dusb="true" data-category-list="'+esc(group.key)+'" aria-label="'+esc(group.title)+' folders">'+
-   items.map(node=>{
-    const selected=activeFolder===node.id;
-    return '<button type="button" class="dumc-nav-item'+(selected?' active':'')+'" data-category-folder="'+esc(node.id)+'" data-category-label="'+esc(folderName(node.name))+'" aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(folderName(node.name))+'</span></button>';
-   }).join("")+
+   '<div class="dumc-directory-panel-body dusb-viewport">'+
+    '<div class="dumc-category-list dusb-scrollbar" id="'+listId+'" data-dusb="true" data-category-list="'+esc(group.key)+'" aria-label="'+esc(group.title)+' folders">'+
+    items.map(node=>{
+     const selected=activeFolder===node.id;
+     return '<button type="button" class="dumc-nav-item'+(selected?' active':'')+'" data-category-folder="'+esc(node.id)+'" data-category-label="'+esc(folderName(node.name))+'" aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(folderName(node.name))+'</span></button>';
+    }).join("")+
+    '</div><div class="dusb-rail" data-dusb-rail="'+esc(group.key)+'" aria-hidden="true"><span class="dusb-thumb"></span></div>'+
    '</div></section>';
  }).join("");
+ el.querySelectorAll("[data-dusb]").forEach(bindDusb);
 }
 function renderYears(){
  const el=$("#dumcHomeSubcategories");
@@ -66,6 +129,7 @@ function renderYears(){
   const value=String(year);
   return '<button type="button" class="dumc-nav-item dumc-year-item'+(activeYear===value?' active':'')+'" data-year="'+value+'" aria-pressed="'+(activeYear===value?'true':'false')+'">'+folderIcon+'<span>'+value+'</span></button>';
  }).join("")+'</div>';
+ bindDusb(el);
 }
 function updateLibraryCount(){
  $("#dumcHomeCount").textContent=categoryCount().toLocaleString("en-US")+" folders · "+movies.length.toLocaleString("en-US")+" movies";
