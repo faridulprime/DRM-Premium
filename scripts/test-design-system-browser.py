@@ -1700,6 +1700,7 @@ def inspect_dumc_movie_directory(browser, base_url):
     )
     page = context.new_page()
     try:
+        page.route("https://**/*", lambda route: route.abort())
         page.route(
             "**/api/dumc/browse*",
             lambda route: route.fulfill(
