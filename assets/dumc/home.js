@@ -1,19 +1,14 @@
 (()=>{"use strict";
 const $=s=>document.querySelector(s),host=$("#dumcHomeGrid");
 if(!host)return;
-const labels={
- "01_MOVIE_LIBRARY":"Library",
- "02_LANGUAGE":"Language",
- "03_FILM_INDUSTRY":"Film Industry",
- "04_DUBBED_MOVIES":"Dubbed Movies",
- "05_GENRES":"Genre",
- "06_COUNTRIES":"Country",
- "07_COLLECTIONS":"Collections",
- "09_SUBTITLES":"Subtitles",
- "08_RELEASE_YEARS":"Year"
-};
-const categoryRootIds=["01_MOVIE_LIBRARY","02_LANGUAGE","03_FILM_INDUSTRY","04_DUBBED_MOVIES","05_GENRES","06_COUNTRIES","07_COLLECTIONS","09_SUBTITLES"];
-const categoryRootSet=new Set(categoryRootIds);
+const categoryDefinitions=[
+ {key:"all-movies",title:"All Movies",rootId:"03_FILM_INDUSTRY"},
+ {key:"dubbed-movies",title:"Dubbed Movies",rootId:"04_DUBBED_MOVIES"},
+ {key:"country",title:"Country",rootId:"06_COUNTRIES"},
+ {key:"collections",title:"Collections",rootId:"07_COLLECTIONS"},
+ {key:"genre",title:"Genre",rootId:"05_GENRES"},
+ {key:"subtitles",title:"Subtitles",rootId:"09_SUBTITLES"}
+];
 let roots=[],activeFolder="",activeYear="",movies=[],offset=0,query="",loading=false,hasMore=false,searchTimer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const folderName=s=>String(s??"").replace(/^\d+_/,"").replace(/_/g," ");
@@ -23,20 +18,14 @@ function findNode(nodes,id){
  for(const node of nodes||[]){if(node.id===id)return node;const found=findNode(node.children,id);if(found)return found}
  return null;
 }
-function nodeLabel(node,rootId){
- if(!node)return "";
- const name=folderName(node.name);
- if(rootId==="02_LANGUAGE")return name+" Movie";
- if(rootId==="01_MOVIE_LIBRARY"&&node.id==="ALL_MOVIES")return "All Movies";
- if(rootId==="01_MOVIE_LIBRARY"&&node.id==="FEATURED")return "Featured Movies";
- if(rootId==="01_MOVIE_LIBRARY"&&node.id==="UNCLASSIFIED")return "Unclassified Movies";
- return name;
-}
 function categoryGroups(){
- return categoryRootIds.map(id=>({id,title:labels[id],node:findNode(roots,id)})).filter(x=>x.node);
+ return categoryDefinitions.map(definition=>({...definition,node:findNode(roots,definition.rootId)})).filter(group=>group.node);
+}
+function groupItems(group){
+ return(group.node?.children||[]).filter(node=>node.id!=="ARCHIVED");
 }
 function categoryCount(){
- return categoryGroups().reduce((n,g)=>n+(g.node.children||[]).filter(x=>x.id!=="ARCHIVED").length,0);
+ return categoryGroups().reduce((count,group)=>count+groupItems(group).length,0);
 }
 function yearFolders(){
  const root=findNode(roots,"08_RELEASE_YEARS");
@@ -55,22 +44,24 @@ function yearFolders(){
 }
 function renderCategories(){
  const el=$("#dumcHomeCategories");
- const groups=categoryGroups();
- el.innerHTML=groups.map(group=>{
-  const items=(group.node.children||[]).filter(node=>node.id!=="ARCHIVED");
-  if(!items.length)return "";
-  return '<section class="dumc-category-group" aria-label="'+esc(group.title)+'"><h4 class="dumc-category-group-title">'+esc(group.title)+'</h4><div class="dumc-folder-list">'+items.map(node=>{
-   const selected=activeFolder===node.id;
-   return '<button type="button" class="dumc-nav-item'+(selected?' active':'')+'" data-category-folder="'+esc(node.id)+'" data-category-label="'+esc(nodeLabel(node,group.id))+'" aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(nodeLabel(node,group.id))+'</span></button>';
-  }).join("")+'</div></section>';
+ el.innerHTML=categoryGroups().map((group,index)=>{
+  const titleId="dumc-category-title-"+group.key;
+  const listId="dusb-list-"+group.key;
+  const items=groupItems(group);
+  return '<section class="dumc-directory-panel dumc-category-panel" aria-labelledby="'+titleId+'">'+
+   '<header class="dumc-directory-panel-head"><h3 id="'+titleId+'">'+esc(group.title)+'</h3></header>'+
+   '<div class="dumc-directory-panel-body dumc-category-list dusb-scrollbar" id="'+listId+'" data-dusb="true" data-category-list="'+esc(group.key)+'" aria-label="'+esc(group.title)+' folders">'+
+   items.map(node=>{
+    const selected=activeFolder===node.id;
+    return '<button type="button" class="dumc-nav-item'+(selected?' active':'')+'" data-category-folder="'+esc(node.id)+'" data-category-label="'+esc(folderName(node.name))+'" aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(folderName(node.name))+'</span></button>';
+   }).join("")+
+   '</div></section>';
  }).join("");
 }
 function renderYears(){
  const el=$("#dumcHomeSubcategories");
  const years=yearFolders();
- if(years.length!==77){
-  $("#dumcHomeStatus").textContent="Year taxonomy incomplete: "+years.length+" of 77 folders found.";
- }
+ if(years.length!==77)$("#dumcHomeStatus").textContent="Year taxonomy incomplete: "+years.length+" of 77 folders found.";
  el.innerHTML='<div class="dumc-year-grid" role="group" aria-label="Release years 2026 through 1950">'+years.map(({year})=>{
   const value=String(year);
   return '<button type="button" class="dumc-nav-item dumc-year-item'+(activeYear===value?' active':'')+'" data-year="'+value+'" aria-pressed="'+(activeYear===value?'true':'false')+'">'+folderIcon+'<span>'+value+'</span></button>';
@@ -79,21 +70,17 @@ function renderYears(){
 function activeCategoryLabel(){
  if(!activeFolder)return "";
  const node=findNode(roots,activeFolder);
- if(!node)return "";
- for(const group of categoryGroups()){
-  if(findNode([group.node],activeFolder))return nodeLabel(node,group.id);
- }
- return folderName(node.name);
+ return node?folderName(node.name):"";
 }
 function renderBreadcrumb(){
  const parts=['<button type="button" data-crumb="all">Movies</button>'];
- if(activeFolder)parts.push('<span class="dumc-crumb-separator">›</span><span>Category</span><span class="dumc-crumb-separator">›</span><strong>'+esc(activeCategoryLabel())+'</strong>');
- if(activeYear)parts.push('<span class="dumc-crumb-separator">›</span><span>Year</span><span class="dumc-crumb-separator">›</span><strong>'+(activeYear==="unknown"?"Unknown Year":activeYear)+'</strong>');
+ if(activeFolder)parts.push('<span class="dumc-crumb-separator">›</span><strong>'+esc(activeCategoryLabel())+'</strong>');
+ if(activeYear)parts.push('<span class="dumc-crumb-separator">›</span><strong>'+(activeYear==="unknown"?"Unknown Year":activeYear)+'</strong>');
  if(!activeFolder&&!activeYear)parts.push('<span class="dumc-crumb-hint">Choose a category and year, or browse all movies.</span>');
  $("#dumcHomeBreadcrumb").innerHTML=parts.join("");
 }
 function updateLibraryCount(){
- $("#dumcHomeCount").textContent=categoryCount().toLocaleString("en-US")+" categories · "+movies.length.toLocaleString("en-US")+" movies";
+ $("#dumcHomeCount").textContent=categoryCount().toLocaleString("en-US")+" folders · "+movies.length.toLocaleString("en-US")+" movies";
 }
 async function loadTaxonomy(){
  try{
@@ -104,7 +91,7 @@ async function loadTaxonomy(){
   renderCategories();renderYears();renderBreadcrumb();updateLibraryCount();
  }catch(e){
   $("#dumcHomeStatus").textContent="Folder taxonomy could not be loaded. Refresh the page.";
-  $("#dumcHomeCategories").innerHTML='<p class="dumc-nav-empty">Category list unavailable.</p>';
+  $("#dumcHomeCategories").innerHTML='<p class="dumc-nav-empty">Category lists unavailable.</p>';
   $("#dumcHomeSubcategories").innerHTML='<p class="dumc-nav-empty">Year list unavailable.</p>';
  }
 }
