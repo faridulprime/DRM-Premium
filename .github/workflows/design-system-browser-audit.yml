@@ -6,6 +6,14 @@ on:
       - feature/full-admin-panel
     paths:
       - "index.html"
+      - "_redirects"
+      - "movies.html"
+      - "app.js"
+      - "assets/dumc/**"
+      - "_redirects"
+      - "movies.html"
+      - "app.js"
+      - "assets/dumc/**"
       - "admin.html"
       - "live-users.html"
       - "upload-studio.html"
