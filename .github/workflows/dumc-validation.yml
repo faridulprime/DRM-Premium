@@ -6,6 +6,7 @@ on:
     paths:
       - "assets/dumc/**"
       - "migrations/0009_dumc_movie_library.sql"
+      - "migrations/0010_dumc_release_years_1956_1959.sql"
       - "migrations/manifest.json"
       - "functions/api/[[path]].js"
       - "upload-studio.html"
@@ -20,6 +21,7 @@ on:
       - "upload-studio.js"
       - "dumc-manager.js"
       - "migrations/0009_dumc_movie_library.sql"
+      - "migrations/0010_dumc_release_years_1956_1959.sql"
       - "migrations/manifest.json"
       - "functions/api/[[path]].js"
       - "scripts/test-dumc-migration.py"
