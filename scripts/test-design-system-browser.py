@@ -1725,11 +1725,20 @@ def inspect_dumc_movie_directory(browser, base_url):
 
         year_buttons = page.locator('#dumcHomeSubcategories [data-year]:not([data-year="unknown"])')
         rendered_years = [int(value) for value in year_buttons.evaluate_all("(els) => els.map(el => el.dataset.year)")]
-        if rendered_years != list(range(1950, 2027)):
+        if rendered_years != list(range(2026, 1949, -1)):
             fail(f"homepage/DUMC: Year panel must show every folder from 1950 through 2026 ({len(rendered_years)} rendered)")
         year_columns = page.locator(".dumc-year-grid").evaluate("(el) => getComputedStyle(el).gridTemplateColumns.split(' ').length")
-        if year_columns != 7:
-            fail(f"homepage/DUMC: desktop Year grid should use 7 compact columns ({year_columns} found)")
+        if year_columns != 1:
+            fail(f"homepage/DUMC: Year folders should be displayed in one vertical list ({year_columns} columns found)")
+        year_scroller = page.locator("#dumcHomeSubcategories")
+        if year_scroller.evaluate("(el) => getComputedStyle(el).direction") != "rtl":
+            fail("homepage/DUMC: Year scrollbar should sit on the left side")
+        if year_scroller.evaluate("(el) => getComputedStyle(el.firstElementChild).direction") != "ltr":
+            fail("homepage/DUMC: Year labels should retain normal left-to-right reading direction")
+        if year_scroller.evaluate("(el) => getComputedStyle(el, '::-webkit-scrollbar-thumb').backgroundColor") not in ("rgb(59, 130, 246)", "rgb(96, 165, 250)"):
+            fail("homepage/DUMC: Year scrollbar thumb should be blue")
+        if page.locator('#dumcHomeSubcategories [data-year="unknown"]').count() != 0:
+            fail("homepage/DUMC: Year directory must contain only the 1950–2026 year list")
         if page.locator("#dumcHomeSubcategories details").count() != 0:
             fail("homepage/DUMC: year folders must not be hidden inside decade accordions")
         if page.locator('#dumcHomeSubcategories [data-year="2027"]').count() != 0:
