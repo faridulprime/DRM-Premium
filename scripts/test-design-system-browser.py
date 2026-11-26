@@ -12,6 +12,7 @@ from pathlib import Path
 import re
 import sys
 from threading import Thread
+from urllib.parse import urlsplit
 from time import sleep
 
 from playwright.sync_api import sync_playwright
@@ -87,6 +88,17 @@ def contrast_ratio(foreground, background):
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
+    """Static test server with Cloudflare Pages-style extensionless HTML routes."""
+    def translate_path(self, path):
+        translated = super().translate_path(path)
+        url_path = urlsplit(path).path
+        if url_path.endswith("/") or Path(url_path).suffix:
+            return translated
+        html_candidate = Path(translated + ".html")
+        if html_candidate.is_file():
+            return str(html_candidate)
+        return translated
+
     def log_message(self, _format, *_args):
         pass
 
