@@ -51,7 +51,7 @@ function yearFolders(){
   }
  };
  visit(root?.children||[]);
- return values.sort((a,b)=>a.year-b.year);
+ return values.sort((a,b)=>b.year-a.year);
 }
 function renderCategories(){
  const el=$("#dumcHomeCategories");
@@ -71,10 +71,10 @@ function renderYears(){
  if(years.length!==77){
   $("#dumcHomeStatus").textContent="Year taxonomy incomplete: "+years.length+" of 77 folders found.";
  }
- el.innerHTML='<div class="dumc-year-grid" role="group" aria-label="Release years 1950 through 2026">'+years.map(({year})=>{
+ el.innerHTML='<div class="dumc-year-grid" role="group" aria-label="Release years 2026 through 1950">'+years.map(({year})=>{
   const value=String(year);
   return '<button type="button" class="dumc-nav-item dumc-year-item'+(activeYear===value?' active':'')+'" data-year="'+value+'" aria-pressed="'+(activeYear===value?'true':'false')+'">'+folderIcon+'<span>'+value+'</span></button>';
- }).join("")+'</div><div class="dumc-year-special"><button type="button" class="dumc-nav-item dumc-year-item'+(activeYear==="unknown"?' active':'')+'" data-year="unknown" aria-pressed="'+(activeYear==="unknown"?'true':'false')+'">'+folderIcon+'<span>Unknown Year</span></button></div>';
+ }).join("")+'</div>';
 }
 function activeCategoryLabel(){
  if(!activeFolder)return "";
