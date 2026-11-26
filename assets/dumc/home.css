@@ -7,14 +7,14 @@
 .dumc-directory-panel-head{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-height:55px;padding:8px 2px 10px;border-bottom:1px solid rgba(255,255,255,.14)}
 .dumc-directory-panel-head h3{margin:0;color:#fff;font-size:.9rem;line-height:1.25;font-weight:750;letter-spacing:.005em;text-shadow:0 2px 4px #000;overflow-wrap:anywhere}
 .dumc-directory-panel-body{flex:1;min-width:0;min-height:0;max-height:none;overflow:hidden;position:relative;padding:7px 3px 4px 0}
-.dusb-viewport{position:relative;isolation:isolate;padding:0}
-.dusb-scrollbar{position:absolute;top:7px;bottom:4px;left:0;width:calc(100% - 20px);max-width:calc(100% - 20px);overflow-y:scroll!important;overflow-x:hidden!important;overscroll-behavior-y:auto;overscroll-behavior-x:contain;scrollbar-width:none;scrollbar-gutter:auto;box-sizing:border-box;padding:7px 12px 4px 0}
+.dusb-viewport{position:relative;isolation:isolate;padding:0;overflow:visible}
+.dusb-scrollbar{position:absolute;top:0;bottom:0;left:0;width:calc(100% - 20px);max-width:calc(100% - 20px);overflow-y:scroll!important;overflow-x:hidden!important;overscroll-behavior-y:auto;overscroll-behavior-x:contain;scrollbar-width:none;scrollbar-gutter:auto;box-sizing:border-box;padding:7px 12px 4px 0}
 .dusb-scrollbar::-webkit-scrollbar{display:none!important;width:0;height:0}
-.dusb-rail{position:absolute;z-index:4;top:7px;bottom:4px;right:23px;width:var(--dusb-width);border-radius:10px;background:var(--dusb-track);cursor:pointer;touch-action:none}
+.dusb-rail{position:absolute;z-index:4;top:0;bottom:0;right:20px;width:var(--dusb-width);border-radius:10px;background:var(--dusb-track);cursor:pointer;touch-action:none}
 .dusb-thumb{position:absolute;top:0;left:0;width:100%;min-height:26px;border:2px solid transparent;border-radius:10px;background:var(--dusb-thumb);background-clip:padding-box;cursor:grab;touch-action:none;transition:background-color .15s ease}
 .dusb-rail:hover .dusb-thumb{background-color:var(--dusb-thumb-hover);background-clip:padding-box}
-.dusb-rail-year{right:calc(23px + 7.2vw)}
-#dusb-list-genre+.dusb-rail{right:calc(23px + 4.3vw)}
+.dusb-rail-year{right:calc(20px + 7.2vw)}
+#dusb-list-genre+.dusb-rail{right:calc(20px + 4.3vw)}
 .dumc-category-list{display:flex;flex-direction:column;align-items:stretch;gap:1px}
 .dumc-category-panel .dumc-directory-panel-head{padding-inline:3px}
 .dumc-nav-item{display:flex;align-items:center;gap:7px;width:100%;min-width:0;min-height:42px;padding:6px 5px;border:0;border-radius:5px;background:transparent;color:#edf1f5;text-align:left;font:600 .78rem/1.3 "Hind Siliguri","Space Grotesk",sans-serif;cursor:pointer;text-shadow:0 2px 3px rgba(0,0,0,.98),0 0 7px rgba(0,0,0,.95);transition:color .15s ease,background-color .15s ease}
@@ -53,6 +53,6 @@
 .dumc-home-more{display:block;margin:24px auto 0}
 @media(max-width:1280px){.dumc-directory-layout{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 12px}.dumc-directory-panel{height:430px;min-height:360px}}
 @media(max-width:900px){.dumc-directory-layout{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 11px}.dumc-directory-panel{height:400px;min-height:340px}.dumc-directory-panel-head h3{font-size:.86rem}.dumc-year-directory-panel .dumc-home-count{font-size:.64rem}}
-@media(max-width:680px){.dusb-scrollbar{width:calc(100% - 20px);max-width:calc(100% - 20px)}.dusb-rail-year{right:23px}#dusb-list-genre+.dusb-rail{right:23px}.dumc-directory-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}.dumc-directory-panel{height:390px;min-height:320px}.dumc-directory-panel-head{min-height:49px}.dumc-directory-panel-head h3{font-size:.82rem}.dumc-year-directory-panel .dumc-home-count{font-size:.61rem}.dumc-nav-item{font-size:.8rem}.dumc-home-toolbar{grid-template-columns:1fr;gap:9px;align-items:stretch}.dumc-home-search{width:100%}.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-count{font-size:.77rem}}
+@media(max-width:680px){.dusb-scrollbar{width:calc(100% - 12px);max-width:calc(100% - 12px)}.dusb-rail{right:12px}.dusb-rail-year{right:12px}#dusb-list-genre+.dusb-rail{right:12px}.dumc-directory-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}.dumc-directory-panel{height:390px;min-height:320px}.dumc-directory-panel-head{min-height:49px}.dumc-directory-panel-head h3{font-size:.82rem}.dumc-year-directory-panel .dumc-home-count{font-size:.61rem}.dumc-nav-item{font-size:.8rem}.dumc-home-toolbar{grid-template-columns:1fr;gap:9px;align-items:stretch}.dumc-home-search{width:100%}.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-count{font-size:.77rem}}
 @media(max-width:420px){.dumc-directory-layout{grid-template-columns:1fr 1fr;gap:14px 10px}.dumc-directory-panel{height:360px;min-height:300px}.dumc-category-panel .dumc-directory-panel-head{padding-inline:1px}.dumc-directory-panel-head h3{font-size:.78rem}.dumc-year-directory-panel .dumc-home-count{font-size:.58rem}.dumc-nav-item{font-size:.76rem;gap:5px}.dumc-folder-icon{width:14px;height:14px;flex-basis:14px}.dumc-home-grid{grid-template-columns:1fr}.dumc-home-count{display:none}}
 #movies{scroll-margin-top:88px}
