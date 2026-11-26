@@ -2,12 +2,11 @@
 .movies-route main#home{max-width:none;margin:0;padding:0 var(--duss-page-gutter-home-desktop,22px)}
 .movies-route #home>:not(#movies){display:none!important}
 .movies-route #home>#movies{display:block!important;width:100%;min-width:0}
-.movies-route #movies{padding-top:clamp(24px,3vw,40px)!important}
+.movies-route #movies{padding-top:0!important}
 .movies-route #movies .section-head{margin-bottom:22px}
 .movies-route .category-chip[href="/movies"]{cursor:pointer}
 @media(max-width:760px){
  .movies-route main#home{padding-inline:14px}
- .movies-route #movies{padding-top:22px!important}
 }
 /* The Movies tab is a route link; suppress the shared home-nav red underline. */
 .movies-route .category-bar a.category-chip[href="/movies"]::after,
