@@ -25,17 +25,11 @@
 .dumc-folder-icon{display:block;flex:0 0 17px;width:17px;height:17px;color:#e7b85f;filter:drop-shadow(0 2px 3px rgba(0,0,0,.95))}
 .dumc-nav-item.active .dumc-folder-icon{color:#ffd27a}
 .dumc-nav-item span{min-width:0;overflow-wrap:anywhere}
-.dumc-year-period{margin:0 0 8px;border-bottom:1px solid rgba(255,255,255,.09)}
-.dumc-year-period>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:39px;padding:5px 7px;color:#f1f3f6;font-size:.9rem;font-weight:750;cursor:pointer;list-style:none;text-shadow:0 2px 3px #000}
-.dumc-year-period>summary::-webkit-details-marker{display:none}
-.dumc-year-period>summary::before{content:"";width:7px;height:7px;margin-right:1px;border-right:2px solid #d9b46e;border-bottom:2px solid #d9b46e;transform:rotate(-45deg);transition:transform .15s}
-.dumc-year-period[open]>summary::before{transform:rotate(45deg)}
-.dumc-year-period-label{flex:1}
-.dumc-year-period-count{color:#a9b2bf;font-size:.72rem;font-weight:500}
-.dumc-year-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px 8px;padding:4px 3px 11px 12px}
-.dumc-year-item{min-height:44px;font-variant-numeric:tabular-nums;font-family:"Space Grotesk","Hind Siliguri",sans-serif;font-size:.82rem}
+.dumc-year-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px 8px}
+.dumc-year-item{min-height:44px;font-variant-numeric:tabular-nums;font-family:"Space Grotesk","Hind Siliguri",sans-serif;font-size:.84rem}
 .dumc-year-item .dumc-folder-icon{width:15px;height:15px;flex-basis:15px}
-.dumc-year-special{padding:6px 2px}
+.dumc-year-special{margin-top:10px;padding:10px 2px 0;border-top:1px solid rgba(255,255,255,.12)}
+.dumc-year-special .dumc-year-item{color:#bfc7d1;font-size:.8rem}
 .dumc-nav-empty{padding:16px 5px;color:#c5cbd3;font-size:.86rem}
 .dumc-home-toolbar{display:grid;grid-template-columns:minmax(150px,1fr) minmax(220px,420px) auto;align-items:center;gap:16px;margin:0 0 16px;min-height:48px}
 .dumc-contents-title h3{font-size:1.05rem}
@@ -58,7 +52,7 @@
 .dumc-movie-copy small{display:inline-block;margin-top:8px;color:#d9bd8c}
 .dumc-empty{grid-column:1/-1;padding:30px 10px;color:#e5e7eb}
 .dumc-home-more{display:block;margin:24px auto 0}
-@media(max-width:980px){.dumc-directory-layout{grid-template-columns:1fr 1fr;gap:14px}.dumc-folder-list{grid-template-columns:1fr}.dumc-year-list{grid-template-columns:repeat(3,minmax(0,1fr))}.dumc-home-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}}
-@media(max-width:680px){.dumc-directory-layout{grid-template-columns:1fr;gap:14px}.dumc-directory-panel{min-height:0}.dumc-directory-panel-body{max-height:440px}.dumc-folder-list{grid-template-columns:repeat(2,minmax(0,1fr))}.dumc-year-list{grid-template-columns:repeat(4,minmax(0,1fr))}.dumc-directory-hint{font-size:.68rem}.dumc-home-toolbar{grid-template-columns:1fr;gap:9px;align-items:stretch}.dumc-home-search{width:100%}.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-count{font-size:.77rem}}
-@media(max-width:380px){.dumc-folder-list{grid-template-columns:1fr}.dumc-year-list{grid-template-columns:repeat(3,minmax(0,1fr))}.dumc-home-grid{grid-template-columns:1fr}.dumc-home-count{display:none}}
+@media(max-width:980px){.dumc-directory-layout{grid-template-columns:1fr 1fr;gap:14px}.dumc-folder-list{grid-template-columns:1fr}.dumc-year-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.dumc-home-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}}
+@media(max-width:680px){.dumc-directory-layout{grid-template-columns:1fr;gap:14px}.dumc-directory-panel{min-height:0}.dumc-directory-panel-body{max-height:440px}.dumc-folder-list{grid-template-columns:repeat(2,minmax(0,1fr))}.dumc-year-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.dumc-directory-hint{font-size:.68rem}.dumc-home-toolbar{grid-template-columns:1fr;gap:9px;align-items:stretch}.dumc-home-search{width:100%}.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-count{font-size:.77rem}}
+@media(max-width:380px){.dumc-folder-list{grid-template-columns:1fr}.dumc-year-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.dumc-home-grid{grid-template-columns:1fr}.dumc-home-count{display:none}}
 #movies{scroll-margin-top:88px}
