@@ -1818,6 +1818,10 @@ def inspect_dumc_movie_directory(browser, base_url):
             fail("movies route: homepage Videos section should not appear on /movies")
         if page.locator('#categoryTabs a[data-category="__movies__"].active[aria-current="page"]').count() != 1:
             fail("movies route: Movies tab should be visibly active on /movies")
+        movies_tab = page.locator('#categoryTabs a[data-category="__movies__"]')
+        underline = movies_tab.evaluate("(el) => getComputedStyle(el, '::after').display")
+        if underline != "none":
+            fail(f"movies route: Movies tab should not render the shared red hover underline ({underline})")
     except Exception as exc:
         fail(f"homepage/DUMC Category -> Year navigation: {type(exc).__name__}: {exc}")
     finally:
