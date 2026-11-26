@@ -96,7 +96,13 @@ function renderCategoryTabs(){
  const host=$("#categoryTabs");if(!host)return;
  const names=[...new Set(categories.map(c=>c.name).filter(Boolean))];
  const all=[{name:"All",value:"all"},...names.map(name=>({name,value:name})),{name:"Movies",value:"__movies__"}];
- host.innerHTML=all.map((item,i)=>'<button type="button" class="category-chip '+(($("#categoryFilter")?.value||"all")===item.value?'active':'')+'" data-category="'+esc(item.value)+'">'+esc(item.name)+'</button>').join("");
+ const onMoviesPage=location.pathname.replace(/\/+$/,"")==="/movies";
+ const activeValue=onMoviesPage?"__movies__":($("#categoryFilter")?.value||"all");
+ host.innerHTML=all.map(item=>{
+  const active=activeValue===item.value;
+  if(item.value==="__movies__")return '<a class="category-chip '+(active?'active':'')+'" href="/movies" data-category="__movies__"'+(active?' aria-current="page"':'')+'>Movies</a>';
+  return '<button type="button" class="category-chip '+(active?'active':'')+'" data-category="'+esc(item.value)+'">'+esc(item.name)+'</button>';
+ }).join("");
 }
 function render(append=false){
  const q=$("#search").value.toLowerCase().trim(),cat=$("#categoryFilter").value;
@@ -292,7 +298,7 @@ async function init(){
   if(!opened||sidebar.contains(e.target)||toggle.contains(e.target))return;
   openAccountMenu(false);
  },true);
- $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;if(chip.dataset.category==="__movies__"){document.querySelectorAll("#categoryTabs .category-chip").forEach(x=>x.classList.toggle("active",x===chip));document.querySelector("#movies")?.scrollIntoView({behavior:"smooth",block:"start"});return;}$("#categoryFilter").value=chip.dataset.category;syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();});
+ $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;if(chip.dataset.category==="__movies__")return;$("#categoryFilter").value=chip.dataset.category;syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();});
  $("#searchSubmit")?.addEventListener("click",()=>$("#search").dispatchEvent(new Event("input",{bubbles:true})));
  document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});
  document.querySelectorAll("#ytSidebar a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll("#ytSidebar .side-link").forEach(x=>x.classList.toggle("active",x===a));openAccountMenu(false);const href=a.getAttribute("href")||"";if(href.startsWith("/"))return;const tab=href.slice(1);if(tab)sendTabView(tab);}));
