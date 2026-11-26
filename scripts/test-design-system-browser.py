@@ -1780,11 +1780,18 @@ def inspect_dumc_movie_directory(browser, base_url):
                 fail(f"homepage/DUMC: {key} list is missing its DUSB overlay thumb")
             if rail.locator(".dusb-thumb").evaluate("(el) => getComputedStyle(el).backgroundColor") != "rgb(59, 130, 246)":
                 fail(f"homepage/DUMC: {key} list is missing the shared blue DUSB thumb")
-            viewport_width = page.evaluate("window.innerWidth")
-            expected_inset = round(20 + viewport_width * (0.043 if key == "genre" else 0))
-            actual_inset = rail.evaluate("(el) => Math.round(el.parentElement.getBoundingClientRect().right - el.getBoundingClientRect().right)")
-            if abs(actual_inset - expected_inset) > 1:
-                fail(f"homepage/DUMC: {key} scrollbar position is incorrect ({actual_inset}px vs {expected_inset}px)")
+            area = panel.bounding_box()
+            rail_box = rail.bounding_box()
+            if rail_box is None or area is None:
+                fail(f"homepage/DUMC: {key} scrollbar geometry is unavailable")
+            list_boxes = panel.locator(".dumc-nav-item").evaluate_all(
+                "(els) => els.map(el => { const r=el.getBoundingClientRect(); return {right:r.right, width:r.width}; })"
+            )
+            if not list_boxes or max(item["right"] for item in list_boxes) > rail_box["x"] - 5:
+                fail(f"homepage/DUMC: {key} folder row area extends underneath or beyond its scrollbar")
+            gap = round(rail_box["x"] - (area["x"] + area["width"]))
+            if abs(gap - 8) > 1:
+                fail(f"homepage/DUMC: {key} scrollbar must sit immediately after its fit-to-content list ({gap}px gap)")
 
         all_movies_text = page.locator('[data-category-list="all-movies"]').inner_text()
         if "Dhallywood" not in all_movies_text or "Telugu Cinema" not in all_movies_text:
@@ -1808,10 +1815,16 @@ def inspect_dumc_movie_directory(browser, base_url):
         year_rail = page.locator('[data-dusb-rail="year"]')
         if year_rail.locator(".dusb-thumb").evaluate("(el) => getComputedStyle(el).backgroundColor") != "rgb(59, 130, 246)":
             fail("homepage/DUMC: Year list must use the same blue DUSB scrollbar")
-        expected_year_inset = round(20 + page.evaluate("window.innerWidth") * .072)
-        actual_year_inset = year_rail.evaluate("(el) => Math.round(el.parentElement.getBoundingClientRect().right - el.getBoundingClientRect().right)")
-        if abs(actual_year_inset - expected_year_inset) > 1:
-            fail(f"homepage/DUMC: Year scrollbar position is incorrect ({actual_year_inset}px vs {expected_year_inset}px)")
+        year_area = year_panel.bounding_box()
+        year_rail_box = year_rail.bounding_box()
+        year_items = year_panel.locator(".dumc-nav-item").evaluate_all(
+            "(els) => els.map(el => el.getBoundingClientRect().right)"
+        )
+        if not year_items or max(year_items) > year_rail_box["x"] - 5:
+            fail("homepage/DUMC: Year folder row area extends underneath or beyond its scrollbar")
+        year_gap = round(year_rail_box["x"] - (year_area["x"] + year_area["width"]))
+        if abs(year_gap - 8) > 1:
+            fail(f"homepage/DUMC: Year scrollbar must sit immediately after its fit-to-content list ({year_gap}px gap)")
 
         industry = page.locator('[data-category-folder="INDUSTRY_TELUGU_CINEMA"]')
         if industry.locator("svg.dumc-folder-icon").count() != 1:
