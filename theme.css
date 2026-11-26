@@ -1149,3 +1149,12 @@ body.admin-dashboard-state .admin-topbar .brand #adminBrandRole.brand-admin-suff
  background:rgba(168,85,247,.14)!important;
  border:1px solid rgba(192,132,252,.42)!important;
 }
+
+/* Movies is a page route, not a red-underline category hover item. */
+#categoryTabs > a.category-chip[href="/movies"]::after,
+#categoryTabs > a.category-chip[href="/movies"]:hover::after,
+#categoryTabs > a.category-chip[href="/movies"].active::after,
+#categoryTabs > a.category-chip[href="/movies"]:focus-visible::after{
+ content:none!important;
+ display:none!important;
+}
