@@ -1704,7 +1704,7 @@ def inspect_live_overlay_interactions(browser, base_url):
         context.close()
 
 def inspect_dumc_movie_directory(browser, base_url):
-    """Exercise the public Category -> Year -> Contents navigation with a D1 browse fixture."""
+    """Exercise the six category columns, DUSB scrollbars, Year list, and filters."""
     context = browser.new_context(
         viewport={"width": 1440, "height": 900},
         locale="bn-BD",
@@ -1723,96 +1723,115 @@ def inspect_dumc_movie_directory(browser, base_url):
         )
         page.goto(base_url + "/", wait_until="load", timeout=30000)
         page.wait_for_selector(
-            '#dumcHomeCategories [data-category-folder="LANG_TELUGU"]',
+            '#dumcHomeCategories [data-category-folder="INDUSTRY_TELUGU_CINEMA"]',
             timeout=10000,
         )
-        if page.locator("#dumcCategoryTitle").inner_text().strip() != "Category":
-            fail("homepage/DUMC: Category directory heading is missing")
-        if page.locator("#dumcYearTitle").inner_text().strip() != "Year":
-            fail("homepage/DUMC: Year directory heading is missing")
-        if page.locator(".dumc-directory-layout").evaluate(
+
+        expected_titles = [
+            "All Movies", "Dubbed Movies", "Country",
+            "Collections", "Genre", "Subtitles", "Year",
+        ]
+        titles = page.locator(
+            ".dumc-category-panel .dumc-directory-panel-head h3, "
+            ".dumc-year-directory-panel .dumc-directory-panel-head h3"
+        ).all_inner_texts()
+        if titles != expected_titles:
+            fail(f"homepage/DUMC: expected seven directory headings {expected_titles}, found {titles}")
+
+        columns = page.locator(".dumc-directory-layout").evaluate(
             "(el) => getComputedStyle(el).gridTemplateColumns.split(' ').length"
-        ) != 2:
-            fail("homepage/DUMC: desktop Category and Year directories are not displayed side by side")
+        )
+        if columns != 7:
+            fail(f"homepage/DUMC: desktop directory must have seven columns ({columns} found)")
+        if page.locator(".dumc-category-panel").count() != 6:
+            fail("homepage/DUMC: exactly six category lists must be rendered")
+        if page.locator(".dumc-year-directory-panel").count() != 1:
+            fail("homepage/DUMC: exactly one Year list must be rendered")
 
-        year_buttons = page.locator('#dumcHomeSubcategories [data-year]:not([data-year="unknown"])')
-        rendered_years = [int(value) for value in year_buttons.evaluate_all("(els) => els.map(el => el.dataset.year)")]
+        expected_lists = {
+            "all-movies": ("INDUSTRY_DHALLYWOOD", "INDUSTRY_TELUGU_CINEMA"),
+            "dubbed-movies": ("DUB_BANGLA_DUBBED", "DUB_OTHER_DUBBED"),
+            "country": ("COUNTRY_BANGLADESH", "COUNTRY_OTHER_COUNTRIES"),
+            "collections": ("COLLECTION_MOVIE_FRANCHISES", "COLLECTION_DRM_EDITOR_PICKS"),
+            "genre": ("GENRE_ACTION", "GENRE_MUSIC"),
+            "subtitles": ("SUBTITLE_BANGLA", "SUBTITLE_OTHER_SUBTITLES"),
+        }
+        for key, (first_id, last_id) in expected_lists.items():
+            panel = page.locator(f'[data-category-list="{key}"]')
+            if panel.count() != 1:
+                fail(f"homepage/DUMC: {key} list is missing or duplicated")
+            if panel.locator("[data-category-folder]").count() < 2:
+                fail(f"homepage/DUMC: {key} list does not contain its folder entries")
+            if panel.locator(f'[data-category-folder="{first_id}"]').count() != 1:
+                fail(f"homepage/DUMC: {key} list is missing {first_id}")
+            if panel.locator(f'[data-category-folder="{last_id}"]').count() != 1:
+                fail(f"homepage/DUMC: {key} list is missing {last_id}")
+            direction = panel.evaluate("(el) => getComputedStyle(el).direction")
+            overflow_y = panel.evaluate("(el) => getComputedStyle(el).overflowY")
+            if direction != "ltr" or overflow_y != "scroll":
+                fail(f"homepage/DUMC: {key} list must use a right-side vertical scrollbar")
+            if panel.evaluate("(el) => getComputedStyle(el, '::-webkit-scrollbar-thumb').backgroundColor") != "rgb(59, 130, 246)":
+                fail(f"homepage/DUMC: {key} list is missing the shared blue DUSB thumb")
+
+        all_movies_text = page.locator('[data-category-list="all-movies"]').inner_text()
+        if "Dhallywood" not in all_movies_text or "Telugu Cinema" not in all_movies_text:
+            fail("homepage/DUMC: Film Industry folders were not moved under All Movies")
+        if page.get_by_text("Film Industry", exact=True).count() != 0:
+            fail("homepage/DUMC: the separate Film Industry heading should be removed")
+
+        year_buttons = page.locator('#dumcHomeSubcategories [data-year]')
+        rendered_years = [int(value) for value in year_buttons.evaluate_all(
+            "(els) => els.map(el => el.dataset.year)"
+        )]
         if rendered_years != list(range(2026, 1949, -1)):
-            fail(f"homepage/DUMC: Year panel must show every folder from 1950 through 2026 ({len(rendered_years)} rendered)")
-        year_columns = page.locator(".dumc-year-grid").evaluate("(el) => getComputedStyle(el).gridTemplateColumns.split(' ').length")
-        if year_columns != 1:
-            fail(f"homepage/DUMC: Year folders should be displayed in one vertical list ({year_columns} columns found)")
-        year_panel = page.locator(".dumc-year-directory-panel")
-        year_width = year_panel.evaluate("(el) => Math.round(el.getBoundingClientRect().width)")
-        if year_width != 112:
-            fail(f"homepage/DUMC: Year panel should match the marked compact width (112px; found {year_width}px)")
-        year_scroller = page.locator("#dumcHomeSubcategories")
-        if year_scroller.evaluate("(el) => getComputedStyle(el).direction") != "ltr":
-            fail("homepage/DUMC: Year scrollbar should sit on the right side")
-        if page.locator(".dumc-year-directory-panel .dumc-directory-hint").evaluate("(el) => getComputedStyle(el).display") != "none":
-            fail("homepage/DUMC: compact Year panel must not retain the wide header hint")
-        if year_scroller.evaluate("(el) => getComputedStyle(el, '::-webkit-scrollbar-thumb').backgroundColor") not in ("rgb(59, 130, 246)", "rgb(96, 165, 250)"):
-            fail("homepage/DUMC: Year scrollbar thumb should be blue")
-        if page.locator('#dumcHomeSubcategories [data-year="unknown"]').count() != 0:
-            fail("homepage/DUMC: Year directory must contain only the 1950–2026 year list")
-        if page.locator("#dumcHomeSubcategories details").count() != 0:
-            fail("homepage/DUMC: year folders must not be hidden inside decade accordions")
-        if page.locator('#dumcHomeSubcategories [data-year="2027"]').count() != 0:
-            fail("homepage/DUMC: years after 2026 must not appear in the public Year list")
+            fail(f"homepage/DUMC: Year list must contain 2026 through 1950 ({len(rendered_years)} found)")
+        year_panel = page.locator("#dumcHomeSubcategories")
+        if year_panel.evaluate("(el) => getComputedStyle(el).overflowY") != "scroll":
+            fail("homepage/DUMC: Year list must use DUSB vertical scrolling")
+        if year_panel.evaluate("(el) => getComputedStyle(el, '::-webkit-scrollbar-thumb').backgroundColor") != "rgb(59, 130, 246)":
+            fail("homepage/DUMC: Year list must use the same blue DUSB scrollbar")
 
-        category = page.locator('[data-category-folder="LANG_TELUGU"]')
-        if "Telugu Movie" not in category.inner_text():
-            fail("homepage/DUMC: original-language category is not labelled Telugu Movie")
-        if page.locator('[data-category-folder="LANG_ENGLISH"]').count() != 1:
-            fail("homepage/DUMC: English Movie category is missing")
-
-        category_style = category.evaluate(
+        industry = page.locator('[data-category-folder="INDUSTRY_TELUGU_CINEMA"]')
+        if industry.locator("svg.dumc-folder-icon").count() != 1:
+            fail("homepage/DUMC: folder icon is missing from All Movies entries")
+        style = industry.evaluate(
             "(el) => ({background: getComputedStyle(el).backgroundColor, shadow: getComputedStyle(el).textShadow})"
         )
-        if category_style["background"] not in ("rgba(0, 0, 0, 0)", "transparent"):
-            fail(f"homepage/DUMC: folder item has an opaque background ({category_style})")
-        if category_style["shadow"] == "none":
-            fail("homepage/DUMC: folder text shadow is missing")
-        if category.locator("svg.dumc-folder-icon").count() != 1:
-            fail("homepage/DUMC: category folder icon is missing")
+        if style["background"] not in ("rgba(0, 0, 0, 0)", "transparent") or style["shadow"] == "none":
+            fail(f"homepage/DUMC: folder entry readability styling regressed ({style})")
 
-        with page.expect_request(
-            lambda request: "/api/dumc/browse?" in request.url and "folder_id=LANG_TELUGU" in request.url,
-            timeout=5000,
-        ) as category_request:
-            category.click()
-        category_url = category_request.value.url
-        if "year=" in category_url:
-            fail("homepage/DUMC: selecting a category unexpectedly retained a previous year filter")
-
-        year = page.locator('[data-year="2018"]')
-        year.evaluate("(el) => { const group = el.closest('details'); if (group) group.open = true; }")
         with page.expect_request(
             lambda request: "/api/dumc/browse?" in request.url
-            and "folder_id=LANG_TELUGU" in request.url
+            and "folder_id=INDUSTRY_TELUGU_CINEMA" in request.url,
+            timeout=5000,
+        ) as category_request:
+            industry.click()
+        if "year=" in category_request.value.url:
+            fail("homepage/DUMC: selecting a category unexpectedly retained a previous year")
+
+        year = page.locator('[data-year="2018"]')
+        with page.expect_request(
+            lambda request: "/api/dumc/browse?" in request.url
+            and "folder_id=INDUSTRY_TELUGU_CINEMA" in request.url
             and "year=2018" in request.url,
             timeout=5000,
         ) as year_request:
             year.click()
         combined_url = year_request.value.url
-        if "folder_id=LANG_TELUGU" not in combined_url or "year=2018" not in combined_url:
-            fail("homepage/DUMC: Year selection did not preserve the selected Category")
-
+        if "folder_id=INDUSTRY_TELUGU_CINEMA" not in combined_url or "year=2018" not in combined_url:
+            fail("homepage/DUMC: Year selection did not preserve the selected All Movies folder")
         breadcrumb = page.locator("#dumcHomeBreadcrumb").inner_text()
-        if "Telugu Movie" not in breadcrumb or "2018" not in breadcrumb:
-            fail(f"homepage/DUMC: Category -> Year breadcrumb is incomplete ({breadcrumb})")
+        if "Telugu Cinema" not in breadcrumb or "2018" not in breadcrumb:
+            fail(f"homepage/DUMC: selected folder/year breadcrumb is incomplete ({breadcrumb})")
 
         movies_link = page.locator('#categoryTabs a[data-category="__movies__"]')
-        if movies_link.count() != 1:
-            fail("homepage/navigation: Movies must be a link to a dedicated page")
-        if movies_link.get_attribute("href") != "/movies":
-            fail("homepage/navigation: Movies link must target /movies")
+        if movies_link.count() != 1 or movies_link.get_attribute("href") != "/movies":
+            fail("homepage/navigation: Movies must link to the dedicated /movies page")
         if movies_link.get_attribute("target") is not None:
             fail("homepage/navigation: Movies must open in the current tab")
         movies_link.hover()
-        home_underline = movies_link.evaluate("(el) => getComputedStyle(el, '::after').display")
-        if home_underline != "none":
-            fail(f"homepage/navigation: Movies hover underline should be hidden on homepage ({home_underline})")
+        if movies_link.evaluate("(el) => getComputedStyle(el, '::after').display") != "none":
+            fail("homepage/navigation: Movies hover underline should be hidden on homepage")
         with page.expect_navigation(timeout=10000):
             movies_link.click()
         if not page.url.rstrip("/").endswith("/movies"):
@@ -1820,14 +1839,13 @@ def inspect_dumc_movie_directory(browser, base_url):
         page.wait_for_selector("body.movies-route #movies", timeout=10000)
         if page.locator(".movies-route #home > #browse").is_visible():
             fail("movies route: homepage Videos section should not appear on /movies")
-        if page.locator('#categoryTabs a[data-category="__movies__"].active[aria-current="page"]').count() != 1:
+        movies_tab = page.locator('#categoryTabs a[data-category="__movies__"].active[aria-current="page"]')
+        if movies_tab.count() != 1:
             fail("movies route: Movies tab should be visibly active on /movies")
-        movies_tab = page.locator('#categoryTabs a[data-category="__movies__"]')
-        underline = movies_tab.evaluate("(el) => getComputedStyle(el, '::after').display")
-        if underline != "none":
-            fail(f"movies route: Movies tab should not render the shared red hover underline ({underline})")
+        if movies_tab.evaluate("(el) => getComputedStyle(el, '::after').display") != "none":
+            fail("movies route: Movies tab should not render the red underline")
     except Exception as exc:
-        fail(f"homepage/DUMC Category -> Year navigation: {type(exc).__name__}: {exc}")
+        fail(f"homepage/DUMC seven-column DUSB directory: {type(exc).__name__}: {exc}")
     finally:
         context.close()
 
