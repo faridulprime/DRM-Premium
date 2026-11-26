@@ -25,7 +25,7 @@
 .dumc-folder-icon{display:block;flex:0 0 17px;width:17px;height:17px;color:#e7b85f;filter:drop-shadow(0 2px 3px rgba(0,0,0,.95))}
 .dumc-nav-item.active .dumc-folder-icon{color:#ffd27a}
 .dumc-nav-item span{min-width:0;overflow-wrap:anywhere}
-.dumc-year-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px 8px}
+.dumc-year-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px 8px}
 .dumc-year-item{min-height:44px;font-variant-numeric:tabular-nums;font-family:"Space Grotesk","Hind Siliguri",sans-serif;font-size:.84rem}
 .dumc-year-item .dumc-folder-icon{width:15px;height:15px;flex-basis:15px}
 .dumc-year-special{margin-top:10px;padding:10px 2px 0;border-top:1px solid rgba(255,255,255,.12)}
