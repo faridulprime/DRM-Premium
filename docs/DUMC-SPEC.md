@@ -1,6 +1,6 @@
 # DUMC — DRM Universal Movie Section
 Version: 1.0.0
-Status: Taxonomy catalog and Upload Studio folder explorer implemented on `feature/full-admin-panel`; persistent folder/media relationships are not implemented.
+Status: DUMC taxonomy, Owner/Admin APIs, Upload Studio folder/media relationships and public Movies browsing are implemented on `feature/full-admin-panel`; Preview deployment is active, while Production `main` remains unchanged.
 
 ## Purpose
 DUMC provides one canonical classification model for the Movies section. It separates original audio language, film industry, dubbed audio, genre, production country, collections, release year, subtitle availability, artwork and metadata.
@@ -21,7 +21,7 @@ DUMC provides one canonical classification model for the Movies section. It sepa
 - `05_GENRES`: Action, Adventure, Animation, Comedy, Crime, Drama, Documentary, Fantasy, Historical, Horror, Mystery, Romance, Science_Fiction, Thriller, War, Western, Musical, Family, Biography, Sports, Superhero, Psychological, Noir, Disaster, Music.
 - `06_COUNTRIES`: Bangladesh, India, United_States, United_Kingdom, South_Korea, Japan, China, Hong_Kong, Taiwan, France, Germany, Italy, Spain, Turkey, Iran, Thailand, Indonesia, Malaysia, Australia, Canada, Other_Countries.
 - `07_COLLECTIONS`: Movie_Franchises, Movie_Series, Cinematic_Universe, Sequels, Prequels, Standalone_Collections, Award_Winners, DRM_Editor_Picks.
-- `08_RELEASE_YEARS`: decades 2020s through 1960s, Before_1960, Unknown_Year; decade folders contain year folders.
+- `08_RELEASE_YEARS`: individual public year folders from 1950 through 2026 (77 consecutive years), plus a separate Unknown_Year filter. The taxonomy retains 2027–2029 for future use, but the public Year selector hides them.
 - `09_SUBTITLES`: Bangla, English, Hindi, Arabic, Spanish, French, Other_Subtitles.
 - `10_ARTWORK`: Posters, Backdrops, Logos, Stills, Trailers_Thumbnails, Promotional_Artwork.
 - `11_METADATA`: Movie_Records, People_Cast_Crew, Studios_Production, Ratings_Reviews, External_Identifiers, Metadata_Import_Queue, Missing_Metadata, Duplicate_Review_Queue.
@@ -36,22 +36,22 @@ DUMC provides one canonical classification model for the Movies section. It sepa
 
 ## Implemented on `feature/full-admin-panel`
 
-- Versioned taxonomy: `assets/dumc/taxonomy.json`, 12 top-level sections and 226 stable folder IDs.
-- Additive D1 migration: `migrations/0009_dumc_movie_library.sql`. It creates folder, canonical movie metadata, many-to-many classification, audio-track reference and subtitle-reference tables; seeds the taxonomy; and backfills one metadata row per existing video without guessing missing metadata.
+- Versioned taxonomy: `assets/dumc/taxonomy.json`, 12 top-level sections and 230 stable folder IDs (226 seeded by migration 0009 plus four 1956–1959 folders added by migration 0010).
+- Additive D1 migrations: `migrations/0009_dumc_movie_library.sql` creates the DUMC tables and seeds the original 226 taxonomy nodes; `migrations/0010_dumc_release_years_1956_1959.sql` adds the four missing pre-1960 year folders. Migration 0009 also backfills one metadata row per existing video without guessing missing metadata.
 - Authenticated Owner/Admin APIs: `GET/POST /api/admin/dumc/folders`, `PATCH/DELETE /api/admin/dumc/folders/:id`, `GET /api/admin/dumc/movies`, `GET/PUT /api/admin/dumc/movies/:videoId`, `PUT /api/admin/dumc/movies/:videoId/folders`, and audio/subtitle reference creation/deletion routes.
 - Upload Studio includes a searchable folder explorer, custom-folder creation, movie metadata editor, multi-select Genre/Dubbed/Subtitle/Collection classification, audio/subtitle reference registration, and optional folder assignment when creating a video.
 - The migration inventory is updated. A dedicated GitHub Actions workflow runs SQLite migration tests, migration-inventory validation and JavaScript syntax checks.
 
 ## Important execution boundary
 
-The migration file is committed but has **not** been applied to any D1 database. The repository manifest is documentation-only; Wrangler migrations are not configured and it does not identify applied database history. The Upload Studio falls back to the static taxonomy until the D1 schema is installed. No Preview or Production deployment has been performed.
+Migration 0009 has been applied to the Preview D1 database `drmdatabase-preview`; its current verified contents after that migration were 226 folders and 3 movie metadata rows for 3 existing videos. Migration 0010 is committed but still needs to be applied to Preview to add `YEAR_1956`–`YEAR_1959` and bring the database taxonomy to 230 folders. Do not apply either migration to Production without a separate release decision. The repository manifest is documentation-only and does not record database migration history. Cloudflare Pages Preview is deployed from `feature/full-admin-panel`; Production `main` remains unchanged.
 
-Audio/subtitle APIs register references to an existing `movies/...` asset key or an external HTTPS URL. They do not upload media bytes; a dedicated DUMC media bucket binding and upload pipeline still need to be configured and tested. No external asset is fetched by the API.
+Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration is rejected. They do not upload media bytes and do not fetch external assets.
 
 
 ## Public homepage integration and media policy
 
-- The homepage now has a dedicated DUMC movie-browsing section with public-facing navigation for language, film industry, dubbed movies, genres, countries, collections and subtitles; nested folders are selectable and movies are shown as responsive cover cards.
+- The homepage has a dedicated Movies tab and DUMC browsing section. Category and Year are displayed side by side; selecting a Category then a Year applies both filters together. The Year panel renders every year from 1950 through 2026 as a flat compact folder grid, with Unknown Year separate.
 - Public browsing uses `GET /api/dumc/browse`, which returns published movies only and supports recursive folder filtering, server-side search and pagination.
 - **Media policy:** movie/video files are never uploaded to this website, regardless of whether they are 50 MB, 100 MB or another size. Movie playback uses external video links. Only cover/poster images may be uploaded. Audio and subtitle references are HTTPS links only; DUMC APIs reject asset-key based media registration.
-- DUMC homepage integration is committed to the feature branch but is not live until the D1 migration is applied and the branch is deployed.
+- DUMC homepage integration is deployed to Cloudflare Pages Preview. Public year-folder navigation is served from the versioned static taxonomy; movie contents are returned by the read-only browse API using the Preview D1 binding.
