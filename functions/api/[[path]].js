@@ -188,6 +188,8 @@ async function handle(req,env){
  if(p[0]==="dumc"&&p[1]==="browse"&&m==="GET"){
   const folderId=(u.searchParams.get("folder_id")||"").trim().slice(0,120)||null;
   const searchTerm=(u.searchParams.get("q")||"").trim().slice(0,100);
+  const yearParam=(u.searchParams.get("year")||"").trim();
+  if(yearParam&&yearParam!=="unknown"&&(!/^\d{4}$/.test(yearParam)||Number(yearParam)<1888||Number(yearParam)>2100))return fail("Invalid release year.",400);
   const requestedLimit=Number(u.searchParams.get("limit")||36),requestedOffset=Number(u.searchParams.get("offset")||0);
   const limit=Number.isFinite(requestedLimit)?Math.min(60,Math.max(1,Math.floor(requestedLimit))):36;
   const offset=Number.isFinite(requestedOffset)?Math.min(1000000,Math.max(0,Math.floor(requestedOffset))):0;
@@ -230,10 +232,12 @@ async function handle(req,env){
     )`;
     binds.push(folderId);
    }
+   if(yearParam==="unknown"){movieSql+=" AND dm.release_year IS NULL";}
+   else if(yearParam){movieSql+=" AND dm.release_year=?";binds.push(Number(yearParam));}
    movieSql+=" ORDER BY v.featured DESC,v.created_at DESC LIMIT ? OFFSET ?";
    binds.push(limit,offset);
    const movies=await env.DB.prepare(movieSql).bind(...binds).all();
-   return json({system:"DUMC",version:"1.0.0",folders:roots,movies:movies.results||[],folder_id:folderId,limit,offset});
+   return json({system:"DUMC",version:"1.0.0",folders:roots,movies:movies.results||[],folder_id:folderId,year:yearParam||null,limit,offset});
   }catch{return fail("DUMC database migration is not installed yet.",503)}
  }
  if(p[0]==="videos"&&m==="GET"){const r=await env.DB.prepare("SELECT id,title,category,youtube_id,thumbnail_url,description,featured,published,created_at FROM videos WHERE published=1 ORDER BY featured DESC,sort_order ASC,created_at DESC").all();return json(r.results||[])}
