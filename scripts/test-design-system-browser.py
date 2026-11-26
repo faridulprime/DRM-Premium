@@ -1809,6 +1809,10 @@ def inspect_dumc_movie_directory(browser, base_url):
             fail("homepage/navigation: Movies link must target /movies")
         if movies_link.get_attribute("target") is not None:
             fail("homepage/navigation: Movies must open in the current tab")
+        movies_link.hover()
+        home_underline = movies_link.evaluate("(el) => getComputedStyle(el, '::after').display")
+        if home_underline != "none":
+            fail(f"homepage/navigation: Movies hover underline should be hidden on homepage ({home_underline})")
         with page.expect_navigation(timeout=10000):
             movies_link.click()
         if not page.url.rstrip("/").endswith("/movies"):
