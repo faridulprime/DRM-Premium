@@ -1770,6 +1770,11 @@ def inspect_dumc_movie_directory(browser, base_url):
             overflow_y = panel.evaluate("(el) => getComputedStyle(el).overflowY")
             if direction != "ltr" or overflow_y != "scroll":
                 fail(f"homepage/DUMC: {key} list must use a right-side vertical scrollbar")
+            if panel.evaluate("(el) => getComputedStyle(el).overscrollBehaviorY") != "auto":
+                fail(f"homepage/DUMC: {key} list must hand off wheel scrolling to the main page at its boundaries")
+            panel_gap = panel.evaluate("(el) => Math.round(el.parentElement.getBoundingClientRect().right - el.getBoundingClientRect().right)")
+            if panel_gap != 20:
+                fail(f"homepage/DUMC: {key} scrollbar must sit 20px inside its column edge ({panel_gap}px found)")
             if panel.evaluate("(el) => getComputedStyle(el, '::-webkit-scrollbar-thumb').backgroundColor") != "rgb(59, 130, 246)":
                 fail(f"homepage/DUMC: {key} list is missing the shared blue DUSB thumb")
 
@@ -1788,6 +1793,10 @@ def inspect_dumc_movie_directory(browser, base_url):
         year_panel = page.locator("#dumcHomeSubcategories")
         if year_panel.evaluate("(el) => getComputedStyle(el).overflowY") != "scroll":
             fail("homepage/DUMC: Year list must use DUSB vertical scrolling")
+        if year_panel.evaluate("(el) => getComputedStyle(el).overscrollBehaviorY") != "auto":
+            fail("homepage/DUMC: Year list must hand off wheel scrolling to the main page at its boundaries")
+        if year_panel.evaluate("(el) => Math.round(el.parentElement.getBoundingClientRect().right - el.getBoundingClientRect().right)") != 20:
+            fail("homepage/DUMC: Year scrollbar must sit 20px inside its column edge")
         if year_panel.evaluate("(el) => getComputedStyle(el, '::-webkit-scrollbar-thumb').backgroundColor") != "rgb(59, 130, 246)":
             fail("homepage/DUMC: Year list must use the same blue DUSB scrollbar")
 
@@ -1846,6 +1855,31 @@ def inspect_dumc_movie_directory(browser, base_url):
         directory_top = page.locator("#dumcDirectoryLayout").evaluate("(el) => el.getBoundingClientRect().top")
         if directory_top - nav_bottom > 12:
             fail(f"movies route: directory tab bar is not directly below Universal Tab Bar (gap {directory_top - nav_bottom:.1f}px)")
+
+        # Real wheel input at the bottom/top of a scrollable list must chain to the page.
+        for selector, direction in [
+            ('[data-category-list="genre"]', 1),
+            ('#dumcHomeSubcategories', 1),
+        ]:
+            scroller = page.locator(selector)
+            scroller.evaluate("(el) => { el.scrollTop = el.scrollHeight; }")
+            page.evaluate("window.scrollTo(0, 0)")
+            before = page.evaluate("window.scrollY")
+            bounds = scroller.bounding_box()
+            page.mouse.move(bounds["x"] + bounds["width"] / 2, bounds["y"] + bounds["height"] / 2)
+            page.mouse.wheel(0, 420)
+            page.wait_for_timeout(120)
+            after_bottom = page.evaluate("window.scrollY")
+            if after_bottom <= before:
+                fail(f"movies route: page did not take over scrolling after {selector} reached its bottom")
+            scroller.evaluate("(el) => { el.scrollTop = 0; }")
+            page.evaluate("window.scrollTo(0, 300)")
+            before_top = page.evaluate("window.scrollY")
+            page.mouse.wheel(0, -420)
+            page.wait_for_timeout(120)
+            after_top = page.evaluate("window.scrollY")
+            if after_top >= before_top:
+                fail(f"movies route: page did not take over scrolling after {selector} reached its top")
         if page.locator(".movies-route #home > #browse").is_visible():
             fail("movies route: homepage Videos section should not appear on /movies")
         movies_tab = page.locator('#categoryTabs a[data-category="__movies__"].active[aria-current="page"]')
