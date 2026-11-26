@@ -1730,11 +1730,15 @@ def inspect_dumc_movie_directory(browser, base_url):
         year_columns = page.locator(".dumc-year-grid").evaluate("(el) => getComputedStyle(el).gridTemplateColumns.split(' ').length")
         if year_columns != 1:
             fail(f"homepage/DUMC: Year folders should be displayed in one vertical list ({year_columns} columns found)")
+        year_panel = page.locator(".dumc-year-directory-panel")
+        year_width = year_panel.evaluate("(el) => Math.round(el.getBoundingClientRect().width)")
+        if year_width != 112:
+            fail(f"homepage/DUMC: Year panel should match the marked compact width (112px; found {year_width}px)")
         year_scroller = page.locator("#dumcHomeSubcategories")
-        if year_scroller.evaluate("(el) => getComputedStyle(el).direction") != "rtl":
-            fail("homepage/DUMC: Year scrollbar should sit on the left side")
-        if year_scroller.evaluate("(el) => getComputedStyle(el.firstElementChild).direction") != "ltr":
-            fail("homepage/DUMC: Year labels should retain normal left-to-right reading direction")
+        if year_scroller.evaluate("(el) => getComputedStyle(el).direction") != "ltr":
+            fail("homepage/DUMC: Year scrollbar should sit on the right side")
+        if page.locator(".dumc-year-directory-panel .dumc-directory-hint").evaluate("(el) => getComputedStyle(el).display") != "none":
+            fail("homepage/DUMC: compact Year panel must not retain the wide header hint")
         if year_scroller.evaluate("(el) => getComputedStyle(el, '::-webkit-scrollbar-thumb').backgroundColor") not in ("rgb(59, 130, 246)", "rgb(96, 165, 250)"):
             fail("homepage/DUMC: Year scrollbar thumb should be blue")
         if page.locator('#dumcHomeSubcategories [data-year="unknown"]').count() != 0:
