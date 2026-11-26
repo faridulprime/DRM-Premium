@@ -9,3 +9,11 @@
  .movies-route main#home{padding-inline:14px}
  .movies-route #movies{padding-top:22px!important}
 }
+/* The Movies tab is a route link; suppress the shared home-nav red underline. */
+.movies-route .category-bar a.category-chip[href="/movies"]::after,
+.movies-route .category-bar a.category-chip[href="/movies"]:hover::after,
+.movies-route .category-bar a.category-chip[href="/movies"].active::after,
+.movies-route .category-bar a.category-chip[href="/movies"]:focus-visible::after{
+ content:none!important;
+ display:none!important;
+}
