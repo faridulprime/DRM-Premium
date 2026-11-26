@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DRM PREMIUM — Movies</title>
+<meta name="theme-color" content="#f5f0e9">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Sora:wght@600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=ducs-home-02">
+<link rel="stylesheet" href="theme.css?v=ducs-shell-02">
+<link rel="stylesheet" href="/assets/dumc/home.css?v=dumc-home-13">
+<link rel="stylesheet" href="/assets/dumc/movies-route.css?v=movies-route-01">
+<link rel="stylesheet" href="/assets/motion/motion.css?v=dume-02">
+
+<link rel="stylesheet" href="/assets/sizing/tokens.css?v=duss-08">
+<link rel="stylesheet" href="/assets/positioning/tokens.css?v=dups-04">
+<link rel="stylesheet" href="/assets/colors/index.css?v=ducs-home-02">
+<link rel="stylesheet" href="/assets/sizing/touch-targets.css?v=duss-08">
+  </head>
+<body class="home-page movies-route">
+<button id="visualEditorToggle" class="visual-editor-toggle" type="button" hidden aria-label="ওয়েবসাইট সম্পাদনা">✎</button>
+<aside id="visualEditorPanel" class="visual-editor-panel" hidden aria-label="Visual Editor"><div class="ve-head"><strong>Website Editor</strong><button id="veClose" type="button" aria-label="বন্ধ করুন">×</button></div><p id="veHelp">সম্পাদনার জন্য পেজের কোনো লেখা নির্বাচন করুন।</p><label for="veText">Text</label><textarea id="veText" rows="3"></textarea><label for="veFontSize">Font size (px)</label><input id="veFontSize" type="number" min="8" max="96" value="16"><label for="veColor">Text color</label><input id="veColor" type="color" value="#183d5c"><label for="veBackground">Text background</label><input id="veBackground" type="color" value="#ffffff"><label for="veShadowColor">Text shadow color</label><input id="veShadowColor" type="color" value="#000000"><div class="ve-grid"><div><label for="veShadowX">Shadow X</label><input id="veShadowX" type="number" min="-20" max="20" value="0"></div><div><label for="veShadowY">Shadow Y</label><input id="veShadowY" type="number" min="-20" max="20" value="0"></div><div><label for="veShadowBlur">Blur</label><input id="veShadowBlur" type="number" min="0" max="30" value="0"></div></div><div class="ve-actions"><button id="veApply" type="button">Apply Preview</button><button id="veSave" type="button">Save Changes</button><button id="veReset" type="button">Reset Selected</button></div><p id="veStatus" role="status" aria-live="polite"></p></aside>
+<header class="topbar">
+  <button class="yt-menu-trigger" id="menuToggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6h17M3.5 12h17M3.5 18h17"/></svg></button>
+  <a class="brand" href="/" aria-label="DRM– Premium — Homepage" data-environment-link="home"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2.8 27 7v8.1c0 7.1-4.7 11.8-11 14.1C9.7 26.9 5 22.2 5 15.1V7l11-4.2Z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="m10.8 15.8 3.4 3.4 7.2-7.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="brandName" class="brand-word"><span class="brand-word-main">DRM–</span><span class="brand-word-accent">Premium</span></span></a>
+  <form class="yt-search" role="search" onsubmit="return false"><input id="search" type="search" placeholder="Search" aria-label="কনটেন্ট খুঁজুন"><button type="button" id="searchSubmit" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></button></form>
+  <form id="headerLoginForm" class="top-actions yt-account-actions" aria-label="Account login" hidden>
+    <label class="header-field yt-auth-field"><span class="sr-only">Email</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-3.4 3-5 7-5s6.3 1.6 7 5"/></svg><input id="headerEmail" name="email" type="email" placeholder="Email" autocomplete="username" required></label>
+    <label class="header-field yt-auth-field"><span class="sr-only">Password</span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="headerPassword" name="password" type="password" placeholder="Password" autocomplete="current-password" required></label>
+    <button class="yt-login-action" id="headerLoginButton" type="submit">Login</button>
+    <button class="yt-create-button" id="createAccountButton" type="button">Create account</button>
+    <span id="headerLoginStatus" class="header-login-status" role="status" aria-live="polite"></span>
+  </form>
+  <div class="account-controls"><button id="profileMenuToggle" class="profile-menu-toggle" type="button" aria-label="প্রোফাইল মেনু খুলুন" aria-expanded="false" hidden><img id="headerProfileAvatar" alt="" hidden><span id="headerProfileInitial">U</span></button><a id="quickUploadButton" class="nav-upload" href="/upload-studio.html" hidden aria-label="আপলোড">＋</a></div>
+</header>
+<div id="profileBarBackdrop" class="profile-bar-backdrop" hidden aria-hidden="true"></div>
+<aside id="profileCompleteBar" class="profile-complete-bar" role="status" aria-live="polite" hidden>
+ <p class="profile-bar-message"><span class="profile-welcome">Welcome to</span> <span class="profile-brand-lockup"><svg class="profile-brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2.8 27 7v8.1c0 7.1-4.7 11.8-11 14.1C9.7 26.9 5 22.2 5 15.1V7l11-4.2Z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="m10.8 15.8 3.4 3.4 7.2-7.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="profile-brand-main">DRM–</span><span class="profile-brand-accent">Premium</span></span><span class="profile-welcome">. Please complete your profile.</span></p>
+ <a class="profile-bar-action" href="/profile.html">Setup Profile</a>
+ <button id="profileBarClose" class="profile-bar-close" type="button" aria-label="বার্তাটি বন্ধ করুন">×</button>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+<aside class="yt-sidebar" id="ytSidebar" aria-label="প্রধান মেনু">
+  <div class="sidebar-primary">
+    <a class="side-link active" href="#home"><span class="side-icon">⌂</span><span>Home</span></a>
+    <a class="side-link" href="/movies"><span class="side-icon">▣</span><span>Movies</span></a>
+    <a class="side-link" href="#browse"><span class="side-icon">▶</span><span>Videos</span></a>
+    <a class="side-link" href="#references"><span class="side-icon">▤</span><span>References</span></a>
+    <a class="side-link" href="#articles"><span class="side-icon">▧</span><span>Articles</span></a>
+    <a class="side-link" href="#books"><span class="side-icon">▣</span><span>Books</span></a>
+  </div>
+  <div class="sidebar-section"><div class="sidebar-heading">You</div>
+    <a class="side-link" href="/admin"><span class="side-icon">◉</span><span>Admin dashboard</span></a>
+    <a class="side-link" href="#about"><span class="side-icon">ⓘ</span><span>About</span></a>
+    <a class="side-link" id="sidebarUpload" href="/upload-studio.html" hidden><span class="side-icon">＋</span><span>Upload</span></a>
+  </div>
+</aside>
+<div id="profileDrawerBackdrop" class="profile-drawer-backdrop" hidden></div>
+<aside id="profileDrawer" class="profile-drawer" aria-label="Profile menu" aria-hidden="true">
+ <div class="profile-drawer-head"><span class="profile-drawer-kicker">YOUR ACCOUNT</span><button id="profileDrawerClose" class="profile-drawer-close" type="button" aria-label="Close profile menu">×</button></div>
+ <div class="profile-drawer-identity"><div class="profile-drawer-avatar" id="drawerAvatar"><span id="drawerAvatarInitial">U</span><img id="drawerAvatarImage" alt="" hidden></div><div class="profile-drawer-name"><strong id="drawerFullName">Your profile</strong><span id="drawerUsername">@username</span></div></div>
+ <a id="profileDrawerView" class="profile-drawer-view" href="/profile.html">Setup Profile <span aria-hidden="true">→</span></a>
+ <div class="profile-drawer-divider"></div>
+ <section class="profile-drawer-details" aria-label="Profile information">
+  <div class="profile-drawer-detail"><span>ABOUT</span><p id="drawerBio">Not added yet</p></div>
+  <div class="profile-drawer-detail-grid">
+   <div class="profile-drawer-detail"><span>DATE OF BIRTH</span><p id="drawerDob">Not added</p></div>
+   <div class="profile-drawer-detail"><span>GENDER</span><p id="drawerGender">Not specified</p></div>
+  </div>
+  <div class="profile-drawer-detail"><span>LOCATION</span><p id="drawerLocation">Not added</p></div>
+  <div class="profile-drawer-detail"><span>EMAIL</span><p id="drawerEmail">—</p></div>
+ </section>
+ <div class="profile-drawer-footer"><span>DRM– Premium</span><span>ACCOUNT PROFILE</span></div>
+ <div class="sidebar-logout-area profile-drawer-logout-area" id="sidebarLogoutArea" hidden>
+  <p class="sidebar-logout-status" id="sidebarLogoutStatus" role="status" aria-live="polite"></p>
+  <button class="sidebar-logout-button profile-drawer-logout-button" id="sidebarLogoutButton" type="button">
+   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
+   <span>Logout</span>
+  </button>
+ </div>
+</aside>
+<nav class="category-bar" aria-label="ভিডিও ক্যাটাগরি"><div id="categoryTabs" class="category-tabs"><button class="category-chip active" type="button" data-category="all">All</button></div></nav> 
+<main id="home">
+<section class="hero" id="hero">
+  <div class="hero-copy">
+    <h1>DRM PREMIUM</h1>
+    <p class="hero-kicker">VIDEO <span>/</span> STORY <span>/</span> KNOWLEDGE</p>
+    <div class="red-rule"></div>
+    <p class="hero-description" id="heroDescription">A curated platform for insightful videos, compelling stories and meaningful ideas.</p>
+    <div class="hero-buttons"><button id="heroPlay" class="primary" disabled>▶ এখনই দেখুন</button><a href="#browse" class="secondary">আরও দেখুন</a></div>
+  </div>
+  <div class="hero-visual" role="img" aria-label="Minimal architectural composition with a tree"></div>
+  <div class="hero-corner"></div>
+</section>
+<section class="content dumc-home" id="movies" aria-labelledby="dumcHomeTitle">
+ <div class="section-head"><div><p class="eyebrow">DUMC · DRM UNIVERSAL MOVIE SECTION</p><h2 id="dumcHomeTitle">মুভি লাইব্রেরি</h2><p class="dumc-home-intro">Category নির্বাচন করুন, তারপর Year বেছে আপনার মুভি খুঁজুন</p></div><span class="dumc-home-count" id="dumcHomeCount">লাইব্রেরি লোড হচ্ছে…</span></div>
+ <div class="dumc-home-breadcrumb" id="dumcHomeBreadcrumb" aria-label="বর্তমান অবস্থান" aria-live="polite"></div>
+ <div class="dumc-directory-layout">
+  <section class="dumc-directory-panel" aria-labelledby="dumcCategoryTitle">
+   <header class="dumc-directory-panel-head"><div><span class="dumc-directory-kicker">STEP 01</span><h3 id="dumcCategoryTitle">Category</h3></div><span class="dumc-directory-hint">Choose a movie category</span></header>
+   <div class="dumc-directory-panel-body" id="dumcHomeCategories" aria-label="মুভির ক্যাটাগরি"></div>
+  </section>
+  <section class="dumc-directory-panel dumc-year-directory-panel" aria-labelledby="dumcYearTitle">
+   <header class="dumc-directory-panel-head"><div><span class="dumc-directory-kicker">STEP 02</span><h3 id="dumcYearTitle">Year</h3></div><span class="dumc-directory-hint">Choose a release year</span></header>
+   <div class="dumc-directory-panel-body dumc-year-panel-body" id="dumcHomeSubcategories" aria-label="মুক্তির বছর"></div>
+  </section>
+ </div>
+ <div class="dumc-home-toolbar"><div class="dumc-contents-title"><span class="dumc-directory-kicker">STEP 03</span><h3>Contents</h3></div><label class="dumc-home-search"><span aria-hidden="true">⌕</span><input id="dumcHomeSearch" type="search" placeholder="মুভির নাম খুঁজুন…" aria-label="মুভির নাম খুঁজুন"></label><span id="dumcHomeStatus" role="status" aria-live="polite"></span></div>
+ <div class="dumc-home-grid" id="dumcHomeGrid"><p class="empty">মুভি লাইব্রেরি প্রস্তুত হচ্ছে…</p></div>
+ <button class="secondary dumc-home-more" id="dumcHomeMore" type="button" hidden>আরও মুভি দেখুন</button>
+</section>
+<section class="content" id="browse">
+  <div class="section-head"><div><p class="eyebrow" id="libraryEyebrow">DISCOVER</p><h2 id="libraryTitle">ভিডিও লাইব্রেরি</h2></div></div><div class="library-tools"><select id="categoryFilter" aria-label="ক্যাটাগরি"><option value="all">সব ক্যাটাগরি</option></select></div>
+  <div id="videoRows"></div><button id="loadMoreVideos" class="secondary load-more-videos" type="button" hidden>আরও ভিডিও দেখুন</button><p id="emptyState" class="empty" hidden>কোনো ভিডিও পাওয়া যায়নি।</p>
+</section>
+<section class="content resource-section" id="references"><div class="section-head"><div><p class="eyebrow">REFERENCE</p><h2>রেফারেন্স</h2></div></div><p class="empty">রেফারেন্স বিভাগে শিগগিরই কনটেন্ট যোগ করা হবে।</p></section>
+<section class="content resource-section" id="articles"><div class="section-head"><div><p class="eyebrow">ARTICLES</p><h2>আর্টিকেল</h2></div></div><p class="empty">আর্টিকেল বিভাগে শিগগিরই কনটেন্ট যোগ করা হবে।</p></section>
+<section class="content resource-section" id="books"><div class="section-head"><div><p class="eyebrow">BOOKS</p><h2>বইপত্র</h2></div></div><p class="empty">বইপত্র বিভাগে শিগগিরই কনটেন্ট যোগ করা হবে।</p></section>
+<section class="content resource-section admin-section" id="admin"><div class="section-head"><div><p class="eyebrow">ADMINISTRATION</p><h2>এডমিন ড্যাশবোর্ড</h2></div></div><div id="adminGuest" class="admin-message">এই পেইজের তথ্য দেখার জন্য আপনাকে অবশ্যই এডমিন হতে হবে। নাহলে এই পেইজের তথ্য দেখতে পারবেন না।</div><div id="adminStats" hidden><div class="admin-metrics"><article class="metric-card"><span>অনলাইন Admin</span><strong id="onlineAdminCount">০</strong></article><article class="metric-card"><span>মোট Admin/Owner</span><strong id="totalAdminCount">০</strong></article><article class="metric-card"><span>মোট পোস্ট</span><strong id="totalPostCount">০</strong></article><article class="metric-card"><span>মোট ট্যাব ভিজিট</span><strong id="totalTabViews">০</strong></article></div><div class="admin-report-grid"><section class="admin-report"><h3>Admin কার্যক্রম</h3><div id="adminActivity"></div></section><section class="admin-report"><h3>জনপ্রিয় ট্যাব</h3><div id="tabActivity"></div></section></div><p class="admin-updated" id="adminUpdated"></p></div><p class="admin-error" id="adminError" hidden></p></section>
+</main>
+<dialog id="registerDialog" class="register-dialog" aria-labelledby="registerTitle">
+ <form id="registerForm" class="register-form" novalidate>
+  <button class="register-close" id="registerClose" type="button" aria-label="Close">×</button>
+  <p class="eyebrow">DRM PREMIUM ACCOUNT</p><h2 id="registerTitle">Create your account</h2>
+  <p class="register-intro">ইমেইল যাচাই করে নতুন User অ্যাকাউন্ট তৈরি করুন।</p>
+  <label>Email address<input id="registerEmail" type="email" maxlength="254" autocomplete="email" required placeholder="name@example.com"></label>
+  <label>Username<input id="registerUsername" type="text" minlength="3" maxlength="30" autocomplete="username" required pattern="[A-Za-z0-9_]{3,30}" placeholder="৩–৩০ অক্ষর; English, number বা _"></label>
+  <label>Password<input id="registerPassword" type="password" minlength="8" maxlength="200" autocomplete="new-password" required placeholder="কমপক্ষে ৮ অক্ষর"></label>
+  <div id="registerOtpGroup" hidden><label>Email verification code<input id="registerCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="৬ সংখ্যার কোড"></label><p class="register-hint">ইমেইলে পাঠানো ৬ সংখ্যার কোড দিন। কোড ১০ মিনিট কার্যকর থাকবে।</p><p id="registerDeliveryHint" class="register-delivery-hint" role="status" aria-live="polite" hidden>ইমেইলের Primary Inbox-এ OTP না পেলে Spam বা Junk ফোল্ডারটিও চেক করুন। প্রয়োজনে Promotions ফোল্ডারও দেখুন।</p></div>
+  <p id="registerStatus" class="register-status" role="status" aria-live="polite"></p>
+  <div class="register-actions"><button id="registerSendCode" class="register-primary" type="button">Send verification code</button><button id="registerVerify" class="register-primary" type="submit" hidden>Verify & create account</button></div>
+  <p class="register-footnote">অ্যাকাউন্টটি সাধারণ User হিসেবে তৈরি হবে। Admin বা Owner permission স্বয়ংক্রিয়ভাবে দেওয়া হবে না।</p>
+ </form>
+</dialog>
+<footer id="about"><span id="footerBrand">DRM PREMIUM</span><span id="footerText">একটি ব্যক্তিগত ভিডিও লাইব্রেরি</span></footer>
+<dialog id="playerDialog" class="player-dialog"><button class="close" data-close="playerDialog">✕</button><div id="playerFrame" class="player-frame"></div><div class="player-info"><h2 id="playerTitle"></h2><p id="playerDescription"></p></div></dialog>
+<section id="siteBuilder" class="site-builder" hidden aria-label="Website Builder"><header class="sb-top"><div><strong>DRM PREMIUM BUILDER</strong><small id="sbSaveState">Draft not loaded</small></div><div class="sb-top-actions"><button id="sbUndo" type="button">Undo</button><button id="sbRedo" type="button">Redo</button><button id="sbPreview" type="button">Preview width</button><button id="sbHistory" type="button">History</button><button id="sbSave" class="sb-primary" type="button">Save Draft</button><button id="sbExit" type="button" aria-label="Close builder">×</button></div></header><div class="sb-workspace"><aside class="sb-sidebar"><div class="sb-side-head"><strong>Pages & Layers</strong><select id="sbPage" aria-label="Page"></select></div><div class="sb-add-row"><button id="sbAddSection" type="button">＋ Section</button><button id="sbAddElement" type="button">＋ Element</button></div><div id="sbLayers" class="sb-layers"></div><div class="sb-side-foot"><button id="sbAddPage" type="button">＋ Add page</button><p>Backend, authentication, API ও database এই Builder-এর বাইরে সুরক্ষিত থাকবে।</p></div></aside><main class="sb-stage-wrap"><div class="sb-stage-label"><span>LIVE CANVAS · DRAFT</span><span id="sbViewportLabel">Desktop</span></div><div id="sbCanvas" class="sb-canvas" aria-label="Visual page canvas"><div class="sb-empty">একটি Section যোগ করে শুরু করুন।</div></div></main><aside class="sb-inspector"><div class="sb-inspector-head"><strong>Smart Toolbar</strong><span id="sbSelectedType">Nothing selected</span></div><div id="sbInspectorBody" class="sb-inspector-body"><p>Canvas বা Layers থেকে কোনো element নির্বাচন করুন।</p></div></aside></div><footer class="sb-footer"><span id="sbMessage" role="status">Draft editor · changes are not public until a future publish workflow exists.</span><span>Owner only</span></footer></section><dialog id="sbHistoryDialog" class="sb-dialog"><form method="dialog"><button class="sb-dialog-close">×</button><h2>Draft history</h2><div id="sbHistoryList">Loading…</div><p>History থেকে restore এখনো সক্রিয় নয়।</p></form></dialog>
+<section id="accountSuspensionScreen" class="suspension-screen" hidden role="alertdialog" aria-modal="true" aria-labelledby="suspensionTitle">
+ <div class="suspension-grain" aria-hidden="true"></div>
+ <div class="suspension-content">
+  <div class="suspension-brand brand" aria-label="DRM– Premium Suspended">
+   <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2.8 27 7v8.1c0 7.1-4.7 11.8-11 14.1C9.7 26.9 5 22.2 5 15.1V7l11-4.2Z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="m10.8 15.8 3.4 3.4 7.2-7.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <span class="brand-word"><span class="brand-word-main">DRM–</span><span class="brand-word-accent">Premium</span><span class="brand-admin-suffix">Suspended</span></span>
+  </div>
+  <div class="suspension-kicker"><i></i> ACCOUNT ACCESS · TEMPORARILY RESTRICTED</div>
+  <h1 id="suspensionTitle">Access is on pause.</h1>
+  <p class="suspension-description">Your account has been temporarily suspended. Access will be restored automatically when the countdown ends.</p>
+  <div class="suspension-countdown" aria-label="Time remaining">
+   <div><strong id="suspensionHours">24</strong><span>HOURS</span></div><b>:</b>
+   <div><strong id="suspensionMinutes">00</strong><span>MINUTES</span></div><b>:</b>
+   <div><strong id="suspensionSeconds">00</strong><span>SECONDS</span></div>
+  </div>
+  <div class="suspension-progress"><i id="suspensionProgress"></i></div>
+  <p class="suspension-restore">ACCESS RESTORES <strong id="suspensionRestoreAt">—</strong></p>
+  <div id="suspensionReasonWrap" class="suspension-reason" hidden><span>NOTICE</span><p id="suspensionReason"></p></div>
+  <p class="suspension-footnote">The remaining time is synchronized with the server. You do not need to keep this page open.</p>
+  <button id="suspensionCheckButton" type="button">Check access status</button>
+  <div class="suspension-wordmark">DRM– PREMIUM <span>·</span> ACCOUNT SECURITY</div>
+ </div>
+</section>
+<script src="/assets/motion/motion-controller.js?v=dume-02"></script>
+<script src="app.js?v=movies-route-01"></script>
+<script src="/assets/dumc/home.js?v=dumc-home-07"></script>
+</body>
+</html>
