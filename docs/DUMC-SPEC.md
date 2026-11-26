@@ -51,7 +51,7 @@ Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration 
 
 ## Public homepage integration and media policy
 
-- The homepage has a dedicated Movies tab and DUMC browsing section. Category and Year are displayed side by side; selecting a Category then a Year applies both filters together. The Year panel renders every year from 1950 through 2026 as a flat compact folder grid, with Unknown Year separate.
+- The homepage has a dedicated Movies tab and DUMC browsing section. The public directory is organized into seven independent columns: All Movies (Film Industry folders), Dubbed Movies, Country, Collections, Genre, Subtitles and Year. Each column uses the shared DUSB scrollbar component (blue thumb, right-side vertical scrolling); each category contains one flat folder list, while Year runs from 2026 down to 1950. Selecting a category then a year applies both filters together.
 - Public browsing uses `GET /api/dumc/browse`, which returns published movies only and supports recursive folder filtering, server-side search and pagination.
 - **Media policy:** movie/video files are never uploaded to this website, regardless of whether they are 50 MB, 100 MB or another size. Movie playback uses external video links. Only cover/poster images may be uploaded. Audio and subtitle references are HTTPS links only; DUMC APIs reject asset-key based media registration.
 - DUMC homepage integration is deployed to Cloudflare Pages Preview. Public year-folder navigation is served from the versioned static taxonomy; movie contents are returned by the read-only browse API using the Preview D1 binding.
