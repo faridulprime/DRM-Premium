@@ -67,18 +67,6 @@ function renderYears(){
   return '<button type="button" class="dumc-nav-item dumc-year-item'+(activeYear===value?' active':'')+'" data-year="'+value+'" aria-pressed="'+(activeYear===value?'true':'false')+'">'+folderIcon+'<span>'+value+'</span></button>';
  }).join("")+'</div>';
 }
-function activeCategoryLabel(){
- if(!activeFolder)return "";
- const node=findNode(roots,activeFolder);
- return node?folderName(node.name):"";
-}
-function renderBreadcrumb(){
- const parts=['<button type="button" data-crumb="all">Movies</button>'];
- if(activeFolder)parts.push('<span class="dumc-crumb-separator">›</span><strong>'+esc(activeCategoryLabel())+'</strong>');
- if(activeYear)parts.push('<span class="dumc-crumb-separator">›</span><strong>'+(activeYear==="unknown"?"Unknown Year":activeYear)+'</strong>');
- if(!activeFolder&&!activeYear)parts.push('<span class="dumc-crumb-hint">Choose a category and year, or browse all movies.</span>');
- $("#dumcHomeBreadcrumb").innerHTML=parts.join("");
-}
 function updateLibraryCount(){
  $("#dumcHomeCount").textContent=categoryCount().toLocaleString("en-US")+" folders · "+movies.length.toLocaleString("en-US")+" movies";
 }
@@ -88,7 +76,7 @@ async function loadTaxonomy(){
   if(!response.ok)throw new Error("Folder taxonomy unavailable");
   const data=await response.json();
   roots=data.children||[];
-  renderCategories();renderYears();renderBreadcrumb();updateLibraryCount();
+  renderCategories();renderYears();updateLibraryCount();
  }catch(e){
   $("#dumcHomeStatus").textContent="Folder taxonomy could not be loaded. Refresh the page.";
   $("#dumcHomeCategories").innerHTML='<p class="dumc-nav-empty">Category lists unavailable.</p>';
@@ -126,16 +114,12 @@ $("#dumcHomeCategories").addEventListener("click",e=>{
  const b=e.target.closest("[data-category-folder]");if(!b)return;
  activeFolder=b.dataset.categoryFolder;
  activeYear="";
- renderCategories();renderYears();renderBreadcrumb();loadMovies(true);
+ renderCategories();renderYears();loadMovies(true);
 });
 $("#dumcHomeSubcategories").addEventListener("click",e=>{
  const b=e.target.closest("[data-year]");if(!b)return;
  activeYear=b.dataset.year;
- renderYears();renderBreadcrumb();loadMovies(true);
-});
-$("#dumcHomeBreadcrumb").addEventListener("click",e=>{
- if(!e.target.closest('[data-crumb="all"]'))return;
- activeFolder="";activeYear="";renderCategories();renderYears();renderBreadcrumb();loadMovies(true);
+ renderYears();loadMovies(true);
 });
 $("#dumcHomeSearch").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadMovies(true),250)});
 $("#dumcHomeMore").addEventListener("click",()=>loadMovies(false));
