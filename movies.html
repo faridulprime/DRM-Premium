@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Sora:wght@600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=ducs-home-02">
 <link rel="stylesheet" href="theme.css?v=ducs-shell-03">
-<link rel="stylesheet" href="/assets/dumc/home.css?v=dumc-home-13">
+<link rel="stylesheet" href="/assets/dumc/home.css?v=dumc-home-14">
 <link rel="stylesheet" href="/assets/dumc/movies-route.css?v=movies-route-02">
 <link rel="stylesheet" href="/assets/motion/motion.css?v=dume-02">
 
@@ -96,19 +96,16 @@
   <div class="hero-corner"></div>
 </section>
 <section class="content dumc-home" id="movies" aria-labelledby="dumcHomeTitle">
- <div class="section-head"><div><p class="eyebrow">DUMC · DRM UNIVERSAL MOVIE SECTION</p><h2 id="dumcHomeTitle">মুভি লাইব্রেরি</h2><p class="dumc-home-intro">Category নির্বাচন করুন, তারপর Year বেছে আপনার মুভি খুঁজুন</p></div><span class="dumc-home-count" id="dumcHomeCount">লাইব্রেরি লোড হচ্ছে…</span></div>
+ <div class="section-head"><div><p class="eyebrow">DUMC · DRM UNIVERSAL MOVIE SECTION</p><h2 id="dumcHomeTitle">মুভি লাইব্রেরি</h2><p class="dumc-home-intro">Category, Country, Genre ও Year অনুযায়ী মুভি খুঁজুন</p></div><span class="dumc-home-count" id="dumcHomeCount">লাইব্রেরি লোড হচ্ছে…</span></div>
  <div class="dumc-home-breadcrumb" id="dumcHomeBreadcrumb" aria-label="বর্তমান অবস্থান" aria-live="polite"></div>
- <div class="dumc-directory-layout">
-  <section class="dumc-directory-panel" aria-labelledby="dumcCategoryTitle">
-   <header class="dumc-directory-panel-head"><div><span class="dumc-directory-kicker">STEP 01</span><h3 id="dumcCategoryTitle">Category</h3></div><span class="dumc-directory-hint">Choose a movie category</span></header>
-   <div class="dumc-directory-panel-body" id="dumcHomeCategories" aria-label="মুভির ক্যাটাগরি"></div>
-  </section>
+ <div class="dumc-directory-layout" id="dumcDirectoryLayout">
+  <div id="dumcHomeCategories" class="dumc-category-columns" aria-label="Movie categories"></div>
   <section class="dumc-directory-panel dumc-year-directory-panel" aria-labelledby="dumcYearTitle">
-   <header class="dumc-directory-panel-head"><div><span class="dumc-directory-kicker">STEP 02</span><h3 id="dumcYearTitle">Year</h3></div><span class="dumc-directory-hint">Choose a release year</span></header>
-   <div class="dumc-directory-panel-body dumc-year-panel-body" id="dumcHomeSubcategories" aria-label="মুক্তির বছর"></div>
+   <header class="dumc-directory-panel-head"><h3 id="dumcYearTitle">Year</h3></header>
+   <div class="dumc-directory-panel-body dumc-year-panel-body dusb-scrollbar" id="dumcHomeSubcategories" data-dusb="true" aria-label="মুক্তির বছর"></div>
   </section>
  </div>
- <div class="dumc-home-toolbar"><div class="dumc-contents-title"><span class="dumc-directory-kicker">STEP 03</span><h3>Contents</h3></div><label class="dumc-home-search"><span aria-hidden="true">⌕</span><input id="dumcHomeSearch" type="search" placeholder="মুভির নাম খুঁজুন…" aria-label="মুভির নাম খুঁজুন"></label><span id="dumcHomeStatus" role="status" aria-live="polite"></span></div>
+ <div class="dumc-home-toolbar"><div class="dumc-contents-title"><span class="dumc-directory-kicker">CONTENTS</span><h3>Contents</h3></div><label class="dumc-home-search"><span aria-hidden="true">⌕</span><input id="dumcHomeSearch" type="search" placeholder="মুভির নাম খুঁজুন…" aria-label="মুভির নাম খুঁজুন"></label><span id="dumcHomeStatus" role="status" aria-live="polite"></span></div>
  <div class="dumc-home-grid" id="dumcHomeGrid"><p class="empty">মুভি লাইব্রেরি প্রস্তুত হচ্ছে…</p></div>
  <button class="secondary dumc-home-more" id="dumcHomeMore" type="button" hidden>আরও মুভি দেখুন</button>
 </section>
