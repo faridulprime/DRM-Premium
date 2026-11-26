@@ -7,34 +7,31 @@
 .dumc-home-breadcrumb strong{color:#fff;font-weight:700;text-shadow:0 2px 4px #000}
 .dumc-crumb-separator{color:#7e8794}
 .dumc-crumb-hint{color:#aeb7c3;font-size:.84rem}
-.dumc-directory-layout{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:16px;align-items:stretch;margin:0 0 26px}
-.dumc-directory-panel{display:flex;flex-direction:column;min-width:0;min-height:400px;border:0;border-radius:0;background:transparent;overflow:hidden}
-.dumc-directory-panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:17px 19px 14px;border-bottom:1px solid rgba(255,255,255,.14)}
-.dumc-directory-panel-head h3,.dumc-contents-title h3{margin:2px 0 0;color:#fff;font-size:1.12rem;font-weight:750;letter-spacing:.01em;text-shadow:0 2px 4px #000}
-.dumc-directory-kicker{display:block;color:#d6ae65;font-size:.68rem;font-weight:750;letter-spacing:.14em;text-transform:uppercase}
-.dumc-directory-hint{color:#9ea8b5;font-size:.73rem;text-align:right}
-.dumc-directory-panel-body{flex:1;min-height:0;max-height:min(62vh,620px);overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(216,177,105,.55) transparent;padding:13px 17px 16px}
-.dumc-category-group{margin:0 0 17px;padding:0 0 13px;border-bottom:1px solid rgba(255,255,255,.1)}
-.dumc-category-group:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
-.dumc-category-group-title{margin:0 0 8px;color:#d8b879;font-size:.73rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase;text-shadow:0 2px 4px #000}
-.dumc-folder-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px}
-.dumc-nav-item{display:flex;align-items:center;gap:9px;width:100%;min-width:0;min-height:44px;padding:8px 5px;border:0;border-radius:5px;background:transparent;color:#edf1f5;text-align:left;font:600 .88rem/1.35 "Hind Siliguri","Space Grotesk",sans-serif;cursor:pointer;text-shadow:0 2px 3px rgba(0,0,0,.98),0 0 7px rgba(0,0,0,.95);transition:color .15s ease,background-color .15s ease,padding-left .15s ease}
+.dumc-directory-layout{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;align-items:stretch;margin:0 0 26px}
+.dumc-category-columns{display:contents}
+.dumc-directory-panel{display:flex;flex-direction:column;min-width:0;height:min(62vh,620px);min-height:390px;max-height:620px;border:0;border-radius:0;background:transparent;overflow:hidden}
+.dumc-directory-panel-head{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-height:55px;padding:8px 2px 10px;border-bottom:1px solid rgba(255,255,255,.14)}
+.dumc-directory-panel-head h3{margin:0;color:#fff;font-size:.9rem;line-height:1.25;font-weight:750;letter-spacing:.005em;text-shadow:0 2px 4px #000;overflow-wrap:anywhere}
+.dumc-directory-panel-body{flex:1;min-width:0;min-height:0;max-height:none;overflow:hidden;padding:7px 3px 4px 0}
+.dusb-scrollbar{overflow-y:scroll!important;overflow-x:hidden!important;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3b82f6 rgba(255,255,255,.055);scrollbar-gutter:stable}
+.dusb-scrollbar::-webkit-scrollbar{width:9px;height:9px}
+.dusb-scrollbar::-webkit-scrollbar-track{background:rgba(255,255,255,.055);border-radius:10px}
+.dusb-scrollbar::-webkit-scrollbar-thumb{background-color:#3b82f6;border:2px solid transparent;background-clip:padding-box;border-radius:10px}
+.dusb-scrollbar::-webkit-scrollbar-thumb:hover{background-color:#60a5fa}
+.dumc-category-list{display:flex;flex-direction:column;align-items:stretch;gap:1px;padding-right:3px}
+.dumc-category-panel .dumc-directory-panel-head{padding-inline:3px}
+.dumc-nav-item{display:flex;align-items:center;gap:7px;width:100%;min-width:0;min-height:42px;padding:6px 5px;border:0;border-radius:5px;background:transparent;color:#edf1f5;text-align:left;font:600 .78rem/1.3 "Hind Siliguri","Space Grotesk",sans-serif;cursor:pointer;text-shadow:0 2px 3px rgba(0,0,0,.98),0 0 7px rgba(0,0,0,.95);transition:color .15s ease,background-color .15s ease}
 .dumc-nav-item:hover,.dumc-nav-item:focus-visible{color:#ffe1a5;background:rgba(255,255,255,.055);outline:none}
 .dumc-nav-item:focus-visible{box-shadow:inset 0 0 0 1px rgba(231,184,95,.7)}
 .dumc-nav-item.active{color:#ffd27a;background:transparent;box-shadow:inset 2px 0 #dca94f}
-.dumc-folder-icon{display:block;flex:0 0 17px;width:17px;height:17px;color:#e7b85f;filter:drop-shadow(0 2px 3px rgba(0,0,0,.95))}
+.dumc-folder-icon{display:block;flex:0 0 15px;width:15px;height:15px;color:#e7b85f;filter:drop-shadow(0 2px 3px rgba(0,0,0,.95))}
 .dumc-nav-item.active .dumc-folder-icon{color:#ffd27a}
 .dumc-nav-item span{min-width:0;overflow-wrap:anywhere}
-.dumc-year-grid{display:grid;grid-template-columns:1fr;gap:2px 0;direction:ltr}
-.dumc-year-directory-panel{width:112px;min-width:112px;max-width:112px}.dumc-year-directory-panel .dumc-directory-panel-head{justify-content:flex-start;align-items:flex-start;padding:14px 10px 12px}.dumc-year-directory-panel .dumc-directory-hint{display:none}.dumc-year-panel-body{direction:ltr;scrollbar-color:#3b82f6 rgba(255,255,255,.055);scrollbar-width:thin;padding:10px 8px 12px}
-.dumc-year-panel-body::-webkit-scrollbar{width:9px}
-.dumc-year-panel-body::-webkit-scrollbar-track{background:rgba(255,255,255,.045);border-radius:10px}
-.dumc-year-panel-body::-webkit-scrollbar-thumb{background-color:#3b82f6;border:2px solid transparent;background-clip:padding-box;border-radius:10px}
-.dumc-year-panel-body::-webkit-scrollbar-thumb:hover{background-color:#60a5fa}
-.dumc-year-item{width:100%;min-height:44px;padding:7px 1px;gap:6px;font-size:.78rem;font-variant-numeric:tabular-nums;font-family:"Space Grotesk","Hind Siliguri",sans-serif;font-size:.84rem}
+.dumc-year-directory-panel{width:auto;min-width:0;max-width:none}
+.dumc-year-panel-body{padding:7px 3px 4px 0;scrollbar-color:#3b82f6 rgba(255,255,255,.055)}
+.dumc-year-grid{display:flex;flex-direction:column;gap:1px}
+.dumc-year-item{width:100%;min-height:42px;padding:6px 5px;gap:6px;font-variant-numeric:tabular-nums;font-family:"Space Grotesk","Hind Siliguri",sans-serif;font-size:.8rem}
 .dumc-year-item .dumc-folder-icon{width:14px;height:14px;flex-basis:14px}
-.dumc-year-special{margin-top:10px;padding:10px 2px 0;border-top:1px solid rgba(255,255,255,.12)}
-.dumc-year-special .dumc-year-item{color:#bfc7d1;font-size:.8rem}
 .dumc-nav-empty{padding:16px 5px;color:#c5cbd3;font-size:.86rem}
 .dumc-home-toolbar{display:grid;grid-template-columns:minmax(150px,1fr) minmax(220px,420px) auto;align-items:center;gap:16px;margin:0 0 16px;min-height:48px}
 .dumc-contents-title h3{font-size:1.05rem}
@@ -57,7 +54,8 @@
 .dumc-movie-copy small{display:inline-block;margin-top:8px;color:#d9bd8c}
 .dumc-empty{grid-column:1/-1;padding:30px 10px;color:#e5e7eb}
 .dumc-home-more{display:block;margin:24px auto 0}
-@media(max-width:980px){.dumc-directory-layout{grid-template-columns:minmax(0,1fr) 112px;gap:14px}.dumc-folder-list{grid-template-columns:1fr}.dumc-year-grid{grid-template-columns:1fr}.dumc-home-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}}
-@media(max-width:680px){.dumc-directory-layout{grid-template-columns:1fr;gap:14px}.dumc-year-directory-panel{width:auto;min-width:0;max-width:none}.dumc-directory-panel{min-height:0}.dumc-directory-panel-body{max-height:440px}.dumc-folder-list{grid-template-columns:repeat(2,minmax(0,1fr))}.dumc-year-grid{grid-template-columns:1fr}.dumc-directory-hint{font-size:.68rem}.dumc-home-toolbar{grid-template-columns:1fr;gap:9px;align-items:stretch}.dumc-home-search{width:100%}.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-count{font-size:.77rem}}
-@media(max-width:380px){.dumc-folder-list{grid-template-columns:1fr}.dumc-year-grid{grid-template-columns:1fr}.dumc-home-grid{grid-template-columns:1fr}.dumc-home-count{display:none}}
+@media(max-width:1280px){.dumc-directory-layout{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 12px}.dumc-directory-panel{height:430px;min-height:360px}}
+@media(max-width:900px){.dumc-directory-layout{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 11px}.dumc-directory-panel{height:400px;min-height:340px}.dumc-directory-panel-head h3{font-size:.86rem}}
+@media(max-width:680px){.dumc-directory-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}.dumc-directory-panel{height:390px;min-height:320px}.dumc-directory-panel-head{min-height:49px}.dumc-directory-panel-head h3{font-size:.82rem}.dumc-nav-item{font-size:.8rem}.dumc-home-toolbar{grid-template-columns:1fr;gap:9px;align-items:stretch}.dumc-home-search{width:100%}.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-count{font-size:.77rem}}
+@media(max-width:420px){.dumc-directory-layout{grid-template-columns:1fr 1fr;gap:14px 10px}.dumc-directory-panel{height:360px;min-height:300px}.dumc-category-panel .dumc-directory-panel-head{padding-inline:1px}.dumc-directory-panel-head h3{font-size:.78rem}.dumc-nav-item{font-size:.76rem;gap:5px}.dumc-folder-icon{width:14px;height:14px;flex-basis:14px}.dumc-home-grid{grid-template-columns:1fr}.dumc-home-count{display:none}}
 #movies{scroll-margin-top:88px}
