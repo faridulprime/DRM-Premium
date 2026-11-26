@@ -43,16 +43,49 @@ class DumcMigrationTests(unittest.TestCase):
         home = (ROOT / "assets" / "dumc" / "home.js").read_text(encoding="utf-8")
         self.assertIn('p[0]==="dumc"&&p[1]==="browse"', api)
         self.assertIn('id="movies"', html)
-        self.assertIn('/assets/dumc/home.js?v=dumc-home-01', html)
-        self.assertIn('/assets/dumc/home.css?v=dumc-home-01', html)
+        self.assertIn('/assets/dumc/home.js?v=dumc-home-05', html)
+        self.assertIn('/assets/dumc/home.css?v=dumc-home-05', html)
         self.assertIn('params.set("folder_id",activeFolder)', home)
         self.assertIn('params.set("q",query)', home)
-        self.assertIn("loadTaxonomyFallback", home)
-        self.assertIn('if(c.id==="ARCHIVED")continue', home)
+        self.assertIn('params.set("year",activeYear)', home)
+        self.assertIn('id="dumcHomeBreadcrumb"', html)
+        self.assertIn('id="dumcHomeCategories"', html)
+        self.assertIn('id="dumcHomeSubcategories"', html)
+        self.assertIn("async function loadTaxonomy()", home)
+        self.assertIn('x.id!=="ARCHIVED"', home)
         self.assertIn('folderId==="ARCHIVED"', api)
+        self.assertIn('u.searchParams.get("year")', api)
+        self.assertIn('if(yearParam==="unknown")', api)
+        self.assertIn('AND dm.release_year=?', api)
         self.assertIn('Provide an HTTPS audio source URL', api)
         self.assertIn('Provide an HTTPS subtitle source URL', api)
         self.assertNotIn('asset_key=reference', (ROOT / "dumc-manager.js").read_text(encoding="utf-8"))
+
+    def test_category_and_release_year_filters_are_composable(self):
+        self.db.execute(
+            "UPDATE dumc_movies SET original_language_folder_id='LANG_ENGLISH', release_year=2013 "
+            "WHERE video_id='movie-1'"
+        )
+        query = """
+            SELECT dm.video_id FROM dumc_movies dm
+            WHERE dm.original_language_folder_id IN (
+                WITH RECURSIVE descendants(id) AS (
+                    SELECT id FROM dumc_folders WHERE id=? AND is_archived=0
+                    UNION ALL
+                    SELECT f.id FROM dumc_folders f
+                    JOIN descendants d ON f.parent_id=d.id
+                    WHERE f.is_archived=0
+                )
+                SELECT id FROM descendants
+            )
+            AND dm.release_year=?
+        """
+        matched = self.db.execute(query, ("LANG_ENGLISH", 2013)).fetchall()
+        wrong_year = self.db.execute(query, ("LANG_ENGLISH", 2018)).fetchall()
+        wrong_category = self.db.execute(query, ("LANG_TELUGU", 2013)).fetchall()
+        self.assertEqual(matched, [("movie-1",)])
+        self.assertEqual(wrong_year, [])
+        self.assertEqual(wrong_category, [])
 
     def test_upload_studio_loads_the_interactive_manager(self):
         html = (ROOT / "upload-studio.html").read_text(encoding="utf-8")
