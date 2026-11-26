@@ -1691,6 +1691,84 @@ def inspect_live_overlay_interactions(browser, base_url):
     finally:
         context.close()
 
+def inspect_dumc_movie_directory(browser, base_url):
+    """Exercise the public Category -> Year -> Contents navigation with a D1 browse fixture."""
+    context = browser.new_context(
+        viewport={"width": 1440, "height": 900},
+        locale="bn-BD",
+        reduced_motion="reduce",
+    )
+    page = context.new_page()
+    try:
+        page.route(
+            "**/api/dumc/browse*",
+            lambda route: route.fulfill(
+                status=200,
+                content_type="application/json",
+                body='{"system":"DUMC","folders":[],"movies":[]}',
+            ),
+        )
+        page.goto(base_url + "/", wait_until="load", timeout=30000)
+        page.wait_for_selector(
+            '#dumcHomeCategories [data-category-folder="LANG_TELUGU"]',
+            timeout=10000,
+        )
+        if page.locator("#dumcCategoryTitle").inner_text().strip() != "Category":
+            fail("homepage/DUMC: Category directory heading is missing")
+        if page.locator("#dumcYearTitle").inner_text().strip() != "Year":
+            fail("homepage/DUMC: Year directory heading is missing")
+        if page.locator(".dumc-directory-layout").evaluate(
+            "(el) => getComputedStyle(el).gridTemplateColumns.split(' ').length"
+        ) != 2:
+            fail("homepage/DUMC: desktop Category and Year directories are not displayed side by side")
+
+        category = page.locator('[data-category-folder="LANG_TELUGU"]')
+        if "Telugu Movie" not in category.inner_text():
+            fail("homepage/DUMC: original-language category is not labelled Telugu Movie")
+        if page.locator('[data-category-folder="LANG_ENGLISH"]').count() != 1:
+            fail("homepage/DUMC: English Movie category is missing")
+
+        category_style = category.evaluate(
+            "(el) => ({background: getComputedStyle(el).backgroundColor, shadow: getComputedStyle(el).textShadow})"
+        )
+        if category_style["background"] not in ("rgba(0, 0, 0, 0)", "transparent"):
+            fail(f"homepage/DUMC: folder item has an opaque background ({category_style})")
+        if category_style["shadow"] == "none":
+            fail("homepage/DUMC: folder text shadow is missing")
+        if category.locator("svg.dumc-folder-icon").count() != 1:
+            fail("homepage/DUMC: category folder icon is missing")
+
+        with page.expect_request(
+            lambda request: "/api/dumc/browse?" in request.url and "folder_id=LANG_TELUGU" in request.url,
+            timeout=5000,
+        ) as category_request:
+            category.click()
+        category_url = category_request.value.url
+        if "year=" in category_url:
+            fail("homepage/DUMC: selecting a category unexpectedly retained a previous year filter")
+
+        year = page.locator('[data-year="2018"]')
+        year.evaluate("(el) => { const group = el.closest('details'); if (group) group.open = true; }")
+        with page.expect_request(
+            lambda request: "/api/dumc/browse?" in request.url
+            and "folder_id=LANG_TELUGU" in request.url
+            and "year=2018" in request.url,
+            timeout=5000,
+        ) as year_request:
+            year.click()
+        combined_url = year_request.value.url
+        if "folder_id=LANG_TELUGU" not in combined_url or "year=2018" not in combined_url:
+            fail("homepage/DUMC: Year selection did not preserve the selected Category")
+
+        breadcrumb = page.locator("#dumcHomeBreadcrumb").inner_text()
+        if "Telugu Movie" not in breadcrumb or "2018" not in breadcrumb:
+            fail(f"homepage/DUMC: Category -> Year breadcrumb is incomplete ({breadcrumb})")
+    except Exception as exc:
+        fail(f"homepage/DUMC Category -> Year navigation: {type(exc).__name__}: {exc}")
+    finally:
+        context.close()
+
+
 def main() -> int:
     server, base_url = serve()
     checks = 0
@@ -1699,7 +1777,8 @@ def main() -> int:
             inspect_live_overlay_lifecycle_source()
             browser = playwright.chromium.launch(headless=True)
             inspect_live_overlay_interactions(browser, base_url)
-            checks += 1
+            inspect_dumc_movie_directory(browser, base_url)
+            checks += 2
             for name, config in PAGES.items():
                 route = config[0]
                 for viewport_name, width, height in VIEWPORTS:
@@ -1733,9 +1812,9 @@ def main() -> int:
         return 1
 
     print(
-        f"PASS: {checks - 1} page/viewport checks across {len(PAGES)} pages plus 1 dynamic Live Users overlay interaction suite; "
+        f"PASS: {checks - 1} page/viewport checks across {len(PAGES)} pages plus 1 dynamic Live Users overlay interaction suite and 1 DUMC Category -> Year navigation suite; "
         "DUCS contrast samples; DUSS/DUPS/DUCS token loading; keyboard focus; "
-        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, mobile-to-desktop resize cleanup, Live Users shared-overlay state guards and dynamic drawer/modal/native-dialog lifecycle, close-animation scroll-lock retention, restriction-to-drawer hand-off, and fixed-overlay containing-block ancestry."
+        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, mobile-to-desktop resize cleanup, Live Users shared-overlay state guards and dynamic drawer/modal/native-dialog lifecycle, close-animation scroll-lock retention, restriction-to-drawer hand-off, fixed-overlay containing-block ancestry, and DUMC Category + Year combined filtering."
     )
     print(
         "LIMITATION: 720px is a 200%-zoom layout-width proxy, not native browser zoom. "
