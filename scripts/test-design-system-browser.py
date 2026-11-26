@@ -1723,6 +1723,15 @@ def inspect_dumc_movie_directory(browser, base_url):
         ) != 2:
             fail("homepage/DUMC: desktop Category and Year directories are not displayed side by side")
 
+        year_buttons = page.locator('#dumcHomeSubcategories [data-year]:not([data-year="unknown"])')
+        rendered_years = [int(value) for value in year_buttons.evaluate_all("(els) => els.map(el => el.dataset.year)")]
+        if rendered_years != list(range(1950, 2027)):
+            fail(f"homepage/DUMC: Year panel must show every folder from 1950 through 2026 ({len(rendered_years)} rendered)")
+        if page.locator("#dumcHomeSubcategories details").count() != 0:
+            fail("homepage/DUMC: year folders must not be hidden inside decade accordions")
+        if page.locator('#dumcHomeSubcategories [data-year="2027"]').count() != 0:
+            fail("homepage/DUMC: years after 2026 must not appear in the public Year list")
+
         category = page.locator('[data-category-folder="LANG_TELUGU"]')
         if "Telugu Movie" not in category.inner_text():
             fail("homepage/DUMC: original-language category is not labelled Telugu Movie")
