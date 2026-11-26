@@ -1789,6 +1789,23 @@ def inspect_dumc_movie_directory(browser, base_url):
         breadcrumb = page.locator("#dumcHomeBreadcrumb").inner_text()
         if "Telugu Movie" not in breadcrumb or "2018" not in breadcrumb:
             fail(f"homepage/DUMC: Category -> Year breadcrumb is incomplete ({breadcrumb})")
+
+        movies_link = page.locator('#categoryTabs a[data-category="__movies__"]')
+        if movies_link.count() != 1:
+            fail("homepage/navigation: Movies must be a link to a dedicated page")
+        if movies_link.get_attribute("href") != "/movies":
+            fail("homepage/navigation: Movies link must target /movies")
+        if movies_link.get_attribute("target") is not None:
+            fail("homepage/navigation: Movies must open in the current tab")
+        with page.expect_navigation(timeout=10000):
+            movies_link.click()
+        if not page.url.rstrip("/").endswith("/movies"):
+            fail(f"homepage/navigation: Movies did not navigate to /movies ({page.url})")
+        page.wait_for_selector("body.movies-route #movies", timeout=10000)
+        if page.locator(".movies-route #home > #browse").is_visible():
+            fail("movies route: homepage Videos section should not appear on /movies")
+        if page.locator('#categoryTabs a[data-category="__movies__"].active[aria-current="page"]').count() != 1:
+            fail("movies route: Movies tab should be visibly active on /movies")
     except Exception as exc:
         fail(f"homepage/DUMC Category -> Year navigation: {type(exc).__name__}: {exc}")
     finally:
