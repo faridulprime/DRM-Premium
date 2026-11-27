@@ -28,7 +28,7 @@ function renderPanel(g){
  '<header class="dufn-panel-head"><div><h3>'+esc(g.title)+'</h3><p>'+list.length+' folders · Select one to filter movies</p></div><button type="button" class="dufn-close" data-close-menu aria-label="Close folder menu">×</button></header>'+
  '<div class="dufn-folder-grid">'+list.map(n=>{
   const label=isYear?String(n.year):folderName(n.name),selected=isYear?activeYear===label:activeFolder===n.id;
-  return '<button type="button" class="dumc-nav-item dufn-folder'+(selected?' active':'')+'" '+(isYear?'data-year="'+label+'"':'data-category-folder="'+esc(n.id)+'" data-category-label="'+esc(label)+'')+'" aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(label)+'</span></button>'
+  return '<button type="button" class="dumc-nav-item dufn-folder'+(selected?' active':'')+'" '+(isYear?'data-year="'+label+'"':'data-category-folder="'+esc(n.id)+'" data-category-label="'+esc(label)+'"')+' aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(label)+'</span></button>'
  }).join("")+'</div></section>'
 }
 function renderCategories(){
