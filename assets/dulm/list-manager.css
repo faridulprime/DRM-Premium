@@ -40,12 +40,47 @@
 }
 
 
-/* DULM widths: six category lists share the marked 230px width; Year stays compact. */
-.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{width:min(230px,calc(100vw - 28px))!important;min-width:min(230px,calc(100vw - 28px))!important;max-width:calc(100vw - 28px)!important}
-.dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{width:min(172px,calc(100vw - 28px))!important;min-width:min(172px,calc(100vw - 28px))!important}
+/* DULM adaptive width — grow to the widest folder label, bounded by the viewport. */
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{
+ width:max-content!important;
+ min-width:min(230px,calc(100vw - 28px))!important;
+ max-width:min(460px,calc(100vw - 28px))!important;
+}
+.dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{
+ width:max-content!important;
+ min-width:min(172px,calc(100vw - 28px))!important;
+ max-width:min(240px,calc(100vw - 28px))!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder-grid{
+ width:max-content!important;
+ min-width:100%!important;
+ max-width:100%!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dulm-folder-row{
+ width:max-content!important;
+ min-width:100%!important;
+ max-width:100%!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dulm-folder-row>.dufn-folder{
+ width:auto!important;
+ min-width:0!important;
+ flex:1 1 auto!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder span{
+ white-space:nowrap!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+ overflow-wrap:normal!important;
+}
 @media(max-width:420px){
- .dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{width:calc(100vw - 20px)!important;min-width:0!important}
- .dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{width:min(172px,calc(100vw - 20px))!important;min-width:0!important}
+ .dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{
+  min-width:min(230px,calc(100vw - 20px))!important;
+  max-width:calc(100vw - 20px)!important;
+ }
+ .dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{
+  min-width:min(172px,calc(100vw - 20px))!important;
+  max-width:min(240px,calc(100vw - 20px))!important;
+ }
 }
 
 /* DULM compact count-only header and muted upcoming year. */
