@@ -38,3 +38,7 @@
  background:rgba(59,130,246,.13)!important;
  box-shadow:inset 2px 0 #3b82f6!important;
 }
+
+/* DULM compact dropdown width — matched to the user's marked reference. */
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{width:min(172px,calc(100vw - 28px))!important;min-width:172px!important;max-width:calc(100vw - 28px)!important}
+@media(max-width:420px){.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{width:min(172px,calc(100vw - 20px))!important;min-width:0!important}}
