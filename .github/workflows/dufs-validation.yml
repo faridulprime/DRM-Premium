@@ -1,0 +1,106 @@
+name: DUFS Folder System Validation
+
+on:
+  push:
+    branches:
+      - feature/full-admin-panel
+    paths:
+      - "assets/dufs/**"
+      - "assets/dumc/**"
+      - "assets/dulm/**"
+      - "index.html"
+      - "app.js"
+      - "functions/api/[[path]].js"
+      - "dufs-manager.js"
+      - "dumc-manager.js"
+      - "upload-studio.html"
+      - "upload-studio.js"
+      - "migrations/0009_dumc_movie_library.sql"
+      - "migrations/0010_dumc_release_years_1956_1959.sql"
+      - "migrations/manifest.json"
+      - "scripts/test-dumc-migration.py"
+      - ".github/workflows/dufs-validation.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "assets/dufs/**"
+      - "assets/dumc/**"
+      - "assets/dulm/**"
+      - "index.html"
+      - "app.js"
+      - "functions/api/[[path]].js"
+      - "dufs-manager.js"
+      - "dumc-manager.js"
+      - "upload-studio.html"
+      - "upload-studio.js"
+      - "migrations/0009_dumc_movie_library.sql"
+      - "migrations/0010_dumc_release_years_1956_1959.sql"
+      - "migrations/manifest.json"
+      - "scripts/test-dumc-migration.py"
+      - ".github/workflows/dufs-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate existing folder database migration
+        run: python scripts/test-dumc-migration.py
+
+      - name: Verify DUFS taxonomy identity and legacy folder ID parity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          legacy = json.loads(Path("assets/dumc/taxonomy.json").read_text(encoding="utf-8"))
+          dufs = json.loads(Path("assets/dufs/taxonomy.json").read_text(encoding="utf-8"))
+
+          def folder_ids(tree):
+              result = []
+              def walk(nodes):
+                  for node in nodes or []:
+                      result.append(node["id"])
+                      walk(node.get("children", []))
+              walk(tree.get("children", []))
+              return result
+
+          assert dufs.get("system") == "DUFS", "DUFS system identity is missing"
+          assert dufs.get("name") == "DUFS", "DUFS root display name is missing"
+          assert dufs.get("id") == "DUMC", "Legacy root folder ID must remain stable"
+          assert folder_ids(legacy) == folder_ids(dufs), "DUFS folder IDs differ from the legacy taxonomy"
+          print(f"Validated {len(folder_ids(dufs))} stable folder IDs")
+          PY
+
+      - name: Validate migration inventory
+        run: node scripts/validate-migration-inventory.mjs
+
+      - name: Validate API JavaScript syntax
+        run: node --input-type=module --check < 'functions/api/[[path]].js'
+
+      - name: Validate DUFS, DULM, Upload Studio and homepage JavaScript syntax
+        run: |
+          node --check assets/dufs/folder-system.js
+          node --check assets/dufs/home.js
+          node --check assets/dulm/list-manager.js
+          node --check dufs-manager.js
+          node --check dumc-manager.js
+          node --check upload-studio.js
+          node --check app.js
