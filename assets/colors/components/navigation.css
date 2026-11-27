@@ -180,3 +180,28 @@ body .topbar{
   background:#111216!important;background-image:none!important;
   border-bottom-color:rgba(255,255,255,.055)!important;
 }
+
+
+/* Keep every tab state borderless, including the active state. */
+html[data-theme] body .category-tabs>.category-chip,
+html[data-theme] body .dufn-tab-wrap .dufn-tab,
+html[data-theme] body .live-restrictions-tabs>.live-restriction-tab,
+html[data-theme] body .page-tabs>.tab,
+html[data-theme] body .type-switch>.type,
+html[data-theme] body .device-switch>button{
+  background:transparent!important;background-image:none!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;
+}
+html[data-theme] body .category-tabs>.category-chip:hover,
+html[data-theme] body .dufn-tab-wrap .dufn-tab:hover,
+html[data-theme] body .live-restrictions-tabs>.live-restriction-tab:hover,
+html[data-theme] body .page-tabs>.tab:hover,
+html[data-theme] body .type-switch>.type:hover,
+html[data-theme] body .device-switch>button:hover{
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+  color:#F4F2F0!important;text-shadow:0 0 7px rgba(238,242,255,.66),0 0 18px rgba(211,223,255,.35)!important;
+}
+:root[data-theme="light"] body :is(.category-tabs>.category-chip:hover,.dufn-tab-wrap .dufn-tab:hover,
+.live-restrictions-tabs>.live-restriction-tab:hover,.page-tabs>.tab:hover,.type-switch>.type:hover,.device-switch>button:hover){
+  color:#24232A!important;text-shadow:0 0 7px rgba(77,83,98,.3),0 0 16px rgba(108,119,143,.18)!important;
+}
