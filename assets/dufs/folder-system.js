@@ -21,9 +21,10 @@ const loadOverrides=async()=>{const result=await request(API+"/folder-name-overr
 const loadFolderTree=async()=>request(ADMIN+"/folders");
 const browse=(params={})=>{const url=new URL(API+"/browse",location.origin);Object.entries(params).forEach(([key,value])=>{if(value!==undefined&&value!==null&&value!=="")url.searchParams.set(key,String(value))});return request(url.pathname+url.search)};
 const renameFolder=(folderId,name)=>request(ADMIN+"/folder-name-overrides",{method:"PUT",body:JSON.stringify({folder_id:folderId,name})});
+const getSystemInfo=()=>request(API+"/system");
 const api={
  version:VERSION,namespace:"DUFS",displayFolderName,sortFolders,flatten,findFolder,
- loadTaxonomy,loadOverrides,loadFolderTree,browse,renameFolder,
+ loadTaxonomy,loadOverrides,loadFolderTree,browse,renameFolder,getSystemInfo,
  endpoints:Object.freeze({public:API,admin:ADMIN,taxonomy:TAXONOMY}),
  compatibility:Object.freeze({legacyNamespace:"DUMC",legacyApiSupported:true,legacyDatabaseSchema:"dumc_*"})
 };
