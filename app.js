@@ -71,7 +71,7 @@ function setVisualEditor(user){
  const isOwner=Boolean(user&&user.role==="owner");
  toggle.hidden=Boolean(new URLSearchParams(location.search).has("builderPreview"))||!isOwner;
  toggle.dataset.owner=isOwner?"true":"false";
- if(!isOwner)window.DULM?.setOwner(false);
+ window.DULM?.setOwner(isOwner);
 }
 function selectVisualElement(el){
  visualSelected=el;const id=visualSelector(el),saved=visualConfig[id]||{};$("#veText").value=el.textContent;$("#veFontSize").value=parseFloat(getComputedStyle(el).fontSize)||16;$("#veColor").value=saved.style?.color||"#183d5c";$("#veBackground").value=saved.style?.background||"#ffffff";$("#veShadowColor").value=saved.style?.shadow?.color||"#000000";$("#veShadowX").value=saved.style?.shadow?.x||0;$("#veShadowY").value=saved.style?.shadow?.y||0;$("#veShadowBlur").value=saved.style?.shadow?.blur||0;$("#veHelp").textContent="নির্বাচিত: "+el.tagName.toLowerCase()+(el.id?"#"+el.id:"");
