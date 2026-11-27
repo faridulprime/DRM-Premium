@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Sora:wght@600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>(function(){try{var mode=localStorage.getItem("drm-theme-mode");document.documentElement.dataset.theme=(mode==="light"||mode==="dark")?mode:"dark";}catch(e){document.documentElement.dataset.theme="dark";}})();</script>
 <link rel="stylesheet" href="styles.css?v=ducs-home-02">
 <link rel="stylesheet" href="theme.css?v=ducs-shell-04">
 <link rel="stylesheet" href="/assets/dufs/folder-system.css?v=dufs-04">
@@ -19,9 +20,11 @@
 
 <link rel="stylesheet" href="/assets/sizing/tokens.css?v=duss-08">
 <link rel="stylesheet" href="/assets/positioning/tokens.css?v=dups-04">
-<link rel="stylesheet" href="/assets/colors/index.css?v=ducs-tabs-04">
+<link rel="stylesheet" href="/assets/colors/index.css?v=ducs-tabs-05">
 <link rel="stylesheet" href="/assets/sizing/touch-targets.css?v=duss-08">
-  </head>
+  <link rel="stylesheet" href="/theme-mode.css?v=drm-theme-01">
+<script src="/theme-mode.js?v=drm-theme-01" defer></script>
+</head>
 <body class="home-page">
 <button id="visualEditorToggle" class="visual-editor-toggle" type="button" hidden aria-label="Folder Editing Mode" aria-pressed="false" title="Edit folder names">✎</button>
 <aside id="visualEditorPanel" class="visual-editor-panel" hidden aria-label="Visual Editor"><div class="ve-head"><strong>Website Editor</strong><button id="veClose" type="button" aria-label="বন্ধ করুন">×</button></div><p id="veHelp">সম্পাদনার জন্য পেজের কোনো লেখা নির্বাচন করুন।</p><label for="veText">Text</label><textarea id="veText" rows="3"></textarea><label for="veFontSize">Font size (px)</label><input id="veFontSize" type="number" min="8" max="96" value="16"><label for="veColor">Text color</label><input id="veColor" type="color" value="#183d5c"><label for="veBackground">Text background</label><input id="veBackground" type="color" value="#ffffff"><label for="veShadowColor">Text shadow color</label><input id="veShadowColor" type="color" value="#000000"><div class="ve-grid"><div><label for="veShadowX">Shadow X</label><input id="veShadowX" type="number" min="-20" max="20" value="0"></div><div><label for="veShadowY">Shadow Y</label><input id="veShadowY" type="number" min="-20" max="20" value="0"></div><div><label for="veShadowBlur">Blur</label><input id="veShadowBlur" type="number" min="0" max="30" value="0"></div></div><div class="ve-actions"><button id="veApply" type="button">Apply Preview</button><button id="veSave" type="button">Save Changes</button><button id="veReset" type="button">Reset Selected</button></div><p id="veStatus" role="status" aria-live="polite"></p></aside>
