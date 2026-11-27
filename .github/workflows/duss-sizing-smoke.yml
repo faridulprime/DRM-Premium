@@ -1,4 +1,4 @@
-name: DRM System Validation
+name: DUSS sizing token smoke test
 
 on:
   push:
@@ -20,16 +20,6 @@ on:
       - "profile.html"
       - "docs/DUSS-SPEC.md"
       - "scripts/test-duss-tokens.py"
-      - "assets/dufs/**"
-      - "assets/dumc/**"
-      - "assets/dulm/**"
-      - "functions/api/[[path]].js"
-      - "dufs-manager.js"
-      - "dumc-manager.js"
-      - "upload-studio.js"
-      - "scripts/test-dumc-migration.py"
-      - "docs/DUFS-SPEC.md"
-      - ".github/workflows/dufs-validation.yml"
       - ".github/workflows/duss-sizing-smoke.yml"
   pull_request:
     branches:
@@ -70,14 +60,3 @@ jobs:
 
       - name: Validate DUSS sizing tokens and consumers
         run: python scripts/test-duss-tokens.py
-
-      - name: Validate DUFS migration and canonical folder contract
-        run: python scripts/test-dumc-migration.py
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Validate DUFS and application JavaScript syntax
-        run: node --input-type=module --check < 'functions/api/[[path]].js' && node --check assets/dufs/folder-system.js && node --check assets/dufs/home.js && node --check assets/dulm/list-manager.js && node --check dufs-manager.js && node --check upload-studio.js && node --check app.js
