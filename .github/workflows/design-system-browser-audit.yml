@@ -38,6 +38,9 @@ on:
     branches:
       - main
     paths:
+      - "assets/dufs/**"
+      - "docs/DUME-SPEC.md"
+      - "docs/DUFS-SPEC.md"
       - "index.html"
       - "admin.html"
       - "live-users.html"
