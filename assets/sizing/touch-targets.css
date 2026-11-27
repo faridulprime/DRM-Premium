@@ -165,3 +165,24 @@
   min-inline-size:var(--duss-touch-target-min, 44px)!important;
   min-block-size:var(--duss-touch-target-min, 44px)!important;
 }
+
+/* Minimum target sizing for workspace form controls and compact actions. */
+.profile-field input,
+.profile-field select,
+.admin-main input:not([type="checkbox"]),
+.admin-main select,
+.upload-studio-page .panel input:not([type="checkbox"]),
+.upload-studio-page .panel select,
+.upload-studio-page .panel textarea,
+.upload-studio-page .panel button:not(.preview-thumb),
+.admin-main .row-actions button,
+.admin-main .overview-actions button,
+.admin-main .overview-text-action,
+.avatar-actions .upload-button,
+.avatar-actions .remove-avatar {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+.avatar-actions .upload-button,
+.avatar-actions .remove-avatar {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+}
