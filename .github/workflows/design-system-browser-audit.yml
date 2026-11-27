@@ -11,10 +11,6 @@ on:
       - "app.js"
       - "assets/dumc/**"
       - "assets/dufs/**"
-      - "_redirects"
-      - "movies.html"
-      - "app.js"
-      - "assets/dumc/**"
       - "admin.html"
       - "live-users.html"
       - "upload-studio.html"
@@ -40,10 +36,16 @@ on:
     branches:
       - main
     paths:
+      - "index.html"
+      - "_redirects"
+      - "movies.html"
+      - "app.js"
+      - "assets/dumc/**"
       - "assets/dufs/**"
       - "docs/DUME-SPEC.md"
       - "docs/DUFS-SPEC.md"
-      - "index.html"
+      - "theme-mode.css"
+      - "theme-mode.js"
       - "admin.html"
       - "live-users.html"
       - "upload-studio.html"
@@ -81,6 +83,13 @@ jobs:
 
       - name: Install browser test dependency
         run: python -m pip install --disable-pip-version-check -r requirements-browser.txt
+
+      - name: Remove unrelated blocked Microsoft package source
+        run: |
+          sudo sh -c 'for source in /etc/apt/sources.list.d/*; do
+            [ -f "$source" ] || continue
+            if grep -q "packages.microsoft.com" "$source"; then rm -f "$source"; fi
+          done'
 
       - name: Install Chromium
         run: python -m playwright install --with-deps chromium
