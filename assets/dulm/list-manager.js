@@ -93,7 +93,7 @@ async function saveRename(){
 }
 function start(){
  const host=root(),toggle=getToggle();if(!host)return;
- owner=toggle?.dataset.owner==="true";
+ owner=toggle?.dataset.owner==="true"||window.DUFSOwner===true;
  buildDialog();manage();
  if(toggle)toggle.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();toggleMode()});
  host.addEventListener("click",e=>{
