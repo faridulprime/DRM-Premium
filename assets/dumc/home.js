@@ -11,11 +11,11 @@ const defs=[
 {key:"year",title:"Year",rootId:"08_RELEASE_YEARS"}];
 let roots=[],activeFolder="",activeYear="",movies=[],offset=0,query="",loading=false,hasMore=false,searchTimer=null,activeMenu="",hoverTimer=null,closeTimer=null;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const folderName=s=>String(s??"").replace(/^\d+_/,"").replace(/_/g," ");
+const folderName=s=>{const name=String(s??"").replace(/^\d+_/,"").replace(/_/g," ");return name.trim().toLowerCase()==="dhallywood"?"Bangla Movies":name};
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
 const folderIcon='<svg class="dumc-folder-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.75 6.5A2.75 2.75 0 0 1 5.5 3.75h4.1l2.05 2.1h6.85A2.75 2.75 0 0 1 21.25 8.6v8.9a2.75 2.75 0 0 1-2.75 2.75h-13a2.75 2.75 0 0 1-2.75-2.75z" fill="currentColor"/><path d="M2.9 9h18.2" fill="none" stroke="rgba(20,16,10,.55)" stroke-width="1.25"/></svg>';
 function findNode(nodes,id){for(const n of nodes||[]){if(n.id===id)return n;const f=findNode(n.children,id);if(f)return f}return null}
-function years(){const root=findNode(roots,"08_RELEASE_YEARS"),out=[];const walk=nodes=>{for(const n of nodes||[]){const m=/^YEAR_(\d{4})$/.exec(n.id);if(m){const y=+m[1];if(y>=1950&&y<=2026)out.push({year:y,node:n})}else if(n.children?.length)walk(n.children)}};walk(root?.children||[]);return out.sort((a,b)=>b.year-a.year)}
+function years(){const root=findNode(roots,"08_RELEASE_YEARS"),out=[];const walk=nodes=>{for(const n of nodes||[]){const m=/^YEAR_(\d{4})$/.exec(n.id);if(m){const y=+m[1];if(y>=1950&&y<=2026)out.push({year:y,node:n})}else if(n.children?.length)walk(n.children)}};walk(root?.children||[]);return out.sort((a,b)=>a.year-b.year)}
 function groups(){return defs.map(d=>({...d,node:findNode(roots,d.rootId)})).filter(g=>g.node)}
 function items(g){
  if(g.key==="year")return years().map(x=>({id:x.node.id,name:String(x.year),year:x.year}));
@@ -24,7 +24,7 @@ function items(g){
   const allowed=new Set(["bangla dubbed","hindi dubbed","english dubbed","other dubbed"]);
   return children.filter(n=>allowed.has(folderName(n.name).trim().toLowerCase()));
  }
- return children;
+ return children.sort((a,b)=>folderName(a.name).localeCompare(folderName(b.name),undefined,{numeric:true,sensitivity:"base"}));
 }
 function count(){return groups().filter(g=>g.key!=="year").reduce((n,g)=>n+items(g).length,0)}
 function closeMenu(focus=false){clearTimeout(hoverTimer);clearTimeout(closeTimer);activeMenu="";renderCategories();if(focus)nav.querySelector("[data-category-menu]")?.focus()}
