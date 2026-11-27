@@ -10,6 +10,7 @@ on:
       - "movies.html"
       - "app.js"
       - "assets/dumc/**"
+      - "assets/dufs/**"
       - "_redirects"
       - "movies.html"
       - "app.js"
@@ -29,6 +30,8 @@ on:
       - "assets/positioning/**"
       - "assets/colors/**"
       - "scripts/test-design-system-browser.py"
+      - "docs/DUME-SPEC.md"
+      - "docs/DUFS-SPEC.md"
       - "requirements-browser.txt"
       - ".github/workflows/design-system-browser-audit.yml"
   pull_request:
