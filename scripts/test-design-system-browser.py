@@ -1703,215 +1703,213 @@ def inspect_live_overlay_interactions(browser, base_url):
     finally:
         context.close()
 
-def inspect_dumc_movie_directory(browser, base_url):
-    """Exercise the six category columns, DUSB scrollbars, Year list, and filters."""
-    context = browser.new_context(
-        viewport={"width": 1440, "height": 900},
-        locale="bn-BD",
-        reduced_motion="reduce",
-    )
-    page = context.new_page()
-    try:
-        page.route("https://**/*", lambda route: route.abort())
-        page.route(
-            "**/api/dumc/browse*",
-            lambda route: route.fulfill(
-                status=200,
-                content_type="application/json",
-                body='{"system":"DUMC","folders":[],"movies":[]}',
-            ),
-        )
-        page.goto(base_url + "/", wait_until="load", timeout=30000)
-        page.wait_for_selector(
-            '#dumcHomeCategories [data-category-folder="INDUSTRY_TELUGU_CINEMA"]',
-            timeout=10000,
-        )
+def inspect_dufs_dropdown_lifecycle(browser, base_url):
+    """Exercise all seven DUFS category dropdowns and their DUME lifecycle."""
+    scenarios = [
+        ("desktop-normal", 1440, 900, False),
+        ("mobile-normal", 390, 844, False),
+        ("mobile-reduced", 390, 844, True),
+    ]
+    keys = [
+        "all-movies", "dubbed-movies", "country", "collections",
+        "genre", "subtitles", "year",
+    ]
 
-        expected_titles = [
-            "All Movies", "Dubbed Movies", "Country",
-            "Collections", "Genre", "Subtitles", "Year",
-        ]
-        titles = page.locator(
-            ".dumc-category-panel .dumc-directory-panel-head h3, "
-            ".dumc-year-directory-panel .dumc-directory-panel-head h3"
-        ).all_inner_texts()
-        if titles != expected_titles:
-            fail(f"homepage/DUMC: expected seven directory headings {expected_titles}, found {titles}")
-
-        columns = page.locator(".dumc-directory-layout").evaluate(
-            "(el) => getComputedStyle(el).gridTemplateColumns.split(' ').length"
+    for scenario, width, height, reduced_motion in scenarios:
+        context = browser.new_context(
+            viewport={"width": width, "height": height},
+            locale="bn-BD",
+            is_mobile=width <= 760,
+            has_touch=width <= 760,
+            reduced_motion="reduce" if reduced_motion else "no-preference",
         )
-        if columns != 7:
-            fail(f"homepage/DUMC: desktop directory must have seven columns ({columns} found)")
-        if page.locator(".dumc-category-panel").count() != 6:
-            fail("homepage/DUMC: exactly six category lists must be rendered")
-        if page.locator(".dumc-year-directory-panel").count() != 1:
-            fail("homepage/DUMC: exactly one Year list must be rendered")
-
-        expected_lists = {
-            "all-movies": ("INDUSTRY_DHALLYWOOD", "INDUSTRY_TELUGU_CINEMA"),
-            "dubbed-movies": ("DUB_BANGLA_DUBBED", "DUB_OTHER_DUBBED"),
-            "country": ("COUNTRY_BANGLADESH", "COUNTRY_OTHER_COUNTRIES"),
-            "collections": ("COLLECTION_MOVIE_FRANCHISES", "COLLECTION_DRM_EDITOR_PICKS"),
-            "genre": ("GENRE_ACTION", "GENRE_MUSIC"),
-            "subtitles": ("SUBTITLE_BANGLA", "SUBTITLE_OTHER_SUBTITLES"),
-        }
-        for key, (first_id, last_id) in expected_lists.items():
-            panel = page.locator(f'[data-category-list="{key}"]')
-            if panel.count() != 1:
-                fail(f"homepage/DUMC: {key} list is missing or duplicated")
-            if panel.locator("[data-category-folder]").count() < 2:
-                fail(f"homepage/DUMC: {key} list does not contain its folder entries")
-            if panel.locator(f'[data-category-folder="{first_id}"]').count() != 1:
-                fail(f"homepage/DUMC: {key} list is missing {first_id}")
-            if panel.locator(f'[data-category-folder="{last_id}"]').count() != 1:
-                fail(f"homepage/DUMC: {key} list is missing {last_id}")
-            direction = panel.evaluate("(el) => getComputedStyle(el).direction")
-            overflow_y = panel.evaluate("(el) => getComputedStyle(el).overflowY")
-            if direction != "ltr" or overflow_y not in ("auto", "scroll"):
-                fail(f"homepage/DUMC: {key} list must use a right-side vertical scroll area")
-            if panel.evaluate("(el) => getComputedStyle(el).overscrollBehaviorY") != "auto":
-                fail(f"homepage/DUMC: {key} list must hand off wheel scrolling to the main page at its boundaries")
-            rail = page.locator(f'[data-dusb-rail="{key}"]')
-            if rail.count() != 1 or rail.locator(".dusb-thumb").count() != 1:
-                fail(f"homepage/DUMC: {key} list is missing its DUSB overlay thumb")
-            if rail.locator(".dusb-thumb").evaluate("(el) => getComputedStyle(el).backgroundColor") != "rgb(59, 130, 246)":
-                fail(f"homepage/DUMC: {key} list is missing the shared blue DUSB thumb")
-            area = panel.bounding_box()
-            rail_box = rail.bounding_box()
-            if rail_box is None or area is None:
-                fail(f"homepage/DUMC: {key} scrollbar geometry is unavailable")
-            list_boxes = panel.locator(".dumc-nav-item").evaluate_all(
-                "(els) => els.map(el => { const r=el.getBoundingClientRect(); return {right:r.right, width:r.width}; })"
+        page = context.new_page()
+        try:
+            page.route("https://**/*", lambda route: route.abort())
+            page.route(
+                "**/api/dufs/folder-name-overrides",
+                lambda route: route.fulfill(
+                    status=200,
+                    content_type="application/json",
+                    body='{"ok":true,"overrides":{}}',
+                ),
             )
-            if not list_boxes or max(item["right"] for item in list_boxes) > rail_box["x"] - 5:
-                fail(f"homepage/DUMC: {key} folder row area extends underneath or beyond its scrollbar")
-            gap = round(rail_box["x"] - (area["x"] + area["width"]))
-            if abs(gap - 8) > 1:
-                fail(f"homepage/DUMC: {key} scrollbar must sit immediately after its fit-to-content list ({gap}px gap)")
+            page.route(
+                "**/api/dufs/browse*",
+                lambda route: route.fulfill(
+                    status=200,
+                    content_type="application/json",
+                    body='{"system":"DUFS","folders":[],"movies":[]}',
+                ),
+            )
+            page.goto(base_url + "/", wait_until="load", timeout=30000)
+            page.wait_for_selector("#dumcHomeCategories .dufn-tab", timeout=10000)
+            page.wait_for_function(
+                "() => document.querySelectorAll('#dumcHomeCategories .dufn-tab').length === 7"
+            )
+            config = page.evaluate("() => window.DRMMotion?.config || null")
+            if not config:
+                fail(f"homepage/DUFS/{scenario}: DUME controller did not load")
+                continue
+            if bool(config["reducedMotion"]) != reduced_motion:
+                fail(f"homepage/DUFS/{scenario}: reduced-motion preference was not reflected by DUME")
 
-        all_movies_text = page.locator('[data-category-list="all-movies"]').inner_text()
-        if "Dhallywood" not in all_movies_text or "Telugu Cinema" not in all_movies_text:
-            fail("homepage/DUMC: Film Industry folders were not moved under All Movies")
-        if page.get_by_text("Film Industry", exact=True).count() != 0:
-            fail("homepage/DUMC: the separate Film Industry heading should be removed")
+            for key in keys:
+                tab = page.locator(f'[data-category-menu="{key}"]')
+                panel = page.locator(f"#dufnFolderPanel-{key}")
+                if tab.count() != 1 or panel.count() != 1:
+                    fail(f"homepage/DUFS/{scenario}: {key} dropdown is missing or duplicated")
+                    continue
+                if tab.get_attribute("aria-expanded") != "false" or not panel.evaluate("(el) => el.hidden"):
+                    fail(f"homepage/DUFS/{scenario}: {key} dropdown must start closed")
 
-        year_buttons = page.locator('#dumcHomeSubcategories [data-year]')
-        rendered_years = [int(value) for value in year_buttons.evaluate_all(
-            "(els) => els.map(el => el.dataset.year)"
-        )]
-        if rendered_years != list(range(2026, 1949, -1)):
-            fail(f"homepage/DUMC: Year list must contain 2026 through 1950 ({len(rendered_years)} found)")
-        year_panel = page.locator("#dumcHomeSubcategories")
-        if year_panel.evaluate("(el) => getComputedStyle(el).overflowY") not in ("auto", "scroll"):
-            fail("homepage/DUMC: Year list must use DUSB vertical scrolling")
-        if year_panel.evaluate("(el) => getComputedStyle(el).overscrollBehaviorY") != "auto":
-            fail("homepage/DUMC: Year list must hand off wheel scrolling to the main page at its boundaries")
-        year_rail = page.locator('[data-dusb-rail="year"]')
-        if year_rail.locator(".dusb-thumb").evaluate("(el) => getComputedStyle(el).backgroundColor") != "rgb(59, 130, 246)":
-            fail("homepage/DUMC: Year list must use the same blue DUSB scrollbar")
-        year_area = year_panel.bounding_box()
-        year_rail_box = year_rail.bounding_box()
-        year_items = year_panel.locator(".dumc-nav-item").evaluate_all(
-            "(els) => els.map(el => el.getBoundingClientRect().right)"
-        )
-        if not year_items or max(year_items) > year_rail_box["x"] - 5:
-            fail("homepage/DUMC: Year folder row area extends underneath or beyond its scrollbar")
-        year_gap = round(year_rail_box["x"] - (year_area["x"] + year_area["width"]))
-        if abs(year_gap - 8) > 1:
-            fail(f"homepage/DUMC: Year scrollbar must sit immediately after its fit-to-content list ({year_gap}px gap)")
+                if width > 760:
+                    tab.hover()
+                    page.wait_for_timeout(80)
+                    if tab.get_attribute("aria-expanded") != "false":
+                        fail(f"homepage/DUFS/{scenario}: hovering {key} must not open its dropdown")
 
-        industry = page.locator('[data-category-folder="INDUSTRY_TELUGU_CINEMA"]')
-        if industry.locator("svg.dumc-folder-icon").count() != 1:
-            fail("homepage/DUMC: folder icon is missing from All Movies entries")
-        style = industry.evaluate(
-            "(el) => ({background: getComputedStyle(el).backgroundColor, shadow: getComputedStyle(el).textShadow})"
-        )
-        if style["background"] not in ("rgba(0, 0, 0, 0)", "transparent") or style["shadow"] == "none":
-            fail(f"homepage/DUMC: folder entry readability styling regressed ({style})")
+                # First click opens; second click on the same category closes.
+                tab.click()
+                page.wait_for_function(
+                    """({key}) => {
+                      const button = document.querySelector('[data-category-menu="' + key + '"]');
+                      const panel = document.querySelector("#dufnFolderPanel-" + key);
+                      return button?.getAttribute("aria-expanded") === "true"
+                        && panel && !panel.hidden
+                        && panel.getAttribute("aria-hidden") === "false"
+                        && !panel.inert;
+                    }""",
+                    arg={"key": key},
+                    timeout=5000,
+                )
+                opening = panel.evaluate(
+                    """el => ({
+                      running: el.getAnimations().filter(a => a.playState === "running").map(a => {
+                        const timing = a.effect.getTiming();
+                        return {duration: timing.duration, easing: timing.easing};
+                      }),
+                      hidden: el.hidden,
+                      ariaHidden: el.getAttribute("aria-hidden"),
+                      inert: el.inert
+                    })"""
+                )
+                if reduced_motion:
+                    if opening["running"]:
+                        fail(f"homepage/DUFS/{scenario}: {key} animated despite reduced-motion preference")
+                else:
+                    if not opening["running"]:
+                        fail(f"homepage/DUFS/{scenario}: {key} did not use the DUME opening animation")
+                    for timing in opening["running"]:
+                        if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
+                            fail(f"homepage/DUFS/{scenario}: {key} opening duration does not match the DUME token")
+                        if timing["easing"] != config["dropdownEasing"]:
+                            fail(f"homepage/DUFS/{scenario}: {key} opening easing does not match the DUME token")
+                    page.wait_for_timeout(float(config["dropdownDuration"]) + 30)
 
-        with page.expect_request(
-            lambda request: "/api/dumc/browse?" in request.url
-            and "folder_id=INDUSTRY_TELUGU_CINEMA" in request.url,
-            timeout=5000,
-        ) as category_request:
-            industry.click()
-        if "year=" in category_request.value.url:
-            fail("homepage/DUMC: selecting a category unexpectedly retained a previous year")
+                tab.click()
+                page.wait_for_function(
+                    """({key}) => document.querySelector('[data-category-menu="' + key + '"]')
+                      ?.getAttribute("aria-expanded") === "false" """,
+                    arg={"key": key},
+                    timeout=5000,
+                )
+                closing = panel.evaluate(
+                    """el => ({
+                      running: el.getAnimations().filter(a => a.playState === "running").map(a => {
+                        const timing = a.effect.getTiming();
+                        return {duration: timing.duration, easing: timing.easing};
+                      }),
+                      hidden: el.hidden,
+                      ariaHidden: el.getAttribute("aria-hidden"),
+                      inert: el.inert
+                    })"""
+                )
+                if reduced_motion:
+                    if not closing["hidden"] or closing["running"]:
+                        fail(f"homepage/DUFS/{scenario}: {key} did not close immediately under reduced motion")
+                else:
+                    if closing["hidden"] or closing["ariaHidden"] != "true" or not closing["inert"]:
+                        fail(f"homepage/DUFS/{scenario}: {key} did not remain visible-but-inert during its exit animation")
+                    if not closing["running"]:
+                        fail(f"homepage/DUFS/{scenario}: {key} did not use the DUME closing animation")
+                    for timing in closing["running"]:
+                        if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
+                            fail(f"homepage/DUFS/{scenario}: {key} closing duration differs from opening/DUME token")
+                        if timing["easing"] != config["dropdownEasing"]:
+                            fail(f"homepage/DUFS/{scenario}: {key} closing easing differs from opening/DUME token")
 
-        year = page.locator('[data-year="2018"]')
-        with page.expect_request(
-            lambda request: "/api/dumc/browse?" in request.url
-            and "folder_id=INDUSTRY_TELUGU_CINEMA" in request.url
-            and "year=2018" in request.url,
-            timeout=5000,
-        ) as year_request:
-            year.click()
-        combined_url = year_request.value.url
-        if "folder_id=INDUSTRY_TELUGU_CINEMA" not in combined_url or "year=2018" not in combined_url:
-            fail("homepage/DUMC: Year selection did not preserve the selected All Movies folder")
-        if page.locator("#dumcHomeBreadcrumb, #dumcHomeTitle, .dumc-home-intro").count() != 0:
-            fail("homepage/DUMC: intro title, description and breadcrumb must not separate the tab bar from the directory")
-        count = page.locator(".dumc-year-directory-panel #dumcHomeCount")
-        if count.count() != 1 or "folders" not in count.inner_text():
-            fail("homepage/DUMC: folder/movie count must appear beside the Year heading")
-        year_header = page.locator(".dumc-year-directory-panel .dumc-directory-panel-head")
-        if year_header.evaluate("(el) => getComputedStyle(el).justifyContent") != "space-between":
-            fail("homepage/DUMC: folder/movie count must be aligned to the right of the Year heading")
+                page.wait_for_function(
+                    "key => document.querySelector('#dufnFolderPanel-' + key)?.hidden === true",
+                    arg=key,
+                    timeout=3000,
+                )
+                if tab.get_attribute("aria-expanded") != "false":
+                    fail(f"homepage/DUFS/{scenario}: {key} ARIA expanded state remained open after closing")
 
-        movies_link = page.locator('#categoryTabs a[data-category="__movies__"]')
-        if movies_link.count() != 1 or movies_link.get_attribute("href") != "/movies":
-            fail("homepage/navigation: Movies must link to the dedicated /movies page")
-        if movies_link.get_attribute("target") is not None:
-            fail("homepage/navigation: Movies must open in the current tab")
-        movies_link.hover()
-        if movies_link.evaluate("(el) => getComputedStyle(el, '::after').display") != "none":
-            fail("homepage/navigation: Movies hover underline should be hidden on homepage")
-        with page.expect_navigation(timeout=10000):
-            movies_link.click()
-        if not page.url.rstrip("/").endswith("/movies"):
-            fail(f"homepage/navigation: Movies did not navigate to /movies ({page.url})")
-        page.wait_for_selector("body.movies-route #movies", timeout=10000)
-        nav_bottom = page.locator("#categoryTabs").evaluate("(el) => el.getBoundingClientRect().bottom")
-        directory_top = page.locator("#dumcDirectoryLayout").evaluate("(el) => el.getBoundingClientRect().top")
-        if directory_top - nav_bottom > 12:
-            fail(f"movies route: directory tab bar is not directly below Universal Tab Bar (gap {directory_top - nav_bottom:.1f}px)")
+            # Opening another category closes the prior one with the same transition.
+            first = page.locator('[data-category-menu="all-movies"]')
+            second = page.locator('[data-category-menu="genre"]')
+            first.click()
+            page.wait_for_function(
+                "() => document.querySelector('#dufnFolderPanel-all-movies')?.hidden === false"
+            )
+            second.click()
+            page.wait_for_function(
+                "() => document.querySelector('[data-category-menu=genre]')?.getAttribute('aria-expanded') === 'true'"
+            )
+            if not reduced_motion:
+                page.wait_for_function(
+                    "() => document.querySelector('#dufnFolderPanel-all-movies')?.hidden === true",
+                    timeout=3000,
+                )
+            if second.get_attribute("aria-expanded") != "true":
+                fail(f"homepage/DUFS/{scenario}: switching categories did not leave the new dropdown open")
+            second.click()
+            page.wait_for_function(
+                "() => document.querySelector('#dufnFolderPanel-genre')?.hidden === true",
+                timeout=3000,
+            )
 
-        # Real wheel input at the bottom/top of a scrollable list must chain to the page.
-        for selector, direction in [
-            ('[data-category-list="genre"]', 1),
-            ('#dumcHomeSubcategories', 1),
-        ]:
-            scroller = page.locator(selector)
-            scroller.evaluate("(el) => { el.scrollTop = el.scrollHeight; }")
-            page.evaluate("window.scrollTo(0, 0)")
-            before = page.evaluate("window.scrollY")
-            bounds = scroller.bounding_box()
-            page.mouse.move(bounds["x"] + bounds["width"] / 2, bounds["y"] + bounds["height"] / 2)
-            page.mouse.wheel(0, 420)
-            page.wait_for_timeout(120)
-            after_bottom = page.evaluate("window.scrollY")
-            if after_bottom <= before:
-                fail(f"movies route: page did not take over scrolling after {selector} reached its bottom")
-            scroller.evaluate("(el) => { el.scrollTop = 0; }")
-            page.evaluate("window.scrollTo(0, 300)")
-            before_top = page.evaluate("window.scrollY")
-            page.mouse.wheel(0, -420)
-            page.wait_for_timeout(120)
-            after_top = page.evaluate("window.scrollY")
-            if after_top >= before_top:
-                fail(f"movies route: page did not take over scrolling after {selector} reached its top")
-        if page.locator(".movies-route #home > #browse").is_visible():
-            fail("movies route: homepage Videos section should not appear on /movies")
-        movies_tab = page.locator('#categoryTabs a[data-category="__movies__"].active[aria-current="page"]')
-        if movies_tab.count() != 1:
-            fail("movies route: Movies tab should be visibly active on /movies")
-        if movies_tab.evaluate("(el) => getComputedStyle(el, '::after').display") != "none":
-            fail("movies route: Movies tab should not render the red underline")
-    except Exception as exc:
-        fail(f"homepage/DUMC seven-column DUSB directory: {type(exc).__name__}: {exc}")
-    finally:
-        context.close()
+            # Rapid open-close-open must cancel stale close completion callbacks.
+            rapid = page.locator('[data-category-menu="country"]')
+            rapid.dispatch_event("click")
+            rapid.dispatch_event("click")
+            rapid.dispatch_event("click")
+            page.wait_for_function(
+                "() => document.querySelector('[data-category-menu=country]')?.getAttribute('aria-expanded') === 'true' && !document.querySelector('#dufnFolderPanel-country').hidden"
+            )
+            if not reduced_motion:
+                page.wait_for_timeout(float(config["dropdownDuration"]) + 40)
+            if rapid.get_attribute("aria-expanded") != "true" or panel.evaluate("(el) => el.hidden"):
+                fail(f"homepage/DUFS/{scenario}: stale close animation hid a rapidly reopened dropdown")
+            rapid.dispatch_event("click")
+            page.wait_for_function(
+                "() => document.querySelector('#dufnFolderPanel-country')?.hidden === true",
+                timeout=3000,
+            )
+
+            # Explicit close, outside click and Escape all use the shared DUME exit.
+            close_tab = page.locator('[data-category-menu="subtitles"]')
+            close_tab.click()
+            page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-subtitles').hidden")
+            page.locator('#dufnFolderPanel-subtitles [data-close-menu]').click()
+            page.wait_for_function("() => document.querySelector('#dufnFolderPanel-subtitles').hidden")
+
+            close_tab.click()
+            page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-subtitles').hidden")
+            page.locator("header").click(position={"x": 12, "y": 12})
+            page.wait_for_function("() => document.querySelector('#dufnFolderPanel-subtitles').hidden")
+
+            close_tab.click()
+            page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-subtitles').hidden")
+            page.keyboard.press("Escape")
+            page.wait_for_function("() => document.querySelector('#dufnFolderPanel-subtitles').hidden")
+        except Exception as exc:
+            fail(f"homepage/DUFS/{scenario}: dropdown lifecycle failed: {type(exc).__name__}: {exc}")
+        finally:
+            context.close()
+
 
 
 def main() -> int:
@@ -1922,7 +1920,7 @@ def main() -> int:
             inspect_live_overlay_lifecycle_source()
             browser = playwright.chromium.launch(headless=True)
             inspect_live_overlay_interactions(browser, base_url)
-            inspect_dumc_movie_directory(browser, base_url)
+            inspect_dufs_dropdown_lifecycle(browser, base_url)
             checks += 2
             for name, config in PAGES.items():
                 route = config[0]
@@ -1957,9 +1955,9 @@ def main() -> int:
         return 1
 
     print(
-        f"PASS: {checks - 1} page/viewport checks across {len(PAGES)} pages plus 1 dynamic Live Users overlay interaction suite and 1 DUMC Category -> Year navigation suite; "
+        f"PASS: {checks - 1} page/viewport checks across {len(PAGES)} pages plus 1 dynamic Live Users overlay interaction suite and 1 DUFS dropdown lifecycle suite; "
         "DUCS contrast samples; DUSS/DUPS/DUCS token loading; keyboard focus; "
-        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, mobile-to-desktop resize cleanup, Live Users shared-overlay state guards and dynamic drawer/modal/native-dialog lifecycle, close-animation scroll-lock retention, restriction-to-drawer hand-off, fixed-overlay containing-block ancestry, and DUMC Category + Year combined filtering."
+        "DUME normal/reduced-motion drawer lifecycle, rapid-toggle recovery, 760/761px breakpoint, mobile-to-desktop resize cleanup, Live Users shared-overlay state guards and dynamic drawer/modal/native-dialog lifecycle, close-animation scroll-lock retention, restriction-to-drawer hand-off, fixed-overlay containing-block ancestry, and DUFS click-toggle, symmetric open/close animation, rapid-toggle cancellation, outside-click/Escape, seven-category consistency and reduced-motion behavior."
     )
     print(
         "LIMITATION: 720px is a 200%-zoom layout-width proxy, not native browser zoom. "
