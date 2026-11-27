@@ -81,8 +81,8 @@
     </header>
     <div class="live-restrictions-content">
       <div class="live-restrictions-tabs" role="tablist" aria-label="Restricted account type">
-        <button type="button" class="live-restriction-tab is-active" data-restriction-view="ban" role="tab" aria-selected="true">Banned <span id="liveBannedCount">0</span></button>
-        <button type="button" class="live-restriction-tab" data-restriction-view="suspend" role="tab" aria-selected="false">Suspended <span id="liveSuspendedCount">0</span></button>
+        <button type="button" class="live-restriction-tab is-active" data-restriction-view="ban" role="tab" aria-selected="true"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6z"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span class="tab-label">Banned</span> <span id="liveBannedCount">0</span></button>
+        <button type="button" class="live-restriction-tab" data-restriction-view="suspend" role="tab" aria-selected="false"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 8v8M15 8v8"/></svg></span><span class="tab-label">Suspended</span> <span id="liveSuspendedCount">0</span></button>
       </div>
       <div id="liveRestrictionsList" class="live-restrictions-list" aria-live="polite"></div>
     </div>
