@@ -119,10 +119,10 @@
 
   /* Homepage editorial content surfaces. */
   --ducs-home-page-bg: #111216;
-  --ducs-home-page-border: #d9d1c7;
+  --ducs-home-page-border: rgba(255, 255, 255, .055);
   --ducs-home-status-border: #cfc7bd;
   --ducs-home-secondary-border: #77716a;
-  --ducs-home-header-bg: rgba(249, 245, 239, .97);
+  --ducs-home-header-bg: #111216;
   --ducs-home-hero-bg: #f8f3ec;
   --ducs-home-card-bg: #fffdfa;
   --ducs-home-card-border: #e4ddd4;
