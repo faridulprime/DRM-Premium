@@ -100,7 +100,7 @@ function renderDUMC(){
 }
 async function loadDUMC(){
  try{
-  const response=await fetch("/assets/dumc/taxonomy.json",{cache:"no-cache"});
+  const response=await fetch("/assets/dufs/taxonomy.json",{cache:"no-cache"});
   if(!response.ok)throw new Error("Taxonomy file unavailable ("+response.status+").");
   dumcTaxonomy=await response.json();
   dumcSelectedNode=dumcTaxonomy.id;
