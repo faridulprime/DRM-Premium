@@ -182,6 +182,9 @@
   --ducs-live-warning-border:#d1b06e;
   --ducs-live-warning-symbol-border:#d1b06e;
   --ducs-live-tab-active-text:#991b1b;
+  --ducs-live-tab-active-bg:#fce8e8;
+  --ducs-live-surface-active:#d5e0eb;
+  --ducs-live-restricted-row-hover-bg:#fce8e8;
   --ducs-live-tab-active-border:#d98a8a;
   --ducs-live-tab-active-count-bg:#fee2e2;
   --ducs-live-tab-active-count-text:#991b1b;
@@ -461,6 +464,8 @@ html[data-theme="light"] .live-restricted-status.suspend{background:#fff4df!impo
 html[data-theme="light"] .live-restriction-tab span[id^="live"]{background:#d5e0eb!important;color:#35465a!important}
 html[data-theme="light"] .live-restriction-tab.is-active span[id^="live"]{background:#fee2e2!important;color:#991b1b!important}
 html[data-theme="light"] .live-drawer-close{background:#edf2f7!important;color:#263445!important;border-color:#aebbc9!important}
+html[data-theme="light"] .live-drawer-action:hover{background:#dce5ee!important;border-color:#aebbc9!important;color:#172534!important}
+html[data-theme="light"] .live-restricted-user-row:hover{background:#fce8e8!important;border-color:#e5a3a3!important}
 html[data-theme="light"] .live-drawer-close:hover{background:#dce5ee!important;color:#172534!important;border-color:#8797a8!important}
 html[data-theme="light"] .live-activity-track{background:#d5e0eb!important}
 html[data-theme="light"] .live-activity-track i{background:linear-gradient(90deg,#64758a,#2563eb)!important}

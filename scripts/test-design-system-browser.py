@@ -1715,6 +1715,36 @@ def inspect_live_overlay_interactions(browser, base_url):
         )
         if page.locator("#liveUserDrawer").get_attribute("role") != "dialog" or page.locator("#liveUserDrawer").get_attribute("aria-modal") != "true" or page.locator("#liveUserDrawer").evaluate("(el) => el.inert"):
             fail("live-users/overlay-interaction: open account drawer is missing modal semantics or is inert")
+        page.locator("html").evaluate("(el) => { el.dataset.theme = 'light'; }")
+        live_drawer_pairs = page.evaluate(
+            """() => {
+              const drawer = document.querySelector("#liveUserDrawer");
+              const profile = drawer.querySelector(".live-drawer-profile");
+              const actions = [...drawer.querySelectorAll(".live-drawer-action")];
+              const pair = (foreground, background) => ({
+                foreground: getComputedStyle(foreground).color,
+                background: getComputedStyle(background).backgroundColor
+              });
+              const warning = actions.find(el => el.classList.contains("warning"));
+              const danger = actions.find(el => el.classList.contains("danger"));
+              return [
+                ["Live Users drawer title", pair(drawer.querySelector("h2"), drawer)],
+                ["Live Users drawer profile name", pair(profile.querySelector("strong"), profile)],
+                ["Live Users drawer account email", pair(profile.querySelector("small"), profile)],
+                ["Live Users drawer metadata chip", pair(drawer.querySelector(".live-drawer-chip"), drawer)],
+                ["Live Users standard action", pair(actions.find(el => !el.classList.contains("warning") && !el.classList.contains("danger")), actions.find(el => !el.classList.contains("warning") && !el.classList.contains("danger")))],
+                ["Live Users warning action", warning ? pair(warning, warning) : null],
+                ["Live Users danger action", danger ? pair(danger, danger) : null]
+              ];
+            }"""
+        )
+        for label, pair in live_drawer_pairs:
+            if pair is None:
+                continue
+            fg_rgb, bg_rgb = parse_color(pair["foreground"]), parse_color(pair["background"])
+            if fg_rgb is None or bg_rgb is None or contrast_ratio(fg_rgb, bg_rgb) + 0.01 < 4.5:
+                ratio = contrast_ratio(fg_rgb, bg_rgb) if fg_rgb and bg_rgb else 0
+                fail(f"live-users/overlay-interaction: Light Mode {label} contrast {ratio:.2f}:1 is below 4.5:1 ({pair})")
         if page.evaluate("() => document.activeElement?.id") != "liveDrawerClose":
             fail("live-users/overlay-interaction: opening the account drawer did not move focus to its close control")
         page.locator("#liveDrawerBody button").last.focus()
@@ -1760,6 +1790,30 @@ def inspect_live_overlay_interactions(browser, base_url):
         )
         if page.locator("#liveRestrictionsModal").get_attribute("role") != "dialog" or page.locator("#liveRestrictionsModal").get_attribute("aria-modal") != "true" or page.locator("#liveRestrictionsModal").evaluate("(el) => el.inert"):
             fail("live-users/overlay-interaction: open Block List window is missing modal semantics or is inert")
+        banned_row = page.locator('.live-restricted-user-row[data-restricted-user-id="overlay-test-banned"]')
+        if not banned_row.count():
+            fail("live-users/overlay-interaction: expected banned fixture row was not rendered")
+        else:
+            restricted_pairs = banned_row.evaluate(
+                """row => {
+                  const copy = row.querySelector(".live-restricted-copy");
+                  const status = row.querySelector(".live-restricted-status");
+                  const pair = (foreground, background) => ({
+                    foreground: getComputedStyle(foreground).color,
+                    background: getComputedStyle(background).backgroundColor
+                  });
+                  return [
+                    ["Block List username", pair(copy.querySelector("strong"), row)],
+                    ["Block List email metadata", pair(copy.querySelector("small"), row)],
+                    ["Block List restriction status", pair(status, status)]
+                  ];
+                }"""
+            )
+            for label, pair in restricted_pairs:
+                fg_rgb, bg_rgb = parse_color(pair["foreground"]), parse_color(pair["background"])
+                if fg_rgb is None or bg_rgb is None or contrast_ratio(fg_rgb, bg_rgb) + 0.01 < 4.5:
+                    ratio = contrast_ratio(fg_rgb, bg_rgb) if fg_rgb and bg_rgb else 0
+                    fail(f"live-users/overlay-interaction: Light Mode {label} contrast {ratio:.2f}:1 is below 4.5:1 ({pair})")
         if page.evaluate("() => document.activeElement?.id") != "liveRestrictionsClose":
             fail("live-users/overlay-interaction: opening Block List did not move focus to its close control")
         page.locator("#liveBannedTab").focus()
