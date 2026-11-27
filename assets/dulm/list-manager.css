@@ -47,3 +47,10 @@
  .dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{width:calc(100vw - 20px)!important;min-width:0!important}
  .dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{width:min(172px,calc(100vw - 20px))!important;min-width:0!important}
 }
+
+/* DULM compact count-only header and muted upcoming year. */
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-panel-head{display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:38px!important;padding:9px 10px!important}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-panel-count{font-size:12px!important;font-weight:650!important;line-height:1.2!important;color:#e5e7eb!important;letter-spacing:.01em}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-future-year{opacity:.38!important}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-future-year:hover,.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-future-year:focus-visible{opacity:.58!important}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-future-year.active{opacity:.65!important}
