@@ -1,5 +1,6 @@
 (()=>{
 "use strict";
+function displayDumcFolderName(value){const clean=String(value??"").replaceAll("_"," ").trim();const label=clean.split(" ").map(part=>part.toLowerCase()==="cinema"?"Movies":part).join(" ");return label.toLowerCase()==="dhallywood"?"Bangla Movies":label}
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const api=async(path,opts={})=>{const r=await fetch("/api/"+path,{...opts,credentials:"same-origin",headers:{"Content-Type":"application/json",...(opts.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Request failed ("+r.status+")");return d;};
 let root=null,live=false,selected="DUMC",movies=[],current=null;
@@ -13,13 +14,13 @@ function renderTree(){
   const children=(n.children||[]).map(c=>nodeHTML(c,depth+1)).filter(Boolean).join("");
   if(q&&!(n.name+" "+(n.description||"")+" "+n.id).toLowerCase().includes(q)&&!children)return "";
   const has=Boolean(n.children?.length),is=n.id===selected;
-  const label='<span class="dumc-folder-glyph">'+(has?"▸":"•")+'</span><span class="dumc-node-copy"><strong>'+esc(n.name)+'</strong><small>'+esc(n.description||"")+'</small></span><span class="dumc-node-count">'+(Number(n.movie_count||0)||"")+'</span>';
+  const label='<span class="dumc-folder-glyph">'+(has?"▸":"•")+'</span><span class="dumc-node-copy"><strong>'+esc(displayDumcFolderName(n.name))+'</strong><small>'+esc(n.description||"")+'</small></span><span class="dumc-node-count">'+(Number(n.movie_count||0)||"")+'</span>';
   const summary='<'+(has?"summary":'button type="button')+'" class="dumc-node-summary'+(is?" is-selected":"")+'" data-dumc-id="'+esc(n.id)+'">'+label+(has?"</summary>":"</button>");
   return has?'<details class="dumc-tree-node" '+(depth===0||q?"open":"")+'>'+summary+'<div class="dumc-children">'+children+'</div></details>':'<div class="dumc-leaf">'+summary+'</div>';
  }
  $("#dumcTree").innerHTML=nodeHTML(root)||'<div class="empty-state">No matching folders found.</div>';
  $("#dumcStats").innerHTML='<span><strong>'+(root.children||[]).length+'</strong> top-level sections</span><span><strong>'+count(root)+'</strong> total folders</span><span><strong>'+flatten(root).reduce((n,x)=>n+Number(x.movie_count||0),0)+'</strong> movie-folder links</span>';
- const validParents=["02_LANGUAGE","03_FILM_INDUSTRY","06_COUNTRIES","04_DUBBED_MOVIES","05_GENRES","07_COLLECTIONS","09_SUBTITLES","10_ARTWORK","11_METADATA"];const opts='<option value="">Select DUMC folder…</option>'+flatten(root).filter(x=>validParents.includes(parentOf(x.id))).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · '+esc(x.id)+'</option>').join("");
+ const validParents=["02_LANGUAGE","03_FILM_INDUSTRY","06_COUNTRIES","04_DUBBED_MOVIES","05_GENRES","07_COLLECTIONS","09_SUBTITLES","10_ARTWORK","11_METADATA"];const opts='<option value="">Select DUMC folder…</option>'+flatten(root).filter(x=>validParents.includes(parentOf(x.id))).map(x=>'<option value="'+esc(x.id)+'">'+esc(displayDumcFolderName(x.name))+' · '+esc(x.id)+'</option>').join("");
  if($("#folderSelect")){$("#folderSelect").innerHTML=opts;$("#folderSelect").disabled=!live;}
  if($("#newFolder")){$("#newFolder").disabled=!live;$("#newFolder").title=live?"Create a custom DUMC folder":"Apply migration 0009 to enable persistent folders";}
  if($("#dumcAddFolder"))$("#dumcAddFolder").disabled=!live;
@@ -33,7 +34,7 @@ function addEditor(){
  if(!section.dataset.bound){section.dataset.bound="1";$("#dumcMovieSelect").addEventListener("change",()=>{current=null;loadMovie().catch(e=>status(e.message,true));});$("#dumcSave").addEventListener("click",saveMovie);$("#dumcAddAudio").addEventListener("click",()=>registerAsset("audio"));$("#dumcAddSubtitle").addEventListener("click",()=>registerAsset("subtitle"));}
  const style=document.createElement("style");style.textContent='.dumc-editor{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:20px;display:grid;gap:13px}.dumc-editor h3{margin:0 0 5px}.dumc-editor p{color:var(--muted);font-size:12px}.dumc-editor label{display:block;color:var(--muted);font-size:12px;margin:5px 0}.dumc-editor select,.dumc-editor input{width:100%;min-height:40px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);color:var(--text)}.dumc-editor select[multiple]{min-height:118px}.dumc-editor-grid,.dumc-assets-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.dumc-editor-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dumc-editor button{border:1px solid var(--line);border-radius:9px;background:var(--panel2);color:var(--text);padding:10px 14px}.dumc-assets-grid>div{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}.dumc-assets-grid h4{margin:0;font-size:13px}.dumc-editor [data-error=true]{color:#ffabb7}@media(max-width:650px){.dumc-editor-grid,.dumc-assets-grid{grid-template-columns:1fr}}';document.head.append(style);
 }
-function fill(id,parent){const nodes=flatten(root).filter(n=>n.parent_id===parent||n.parentId===parent);$(id).innerHTML='<option value="">Not specified</option>'+nodes.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join("");}
+function fill(id,parent){const nodes=flatten(root).filter(n=>n.parent_id===parent||n.parentId===parent);$(id).innerHTML='<option value="">Not specified</option>'+nodes.map(n=>'<option value="'+esc(n.id)+'">'+esc(displayDumcFolderName(n.name))+'</option>').join("");}
 const values=id=>Array.from($(id).selectedOptions).map(o=>o.value).filter(Boolean);
 async function loadTree(){
  live=false;
