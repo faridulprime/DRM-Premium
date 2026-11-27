@@ -83,12 +83,12 @@ async function saveRename(){
  if(name===current.button.dataset.folderLabel){dialog.close();return}
  saveButton.disabled=true;saveButton.textContent="Saving…";status.textContent="Saving folder name…";
  try{
-  const response=await fetch("/api/admin/dumc/folder-name-overrides",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({folder_id:current.id,name})});
+  const response=await fetch("/api/admin/dufs/folder-name-overrides",{method:"PUT",headers:{"Content-Type":"application/json"},credentials:"same-origin",cache:"no-store",body:JSON.stringify({folder_id:current.id,name})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok||data.ok!==true)throw new Error(data.error||"Folder name সংরক্ষণ করা যায়নি।");
-  const overrides=window.DUMCFolderNameOverrides||{};
-  overrides[current.id]=data.name||name;window.DUMCFolderNameOverrides=overrides;
-  if(typeof window.DUMCRefresh==="function")window.DUMCRefresh();
+  const overrides=window.DUFSFolderNameOverrides||window.DUMCFolderNameOverrides||{};
+  overrides[current.id]=data.name||name;window.DUFSFolderNameOverrides=overrides;window.DUMCFolderNameOverrides=overrides;
+  if(typeof window.DUFSRefresh==="function")window.DUFSRefresh();else if(typeof window.DUMCRefresh==="function")window.DUMCRefresh();
   dialog.close();notify("Folder name successfully saved.");
  }catch(error){status.textContent=error?.message||"Save ব্যর্থ হয়েছে।";saveButton.disabled=false;saveButton.textContent="Save";}
 }
