@@ -43,6 +43,14 @@ function syncMenuState(animate=true){
   const isMarkedHidden=panel.getAttribute("aria-hidden")==="true";
   if(isOpen){
    if(button){
+    /* Measure the widest folder row only; the header must never set panel width. */
+    const wasHidden=panel.hidden;
+    if(wasHidden){panel.hidden=false;panel.style.visibility="hidden";}
+    const rows=[...panel.querySelectorAll(".dufn-folder")];
+    const widestRow=rows.reduce((max,row)=>Math.max(max,row.getBoundingClientRect().width),0);
+    const panelWidth=Math.ceil(widestRow+18);
+    panel.style.width=Math.min(panelWidth,Math.max(120,window.innerWidth-40))+"px";
+    if(wasHidden){panel.style.visibility="";panel.hidden=true;}
     const navRect=nav.getBoundingClientRect(),tabRect=button.getBoundingClientRect();
     const availableWidth=Math.max(0,nav.clientWidth-panel.offsetWidth);
     const tabOffset=tabRect.left-navRect.left;
