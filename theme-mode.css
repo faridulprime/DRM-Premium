@@ -169,6 +169,15 @@
   --ducs-live-status-danger:#991b1b;
   --ducs-live-status-danger-bg:#fee2e2;
   --ducs-live-status-danger-border:#e5a3a3;
+  --ducs-shell-role-owner-text:#6941a5;
+  --ducs-shell-role-owner-bg:#f1eafe;
+  --ducs-shell-role-owner-border:#b9a5da;
+  --ducs-shell-role-admin-text:#276749;
+  --ducs-shell-role-admin-bg:#e2f0e7;
+  --ducs-shell-role-admin-border:#9fc9ad;
+  --ducs-shell-role-member-text:#34465a;
+  --ducs-shell-role-member-bg:#edf2f7;
+  --ducs-shell-role-member-border:#aebbc9;
   --ducs-live-owner-text:#6941a5;
   --ducs-live-owner-bg:#f1eafe;
   --ducs-live-owner-border:#b9a5da;
