@@ -43,16 +43,21 @@ function syncMenuState(animate=true){
   const isMarkedHidden=panel.getAttribute("aria-hidden")==="true";
   if(isOpen){
    if(button){
-    /* Measure the widest folder row only; the header must never set panel width. */
+    /* One shared rule for every category: widest visible folder label + 20px. */
     const wasHidden=panel.hidden;
+    const previousVisibility=panel.style.visibility;
     if(wasHidden){panel.hidden=false;panel.style.visibility="hidden";}
-    const rows=[...panel.querySelectorAll(".dufn-folder")];
-    const widestRow=rows.reduce((max,row)=>Math.max(max,row.getBoundingClientRect().width),0);
-    const panelWidth=Math.ceil(widestRow+18);
-    panel.style.width=Math.min(panelWidth,Math.max(120,window.innerWidth-40))+"px";
-    if(wasHidden){panel.style.visibility="";panel.hidden=true;}
+    const panelRect=panel.getBoundingClientRect();
+    const labelRight=[...panel.querySelectorAll(".dufn-folder span")].reduce(
+     (max,label)=>Math.max(max,label.getBoundingClientRect().right),panelRect.left
+    );
+    const desiredWidth=Math.ceil(labelRight-panelRect.left+20);
+    const maxWidth=Math.max(120,Math.min(nav.clientWidth,window.innerWidth-40));
+    const panelWidth=Math.min(desiredWidth,maxWidth);
+    panel.style.width=panelWidth+"px";
+    if(wasHidden){panel.style.visibility=previousVisibility;panel.hidden=true;}
     const navRect=nav.getBoundingClientRect(),tabRect=button.getBoundingClientRect();
-    const availableWidth=Math.max(0,nav.clientWidth-panel.offsetWidth);
+    const availableWidth=Math.max(0,nav.clientWidth-panelWidth);
     const tabOffset=tabRect.left-navRect.left;
     panel.style.marginLeft=Math.max(0,Math.min(tabOffset,availableWidth))+"px";
    }
@@ -67,8 +72,7 @@ function syncMenuState(animate=true){
    panel.inert=true;
    panel.setAttribute("aria-hidden","true");
   }
-  // A visible panel already marked aria-hidden is midway through its DUME
-  // exit animation. Leave it intact; only reopening that panel may reverse it.
+  // Every category uses the same width rule; a closing panel remains untouched during its exit animation.
  }
 }
 function closeMenu(focus=false){
