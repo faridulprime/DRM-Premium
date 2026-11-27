@@ -162,7 +162,7 @@ def main() -> int:
     ):
         fail("Admin New Video action does not consume the 44px DUSS touch-target token")
     if not re.search(
-        r"\.home-page \.topbar \.account-controls #profileMenuToggle,\\s*\\.profile-drawer \.profile-drawer-close\\s*\\{[^}]*inline-size\\s*:\\s*var\\(--duss-touch-target-min\\s*,",
+        r"\.home-page \.topbar \.account-controls #profileMenuToggle,\s*\.profile-drawer \.profile-drawer-close\s*\{[^}]*inline-size\s*:\s*var\(--duss-touch-target-min\s*,",
         source_files["assets/sizing/touch-targets.css"],
         flags=re.DOTALL,
     ):

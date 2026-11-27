@@ -320,16 +320,16 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             if page.evaluate("() => document.activeElement?.id") != "profileDrawerClose":
                 fail(f"homepage/{viewport_name}: opening Profile Drawer did not move focus to its close control")
             if width <= 760:
-                items = page.locator("#profileDrawer a[href], #profileDrawer button:not([disabled])")
+                items = page.locator("#profileDrawer a[href]:visible, #profileDrawer button:not([disabled]):visible")
                 if items.count() >= 2:
                     items.first.focus()
                     page.keyboard.press("Shift+Tab")
-                    if page.evaluate("() => document.activeElement?.id") != "profileDrawerClose":
-                        fail(f"homepage/{viewport_name}: mobile Profile Drawer Shift+Tab did not wrap focus")
+                    if page.evaluate("() => document.activeElement?.id") != "profileDrawerView":
+                        fail(f"homepage/{viewport_name}: mobile Profile Drawer Shift+Tab did not wrap to the last visible action")
                     items.last.focus()
                     page.keyboard.press("Tab")
                     if page.evaluate("() => document.activeElement?.id") != "profileDrawerClose":
-                        fail(f"homepage/{viewport_name}: mobile Profile Drawer Tab did not wrap focus")
+                        fail(f"homepage/{viewport_name}: mobile Profile Drawer Tab did not wrap to the first visible action")
             page.locator("#profileDrawerClose").click()
             page.locator("#profileMenuToggle").click()
             page.wait_for_function("() => document.querySelector('#profileDrawer')?.classList.contains('is-open')", timeout=2500)
