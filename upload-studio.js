@@ -74,7 +74,7 @@ function dumcCount(node){return 1+(node.children||[]).reduce((n,c)=>n+dumcCount(
 function dumcFind(node,id){if(node.id===id)return node;for(const child of node.children||[]){const found=dumcFind(child,id);if(found)return found;}return null;}
 function dumcNodeHTML(node,depth=0,query=""){
  const children=(node.children||[]).map(child=>dumcNodeHTML(child,depth+1,query)).filter(Boolean).join("");
- const hay=(node.name+" "+(node.description||"")+" "+node.id).toLocaleLowerCase();
+ const hay=(displayDumcFolderName(node.name)+" "+(node.description||"")+" "+node.id).toLocaleLowerCase();
  const match=!query||hay.includes(query)||Boolean(children);
  if(!match)return "";
  const hasChildren=Boolean(node.children?.length);
