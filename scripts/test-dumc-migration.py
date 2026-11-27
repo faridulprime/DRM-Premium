@@ -55,7 +55,7 @@ class DumcMigrationTests(unittest.TestCase):
         self.assertIn('id="dumcHomeCategories"', html)
         self.assertIn("dufn-folder-grid", home)
         self.assertIn("async function loadTaxonomy()", home)
-        self.assertIn('x.id!=="ARCHIVED"', home)
+        self.assertIn('n.id!=="ARCHIVED"', home)
         self.assertIn('folderId==="ARCHIVED"', api)
         self.assertIn('u.searchParams.get("year")', api)
         self.assertIn('if(yearParam==="unknown")', api)
@@ -99,7 +99,6 @@ class DumcMigrationTests(unittest.TestCase):
         self.assertIn("DUFSLinkFolder(created.id", upload)
 
     def test_seed_matches_versioned_taxonomy(self):
-        dufs_taxonomy = None
         expected = []
         def walk(node, parent=None):
             expected.append((node["id"], parent))
