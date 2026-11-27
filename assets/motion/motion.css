@@ -1,4 +1,4 @@
-/* DRM-Premium Universal Motion Engine — shared drawer primitives.
+/* DRM Universal Motion System — shared drawer and dropdown primitives.
    State and timing are owned by /assets/motion/motion-controller.js. */
 :root{--dume-drawer-duration:700ms;--dume-drawer-opacity-duration:520ms;--dume-drawer-easing:cubic-bezier(.16,1,.3,1);--dume-backdrop-duration:240ms;--dume-dropdown-duration:220ms;--dume-dropdown-easing:cubic-bezier(.16,1,.3,1);--dume-dropdown-offset:8px;--dume-dropdown-scale:.985}
 @media(max-width:760px){
