@@ -55,3 +55,14 @@ Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration 
 - Public browsing uses `GET /api/dumc/browse`, which returns published movies only and supports recursive folder filtering, server-side search and pagination.
 - **Media policy:** movie/video files are never uploaded to this website, regardless of whether they are 50 MB, 100 MB or another size. Movie playback uses external video links. Only cover/poster images may be uploaded. Audio and subtitle references are HTTPS links only; DUMC APIs reject asset-key based media registration.
 - DUMC homepage integration is deployed to Cloudflare Pages Preview. Public year-folder navigation is served from the versioned static taxonomy; movie contents are returned by the read-only browse API using the Preview D1 binding.
+
+## DULM Owner folder rename — 2026-11-27
+
+- The floating Owner pencil on the homepage is repurposed as the Folder Editing Mode toggle; it no longer opens the legacy visual/site editor.
+- While Owner editing mode is enabled, each public DUMC folder item displays a compact inline pencil. Non-Owner accounts cannot enable the mode, and the write API independently enforces Owner role.
+- Rename uses a compact native dialog with one name field and Save/Cancel actions. Save validates the name, rejects duplicate sibling display names, writes a read-back-verified override, and refreshes the active list without changing the stable folder ID.
+- Overrides are stored in the existing D1 settings table under the key prefix dumc_folder_name_override:. No new schema or migration is required. Public read-only endpoint: GET /api/dumc/folder-name-overrides. Owner write endpoint: PUT /api/admin/dumc/folder-name-overrides.
+- DUMC public browsing, authenticated folder browsing, movie-assignment labels and the homepage read the override while retaining canonical taxonomy IDs. Internal override keys are excluded from the general public settings response.
+- The static taxonomy remains the source of canonical folder identity. The special 1956–1959 taxonomy entries, documented as absent from Preview D1 until migration 0010 is applied, can still receive a display-name override without running that migration.
+- Implemented only on feature/full-admin-panel. No D1 migration was executed, no live D1 write was made in this implementation session, and Production main was not changed.
+- Source-level JavaScript syntax checks and a disposable SQLite settings/query smoke test passed. The DUMC GitHub Actions workflow currently reports failure with zero jobs created; it has not provided a failing step/log, so CI validation remains unresolved. Live Cloudflare Pages/browser and authenticated D1 save verification remain outstanding.
