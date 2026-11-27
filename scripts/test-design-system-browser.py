@@ -1808,6 +1808,8 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                             fail(f"homepage/DUFS/{scenario}: {key} opening motion does not visibly travel through the DUME entrance frames")
                         if timing["frames"][0].get("opacity") not in ("0", 0) or timing["frames"][-1].get("opacity") not in ("1", 1):
                             fail(f"homepage/DUFS/{scenario}: {key} opening motion is missing its opacity transition")
+                        if "blur(2px)" not in timing["frames"][0].get("filter", "") or "blur(0px)" not in timing["frames"][-1].get("filter", ""):
+                            fail(f"homepage/DUFS/{scenario}: {key} opening motion is missing its DUME blur refinement")
                         if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
                             fail(f"homepage/DUFS/{scenario}: {key} opening easing does not match the DUME token")
                     page.wait_for_timeout(float(config["dropdownDuration"]) + 30)
