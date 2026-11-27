@@ -1804,12 +1804,11 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     for timing in opening["running"]:
                         if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
                             fail(f"homepage/DUFS/{scenario}: {key} opening duration does not match the DUME token")
-                        if len(timing["frames"]) < 2 or "22px" not in timing["frames"][0].get("transform", ""):
-                            fail(f"homepage/DUFS/{scenario}: {key} opening motion does not visibly travel through the DUME entrance frames")
-                        if timing["frames"][0].get("opacity") not in ("0", 0) or timing["frames"][-1].get("opacity") not in ("1", 1):
-                            fail(f"homepage/DUFS/{scenario}: {key} opening motion is missing its opacity transition")
-                        if "blur(2px)" not in timing["frames"][0].get("filter", "") or "blur(0px)" not in timing["frames"][-1].get("filter", ""):
-                            fail(f"homepage/DUFS/{scenario}: {key} opening motion is missing its DUME blur refinement")
+                        heights = [float(frame.get("height", "0px").replace("px", "")) for frame in timing["frames"]]
+                        if len(heights) < 2 or heights[0] > 1 or heights[-1] <= heights[0]:
+                            fail(f"homepage/DUFS/{scenario}: {key} opening did not expand the actual list area from 0px to its full height")
+                        if float(timing["duration"]) != 700 or float(config["dropdownDuration"]) != float(config["drawerDuration"]):
+                            fail(f"homepage/DUFS/{scenario}: {key} opening does not match the homepage 700ms DUME extended-area motion")
                         if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
                             fail(f"homepage/DUFS/{scenario}: {key} opening easing does not match the DUME token")
                     page.wait_for_timeout(float(config["dropdownDuration"]) + 30)
@@ -1842,10 +1841,11 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     if not closing["running"]:
                         fail(f"homepage/DUFS/{scenario}: {key} did not use the DUME closing animation")
                     for timing in closing["running"]:
-                        if len(timing["frames"]) < 2 or "22px" not in timing["frames"][-1].get("transform", ""):
-                            fail(f"homepage/DUFS/{scenario}: {key} closing motion does not reverse the DUME entrance path")
-                        if timing["frames"][0].get("opacity") not in ("1", 1) or timing["frames"][-1].get("opacity") not in ("0", 0):
-                            fail(f"homepage/DUFS/{scenario}: {key} closing motion is missing its opacity transition")
+                        heights = [float(frame.get("height", "0px").replace("px", "")) for frame in timing["frames"]]
+                        if len(heights) < 2 or heights[0] <= 0 or heights[-1] > 1:
+                            fail(f"homepage/DUFS/{scenario}: {key} closing did not collapse the actual list area back to 0px")
+                        if float(timing["duration"]) != 700:
+                            fail(f"homepage/DUFS/{scenario}: {key} closing does not match the homepage 700ms DUME extended-area motion")
                         if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
                             fail(f"homepage/DUFS/{scenario}: {key} closing duration differs from opening/DUME token")
                         if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
