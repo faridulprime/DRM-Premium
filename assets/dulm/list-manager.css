@@ -1,0 +1,40 @@
+/* DULM — DRM Universal List Manager. Scoped list surface and layout. */
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{
+ box-sizing:border-box!important;
+ background:#0F0F0F!important;
+ color:#f3f4f6!important;
+ border:1px solid rgba(255,255,255,.13)!important;
+ padding:12px 22px 12px 12px!important;
+ scrollbar-width:none!important;
+ overflow-x:hidden!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]::-webkit-scrollbar{display:none!important;width:0!important}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]>.dufn-panel-head{
+ background:#0F0F0F!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder-grid{
+ display:flex!important;
+ flex-direction:column!important;
+ flex-wrap:nowrap!important;
+ align-items:stretch!important;
+ gap:1px!important;
+ width:100%!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder{
+ box-sizing:border-box!important;
+ display:flex!important;
+ width:100%!important;
+ min-height:36px!important;
+ justify-content:flex-start!important;
+ background:transparent!important;
+ border-radius:6px!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder:hover,
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder:focus-visible{
+ background:rgba(255,255,255,.07)!important;
+ outline:none;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder.active{
+ background:rgba(59,130,246,.13)!important;
+ box-shadow:inset 2px 0 #3b82f6!important;
+}
