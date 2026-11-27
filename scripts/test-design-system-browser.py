@@ -1871,6 +1871,16 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                 timeout=3000,
             )
 
+            # ArrowDown focuses the first folder in the selected category; Escape closes it.
+            keyboard_tab = page.locator('[data-category-menu="collections"]')
+            keyboard_tab.focus()
+            page.keyboard.press("ArrowDown")
+            page.wait_for_function("() => document.querySelector('#dufnFolderPanel-collections')?.hidden === false")
+            if not page.locator("#dufnFolderPanel-collections .dufn-folder").evaluate("(el) => el === document.activeElement"):
+                fail(f"homepage/DUFS/{scenario}: ArrowDown did not focus the selected category's first folder")
+            page.keyboard.press("Escape")
+            page.wait_for_function("() => document.querySelector('#dufnFolderPanel-collections').hidden")
+
             # Rapid open-close-open must cancel stale close completion callbacks.
             rapid = page.locator('[data-category-menu="country"]')
             rapid.dispatch_event("click")
