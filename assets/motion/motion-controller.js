@@ -15,6 +15,7 @@
  const instances=new Map();
  const DROPDOWN_DURATION=readMs("--dume-dropdown-duration",DURATION);
  const DROPDOWN_EASING=rootStyle.getPropertyValue("--dume-dropdown-easing").trim()||EASING;
+ const DROPDOWN_CLOSE_EASING=rootStyle.getPropertyValue("--dume-dropdown-close-easing").trim()||"cubic-bezier(.08,.95,.18,1)";
  function dropdown(options){
   const {panel,open,onFinish}=options||{};
   if(!panel)return Promise.resolve({cancelled:false,skipped:true});
@@ -85,7 +86,7 @@
   applyFrame(fromFrame);
   panel.style.overflow="hidden";
   panel.style.willChange="height, opacity, padding, margin, border-width";
-  const animation=panel.animate([keyframe(fromFrame),keyframe(toFrame)],{duration,easing:DROPDOWN_EASING,fill:"both"});
+  const animation=panel.animate([keyframe(fromFrame),keyframe(toFrame)],{duration,easing:isOpen?DROPDOWN_EASING:DROPDOWN_CLOSE_EASING,fill:"both"});
   const job={animation,open:isOpen};dropdownJobs.set(panel,job);
   const finish=()=>{
    if(dropdownJobs.get(panel)!==job)return;
@@ -157,7 +158,7 @@
    jobs.set(sidebar,{timer});
   }
  }
- window.DRMMotion=Object.freeze({drawer,dropdown,config:Object.freeze({drawerDuration:DURATION,drawerOpacityDuration:OPACITY_DURATION,drawerEasing:EASING,dropdownDuration:DROPDOWN_DURATION,dropdownEasing:DROPDOWN_EASING,dropdownAxis:"height",get reducedMotion(){return REDUCED.matches;}})});
+ window.DRMMotion=Object.freeze({drawer,dropdown,config:Object.freeze({drawerDuration:DURATION,drawerOpacityDuration:OPACITY_DURATION,drawerEasing:EASING,dropdownDuration:DROPDOWN_DURATION,dropdownEasing:DROPDOWN_EASING,dropdownCloseEasing:DROPDOWN_CLOSE_EASING,dropdownAxis:"height",get reducedMotion(){return REDUCED.matches;}})});
  window.addEventListener("resize",()=>{
   if(mobile())return;
   for(const [sidebar,options] of instances){
