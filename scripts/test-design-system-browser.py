@@ -1209,9 +1209,16 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     const button = document.createElement("button"); button.className = "delete"; button.textContent = "Delete";
                     actions.appendChild(button); row.appendChild(actions); host.appendChild(row);
                     const notice = document.createElement("p"); notice.className = "notice error"; notice.textContent = "Error"; host.appendChild(notice);
+                    const login = document.querySelector(".admin-login-panel");
+                    const loginLabel = login?.querySelector(".admin-login-form label");
+                    const loginInput = login?.querySelector(".admin-login-form input");
+                    const loginButton = login?.querySelector(".admin-login-form button.primary");
                     const result = {pairs: [
                       ["Admin delete action", getPair(button, button)],
-                      ["Admin error feedback", {foreground: color(notice), background: bg(host)}]
+                      ["Admin error feedback", {foreground: color(notice), background: bg(document.body)}],
+                      ["Admin login label", loginLabel && login ? getPair(loginLabel, login) : null],
+                      ["Admin login field", loginInput ? getPair(loginInput, loginInput) : null],
+                      ["Admin login action", loginButton ? getPair(loginButton, loginButton) : null]
                     ]};
                     row.remove(); notice.remove(); return result;
                   }
