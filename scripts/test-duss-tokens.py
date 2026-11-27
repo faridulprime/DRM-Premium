@@ -161,6 +161,12 @@ def main() -> int:
         flags=re.DOTALL,
     ):
         fail("Admin New Video action does not consume the 44px DUSS touch-target token")
+    if not re.search(
+        r"\.home-page \.topbar \.account-controls #profileMenuToggle,\\s*\\.profile-drawer \.profile-drawer-close\\s*\\{[^}]*inline-size\\s*:\\s*var\\(--duss-touch-target-min\\s*,",
+        source_files["assets/sizing/touch-targets.css"],
+        flags=re.DOTALL,
+    ):
+        fail("Homepage Profile Drawer opener/close controls do not consume the 44px DUSS target")
     live_users_js = read("live-users.js")
     if 'class="live-error-link"' not in live_users_js:
         fail("Live Users fallback dashboard link is missing its DUSS touch-target class")

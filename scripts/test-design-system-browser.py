@@ -308,6 +308,41 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             if page.evaluate("() => document.activeElement?.id") != "studioTabCreate" or page.locator("#studioTabCreate").get_attribute("aria-selected") != "true":
                 fail(f"upload-studio/{viewport_name}: Home did not return to Create Post")
 
+        if name == "homepage" and viewport_name in ("desktop", "mobile"):
+            page.locator("#profileMenuToggle").evaluate("(el) => { el.hidden = false; }")
+            page.locator("#profileMenuToggle").click()
+            page.wait_for_function("() => document.querySelector('#profileDrawer')?.classList.contains('is-open')", timeout=2500)
+            if page.locator("#profileDrawer").get_attribute("role") != "dialog" or page.locator("#profileDrawer").get_attribute("aria-hidden") != "false" or page.locator("#profileDrawer").evaluate("(el) => el.inert"):
+                fail(f"homepage/{viewport_name}: Profile Drawer is missing open dialog semantics")
+            expected_modal = "true" if width <= 760 else "false"
+            if page.locator("#profileDrawer").get_attribute("aria-modal") != expected_modal:
+                fail(f"homepage/{viewport_name}: Profile Drawer modal state does not match desktop/mobile presentation")
+            if page.evaluate("() => document.activeElement?.id") != "profileDrawerClose":
+                fail(f"homepage/{viewport_name}: opening Profile Drawer did not move focus to its close control")
+            if width <= 760:
+                items = page.locator("#profileDrawer a[href], #profileDrawer button:not([disabled])")
+                if items.count() >= 2:
+                    items.first.focus()
+                    page.keyboard.press("Shift+Tab")
+                    if page.evaluate("() => document.activeElement?.id") != "profileDrawerClose":
+                        fail(f"homepage/{viewport_name}: mobile Profile Drawer Shift+Tab did not wrap focus")
+                    items.last.focus()
+                    page.keyboard.press("Tab")
+                    if page.evaluate("() => document.activeElement?.id") != "profileDrawerClose":
+                        fail(f"homepage/{viewport_name}: mobile Profile Drawer Tab did not wrap focus")
+            page.locator("#profileDrawerClose").click()
+            page.locator("#profileMenuToggle").click()
+            page.wait_for_function("() => document.querySelector('#profileDrawer')?.classList.contains('is-open')", timeout=2500)
+            if page.evaluate("() => document.querySelector('#profileDrawerBackdrop')?.hidden"):
+                fail(f"homepage/{viewport_name}: stale close cleanup hid the backdrop after rapid reopen")
+            page.wait_for_timeout(760)
+            if not page.locator("#profileDrawer").evaluate("(el) => el.classList.contains('is-open')") or page.evaluate("() => document.querySelector('#profileDrawerBackdrop')?.hidden"):
+                fail(f"homepage/{viewport_name}: rapid reopen did not survive the previous close timer")
+            page.locator("#profileDrawerClose").click()
+            page.wait_for_function("() => document.querySelector('#profileDrawerBackdrop')?.hidden === true && document.querySelector('#profileDrawer')?.inert === true", timeout=2000)
+            if page.evaluate("() => document.activeElement?.id") != "profileMenuToggle":
+                fail(f"homepage/{viewport_name}: closing Profile Drawer did not restore focus to its opener")
+
         if name == "homepage":
             category_state = page.evaluate(
                 """() => {

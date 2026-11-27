@@ -165,7 +165,55 @@ function setSignedIn(user){setVisualEditor(user);const form=$("#headerLoginForm"
 let accountProfileData=null;
 function renderAccountProfile(user,profile){accountProfileData={user,profile};const profileComplete=Boolean(String(profile?.full_name||"").trim());const profileLink=$("#profileDrawerView");if(profileLink)profileLink.innerHTML=(profileComplete?"View Profile":"Setup Profile")+' <span aria-hidden="true">→</span>';const initial=(String(profile?.full_name||user?.username||"U").trim()[0]||"U").toUpperCase(),avatar=profile?.avatar_url||"";const headerImg=$("#headerProfileAvatar"),headerInitial=$("#headerProfileInitial"),drawerImg=$("#drawerAvatarImage"),drawerInitial=$("#drawerAvatarInitial");if(headerImg){headerImg.hidden=!avatar;headerImg.src=avatar||"";}if(headerInitial){headerInitial.hidden=!!avatar;headerInitial.textContent=initial;}if(drawerImg){drawerImg.hidden=!avatar;drawerImg.src=avatar||"";}if(drawerInitial){drawerInitial.hidden=!!avatar;drawerInitial.textContent=initial;}$("#drawerFullName").textContent=profile?.full_name||"Profile not completed";$("#drawerUsername").textContent=user?.username?"@"+user.username:"";$("#drawerBio").textContent=profile?.bio||"Not added yet";$("#drawerDob").textContent=profile?.date_of_birth||"Not added";$("#drawerGender").textContent=({female:"Female",male:"Male",non_binary:"Non-binary",prefer_not_to_say:"Prefer not to say"})[profile?.gender]||"Not specified";$("#drawerLocation").textContent=profile?.location||"Not added";$("#drawerEmail").textContent=user?.email||"—";}
 async function loadAccountProfile(user){try{const response=await fetch("/api/profile",{credentials:"same-origin",cache:"no-store"});if(!response.ok)throw new Error("Profile unavailable");const data=await response.json();renderAccountProfile(user,data.profile||{});}catch{renderAccountProfile(user,null);}}
-function openProfileDrawer(open){const panel=$("#profileDrawer"),backdrop=$("#profileDrawerBackdrop"),toggle=$("#profileMenuToggle");if(!panel||!backdrop||!toggle)return;const state=Boolean(open);if(state){backdrop.hidden=false;panel.setAttribute("aria-hidden","false");document.body.classList.add("profile-drawer-open");requestAnimationFrame(()=>{backdrop.classList.add("is-visible");panel.classList.add("is-open");});toggle.setAttribute("aria-expanded","true");}else{panel.classList.remove("is-open");panel.setAttribute("aria-hidden","true");backdrop.classList.remove("is-visible");document.body.classList.remove("profile-drawer-open");toggle.setAttribute("aria-expanded","false");setTimeout(()=>{if(!panel.classList.contains("is-open"))backdrop.hidden=true;},300);}}
+let profileDrawerCloseTimer=null,profileDrawerOpenFrame=null,profileDrawerReturnFocus=null;
+const profileDrawerBreakpoint=window.matchMedia("(max-width: 760px)");
+function profileDrawerFocusable(){
+ const panel=$("#profileDrawer");if(!panel)return [];
+ return [...panel.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
+  .filter(el=>!el.closest("[hidden],[inert]")&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=="hidden");
+}
+function trapProfileDrawerTab(event){
+ const panel=$("#profileDrawer"),items=profileDrawerFocusable();if(!panel)return;
+ if(!items.length){event.preventDefault();panel.focus({preventScroll:true});return;}
+ const first=items[0],last=items[items.length-1],active=document.activeElement;
+ if(event.shiftKey&&(active===first||!panel.contains(active))){event.preventDefault();last.focus({preventScroll:true});}
+ else if(!event.shiftKey&&(active===last||!panel.contains(active))){event.preventDefault();first.focus({preventScroll:true});}
+}
+function openProfileDrawer(open){
+ const panel=$("#profileDrawer"),backdrop=$("#profileDrawerBackdrop"),toggle=$("#profileMenuToggle");
+ if(!panel||!backdrop||!toggle)return;
+ const state=Boolean(open),mobile=profileDrawerBreakpoint.matches;
+ clearTimeout(profileDrawerCloseTimer);
+ if(profileDrawerOpenFrame!==null){cancelAnimationFrame(profileDrawerOpenFrame);profileDrawerOpenFrame=null;}
+ if(state){
+  if(!panel.classList.contains("is-open"))profileDrawerReturnFocus=document.activeElement;
+  backdrop.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false");
+  panel.setAttribute("aria-modal",String(mobile));document.body.classList.add("profile-drawer-open");
+  toggle.setAttribute("aria-expanded","true");toggle.setAttribute("aria-label","প্রোফাইল মেনু বন্ধ করুন");
+  profileDrawerOpenFrame=requestAnimationFrame(()=>{
+   profileDrawerOpenFrame=null;if(panel.inert)return;
+   backdrop.classList.add("is-visible");panel.classList.add("is-open");
+   $("#profileDrawerClose")?.focus({preventScroll:true});
+  });
+ }else{
+  if(!panel.classList.contains("is-open")&&backdrop.hidden)return;
+  panel.classList.remove("is-open");panel.setAttribute("aria-hidden","true");
+  panel.setAttribute("aria-modal","false");panel.inert=true;backdrop.classList.remove("is-visible");
+  document.body.classList.remove("profile-drawer-open");
+  toggle.setAttribute("aria-expanded","false");toggle.setAttribute("aria-label","প্রোফাইল মেনু খুলুন");
+  const returnTarget=toggle.isConnected&&!toggle.hidden?toggle:profileDrawerReturnFocus;
+  if(returnTarget?.isConnected)returnTarget.focus({preventScroll:true});
+  profileDrawerReturnFocus=null;
+  profileDrawerCloseTimer=setTimeout(()=>{
+   if(!panel.classList.contains("is-open"))backdrop.hidden=true;
+   profileDrawerCloseTimer=null;
+  },720);
+ }
+}
+profileDrawerBreakpoint.addEventListener?.("change",()=>{
+ const panel=$("#profileDrawer");
+ if(panel?.classList.contains("is-open"))panel.setAttribute("aria-modal",String(profileDrawerBreakpoint.matches));
+});
 function closeProfileDrawer(){openProfileDrawer(false);}
 let accountMenuCloseTimer=null;
 const accountMenuBreakpoint=window.matchMedia("(max-width: 760px)");accountMenuBreakpoint.addEventListener?.("change",()=>openAccountMenu(false));
@@ -263,7 +311,11 @@ async function init(){
  $("#profileMenuToggle")?.addEventListener("click",()=>openProfileDrawer(!$("#profileDrawer")?.classList.contains("is-open")));
  $("#profileDrawerClose")?.addEventListener("click",closeProfileDrawer);
  $("#profileDrawerBackdrop")?.addEventListener("click",closeProfileDrawer);
- document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProfileDrawer();});
+ document.addEventListener("keydown",e=>{
+ if(!$("#profileDrawer")?.classList.contains("is-open"))return;
+ if(e.key==="Escape"){e.preventDefault();closeProfileDrawer();return;}
+ if(e.key==="Tab"&&profileDrawerBreakpoint.matches)trapProfileDrawerTab(e);
+});
  document.addEventListener("pointerdown",e=>{const panel=$("#profileDrawer"),toggle=$("#profileMenuToggle");if(panel?.classList.contains("is-open")&&!panel.contains(e.target)&&!toggle?.contains(e.target))closeProfileDrawer();},true);
 
  $("#headerLoginForm").addEventListener("submit",submitHeaderLogin);
