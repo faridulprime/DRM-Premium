@@ -83,9 +83,9 @@ async function sendVerificationEmail(env,{to,code,type="user-registration",expir
 }
 async function handle(req,env){
  const u=new URL(req.url),p=u.pathname.replace(/^\/api\/?/,"").split("/").filter(Boolean),m=req.method;
+ if(p[0]==="dufs"&&p[1]==="system"&&p.length===2&&m==="GET")return json({system:"DUFS",name:"DRM Universal Folder System",version:"1.0.0",api:{public:"/api/dufs",admin:"/api/admin/dufs"},taxonomy:"/assets/dufs/taxonomy.json",storage:{provider:"Cloudflare D1",legacySchema:"dumc_*"},compatibility:{legacyNamespace:"/api/dumc",status:"supported"}});
  if(!env.DB)return fail("D1 database binding DB is not configured. Follow the setup guide.",503);
  // DUFS is the canonical public/API namespace; DUMC routes remain as compatibility aliases.
- if(p[0]==="dufs"&&p[1]==="system"&&p.length===2&&m==="GET")return json({system:"DUFS",name:"DRM Universal Folder System",version:"1.0.0",api:{public:"/api/dufs",admin:"/api/admin/dufs"},taxonomy:"/assets/dufs/taxonomy.json",storage:{provider:"Cloudflare D1",legacySchema:"dumc_*"},compatibility:{legacyNamespace:"/api/dumc",status:"supported"}});
  if(p[0]==="dufs")p[0]="dumc";
  if(p[0]==="admin"&&p[1]==="dufs")p[1]="dumc";
  if(m!=="GET"){if(!originOK(req))return fail("Cross-origin request blocked.",403);if(!(req.headers.get("content-type")||"").toLowerCase().includes("application/json"))return fail("JSON content type required.",415)}
