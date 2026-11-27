@@ -73,7 +73,7 @@ function activateAdminTab(value){
  const target=validAdminTab(value),allowedButton=document.querySelector('[data-tab="'+target+'"]:not([hidden])'),allowedPanel=$("#tab-"+target);
  if(!allowedButton||!allowedPanel)return;
  recordAdminTabView(target);
- document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===target));
+ document.querySelectorAll("[data-tab]").forEach(x=>{const selected=x.dataset.tab===target;x.classList.toggle("active",selected);if(x.getAttribute("role")==="tab")x.setAttribute("aria-selected",String(selected));else if(x.tagName==="BUTTON")x.setAttribute("aria-pressed",String(selected));});
  document.querySelectorAll(".tab-panel").forEach(x=>x.hidden=x.id!=="tab-"+target);
  syncAdminTabAccessibility(target);closeAdminMenu();
 }

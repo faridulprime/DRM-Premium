@@ -143,30 +143,44 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
         if name == "admin":
             admin_tabs = page.evaluate(
                 """() => [...document.querySelectorAll("[data-tab]")].map(el => ({
-                  tab: el.dataset.tab, pressed: el.getAttribute("aria-pressed"),
-                  controls: el.getAttribute("aria-controls"),
+                  tab: el.dataset.tab, role: el.getAttribute("role"),
+                  selected: el.getAttribute("aria-selected"), pressed: el.getAttribute("aria-pressed"),
+                  tabindex: el.getAttribute("tabindex"), controls: el.getAttribute("aria-controls"),
                   exists: !!document.getElementById(el.getAttribute("aria-controls") || "")
                 }))"""
             )
             for item in admin_tabs:
-                if item["pressed"] not in ("true", "false") or not item["controls"] or not item["exists"]:
+                state_ok = item["selected"] in ("true", "false") if item["role"] == "tab" else item["pressed"] in ("true", "false")
+                if not state_ok or not item["controls"] or not item["exists"]:
                     fail(f"admin/{viewport_name}: dashboard navigation lacks an accessible selected state or panel relationship ({item})")
-            if not any(item["tab"] == "overview" and item["pressed"] == "true" for item in admin_tabs):
+                if item["role"] == "tab" and item["tabindex"] not in ("0", "-1"):
+                    fail(f"admin/{viewport_name}: dashboard tab does not use roving tabindex ({item})")
+            if not any(item["tab"] == "overview" and ((item["role"] == "tab" and item["selected"] == "true") or (item["role"] != "tab" and item["pressed"] == "true")) for item in admin_tabs):
                 fail(f"admin/{viewport_name}: Overview is not exposed as the initially selected dashboard view")
 
         if name == "upload-studio":
+            page.locator("#studioContent").evaluate("(el) => { el.hidden = false; }")
             studio_tabs = page.evaluate(
-                """() => [...document.querySelectorAll(".page-tabs [data-tab]")].map(el => ({
-                  tab: el.dataset.tab, pressed: el.getAttribute("aria-pressed"),
-                  controls: el.getAttribute("aria-controls"),
-                  exists: !!document.getElementById(el.getAttribute("aria-controls") || "")
+                """() => [...document.querySelectorAll(".page-tabs [role=tab]")].map(el => ({
+                  tab: el.dataset.tab, selected: el.getAttribute("aria-selected"), tabindex: el.getAttribute("tabindex"),
+                  controls: el.getAttribute("aria-controls"), exists: !!document.getElementById(el.getAttribute("aria-controls") || "")
                 }))"""
             )
             for item in studio_tabs:
-                if item["pressed"] not in ("true", "false") or not item["controls"] or not item["exists"]:
-                    fail(f"upload-studio/{viewport_name}: Studio navigation lacks an accessible selected state or view relationship ({item})")
-            if not any(item["tab"] == "create" and item["pressed"] == "true" for item in studio_tabs):
-                fail(f"upload-studio/{viewport_name}: Create Post is not exposed as the initially selected Studio view")
+                if item["selected"] not in ("true", "false") or item["tabindex"] not in ("0", "-1") or not item["controls"] or not item["exists"]:
+                    fail(f"upload-studio/{viewport_name}: Studio navigation lacks selected state, roving tabindex or panel relationship ({item})")
+            if not any(item["tab"] == "create" and item["selected"] == "true" and item["tabindex"] == "0" for item in studio_tabs):
+                fail(f"upload-studio/{viewport_name}: Create Post is not exposed as the initially selected Studio tab")
+            page.locator("#studioTabCreate").focus()
+            page.keyboard.press("ArrowRight")
+            if page.evaluate("() => document.activeElement?.id") != "studioTabDrafts" or page.locator("#studioTabDrafts").get_attribute("aria-selected") != "true" or not page.locator("#view-drafts").is_visible():
+                fail(f"upload-studio/{viewport_name}: ArrowRight did not select and reveal the Drafts panel")
+            page.keyboard.press("End")
+            if page.evaluate("() => document.activeElement?.id") != "studioTabMedia" or page.locator("#studioTabMedia").get_attribute("aria-selected") != "true":
+                fail(f"upload-studio/{viewport_name}: End did not move to the last Studio tab")
+            page.keyboard.press("Home")
+            if page.evaluate("() => document.activeElement?.id") != "studioTabCreate" or page.locator("#studioTabCreate").get_attribute("aria-selected") != "true":
+                fail(f"upload-studio/{viewport_name}: Home did not return to Create Post")
 
         if name == "homepage":
             category_state = page.evaluate(
