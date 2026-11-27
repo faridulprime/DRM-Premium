@@ -8,7 +8,8 @@ function enhance(el){
  let frame=0,drag=null;
  const measure=()=>{
   const rect=el.getBoundingClientRect(),view=el.clientHeight,total=el.scrollHeight,max=Math.max(0,total-view);
-  const top=Math.max(8,rect.top+8),bottom=Math.min(innerHeight-8,rect.bottom-8),height=Math.max(0,bottom-top);
+  const title=el.querySelector(".dufn-panel-head"),titleBottom=title?title.getBoundingClientRect().bottom:rect.top;
+  const top=Math.max(8,titleBottom+30),bottom=Math.min(innerHeight-8,rect.bottom-8),height=Math.max(0,bottom-top);
   rail.style.top=top+"px";rail.style.left=(rect.right-13)+"px";rail.style.height=height+"px";
   const visible=rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<innerHeight&&getComputedStyle(el).display!=="none"&&height>12;
   const thumbHeight=height?Math.min(height,Math.max(28,height*view/Math.max(total,1))):0,travel=Math.max(0,height-thumbHeight);
