@@ -463,6 +463,7 @@ html[data-theme="light"] .live-pill i{background:#16834a!important;box-shadow:0 
 html[data-theme="light"] .live-avatar{background:#dce5ee!important;color:#34465a!important}
 html[data-theme="light"] .live-user-row.is-source-highlight{background:#e5eef8!important;outline-color:#8fa7c0!important;box-shadow:0 0 0 4px rgba(52,83,113,.08)!important}
 
+html[data-theme="light"] .live-drawer-chip{background:#edf2f7!important;color:#34465a!important;border-color:#aebbc9!important}
 html[data-theme="light"] .live-drawer-chip.role-badge--owner{background:#f1eafe!important;color:#6941a5!important;border-color:#b9a5da!important}
 html[data-theme="light"] .live-drawer-chip.role-badge--admin{background:#e2f0e7!important;color:#276749!important;border-color:#9fc9ad!important}
 html[data-theme="light"] .live-drawer-chip.role-badge--member{background:#edf2f7!important;color:#34465a!important;border-color:#aebbc9!important}
