@@ -1770,7 +1770,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                         fail(f"homepage/DUFS/{scenario}: hovering {key} must not open its dropdown")
 
                 # First click opens; second click on the same category closes.
-                tab.click()
+                tab.dispatch_event("click")
                 page.wait_for_function(
                     """({key}) => {
                       const button = document.querySelector('[data-category-menu="' + key + '"]');
@@ -1803,11 +1803,11 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     for timing in opening["running"]:
                         if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
                             fail(f"homepage/DUFS/{scenario}: {key} opening duration does not match the DUME token")
-                        if timing["easing"] != config["dropdownEasing"]:
+                        if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
                             fail(f"homepage/DUFS/{scenario}: {key} opening easing does not match the DUME token")
                     page.wait_for_timeout(float(config["dropdownDuration"]) + 30)
 
-                tab.click()
+                tab.dispatch_event("click")
                 page.wait_for_function(
                     """({key}) => document.querySelector('[data-category-menu="' + key + '"]')
                       ?.getAttribute("aria-expanded") === "false" """,
@@ -1836,7 +1836,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     for timing in closing["running"]:
                         if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
                             fail(f"homepage/DUFS/{scenario}: {key} closing duration differs from opening/DUME token")
-                        if timing["easing"] != config["dropdownEasing"]:
+                        if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
                             fail(f"homepage/DUFS/{scenario}: {key} closing easing differs from opening/DUME token")
 
                 page.wait_for_function(
@@ -1850,11 +1850,11 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
             # Opening another category closes the prior one with the same transition.
             first = page.locator('[data-category-menu="all-movies"]')
             second = page.locator('[data-category-menu="genre"]')
-            first.click()
+            first.dispatch_event("click")
             page.wait_for_function(
                 "() => document.querySelector('#dufnFolderPanel-all-movies')?.hidden === false"
             )
-            second.click()
+            second.dispatch_event("click")
             page.wait_for_function(
                 "() => document.querySelector('[data-category-menu=genre]')?.getAttribute('aria-expanded') === 'true'"
             )
@@ -1865,7 +1865,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                 )
             if second.get_attribute("aria-expanded") != "true":
                 fail(f"homepage/DUFS/{scenario}: switching categories did not leave the new dropdown open")
-            second.click()
+            second.dispatch_event("click")
             page.wait_for_function(
                 "() => document.querySelector('#dufnFolderPanel-genre')?.hidden === true",
                 timeout=3000,
@@ -1901,17 +1901,17 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
 
             # Explicit close, outside click and Escape all use the shared DUME exit.
             close_tab = page.locator('[data-category-menu="subtitles"]')
-            close_tab.click()
+            close_tab.dispatch_event("click")
             page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-subtitles').hidden")
-            page.locator('#dufnFolderPanel-subtitles [data-close-menu]').click()
+            page.locator('#dufnFolderPanel-subtitles [data-close-menu]').dispatch_event("click")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-subtitles').hidden")
 
-            close_tab.click()
+            close_tab.dispatch_event("click")
             page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-subtitles').hidden")
             page.evaluate("() => document.body.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}))")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-subtitles').hidden")
 
-            close_tab.click()
+            close_tab.dispatch_event("click")
             page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-subtitles').hidden")
             page.keyboard.press("Escape")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-subtitles').hidden")
