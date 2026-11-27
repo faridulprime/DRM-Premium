@@ -87,11 +87,11 @@ function syncMenuState(animate=true){
   if(isOpen){
    if(button)measurePanelWidth(panel,button);
    if(panel.hidden||isMarkedHidden){
-    if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:true,duration:600});
+    if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:true});
     else{panel.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false")}
    }
   }else if(!panel.hidden&&!isMarkedHidden){
-   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,duration:500,onFinish:clearFocusModeIfIdle});
+   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,onFinish:clearFocusModeIfIdle});
    else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true");clearFocusModeIfIdle()}
   }else if(panel.hidden){
    panel.inert=true;
@@ -121,7 +121,7 @@ function renderPanel(g){
  if(!g)return "";
  const list=items(g),isYear=g.key==="year";
  return '<section class="dufn-panel" id="dufnFolderPanel-'+esc(g.key)+'" aria-label="'+esc(g.title)+' folder list" hidden inert aria-hidden="true">'+
- '<header class="dufn-panel-head"><div class="dufn-panel-count">'+list.length+' Folders</div></header>'+
+ '<header class="dufn-panel-head"><div class="dufn-panel-count">'+list.length+' Folders</div><button type="button" class="dufn-panel-close" data-close-menu aria-label="Close '+esc(g.title)+' folder list">×</button></header>'+
  '<div class="dufn-folder-grid">'+list.map(n=>{
   const baseLabel=isYear?String(n.year):folderName(n.name),label=folderName(folderNameOverrides[n.id]||baseLabel),selected=isYear?activeYear===String(n.year):activeFolder===n.id,isFutureYear=isYear&&n.year>2026;
   return '<button type="button" class="dumc-nav-item dufn-folder'+(selected?' active':'')+(isFutureYear?' dufn-future-year':'')+'" data-folder-id="'+esc(n.id)+'" data-folder-label="'+esc(label)+'" '+(isYear?'data-year="'+String(n.year)+'"':'data-category-folder="'+esc(n.id)+'" data-category-label="'+esc(label)+'"')+' aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(label)+'</span></button>'

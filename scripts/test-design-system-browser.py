@@ -386,7 +386,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                         record["samples"].append(sample)
         if metrics["headerHeight"] <= 0:
             fail(f"{name}/{viewport_name}: visible header geometry could not be measured")
-        if name == "homepage":
+        if name in ("homepage", "movies"):
             shell_edges = page.evaluate(
                 """() => {
                   const root = getComputedStyle(document.documentElement);
@@ -425,7 +425,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                         fail(f"{name}/{viewport_name}: shared {label} viewport-edge geometry differs from the DUPS anchors ({geometry}, expectedTop={expected_top}, zero={shell_edges['zero']})")
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: shared {label} DUPS edge geometry could not be resolved ({geometry})")
-        if name == "homepage":
+        if name in ("homepage", "movies"):
             drawer_edges = page.evaluate(
                 """() => {
                   const drawer = document.querySelector(".profile-drawer");
@@ -486,7 +486,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 metrics["tokens"]["dupsLiveHeader"]
                 if name == "live-users"
                 else metrics["tokens"]["dupsHomeHeaderMobile"]
-                if name in ("homepage", "upload-studio") and width <= 760
+                if name in ("homepage", "movies", "upload-studio") and width <= 760
                 else metrics["tokens"]["dups"]
             )
             try:
@@ -502,7 +502,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     f"{name}/{viewport_name}: DUPS header layer could not be resolved "
                     f"(computed={metrics['headerZIndex']!r}, token={expected_layer!r})"
                 )
-        if name == "homepage" and width <= 900:
+        if name in ("homepage", "movies") and width <= 900:
             builder_inspector = page.evaluate(
                 """() => {
                   const shell = document.querySelector("#siteBuilder");
@@ -624,7 +624,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             except (TypeError, ValueError, KeyError):
                 fail(f"{name}/{viewport_name}: Live Users presence dot anchor could not be resolved ({presence_dot_anchor})")
 
-        if name == "homepage":
+        if name in ("homepage", "movies"):
             header_status_anchor = page.evaluate(
                 """() => {
                   const status = document.querySelector("#headerLoginStatus");
@@ -677,7 +677,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: header login status anchor/layer could not be resolved ({header_status_anchor})")
 
-        if name == "homepage":
+        if name in ("homepage", "movies"):
             hero_anchor = page.evaluate(
                 """() => {
                   const hero = document.querySelector(".hero-visual");
@@ -854,7 +854,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 except (TypeError, ValueError, KeyError):
                     fail(f"{name}/{viewport_name}: Admin Category Bar anchor token could not be resolved ({admin_category_anchor})")
 
-        if name == "homepage":
+        if name in ("homepage", "movies"):
             category_anchor = page.evaluate(
                 """() => {
                   const bar = document.querySelector(".category-bar");
@@ -1357,8 +1357,8 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
             }""",
             arg={"sidebar": sidebar, "backdrop": backdrop},
         )
-        expected_sidebar = layers["tokens"]["homeSidebar"] if name == "homepage" else layers["tokens"]["sidebar"]
-        expected_backdrop = layers["tokens"]["homeBackdrop"] if name == "homepage" else layers["tokens"]["backdrop"]
+        expected_sidebar = layers["tokens"]["homeSidebar"] if name in ("homepage", "movies") else layers["tokens"]["sidebar"]
+        expected_backdrop = layers["tokens"]["homeBackdrop"] if name in ("homepage", "movies") else layers["tokens"]["backdrop"]
         try:
             actual_sidebar = float(layers["sidebar"])
             actual_backdrop = float(layers["backdrop"])
@@ -1377,7 +1377,7 @@ def inspect_drawer(browser, base_url, name, config, reduced_motion):
             # Upload Studio intentionally keep their fixed header above it.
             valid_order = (
                 actual_sidebar > actual_backdrop > actual_header
-                if name in ("homepage", "admin")
+                if name in ("homepage", "movies", "admin")
                 else actual_header > actual_sidebar > actual_backdrop
             )
             if not valid_order:

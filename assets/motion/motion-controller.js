@@ -15,7 +15,7 @@
  const instances=new Map();
  const DROPDOWN_DURATION=readMs("--dume-dropdown-duration",DURATION);
  const DROPDOWN_EASING=rootStyle.getPropertyValue("--dume-dropdown-easing").trim()||EASING;
- const DROPDOWN_CLOSE_EASING=rootStyle.getPropertyValue("--dume-dropdown-close-easing").trim()||"cubic-bezier(.08,.95,.18,1)";
+ const DROPDOWN_CLOSE_EASING=DROPDOWN_EASING;
  function dropdown(options){
   const {panel,open,onFinish}=options||{};
   if(!panel)return Promise.resolve({cancelled:false,skipped:true});
@@ -76,7 +76,7 @@
   const toFrame=isOpen?naturalFrame:zeroFrame;
   const requestedDuration=Number(options.duration);
   const hasExplicitDuration=options.duration!==undefined&&options.duration!==null&&Number.isFinite(requestedDuration);
-  const duration=hasExplicitDuration?Math.max(0,requestedDuration):(REDUCED.matches?0:DROPDOWN_DURATION);
+  const duration=REDUCED.matches?0:(hasExplicitDuration?Math.max(0,requestedDuration):DROPDOWN_DURATION);
   if(duration<=0||typeof panel.animate!=="function"){
    clearTemporaryStyles();
    if(!isOpen)panel.hidden=true;
