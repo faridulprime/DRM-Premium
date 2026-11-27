@@ -655,3 +655,6 @@ html[data-theme="light"] body.upload-studio-page .dumc-storage-note strong{color
 @media(prefers-reduced-motion:reduce){
   .drm-theme-switch,.drm-theme-switch *{transition:none!important}
 }
+
+/* Final light-theme tab hover override: loaded after all page styles. */
+html[data-theme="light"] body :is(.category-chip:hover,.dufn-tab:hover,.live-restriction-tab:hover,.upload-studio-page .page-tabs>.tab:hover,.upload-studio-page .type-switch>.type:hover,.upload-studio-page .device-switch>button:hover,[role="tab"]:hover){background-color:#d5e0eb!important;background-image:none!important;color:#172534!important;text-shadow:none!important;}
