@@ -1881,7 +1881,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
             )
             if not reduced_motion:
                 page.wait_for_timeout(float(config["dropdownDuration"]) + 40)
-            if rapid.get_attribute("aria-expanded") != "true" or panel.evaluate("(el) => el.hidden"):
+            if rapid.get_attribute("aria-expanded") != "true" or page.locator("#dufnFolderPanel-country").evaluate("(el) => el.hidden"):
                 fail(f"homepage/DUFS/{scenario}: stale close animation hid a rapidly reopened dropdown")
             rapid.dispatch_event("click")
             page.wait_for_function(
