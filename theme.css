@@ -1158,3 +1158,24 @@ body.admin-dashboard-state .admin-topbar .brand #adminBrandRole.brand-admin-suff
  content:none!important;
  display:none!important;
 }
+
+
+/* Global document scrollbar — site-wide main page scroll. */
+html{
+ scrollbar-width:thin;
+ scrollbar-color:rgba(230,230,230,.8) #0F0F0F;
+}
+html::-webkit-scrollbar{
+ width:8px;
+ height:8px;
+}
+html::-webkit-scrollbar-track{
+ background:#0F0F0F;
+}
+html::-webkit-scrollbar-thumb{
+ background:rgba(230,230,230,.8);
+ border-radius:999px;
+}
+html::-webkit-scrollbar-thumb:hover{
+ background:rgba(230,230,230,.8);
+}
