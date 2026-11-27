@@ -30,6 +30,46 @@ function items(g){
  return window.DUFS?.sortFolders?window.DUFS.sortFolders(children,folderNameOverrides):children.sort((a,b)=>folderName(folderNameOverrides[a.id]||a.name).localeCompare(folderName(folderNameOverrides[b.id]||b.name),undefined,{numeric:true,sensitivity:"base"}));
 }
 function count(){return groups().filter(g=>g.key!=="year").reduce((n,g)=>n+items(g).length,0)}
+function measurePanelWidth(panel,button){
+ if(!panel||!button)return;
+ const wasHidden=panel.hidden;
+ const saved={visibility:panel.style.visibility,width:panel.style.width,maxWidth:panel.style.maxWidth,overflowX:panel.style.overflowX,marginLeft:panel.style.marginLeft};
+ const rows=[...panel.querySelectorAll(".dufn-folder")];
+ const savedRows=rows.map(row=>({maxWidth:row.style.maxWidth,width:row.style.width}));
+ const labels=[...panel.querySelectorAll(".dufn-folder span")];
+ const savedLabels=labels.map(label=>({whiteSpace:label.style.whiteSpace,width:label.style.width}));
+ if(wasHidden){panel.hidden=false;panel.style.visibility="hidden";}
+ /* Temporarily remove all width constraints so long names are measured unwrapped. */
+ panel.style.width="max-content";
+ panel.style.maxWidth="none";
+ panel.style.overflowX="visible";
+ rows.forEach(row=>{row.style.width="max-content";row.style.maxWidth="none"});
+ labels.forEach(label=>{label.style.whiteSpace="nowrap";label.style.width="max-content"});
+ const panelLeft=panel.getBoundingClientRect().left;
+ const widestRight=rows.reduce((max,row)=>Math.max(max,row.getBoundingClientRect().right),panelLeft);
+ const desiredWidth=Math.ceil(widestRight-panelLeft+20);
+ const maxWidth=Math.max(120,Math.min(nav.clientWidth,window.innerWidth-40));
+ panel.style.width=Math.min(desiredWidth,maxWidth)+"px";
+ panel.style.maxWidth=maxWidth+"px";
+ rows.forEach((row,i)=>{row.style.width=savedRows[i].width;row.style.maxWidth=savedRows[i].maxWidth});
+ labels.forEach((label,i)=>{label.style.whiteSpace=savedLabels[i].whiteSpace;label.style.width=savedLabels[i].width});
+ panel.style.overflowX=saved.overflowX;
+ if(wasHidden){panel.style.visibility=saved.visibility;panel.hidden=true;}
+ const navRect=nav.getBoundingClientRect(),tabRect=button.getBoundingClientRect();
+ const finalWidth=panel.getBoundingClientRect().width;
+ const availableWidth=Math.max(0,nav.clientWidth-finalWidth);
+ panel.style.marginLeft=Math.max(0,Math.min(tabRect.left-navRect.left,availableWidth))+"px";
+}
+function scheduleOpenPanelMeasure(){
+ if(!activeMenu)return;
+ cancelAnimationFrame(panelMeasureFrame);
+ panelMeasureFrame=requestAnimationFrame(()=>{
+  const button=nav.querySelector('[data-category-menu="'+activeMenu+'"]');
+  const panel=nav.querySelector("#dufnFolderPanel-"+activeMenu);
+  if(button&&panel)measurePanelWidth(panel,button);
+ });
+}
+let panelMeasureFrame=0;
 function syncMenuState(animate=true){
  for(const g of groups()){
   const button=nav.querySelector('[data-category-menu="'+g.key+'"]');
@@ -42,25 +82,7 @@ function syncMenuState(animate=true){
   if(!panel)continue;
   const isMarkedHidden=panel.getAttribute("aria-hidden")==="true";
   if(isOpen){
-   if(button){
-    /* One shared rule for every category: widest visible folder label + 20px. */
-    const wasHidden=panel.hidden;
-    const previousVisibility=panel.style.visibility;
-    if(wasHidden){panel.hidden=false;panel.style.visibility="hidden";}
-    const panelRect=panel.getBoundingClientRect();
-    const labelRight=[...panel.querySelectorAll(".dufn-folder span")].reduce(
-     (max,label)=>Math.max(max,label.getBoundingClientRect().right),panelRect.left
-    );
-    const desiredWidth=Math.ceil(labelRight-panelRect.left+20);
-    const maxWidth=Math.max(120,Math.min(nav.clientWidth,window.innerWidth-40));
-    const panelWidth=Math.min(desiredWidth,maxWidth);
-    panel.style.width=panelWidth+"px";
-    if(wasHidden){panel.style.visibility=previousVisibility;panel.hidden=true;}
-    const navRect=nav.getBoundingClientRect(),tabRect=button.getBoundingClientRect();
-    const availableWidth=Math.max(0,nav.clientWidth-panelWidth);
-    const tabOffset=tabRect.left-navRect.left;
-    panel.style.marginLeft=Math.max(0,Math.min(tabOffset,availableWidth))+"px";
-   }
+   if(button)measurePanelWidth(panel,button);
    if(panel.hidden||isMarkedHidden){
     if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:true,duration:700});
     else{panel.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false")}
@@ -72,7 +94,6 @@ function syncMenuState(animate=true){
    panel.inert=true;
    panel.setAttribute("aria-hidden","true");
   }
-  // Every category uses the same width rule; a closing panel remains untouched during its exit animation.
  }
 }
 function closeMenu(focus=false){
@@ -125,6 +146,10 @@ async function loadTaxonomy(){
 }
 function renderMovies(){host.innerHTML=movies.length?movies.map(v=>'<article class="dumc-movie-card" data-movie-id="'+esc(v.id)+'"><button type="button" class="dumc-movie-open" data-movie-id="'+esc(v.id)+'" aria-label="Play '+esc(v.title)+'"><img src="'+esc(thumb(v))+'" alt="" loading="lazy" decoding="async"><span class="dumc-movie-play" aria-hidden="true">▶</span></button><div class="dumc-movie-copy"><h3>'+esc(v.title)+'</h3><p>'+esc(v.description||v.category||"মুভি দেখুন")+'</p>'+(v.release_year?'<small>'+esc(v.release_year)+'</small>':"")+'</div></article>').join(""):'<p class="empty dumc-empty">'+(query?"কোনো মিল পাওয়া যায়নি।":"এই Category ও Year-এ এখনো কোনো প্রকাশিত মুভি নেই।")+'</p>';updateCount();$("#dumcHomeMore").hidden=!hasMore||Boolean(query)}
 async function loadMovies(reset=true){if(loading)return;loading=true;const status=$("#dumcHomeStatus");status.textContent="মুভি লোড হচ্ছে…";if(reset){offset=0;movies=[];host.innerHTML='<p class="empty">মুভি লোড হচ্ছে…</p>'}try{const p=new URLSearchParams({limit:"36",offset:String(offset)});if(activeFolder)p.set("folder_id",activeFolder);if(activeYear)p.set("year",activeYear);if(query)p.set("q",query);const d=window.DUFS?.browse?await window.DUFS.browse({limit:36,offset,folder_id:activeFolder,year:activeYear,q:query}):await (async()=>{const response=await fetch("/api/dufs/browse?"+p.toString(),{credentials:"same-origin",cache:"no-store"});const payload=await response.json().catch(()=>({}));if(!response.ok)throw Error(payload.error||"DUFS browse request failed.");return payload})();movies=reset?(d.movies||[]):movies.concat(d.movies||[]);offset+=d.movies?.length||0;hasMore=(d.movies||[]).length===36;renderMovies();status.textContent=""}catch(e){status.textContent=e.message;host.innerHTML='<p class="empty dumc-empty">'+esc(e.message)+'</p>';$("#dumcHomeMore").hidden=true;updateCount()}finally{loading=false}}
+const panelContentObserver=new MutationObserver(()=>scheduleOpenPanelMeasure());
+panelContentObserver.observe(nav,{subtree:true,childList:true,characterData:true});
+window.addEventListener("resize",scheduleOpenPanelMeasure,{passive:true});
+if(document.fonts?.ready)document.fonts.ready.then(scheduleOpenPanelMeasure);
 nav.addEventListener("click",e=>{const x=e.target.closest("[data-close-menu]");if(x){closeMenu();return}const t=e.target.closest("[data-category-menu]");if(t){toggleMenu(t.dataset.categoryMenu);return}const f=e.target.closest("[data-category-folder]");if(f){activeFolder=f.dataset.categoryFolder;activeYear="";closeMenu();loadMovies(true);return}const y=e.target.closest("[data-year]");if(y){activeYear=y.dataset.year;activeFolder="";closeMenu();loadMovies(true)}});
 document.addEventListener("click",e=>{if(!activeMenu||layout.contains(e.target))return;e.preventDefault();e.stopImmediatePropagation();closeMenu()},true);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&activeMenu){e.preventDefault();closeMenu(true);return}if(e.key==="ArrowDown"&&e.target.matches("[data-category-menu]")){e.preventDefault();openMenu(e.target.dataset.categoryMenu);nav.querySelector("#dufnFolderPanel-"+activeMenu+" .dufn-folder")?.focus()}});
