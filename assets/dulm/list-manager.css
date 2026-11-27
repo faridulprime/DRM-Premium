@@ -44,12 +44,12 @@
 .dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{
  width:max-content!important;
  min-width:min(230px,calc(100vw - 28px))!important;
- max-width:min(460px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;
 }
 .dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{
  width:max-content!important;
  min-width:min(172px,calc(100vw - 28px))!important;
- max-width:min(240px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;
 }
 .dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder-grid{
  width:max-content!important;
@@ -79,7 +79,7 @@
  }
  .dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{
   min-width:min(172px,calc(100vw - 20px))!important;
-  max-width:min(240px,calc(100vw - 20px))!important;
+  max-width:calc(100vw - 20px)!important;
  }
 }
 
