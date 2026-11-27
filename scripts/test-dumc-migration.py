@@ -94,7 +94,7 @@ class DumcMigrationTests(unittest.TestCase):
         html = (ROOT / "upload-studio.html").read_text(encoding="utf-8")
         manager = (ROOT / "dufs-manager.js").read_text(encoding="utf-8")
         upload = (ROOT / "upload-studio.js").read_text(encoding="utf-8")
-        self.assertIn("dufs-manager.js?v=dufs-03", html)
+        self.assertIn("dufs-manager.js?v=dufs-05", html)
         self.assertIn("window.DUFSLinkFolder", manager)
         self.assertIn("DUFSLinkFolder(created.id", upload)
 
