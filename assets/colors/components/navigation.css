@@ -205,3 +205,21 @@ html[data-theme] body .device-switch>button:hover{
 .live-restrictions-tabs>.live-restriction-tab:hover,.page-tabs>.tab:hover,.type-switch>.type:hover,.device-switch>button:hover){
   color:#24232A!important;text-shadow:0 0 7px rgba(77,83,98,.3),0 0 16px rgba(108,119,143,.18)!important;
 }
+
+
+/* Final high-specificity reset for legacy active and hover fills. */
+html[data-theme] html[data-theme] body body .category-tabs>.category-chip,
+html[data-theme] html[data-theme] body body .dufn-tab-wrap .dufn-tab,
+html[data-theme] html[data-theme] body body .live-restrictions-tabs>.live-restriction-tab,
+html[data-theme] html[data-theme] body body .page-tabs>.tab,
+html[data-theme] html[data-theme] body body .type-switch>.type,
+html[data-theme] html[data-theme] body body .device-switch>button,
+html[data-theme] html[data-theme] body body .category-tabs>.category-chip:hover,
+html[data-theme] html[data-theme] body body .dufn-tab-wrap .dufn-tab:hover,
+html[data-theme] html[data-theme] body body .live-restrictions-tabs>.live-restriction-tab:hover,
+html[data-theme] html[data-theme] body body .page-tabs>.tab:hover,
+html[data-theme] html[data-theme] body body .type-switch>.type:hover,
+html[data-theme] html[data-theme] body body .device-switch>button:hover{
+  background:transparent!important;background-color:transparent!important;background-image:none!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+}
