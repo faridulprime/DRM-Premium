@@ -36,8 +36,8 @@
 .dumc-home-search input::placeholder{color:#adb4bf}
 #dumcHomeStatus{font-size:.84rem;color:#f0d69e;text-shadow:0 2px 4px #000}
 .dumc-home-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-.dumc-movie-card{min-width:0;overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:15px;background:#151515;transition:transform .2s,border-color .2s}
-.dumc-movie-card:hover{transform:translateY(-3px);border-color:#c69a52}
+.dumc-movie-card{min-width:0;overflow:hidden;border:1px solid rgba(255,255,255,.13);border-radius:15px;background:linear-gradient(145deg,#1b1d22 0%,#121317 62%,#17191e 100%);box-shadow:0 10px 26px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.045);transform:perspective(900px) translateZ(0);transform-style:preserve-3d;transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}
+.dumc-movie-card:hover{transform:perspective(900px) translateY(-4px) rotateX(.45deg) scale(1.006);border-color:rgba(198,154,82,.7);box-shadow:0 16px 34px rgba(0,0,0,.32),0 0 20px rgba(198,154,82,.07),inset 0 1px 0 rgba(255,255,255,.075)}
 .dumc-movie-open{position:relative;display:block;width:100%;aspect-ratio:16/9;padding:0;border:0;background:#161616;cursor:pointer;overflow:hidden}
 .dumc-movie-open img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .35s}
 .dumc-movie-card:hover img{transform:scale(1.035)}
