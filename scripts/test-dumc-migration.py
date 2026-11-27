@@ -99,12 +99,24 @@ class DumcMigrationTests(unittest.TestCase):
         self.assertIn("DUFSLinkFolder(created.id", upload)
 
     def test_seed_matches_versioned_taxonomy(self):
+        dufs_taxonomy = None
         expected = []
         def walk(node, parent=None):
             expected.append((node["id"], parent))
             for child in node.get("children", []):
                 walk(child, node["id"])
         walk(self.taxonomy)
+        dufs_taxonomy = json.loads((ROOT / "assets" / "dufs" / "taxonomy.json").read_text(encoding="utf-8"))
+        self.assertEqual(dufs_taxonomy.get("system"), "DUFS")
+        self.assertEqual(dufs_taxonomy.get("name"), "DUFS")
+        self.assertEqual(dufs_taxonomy.get("id"), "DUMC")
+        dufs_expected = []
+        def walk_dufs(node, parent=None):
+            dufs_expected.append((node["id"], parent))
+            for child in node.get("children", []):
+                walk_dufs(child, node["id"])
+        walk_dufs(dufs_taxonomy)
+        self.assertEqual(set(dufs_expected), set(expected))
         actual = self.db.execute(
             "SELECT id,parent_id FROM dumc_folders ORDER BY id"
         ).fetchall()
