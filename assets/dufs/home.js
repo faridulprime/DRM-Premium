@@ -42,12 +42,18 @@ function syncMenuState(animate=true){
   if(!panel)continue;
   const isMarkedHidden=panel.getAttribute("aria-hidden")==="true";
   if(isOpen){
+   if(button){
+    const navRect=nav.getBoundingClientRect(),tabRect=button.getBoundingClientRect();
+    const availableWidth=Math.max(0,nav.clientWidth-panel.offsetWidth);
+    const tabOffset=tabRect.left-navRect.left;
+    panel.style.marginLeft=Math.max(0,Math.min(tabOffset,availableWidth))+"px";
+   }
    if(panel.hidden||isMarkedHidden){
-    if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:true});
+    if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:true,duration:700});
     else{panel.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false")}
    }
   }else if(!panel.hidden&&!isMarkedHidden){
-   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false});
+   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,duration:700});
    else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true")}
   }else if(panel.hidden){
    panel.inert=true;
