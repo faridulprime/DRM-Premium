@@ -1898,7 +1898,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
 
             close_tab.click()
             page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-subtitles').hidden")
-            page.locator("header").click(position={"x": 12, "y": 12})
+            page.evaluate("() => document.body.dispatchEvent(new MouseEvent(\\"click\\", {bubbles: true, cancelable: true}))")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-subtitles').hidden")
 
             close_tab.click()
