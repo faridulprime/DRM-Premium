@@ -1,6 +1,6 @@
 # DRM Universal Motion Engine (DUME)
-Version: 0.2.1 — Responsive drawer lifecycle and token-duration validation
-Status: Shared mobile drawer controller and CSS timing tokens are integrated on Homepage, Admin, Live Users and Upload Studio. Chromium validates normal/reduced-motion open/close, rapid-toggle recovery, resize cleanup across the 760px breakpoint, ARIA/backdrop state, and transform/opacity timing against DUME tokens. Other motion families and Profile remain outside this controller migration.
+Version: 0.3.0 — Shared drawer and dropdown lifecycle motion
+Status: Shared mobile drawer motion and reusable dropdown disclosure motion are integrated. Homepage DUFS category dropdowns use the DUME controller for symmetric open/close transitions, rapid-toggle cancellation and reduced-motion behavior. Other motion families and Profile remain outside this controller migration.
 
 ## Purpose
 DUME centralizes interaction motion: transition duration, easing, animation sequencing, reduced-motion behavior, and motion state orchestration. It does not own element dimensions, coordinate placement, or colors.
@@ -12,10 +12,10 @@ DUME centralizes interaction motion: transition duration, easing, animation sequ
 - DUCS owns colors and semantic color meaning.
 
 ## Current implementation
-- `assets/motion/motion.css` defines shared drawer duration, opacity duration, easing, and mobile drawer/backdrop primitives.
-- `assets/motion/motion-controller.js` exposes `window.DRMMotion.drawer({sidebar, backdrop, toggle, open})`.
+- `assets/motion/motion.css` defines shared drawer and dropdown duration/easing/transform tokens, opacity timing, and mobile drawer/backdrop primitives.
+- `assets/motion/motion-controller.js` exposes `window.DRMMotion.drawer({sidebar, backdrop, toggle, open})` and `window.DRMMotion.dropdown({panel, open, onFinish})`.
 - The controller owns the mobile universal drawer transition at the 760px breakpoint, sets toggle ARIA state, coordinates backdrop visibility, cancels stale close timers, and clears temporary inline styles after closing.
-- Reduced-motion preference sets the drawer transition duration to zero.
+- Reduced-motion preference sets both drawer and dropdown animation durations to zero; semantic visibility/ARIA/inert state changes still occur immediately.
 - Desktop drawer behavior remains with existing page CSS; the controller delegates to the existing desktop class state.
 
 ## Token contract
@@ -23,6 +23,10 @@ DUME centralizes interaction motion: transition duration, easing, animation sequ
 - `--dume-drawer-opacity-duration`: drawer opacity transition duration.
 - `--dume-drawer-easing`: drawer transition easing.
 - `--dume-backdrop-duration`: backdrop opacity transition duration.
+- `--dume-dropdown-duration`: symmetric dropdown enter/exit duration.
+- `--dume-dropdown-easing`: shared dropdown enter/exit easing.
+- `--dume-dropdown-offset`: vertical translation used by the dropdown motion.
+- `--dume-dropdown-scale`: starting/ending scale for the dropdown motion.
 
 The controller reads the duration and easing from computed root custom properties. JavaScript fallbacks are retained for resilience if a token stylesheet is unavailable.
 
@@ -33,6 +37,8 @@ The controller reads the duration and easing from computed root custom propertie
 4. Keep layout geometry and positioning outside DUME.
 5. Migrate one component family at a time and preserve existing visual behavior.
 6. Avoid global transitions that animate unrelated layout or content.
+7. Enter and exit for one disclosure component use the same duration/easing and reverse the same visual path. Visibility is removed only after a normal-motion close finishes; close state is announced and made inert immediately.
+8. Reopening during a close cancels the stale animation and reverses from the current rendered frame, preventing a late close callback from hiding an already reopened panel.
 
 ## Definition of done
 A component is migrated only when timing and easing are tokenized, state changes remain correct under rapid interaction, reduced motion is respected, keyboard interaction is preserved, and desktop/mobile behavior is validated in a browser.
@@ -70,3 +76,9 @@ The Chromium audit checks Homepage, Admin, Live Users and Upload Studio for:
 - Computed transform and opacity transition durations against `--dume-drawer-duration` and `--dume-drawer-opacity-duration`.
 
 The controller now uses the opacity-duration token rather than a hard-coded 520ms value. This acceptance applies to the tested shared sidebar drawer states only; it is not evidence that every page animation is centralized in DUME.
+
+## DUME dropdown/disclosure rule — 2026-11-27
+
+The DRM Universal Motion System owns the shared category-dropdown motion used by DUFS on the Movies homepage. All seven category dropdowns use one interaction contract: click/keyboard activation opens a closed menu; activating the same category again closes it; activating a different category closes the old menu while opening the new one; Escape, outside click and the explicit close control close the active menu. Pointer hover does not mutate open/closed state, so mouse and touch clicks have identical toggle semantics.
+
+The controller animates from a compact, slightly raised and transparent state to the normal panel state. Closing runs the exact same duration/easing and motion path in reverse. The panel becomes `aria-hidden` and inert at the start of closing, but remains rendered until the exit animation completes. Reopening during either transition cancels the old animation and begins from the current computed frame. Under `prefers-reduced-motion: reduce`, the same state changes happen immediately with no animation.
