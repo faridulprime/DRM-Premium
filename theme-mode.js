@@ -34,6 +34,22 @@
     window.dispatchEvent(new CustomEvent("drm:themechange", { detail: { theme: mode } }));
   }
 
+  document.addEventListener("click", event => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const tab = event.target.closest(".category-tabs>.category-chip,.dufn-tabs>.dufn-tab,.live-restrictions-tabs>.live-restriction-tab,.page-tabs>.tab,.type-switch>.type,.device-switch>button");
+    if (!tab || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const oldRipple = tab.querySelector(".tab-water-ripple");
+    if (oldRipple) oldRipple.remove();
+    const rect = tab.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    ripple.className = "tab-water-ripple";
+    ripple.setAttribute("aria-hidden", "true");
+    ripple.style.setProperty("--ripple-x", ((event.clientX || rect.left + rect.width / 2) - rect.left) + "px");
+    ripple.style.setProperty("--ripple-y", ((event.clientY || rect.top + rect.height / 2) - rect.top) + "px");
+    tab.append(ripple);
+    window.setTimeout(() => ripple.remove(), 760);
+  }, { passive: true });
+
   function mount() {
     if (!document.body || document.querySelector(".drm-theme-switch")) return;
     const button = document.createElement("button");
