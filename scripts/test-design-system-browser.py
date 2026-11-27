@@ -1759,9 +1759,18 @@ def inspect_live_overlay_interactions(browser, base_url):
               const drawer = document.querySelector("#liveUserDrawer");
               const profile = drawer.querySelector(".live-drawer-profile");
               const actions = [...drawer.querySelectorAll(".live-drawer-action")];
+              const effectiveBackground = element => {
+                let current = element;
+                while (current) {
+                  const value = getComputedStyle(current).backgroundColor;
+                  if (value !== "rgba(0, 0, 0, 0)" && value !== "transparent") return value;
+                  current = current.parentElement;
+                }
+                return "rgb(248, 250, 252)";
+              };
               const pair = (foreground, background) => ({
                 foreground: getComputedStyle(foreground).color,
-                background: getComputedStyle(background).backgroundColor
+                background: effectiveBackground(background)
               });
               const warning = actions.find(el => el.classList.contains("warning"));
               const danger = actions.find(el => el.classList.contains("danger"));
