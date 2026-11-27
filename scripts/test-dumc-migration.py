@@ -43,17 +43,17 @@ class DumcMigrationTests(unittest.TestCase):
     def test_public_homepage_browse_is_read_only_and_link_based(self):
         api = (ROOT / "functions" / "api" / "[[path]].js").read_text(encoding="utf-8")
         html = (ROOT / "index.html").read_text(encoding="utf-8")
-        home = (ROOT / "assets" / "dumc" / "home.js").read_text(encoding="utf-8")
+        home = (ROOT / "assets" / "dufs" / "home.js").read_text(encoding="utf-8")
         self.assertIn('p[0]==="dumc"&&p[1]==="browse"', api)
         self.assertIn('id="movies"', html)
-        self.assertRegex(html, r'/assets/dumc/home\.js\?v=dumc-home-\d+')
-        self.assertRegex(html, r'/assets/dumc/home\.css\?v=dumc-home-\d+')
-        self.assertIn('params.set("folder_id",activeFolder)', home)
-        self.assertIn('params.set("q",query)', home)
-        self.assertIn('params.set("year",activeYear)', home)
-        self.assertIn('id="dumcHomeBreadcrumb"', html)
+        self.assertRegex(html, r'/assets/dufs/home\.js\?v=dufs-\d+')
+        self.assertRegex(html, r'/assets/dufs/home\.css\?v=dufs-\d+')
+        self.assertIn('p.set("folder_id",activeFolder)', home)
+        self.assertIn('p.set("q",query)', home)
+        self.assertIn('p.set("year",activeYear)', home)
+        self.assertIn('aria-label="DUFS folder directory"', html)
         self.assertIn('id="dumcHomeCategories"', html)
-        self.assertIn('id="dumcHomeSubcategories"', html)
+        self.assertIn("dufn-folder-grid", home)
         self.assertIn("async function loadTaxonomy()", home)
         self.assertIn('x.id!=="ARCHIVED"', home)
         self.assertIn('folderId==="ARCHIVED"', api)
@@ -62,7 +62,7 @@ class DumcMigrationTests(unittest.TestCase):
         self.assertIn('AND dm.release_year=?', api)
         self.assertIn('Provide an HTTPS audio source URL', api)
         self.assertIn('Provide an HTTPS subtitle source URL', api)
-        self.assertNotIn('asset_key=reference', (ROOT / "dumc-manager.js").read_text(encoding="utf-8"))
+        self.assertNotIn('asset_key=reference', (ROOT / "dufs-manager.js").read_text(encoding="utf-8"))
 
     def test_category_and_release_year_filters_are_composable(self):
         self.db.execute(
@@ -92,11 +92,11 @@ class DumcMigrationTests(unittest.TestCase):
 
     def test_upload_studio_loads_the_interactive_manager(self):
         html = (ROOT / "upload-studio.html").read_text(encoding="utf-8")
-        manager = (ROOT / "dumc-manager.js").read_text(encoding="utf-8")
+        manager = (ROOT / "dufs-manager.js").read_text(encoding="utf-8")
         upload = (ROOT / "upload-studio.js").read_text(encoding="utf-8")
-        self.assertIn("dumc-manager.js?v=dumc-02", html)
-        self.assertIn("window.DUMCLinkFolder", manager)
-        self.assertIn("DUMCLinkFolder(created.id", upload)
+        self.assertIn("dufs-manager.js?v=dufs-03", html)
+        self.assertIn("window.DUFSLinkFolder", manager)
+        self.assertIn("DUFSLinkFolder(created.id", upload)
 
     def test_seed_matches_versioned_taxonomy(self):
         expected = []
