@@ -13,10 +13,10 @@
  const jobs=new WeakMap();
  const dropdownJobs=new WeakMap();
  const instances=new Map();
- const DROPDOWN_DURATION=readMs("--dume-dropdown-duration",220);
+ const DROPDOWN_DURATION=readMs("--dume-dropdown-duration",380);
  const DROPDOWN_EASING=rootStyle.getPropertyValue("--dume-dropdown-easing").trim()||EASING;
- const DROPDOWN_OFFSET=parseFloat(rootStyle.getPropertyValue("--dume-dropdown-offset"))||8;
- const DROPDOWN_SCALE=parseFloat(rootStyle.getPropertyValue("--dume-dropdown-scale"))||.985;
+ const DROPDOWN_OFFSET=parseFloat(rootStyle.getPropertyValue("--dume-dropdown-offset"))||22;
+ const DROPDOWN_SCALE=parseFloat(rootStyle.getPropertyValue("--dume-dropdown-scale"))||.97;
  function dropdown(options){
   const {panel,open,onFinish}=options||{};
   if(!panel)return Promise.resolve({cancelled:false,skipped:true});
@@ -37,8 +37,8 @@
    panel.inert=true;
    panel.setAttribute("aria-hidden","true");
   }
-  const closedFrame={opacity:0,transform:"translate3d(0,-"+DROPDOWN_OFFSET+"px,0) scale("+DROPDOWN_SCALE+")"};
-  const openFrame={opacity:1,transform:"translate3d(0,0,0) scale(1)"};
+  const closedFrame={opacity:0,transform:"translate3d(0,-"+DROPDOWN_OFFSET+"px,0) scale("+DROPDOWN_SCALE+")",filter:"blur(2px)"};
+  const openFrame={opacity:1,transform:"translate3d(0,0,0) scale(1)",filter:"blur(0px)"};
   const from=currentFrame||(isOpen?closedFrame:openFrame);
   const to=isOpen?openFrame:closedFrame;
   const duration=REDUCED.matches?0:DROPDOWN_DURATION;
@@ -48,7 +48,7 @@
    if(typeof onFinish==="function")onFinish();
    return Promise.resolve({cancelled:false,reducedMotion:REDUCED.matches});
   }
-  panel.style.willChange="transform, opacity";
+  panel.style.willChange="transform, opacity, filter";
   const animation=panel.animate([from,to],{duration,easing:DROPDOWN_EASING,fill:"both"});
   const job={animation,open:isOpen};
   dropdownJobs.set(panel,job);
