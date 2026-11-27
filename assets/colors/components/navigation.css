@@ -93,3 +93,16 @@ body #dumcHomeCategories .dufn-tabs{border:0!important;border-bottom:0!important
   .category-tabs{gap:18px!important}
   :where(.dufn-tabs,.live-restrictions-tabs,.page-tabs,.type-switch){gap:18px!important}
 }
+
+/* Final high-specificity reset for legacy tab rails. */
+html body .category-tabs,html body .dufn-tabs,html body .live-restrictions-tabs,
+html body .page-tabs,html body .type-switch{
+  border:0!important;border-bottom:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+  gap:clamp(18px,4vw,42px)!important;padding:0 4px!important;
+}
+html body .category-tabs{height:auto!important;min-height:50px!important}
+html body :is(.category-tabs>.category-chip,.dufn-tabs>.dufn-tab,.live-restrictions-tabs>.live-restriction-tab,.page-tabs>.tab,.type-switch>.type){
+  min-height:50px!important;padding:12px 0 15px!important;border:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;font-size:17px!important;font-weight:500!important;
+}
