@@ -185,6 +185,18 @@ async function handle(req,env){
  if(p[0]==="auth"&&p[1]==="logout"&&m==="POST"){const t=cookieToken(req);if(t)await env.DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await hash(t)).run();return json({ok:true},200,{"set-cookie":clearCookie()})}
  const sessionUser=await getSession(req,env);if(sessionUser){const now=Math.floor(Date.now()/1000),restriction=await env.DB.prepare("SELECT restriction_type,expires_at,reason,created_at FROM user_restrictions WHERE user_id=? AND (expires_at IS NULL OR expires_at>?)").bind(sessionUser.id,now).first();if(restriction&&!(p[0]==="auth"&&p[1]==="access-state"))return json({error:"Account access is restricted.",restricted:true,restriction:{type:restriction.restriction_type,expiresAt:restriction.expires_at,reason:restriction.reason,createdAt:restriction.created_at}},423)}
 
+ if(p[0]==="dumc"&&p[1]==="folder-name-overrides"&&p.length===2&&m==="GET"){
+  try{
+   const prefix="dumc_folder_name_override:";
+   const rows=await env.DB.prepare("SELECT key,value FROM settings WHERE substr(key,1,?)=?").bind(prefix.length,prefix).all();
+   const overrides={};
+   for(const row of rows.results||[]){
+    const id=String(row.key||"").slice(prefix.length);
+    if(/^[A-Za-z0-9_-]{1,120}$/.test(id)&&typeof row.value==="string"&&row.value.length<=100)overrides[id]=row.value;
+   }
+   return json({overrides});
+  }catch{return fail("Folder name overrides are unavailable.",503)}
+ }
  if(p[0]==="dumc"&&p[1]==="browse"&&m==="GET"){
   const folderId=(u.searchParams.get("folder_id")||"").trim().slice(0,120)||null;
   const searchTerm=(u.searchParams.get("q")||"").trim().slice(0,100);
@@ -194,7 +206,7 @@ async function handle(req,env){
   const limit=Number.isFinite(requestedLimit)?Math.min(60,Math.max(1,Math.floor(requestedLimit))):36;
   const offset=Number.isFinite(requestedOffset)?Math.min(1000000,Math.max(0,Math.floor(requestedOffset))):0;
   try{
-   const folders=await env.DB.prepare(`SELECT f.id,f.parent_id,f.name,f.description,f.kind,f.sort_order,
+   const folders=await env.DB.prepare(`SELECT f.id,f.parent_id,COALESCE((SELECT value FROM settings WHERE key='dumc_folder_name_override:'||f.id),f.name) AS name,f.description,f.kind,f.sort_order,
     (SELECT COUNT(DISTINCT v.id) FROM videos v
       WHERE v.published=1 AND (
        EXISTS(SELECT 1 FROM dumc_movies dm WHERE dm.video_id=v.id AND
@@ -291,6 +303,34 @@ async function handle(req,env){
 
 
  if(p[0]==="admin"&&p[1]==="dumc"){
+  if(p.length===3&&p[2]==="folder-name-overrides"&&m==="PUT"){
+   if(user.role!=="owner")return fail("শুধু Owner Folder-এর নাম পরিবর্তন করতে পারবেন।",403);
+   const d=await readBody(req),folderId=String(d?.folder_id||"").trim(),name=String(d?.name||"").normalize("NFC").trim();
+   if(!/^[A-Za-z0-9_-]{1,120}$/.test(folderId))return fail("Folder ID সঠিক নয়।",400);
+   if(!textOK(name,100)||Array.from(name).some(ch=>ch.charCodeAt(0)<32||ch.charCodeAt(0)===127))return fail("Folder name ১–১০০ অক্ষরের মধ্যে দিন।",400);
+   const folder=await env.DB.prepare("SELECT id,parent_id,is_archived FROM dumc_folders WHERE id=?").bind(folderId).first();
+   const missingYearParent=folderId==="YEAR_1956"||folderId==="YEAR_1957"||folderId==="YEAR_1958"||folderId==="YEAR_1959"?"YEAR_BEFORE_1960":null;
+   if(!folder&&!missingYearParent)return fail("Folder পাওয়া যায়নি। পৃষ্ঠাটি Refresh করে আবার চেষ্টা করুন।",404);
+   if(folder&&Number(folder.is_archived))return fail("Archived Folder-এর নাম পরিবর্তন করা যাবে না।",404);
+   const parentId=folder?.parent_id||missingYearParent;
+   if(parentId){
+    const siblings=await env.DB.prepare("SELECT f.id,f.name,s.value AS override_name FROM dumc_folders f LEFT JOIN settings s ON s.key=?||f.id WHERE f.parent_id=? AND f.is_archived=0 AND f.id<>?").bind("dumc_folder_name_override:",parentId,folderId).all();
+    const displayName=value=>{
+     const raw=String(value||"").replace(/_/g," ").trim().replace(/cinema/gi,"Movies");
+     return raw.toLowerCase()==="dhallywood"?"Bangla Movies":raw;
+    };
+    const target=name.toLocaleLowerCase();
+    const duplicate=(siblings.results||[]).some(row=>displayName(row.override_name||row.name).toLocaleLowerCase()===target);
+    if(duplicate)return fail("এই Folder-এর মধ্যে একই নামে আরেকটি Folder রয়েছে।",409);
+   }
+   const key="dumc_folder_name_override:"+folderId;
+   try{
+    await env.DB.prepare("INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(key,name).run();
+    const saved=await env.DB.prepare("SELECT value FROM settings WHERE key=?").bind(key).first();
+    if(saved?.value!==name)return fail("Folder name সংরক্ষণ যাচাই করা যায়নি।",500);
+   }catch(e){console.error("DUMC folder rename failed",String(e?.message||e));return fail("Folder name সংরক্ষণ করা যায়নি।",409)}
+   return json({ok:true,folder_id:folderId,name});
+  }
   const canAccessVideo=async(videoId)=>!!(await env.DB.prepare("SELECT id FROM videos WHERE id=? AND (?='owner' OR owner_id=?)").bind(videoId,user.role,user.id).first());
   const canAccessFolder=async(folderId)=>await env.DB.prepare("SELECT id,parent_id,name,description,kind,sort_order,is_system,owner_id,is_archived FROM dumc_folders WHERE id=? AND is_archived=0 AND (is_system=1 OR owner_id=? OR ?='owner')").bind(folderId,user.id,user.role).first();
   const folderParent=async(folderId,parentId)=>{const f=await canAccessFolder(folderId);return !!f&&f.parent_id===parentId};
@@ -300,7 +340,7 @@ async function handle(req,env){
    artwork:"10_ARTWORK",metadata:"11_METADATA"
   };
   if(p.length===3&&p[2]==="folders"&&m==="GET"){
-   const rows=await env.DB.prepare("SELECT f.id,f.parent_id,f.name,f.description,f.kind,f.sort_order,f.is_system,f.owner_id,f.is_archived,COUNT(DISTINCT a.video_id) AS movie_count FROM dumc_folders f LEFT JOIN dumc_movie_folder_assignments a ON a.folder_id=f.id WHERE f.is_archived=0 AND (f.is_system=1 OR f.owner_id=? OR ?='owner') GROUP BY f.id ORDER BY f.parent_id,f.sort_order,f.name").bind(user.id,user.role).all();
+   const rows=await env.DB.prepare("SELECT f.id,f.parent_id,COALESCE((SELECT value FROM settings WHERE key='dumc_folder_name_override:'||f.id),f.name) AS name,f.description,f.kind,f.sort_order,f.is_system,f.owner_id,f.is_archived,COUNT(DISTINCT a.video_id) AS movie_count FROM dumc_folders f LEFT JOIN dumc_movie_folder_assignments a ON a.folder_id=f.id WHERE f.is_archived=0 AND (f.is_system=1 OR f.owner_id=? OR ?='owner') GROUP BY f.id ORDER BY f.parent_id,f.sort_order,f.name").bind(user.id,user.role).all();
    const byId=new Map((rows.results||[]).map(x=>[x.id,{...x,children:[]}]));
    const roots=[];
    for(const node of byId.values()){if(node.parent_id&&byId.has(node.parent_id))byId.get(node.parent_id).children.push(node);else if(!node.parent_id)roots.push(node);}
