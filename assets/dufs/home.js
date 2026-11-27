@@ -84,8 +84,8 @@ function renderPanel(g){
 function renderCategories(){
  const gs=groups();
  nav.innerHTML='<div class="dufn-tabs" role="group" aria-label="Movie folder categories">'+gs.map(g=>
-  '<div class="dufn-tab-wrap"><button type="button" class="dufn-tab'+(activeMenu===g.key?' is-open':'')+'" data-category-menu="'+g.key+'" aria-expanded="'+(activeMenu===g.key)+'" aria-controls="dufnFolderPanel-'+g.key+'">'+esc(g.title)+'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+renderPanel(g)+'</div>'
- ).join("")+'</div><span class="dumc-home-count" id="dumcHomeCount">'+count().toLocaleString("en-US")+' folders · '+movies.length.toLocaleString("en-US")+' movies</span>';
+  '<button type="button" class="dufn-tab'+(activeMenu===g.key?' is-open':'')+'" data-category-menu="'+g.key+'" aria-expanded="'+(activeMenu===g.key)+'" aria-controls="dufnFolderPanel-'+g.key+'">'+esc(g.title)+'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
+ ).join('')+'</div>'+gs.map(renderPanel).join('')+'<span class="dumc-home-count" id="dumcHomeCount">'+count().toLocaleString("en-US")+' folders · '+movies.length.toLocaleString("en-US")+' movies</span>';
  syncMenuState(true);
 }
 function updateCount(){const el=$("#dumcHomeCount");if(el)el.textContent=count().toLocaleString("en-US")+" folders · "+movies.length.toLocaleString("en-US")+" movies"}
