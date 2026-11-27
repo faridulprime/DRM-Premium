@@ -54,3 +54,29 @@
 @media(max-width:680px){.dusb-viewport{max-width:100%;grid-template-columns:minmax(0,max-content) var(--dusb-width);column-gap:36px}.dusb-scrollbar{max-width:100%}.dumc-directory-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}.dumc-directory-panel{height:390px;min-height:320px}.dumc-directory-panel-head{min-height:49px}.dumc-directory-panel-head h3{font-size:.82rem}.dumc-year-directory-panel .dumc-home-count{font-size:.61rem}.dumc-nav-item{font-size:.8rem}.dumc-home-toolbar{grid-template-columns:1fr;gap:9px;align-items:stretch}.dumc-home-search{width:100%}.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-count{font-size:.77rem}}
 @media(max-width:420px){.dumc-directory-layout{grid-template-columns:1fr 1fr;gap:14px 10px}.dumc-directory-panel{height:360px;min-height:300px}.dumc-category-panel .dumc-directory-panel-head{padding-inline:1px}.dumc-directory-panel-head h3{font-size:.78rem}.dumc-year-directory-panel .dumc-home-count{font-size:.58rem}.dumc-nav-item{font-size:.76rem;gap:5px}.dumc-folder-icon{width:14px;height:14px;flex-basis:14px}.dumc-home-grid{grid-template-columns:1fr}.dumc-home-count{display:none}}
 #movies{scroll-margin-top:88px}
+/* DUFN — Hybrid expandable folder navigation */
+.dumc-directory-layout{display:block!important;margin:0 0 26px!important;min-width:0}
+.dumc-category-columns{display:block!important;min-width:0}
+.dufn-tabs{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:0 0 12px;border-bottom:1px solid rgba(255,255,255,.12)}
+.dufn-tab{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 14px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:#242424;color:#e8e8e8;font:650 13px/1 "Space Grotesk","Hind Siliguri",sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s ease,border-color .16s ease,color .16s ease}
+.dufn-tab svg{width:13px;height:13px;opacity:.68;transition:transform .16s ease}
+.dufn-tab:hover,.dufn-tab:focus-visible,.dufn-tab.is-open{background:#30343a;border-color:rgba(215,173,101,.48);color:#ffe0a8;outline:none}
+.dufn-tab.is-open svg{transform:rotate(180deg)}
+.dufn-tab:focus-visible{box-shadow:0 0 0 2px rgba(215,173,101,.25)}
+.dufn-panel{padding:18px 0 8px;animation:dufnReveal .18s ease both}
+.dufn-panel[hidden]{display:none!important}
+@keyframes dufnReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.dufn-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 12px}
+.dufn-panel-head h3{margin:0;color:#f5f5f5;font-size:15px;font-weight:750}
+.dufn-panel-head p{margin:4px 0 0;color:#9299a3;font-size:11px}
+.dufn-close{width:30px;height:30px;flex:0 0 30px;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:#202226;color:#cbd0d7;font-size:20px;line-height:1;cursor:pointer}
+.dufn-close:hover{background:#34383f;color:#fff}
+.dufn-folder-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px 16px;align-items:start;overflow:visible}
+.dufn-folder{width:100%!important;max-width:none!important;min-height:39px!important;padding:7px 9px!important;border-radius:7px!important}
+.dufn-folder.active{background:rgba(215,173,101,.09)!important;box-shadow:inset 2px 0 #dca94f!important}
+.dumc-home-count{display:block;margin:0 0 5px;color:#d8bd8a!important;font-size:11px;font-weight:600;text-align:right}
+.dumc-home-toolbar{margin-top:20px}
+.dumc-year-directory-panel,.dusb-viewport,.dusb-scrollbar,.dusb-rail{display:none!important}
+@media(max-width:1100px){.dufn-folder-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px 12px}}
+@media(max-width:760px){.dufn-tabs{gap:7px}.dufn-tab{min-height:39px;padding:0 11px;font-size:12px}.dufn-panel{padding-top:14px}.dufn-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px}.dufn-folder{font-size:.79rem!important;min-height:40px!important}}
+@media(max-width:420px){.dufn-tabs{gap:6px}.dufn-tab{min-height:37px;padding:0 9px;font-size:11px}.dufn-folder-grid{grid-template-columns:1fr}}
