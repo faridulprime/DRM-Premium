@@ -403,7 +403,7 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
   box-shadow:none;cursor:pointer;isolation:isolate;appearance:none;
 }
 .drm-theme-switch::before{
-  content:"";position:absolute;inset:-3px 0;z-index:0;pointer-events:none;
+  content:"";position:absolute;inset:-3px 0;z-index:0;pointer-events:auto;
   border:1px solid rgba(255,255,255,.06);border-radius:999px;background:#242a32;
   box-shadow:6px 6px 14px rgba(0,0,0,.42),-5px -5px 12px rgba(255,255,255,.035);
   transition:background .3s ease,box-shadow .3s ease,border-color .3s ease;
