@@ -88,3 +88,7 @@ Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration 
 - Relationship service: `loadMovies`, `loadMovie`, `updateMovie`, `updateMovieFolders`, `registerAudio`, `removeAudio`, `registerSubtitle` and `removeSubtitle` expose the existing movie relationship APIs without moving movie records into the folder core.
 - Authorization remains server-side: Owner/Admin role checks and custom-folder ownership constraints are enforced by the existing authenticated DUFS API handlers.
 - Audit/restore is not marked implemented. The current schema has no folder-audit/event table and the archive route is a soft-archive operation without a corresponding restore endpoint. A persistent audit/recovery feature needs a separately reviewed schema/API design; no migration is silently introduced during this identity transition.
+
+## Category dropdown interaction — 2026-11-27
+
+The seven Movies category menus (All Movies, Dubbed Movies, Country, Collections, Genre, Subtitles and Year) are click/keyboard toggles. Activating the open category again closes it; switching category closes the old panel and opens the new one. Mouse hover does not open menus. Closing uses the shared DUME dropdown transition and the panel remains in the DOM until the exit motion completes.
