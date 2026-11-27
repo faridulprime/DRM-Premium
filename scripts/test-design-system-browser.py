@@ -204,7 +204,12 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 }
                 return !accessibleName(el);
               }).map(el => ({tag:el.tagName.toLowerCase(),id:el.id,className:typeof el.className==="string"?el.className:""}));
-              const dialogs = [...document.querySelectorAll('dialog,[role="dialog"],[role="alertdialog"]')];
+              const dialogs = [...document.querySelectorAll('dialog,[role="dialog"],[role="alertdialog"]')].filter(el => {
+                if (el.matches("dialog")) return el.open;
+                return !el.closest("[hidden],[inert]") && el.getAttribute("aria-hidden") !== "true" &&
+                  getComputedStyle(el).display !== "none" && getComputedStyle(el).visibility !== "hidden" &&
+                  el.getClientRects().length > 0;
+              });
               const unnamedDialogs = dialogs.filter(el => {
                 const labelledBy = el.getAttribute("aria-labelledby");
                 const label = el.getAttribute("aria-label");
@@ -1890,6 +1895,8 @@ def inspect_live_overlay_interactions(browser, base_url):
         )
         if page.locator("#liveUserDrawer").get_attribute("role") != "dialog" or page.locator("#liveUserDrawer").get_attribute("aria-modal") != "true" or page.locator("#liveUserDrawer").evaluate("(el) => el.inert"):
             fail("live-users/overlay-interaction: open account drawer is missing modal semantics or is inert")
+        if not page.locator("#liveUserDrawer").get_attribute("aria-labelledby") or not page.locator("#drawerTitle").inner_text().strip():
+            fail("live-users/overlay-interaction: open account drawer does not expose a non-empty accessible title")
         page.locator("html").evaluate("(el) => { el.dataset.theme = 'light'; }")
         live_drawer_pairs = page.evaluate(
             """() => {
@@ -1983,6 +1990,8 @@ def inspect_live_overlay_interactions(browser, base_url):
         )
         if page.locator("#liveRestrictionsModal").get_attribute("role") != "dialog" or page.locator("#liveRestrictionsModal").get_attribute("aria-modal") != "true" or page.locator("#liveRestrictionsModal").evaluate("(el) => el.inert"):
             fail("live-users/overlay-interaction: open Block List window is missing modal semantics or is inert")
+        if not page.locator("#liveRestrictionsModal").get_attribute("aria-labelledby") or not page.locator("#liveRestrictionsTitle").inner_text().strip():
+            fail("live-users/overlay-interaction: open Block List window does not expose a non-empty accessible title")
         banned_row = page.locator('.live-restricted-user-row[data-restricted-user-id="overlay-test-banned"]')
         if not banned_row.count():
             fail("live-users/overlay-interaction: expected banned fixture row was not rendered")
