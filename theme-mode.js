@@ -34,20 +34,33 @@
     window.dispatchEvent(new CustomEvent("drm:themechange", { detail: { theme: mode } }));
   }
 
-  document.addEventListener("click", event => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const tab = event.target.closest(".category-tabs>.category-chip,.dufn-tabs .dufn-tab,.live-restrictions-tabs>.live-restriction-tab,.page-tabs>.tab,.type-switch>.type,.device-switch>button");
-    if (!tab) return;
+  const tabRippleSelector = ".category-tabs>.category-chip,.dufn-tabs .dufn-tab,.dufn-folder,.live-restrictions-tabs>.live-restriction-tab,.page-tabs>.tab,.type-switch>.type,.device-switch>button";
+  function createTabRipple(tab, event) {
+    if (!tab || !tab.matches(tabRippleSelector)) return;
+    if (event && event.__drmTabRippleHandled) return;
+    if (event) {
+      try { event.__drmTabRippleHandled = true; } catch (_) {}
+    }
     const oldRipple = tab.querySelector(".tab-water-ripple");
     if (oldRipple) oldRipple.remove();
     const rect = tab.getBoundingClientRect();
+    const hasPointer = event && Number.isFinite(event.clientX) && Number.isFinite(event.clientY) && (event.clientX !== 0 || event.clientY !== 0);
+    const x = hasPointer ? event.clientX - rect.left : rect.width / 2;
+    const y = hasPointer ? event.clientY - rect.top : rect.height / 2;
     const ripple = document.createElement("span");
     ripple.className = "tab-water-ripple";
     ripple.setAttribute("aria-hidden", "true");
-    ripple.style.setProperty("--ripple-x", ((event.clientX || rect.left + rect.width / 2) - rect.left) + "px");
-    ripple.style.setProperty("--ripple-y", ((event.clientY || rect.top + rect.height / 2) - rect.top) + "px");
+    ripple.style.setProperty("--ripple-x", x + "px");
+    ripple.style.setProperty("--ripple-y", y + "px");
     tab.append(ripple);
     window.setTimeout(() => ripple.remove(), 760);
+  }
+  window.DRMCreateTabRipple = createTabRipple;
+  document.addEventListener("click", event => {
+    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+    const tab = target?.closest(tabRippleSelector);
+    if (!tab || (typeof event.button === "number" && event.button > 0)) return;
+    createTabRipple(tab, event);
   }, { passive: true, capture: true });
 
   function mount() {
