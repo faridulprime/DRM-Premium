@@ -148,7 +148,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   probe.type = "button";
                   probe.className = "category-chip";
                   probe.textContent = "Hover state";
-                  probe.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:2147483000";
+                  probe.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:2147483000;transition:none!important";
                   document.body.appendChild(probe);
                 }"""
             )
