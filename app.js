@@ -369,7 +369,7 @@ async function init(){
   if(!opened||sidebar.contains(e.target)||toggle.contains(e.target))return;
   openAccountMenu(false);
  },true);
- $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;window.DRMCreateTabRipple?.(chip,e);if(chip.dataset.category==="__movies__")return;$("#categoryFilter").value=chip.dataset.category;syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();});
+ $("#categoryTabs")?.addEventListener("click",e=>{const chip=e.target.closest("[data-category]");if(!chip)return;window.DRMCreateTabRipple?.(chip,e);if(chip.dataset.category==="__movies__")return;$("#categoryFilter").value=chip.dataset.category;syncHomeFilterUrl();renderLimit=RENDER_BATCH;render();window.DRMCreateTabRipple?.($("#categoryTabs .category-chip.active")||chip,null);});
  $("#searchSubmit")?.addEventListener("click",()=>$("#search").dispatchEvent(new Event("input",{bubbles:true})));
  document.addEventListener("keydown",e=>{if(e.key==="Escape")openAccountMenu(false);});
  document.querySelectorAll("#ytSidebar a").forEach(a=>a.addEventListener("click",()=>{document.querySelectorAll("#ytSidebar .side-link").forEach(x=>x.classList.toggle("active",x===a));openAccountMenu(false);const href=a.getAttribute("href")||"";if(href.startsWith("/"))return;const tab=href.slice(1);if(tab)sendTabView(tab);}));
