@@ -49,9 +49,12 @@ function syncMenuState(animate=true){
   }else if(!panel.hidden&&!isMarkedHidden){
    if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false});
    else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true")}
-  }else{
-   panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true");
+  }else if(panel.hidden){
+   panel.inert=true;
+   panel.setAttribute("aria-hidden","true");
   }
+  // A visible panel already marked aria-hidden is midway through its DUME
+  // exit animation. Leave it intact; only reopening that panel may reverse it.
  }
 }
 function closeMenu(focus=false){
