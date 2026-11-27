@@ -242,3 +242,88 @@ html[data-theme] body .type-switch.type-switch>.type.type:hover{
   border:0!important;border-radius:0!important;box-shadow:none!important;
   color:#F4F2F0!important;text-shadow:0 0 7px rgba(238,242,255,.66),0 0 18px rgba(211,223,255,.35)!important;
 }
+
+/* Ice Glow folder tabs, folder items, and ripple fallback. */
+html[data-theme] body #dumcHomeCategories .dufn-tabs{
+  gap:clamp(18px,3.4vw,36px)!important;padding:0 4px!important;
+  border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-tabs .dufn-tab{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  display:inline-flex!important;align-items:center!important;gap:8px!important;
+  min-height:50px!important;padding:12px 0 15px!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  color:#A6A4A6!important;box-shadow:none!important;
+  text-shadow:0 1px 12px rgba(235,238,255,.18)!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-tabs .tab-icon{
+  display:inline-flex!important;flex:0 0 16px!important;width:16px!important;height:16px!important;
+  color:#C6B990!important;opacity:.82!important;filter:drop-shadow(0 0 5px rgba(210,220,248,.2))!important;
+  transition:color .18s ease,filter .18s ease,opacity .18s ease!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-tabs .tab-icon svg{width:100%!important;height:100%!important}
+html[data-theme] body #dumcHomeCategories .dufn-tabs .dufn-tab:hover{
+  background:transparent!important;border:0!important;box-shadow:none!important;color:#F4F2F0!important;
+  text-shadow:0 0 7px rgba(238,242,255,.66),0 0 18px rgba(211,223,255,.35)!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-tabs .dufn-tab:hover .tab-icon,
+html[data-theme] body #dumcHomeCategories .dufn-tabs .dufn-tab.is-open .tab-icon{
+  color:#F2E8CB!important;opacity:1!important;filter:drop-shadow(0 0 7px rgba(220,230,255,.48))!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-tabs .dufn-tab.is-open::after{
+  content:""!important;position:absolute!important;left:50%!important;bottom:3px!important;
+  width:44px!important;height:2px!important;transform:translateX(-50%)!important;
+  background:linear-gradient(90deg,transparent,#F0F1F5,transparent)!important;
+  box-shadow:0 0 9px rgba(226,230,245,.42)!important;pointer-events:none!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-panel{
+  background:linear-gradient(145deg,rgba(29,31,37,.98),rgba(17,18,22,.98) 62%,rgba(23,25,30,.98))!important;
+  border:1px solid rgba(221,226,239,.11)!important;border-radius:12px!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.055)!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-panel-head{
+  background:linear-gradient(145deg,#1d1f25,#17191e)!important;
+  border-bottom-color:rgba(255,255,255,.07)!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-folder{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  width:max-content!important;max-width:calc(100vw - 60px)!important;min-height:40px!important;
+  padding:8px 12px!important;border:1px solid rgba(255,255,255,.045)!important;border-radius:8px!important;
+  background:linear-gradient(145deg,rgba(35,37,43,.74),rgba(20,21,25,.82) 70%,rgba(28,30,36,.76))!important;
+  color:#E7E8EC!important;box-shadow:0 4px 11px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.055)!important;
+  text-shadow:0 1px 8px rgba(220,228,247,.12)!important;
+  transform:perspective(720px) translateZ(0)!important;transform-style:preserve-3d!important;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,color .2s ease,filter .2s ease!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-folder:hover,
+html[data-theme] body #dumcHomeCategories .dufn-folder:focus-visible{
+  background:linear-gradient(145deg,rgba(42,44,51,.88),rgba(23,24,29,.92) 70%,rgba(34,36,43,.88))!important;
+  border-color:rgba(226,231,244,.19)!important;color:#F7F5F1!important;
+  box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.09)!important;
+  transform:perspective(720px) translateY(-1px) rotateX(1deg)!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-folder.active{
+  background:linear-gradient(145deg,rgba(53,49,40,.82),rgba(29,28,26,.9))!important;
+  border-color:rgba(225,198,145,.3)!important;color:#F4E7C9!important;
+  box-shadow:0 7px 16px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+html[data-theme] body #dumcHomeCategories .dumc-folder-icon{
+  flex:0 0 16px!important;width:16px!important;height:16px!important;
+  color:#D8BD87!important;filter:drop-shadow(0 0 5px rgba(217,191,137,.28))!important;
+  transition:color .18s ease,filter .18s ease,transform .18s ease!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-folder:hover .dumc-folder-icon,
+html[data-theme] body #dumcHomeCategories .dufn-folder.active .dumc-folder-icon{
+  color:#F3D99F!important;filter:drop-shadow(0 0 7px rgba(239,214,159,.55))!important;
+  transform:translateZ(5px)!important;
+}
+html[data-theme] body #dumcHomeCategories .dufn-folder span{position:relative!important;z-index:1!important}
+html[data-theme] body #dumcHomeCategories .dufn-tabs .tab-water-ripple,
+html[data-theme] body #dumcHomeCategories .dufn-folder .tab-water-ripple{z-index:0!important}
+:root[data-theme="light"] html[data-theme] body #dumcHomeCategories .dufn-panel{
+  background:linear-gradient(145deg,rgba(245,246,249,.98),rgba(232,234,239,.98))!important;
+}
+@media(max-width:760px){
+  html[data-theme] body #dumcHomeCategories .dufn-tabs .dufn-tab{gap:6px!important}
+  html[data-theme] body #dumcHomeCategories .dufn-tabs .tab-icon{flex-basis:14px!important;width:14px!important;height:14px!important}
+}
