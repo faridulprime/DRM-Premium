@@ -14,7 +14,7 @@ DUME centralizes interaction motion: transition duration, easing, animation sequ
 ## Current implementation
 - `assets/motion/motion.css` defines shared drawer and dropdown duration/easing/transform tokens, opacity timing, and mobile drawer/backdrop primitives.
 - `assets/motion/motion-controller.js` exposes `window.DRMMotion.drawer({sidebar, backdrop, toggle, open})` and `window.DRMMotion.dropdown({panel, open, onFinish})`.
-- The controller owns the mobile universal drawer transition at the 760px breakpoint, sets toggle ARIA state, coordinates backdrop visibility, cancels stale close timers, and clears temporary inline styles after closing.
+- The controller owns the mobile universal drawer transition at the 760px breakpoint and the reusable dropdown disclosure lifecycle. It sets toggle/panel ARIA and inert state, coordinates backdrop visibility, cancels stale close timers/animations, and clears temporary inline styles after transitions.
 - Reduced-motion preference sets both drawer and dropdown animation durations to zero; semantic visibility/ARIA/inert state changes still occur immediately.
 - Desktop drawer behavior remains with existing page CSS; the controller delegates to the existing desktop class state.
 
