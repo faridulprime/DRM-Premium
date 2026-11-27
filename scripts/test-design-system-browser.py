@@ -188,6 +188,10 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 page.wait_for_function("() => document.querySelector('#adminSideTabOverview')?.getAttribute('aria-selected') === 'true' && document.activeElement?.id === 'adminMenuToggle'", timeout=2500)
 
                 page.locator('#adminCategoryBar button[data-tab="videos"]').evaluate("(el) => el.click()")
+                page.wait_for_function(
+                    "() => document.querySelector('#adminCategoryBar button[data-tab=videos]')?.getAttribute('aria-pressed') === 'true'",
+                    timeout=2500,
+                )
                 if page.locator('#adminCategoryBar button[data-tab="videos"]').get_attribute("aria-pressed") != "true":
                     fail("admin/desktop: mobile category button did not expose its selected state after switching to Videos")
 
