@@ -403,7 +403,7 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
   box-shadow:none;cursor:pointer;isolation:isolate;appearance:none;
 }
 .drm-theme-switch::before{
-  content:"";position:absolute;inset:-6px 0;z-index:0;pointer-events:auto;
+  content:"";position:absolute;inset:-4px 0;z-index:0;pointer-events:auto;
   border:1px solid rgba(255,255,255,.06);border-radius:999px;background:#14161A;
   box-shadow:6px 6px 14px rgba(0,0,0,.42),-5px -5px 12px rgba(255,255,255,.035);
   transition:background .3s ease,box-shadow .3s ease,border-color .3s ease;
@@ -424,12 +424,12 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 :root[data-theme="dark"] .drm-theme-switch .drm-theme-icon-moon,
 :root:not([data-theme="light"]) .drm-theme-switch .drm-theme-icon-moon{opacity:1;color:#e2e8f0}
 :root[data-theme="light"] .drm-theme-switch::before{
-  background:#C9CDD1;border-color:rgba(255,255,255,.72);
+  background:#C9CDD1;border-color:#D5D9DE;
   box-shadow:6px 6px 14px rgba(45,62,82,.18),-6px -6px 14px rgba(0,0,0,.18);
 }
 :root[data-theme="light"] .drm-theme-switch .drm-theme-knob{
   top:9px;bottom:auto;background:#e6edf3;
-  box-shadow:4px 4px 8px rgba(45,62,82,.2),-4px -4px 8px rgba(255,255,255,.95);
+  box-shadow:0 0 8px rgba(255,255,255,.95),0 0 2px rgba(45,62,82,.18);
 }
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-sun{opacity:1;color:#31445b}
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-moon{opacity:.46;color:#718096}
