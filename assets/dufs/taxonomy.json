@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "system": "DUMC",
+  "system": "DUFS",
   "full_name": "DRM Universal Movie Section",
   "parent": "Movies",
   "classification_model": "hybrid-hierarchical-metadata",
@@ -13,7 +13,7 @@
     "Unknown metadata remains unknown and must not be inferred."
   ],
   "id": "DUMC",
-  "name": "DUMC",
+  "name": "DUFS",
   "kind": "Root",
   "description": "DRM Universal Movie Section — the unified movie classification and folder catalog.",
   "children": [
