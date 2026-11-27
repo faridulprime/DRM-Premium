@@ -441,8 +441,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   while (ancestor && ancestor !== document.documentElement) {
                     const cs = getComputedStyle(ancestor);
                     const reasons = [];
-                    const willChange = cs.willChange.split(/,\s*/);
-                    const contain = cs.contain.split(/\s+/);
+                    const willChange = cs.willChange.split(/,\\s*/);
+                    const contain = cs.contain.split(/\\s+/);
                     if (["absolute", "relative"].includes(cs.position) && cs.zIndex !== "auto") reasons.push("positioned-z-index");
                     if (["fixed", "sticky"].includes(cs.position)) reasons.push("fixed-or-sticky");
                     if (Number(cs.opacity) < 1) reasons.push("opacity");
