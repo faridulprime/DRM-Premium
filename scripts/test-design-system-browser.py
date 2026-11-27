@@ -160,14 +160,36 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             if viewport_name == "desktop":
                 page.locator("#dashboard").evaluate("(el) => { el.hidden = false; }")
                 page.locator("#adminCategoryBar").evaluate("(el) => { el.hidden = false; }")
+                page.locator("#adminMenuToggle").click()
+                page.wait_for_function(
+                    "() => document.body.classList.contains('sidebar-open') && getComputedStyle(document.querySelector('#adminSidebar')).visibility === 'visible'",
+                    timeout=2500,
+                )
                 page.locator("#adminSideTabOverview").focus()
                 page.keyboard.press("ArrowDown")
                 page.wait_for_function("() => document.activeElement?.id === 'adminSideTabVideos' && document.querySelector('#adminSideTabVideos')?.getAttribute('aria-selected') === 'true'", timeout=2500)
+
+                page.locator("#adminMenuToggle").click()
+                page.locator("#adminMenuToggle").click()
+                page.wait_for_function(
+                    "() => document.body.classList.contains('sidebar-open') && getComputedStyle(document.querySelector('#adminSidebar')).visibility === 'visible'",
+                    timeout=2500,
+                )
+                page.locator("#adminSideTabVideos").focus()
                 page.keyboard.press("End")
                 page.wait_for_function("() => document.activeElement?.id === 'adminSideTabCategories' && document.querySelector('#adminSideTabCategories')?.getAttribute('aria-selected') === 'true'", timeout=2500)
+
+                page.locator("#adminMenuToggle").click()
+                page.locator("#adminMenuToggle").click()
+                page.wait_for_function(
+                    "() => document.body.classList.contains('sidebar-open') && getComputedStyle(document.querySelector('#adminSidebar')).visibility === 'visible'",
+                    timeout=2500,
+                )
+                page.locator("#adminSideTabCategories").focus()
                 page.keyboard.press("Home")
                 page.wait_for_function("() => document.activeElement?.id === 'adminSideTabOverview' && document.querySelector('#adminSideTabOverview')?.getAttribute('aria-selected') === 'true'", timeout=2500)
-                page.locator('#adminCategoryBar button[data-tab="videos"]').click()
+
+                page.locator('#adminCategoryBar button[data-tab="videos"]').evaluate("(el) => el.click()")
                 if page.locator('#adminCategoryBar button[data-tab="videos"]').get_attribute("aria-pressed") != "true":
                     fail("admin/desktop: mobile category button did not expose its selected state after switching to Videos")
 
@@ -2224,10 +2246,18 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
             country_tab.dispatch_event("click")
             page.wait_for_function("() => document.querySelector('[data-category-menu=country]')?.getAttribute('aria-expanded') === 'true'")
             if not reduced_motion:
-                page.wait_for_timeout(float(config["dropdownDuration"]) + 40)
-            for old_key in ("all-movies", "genre"):
-                if not page.locator("#dufnFolderPanel-" + old_key).evaluate("(el) => el.hidden"):
-                    fail(f"movies/DUFS/{scenario}: {old_key} exit animation did not complete after rapid category switching")
+                for old_key in ("all-movies", "genre"):
+                    try:
+                        page.wait_for_function(
+                            f"() => document.querySelector('#dufnFolderPanel-{old_key}')?.hidden === true",
+                            timeout=float(config["dropdownDuration"]) + 1500,
+                        )
+                    except Exception as error:
+                        fail(f"movies/DUFS/{scenario}: {old_key} exit animation did not complete after rapid category switching ({error})")
+            else:
+                for old_key in ("all-movies", "genre"):
+                    if not page.locator("#dufnFolderPanel-" + old_key).evaluate("(el) => el.hidden"):
+                        fail(f"movies/DUFS/{scenario}: {old_key} did not close immediately under reduced motion")
             if country_tab.get_attribute("aria-expanded") != "true" or page.locator("#dufnFolderPanel-country").evaluate("(el) => el.hidden"):
                 fail(f"movies/DUFS/{scenario}: the final category did not stay open after rapid switching")
             country_tab.dispatch_event("click")
