@@ -11,7 +11,64 @@
  const EASING=rootStyle.getPropertyValue("--dume-drawer-easing").trim()||"cubic-bezier(.16,1,.3,1)";
  const REDUCED=window.matchMedia("(prefers-reduced-motion: reduce)");
  const jobs=new WeakMap();
+ const dropdownJobs=new WeakMap();
  const instances=new Map();
+ const DROPDOWN_DURATION=readMs("--dume-dropdown-duration",220);
+ const DROPDOWN_EASING=rootStyle.getPropertyValue("--dume-dropdown-easing").trim()||EASING;
+ const DROPDOWN_OFFSET=parseFloat(rootStyle.getPropertyValue("--dume-dropdown-offset"))||8;
+ const DROPDOWN_SCALE=parseFloat(rootStyle.getPropertyValue("--dume-dropdown-scale"))||.985;
+ function dropdown(options){
+  const {panel,open,onFinish}=options||{};
+  if(!panel)return Promise.resolve({cancelled:false,skipped:true});
+  const previous=dropdownJobs.get(panel);
+  let currentFrame=null;
+  if(previous){
+   const computed=getComputedStyle(panel);
+   currentFrame={opacity:computed.opacity,transform:computed.transform==="none"?"translate3d(0,0,0) scale(1)":computed.transform};
+   previous.animation.cancel();
+   dropdownJobs.delete(panel);
+  }
+  const isOpen=Boolean(open);
+  if(isOpen){
+   panel.hidden=false;
+   panel.inert=false;
+   panel.setAttribute("aria-hidden","false");
+  }else{
+   panel.inert=true;
+   panel.setAttribute("aria-hidden","true");
+  }
+  const closedFrame={opacity:0,transform:"translate3d(0,-"+DROPDOWN_OFFSET+"px,0) scale("+DROPDOWN_SCALE+")"};
+  const openFrame={opacity:1,transform:"translate3d(0,0,0) scale(1)"};
+  const from=currentFrame||(isOpen?closedFrame:openFrame);
+  const to=isOpen?openFrame:closedFrame;
+  const duration=REDUCED.matches?0:DROPDOWN_DURATION;
+  if(duration<=0||typeof panel.animate!=="function"){
+   panel.style.removeProperty("will-change");
+   if(!isOpen)panel.hidden=true;
+   if(typeof onFinish==="function")onFinish();
+   return Promise.resolve({cancelled:false,reducedMotion:REDUCED.matches});
+  }
+  panel.style.willChange="transform, opacity";
+  const animation=panel.animate([from,to],{duration,easing:DROPDOWN_EASING,fill:"both"});
+  const job={animation,open:isOpen};
+  dropdownJobs.set(panel,job);
+  const finish=()=>{
+   if(dropdownJobs.get(panel)!==job)return;
+   dropdownJobs.delete(panel);
+   animation.cancel();
+   panel.style.removeProperty("will-change");
+   if(!isOpen)panel.hidden=true;
+   if(typeof onFinish==="function")onFinish();
+  };
+  animation.addEventListener("finish",finish,{once:true});
+  animation.addEventListener("cancel",()=>{
+   if(dropdownJobs.get(panel)===job){
+    dropdownJobs.delete(panel);
+    panel.style.removeProperty("will-change");
+   }
+  },{once:true});
+  return animation.finished.then(()=>({cancelled:false})).catch(()=>({cancelled:true}));
+ }
  function mobile(){return window.matchMedia("(max-width:760px)").matches;}
  function clearJob(el){const job=jobs.get(el);if(job){clearTimeout(job.timer);jobs.delete(el);}}
  function setImportant(el,p,v){el.style.setProperty(p,v,"important");}
@@ -65,7 +122,7 @@
    jobs.set(sidebar,{timer});
   }
  }
- window.DRMMotion=Object.freeze({drawer,config:Object.freeze({drawerDuration:DURATION,drawerOpacityDuration:OPACITY_DURATION,drawerEasing:EASING})});
+ window.DRMMotion=Object.freeze({drawer,dropdown,config:Object.freeze({drawerDuration:DURATION,drawerOpacityDuration:OPACITY_DURATION,drawerEasing:EASING,dropdownDuration:DROPDOWN_DURATION,dropdownEasing:DROPDOWN_EASING,dropdownOffset:DROPDOWN_OFFSET,dropdownScale:DROPDOWN_SCALE,get reducedMotion(){return REDUCED.matches;}})});
  window.addEventListener("resize",()=>{
   if(mobile())return;
   for(const [sidebar,options] of instances){
