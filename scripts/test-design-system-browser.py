@@ -221,6 +221,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   && el.getBoundingClientRect().height > 0;
               });
               const undersized = controls.filter((el) => {
+                /* Disabled controls are not operable hit targets; still include them in zero-geometry checks. */
+                if (el.disabled || el.getAttribute("aria-disabled") === "true") return false;
                 const rect = el.getBoundingClientRect();
                 return rect.width < 44 || rect.height < 44;
               });
