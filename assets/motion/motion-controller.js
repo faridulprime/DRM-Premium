@@ -1,4 +1,4 @@
-/* DRM-Premium Universal Motion Engine (DUME)
+/* DRM Universal Motion System (DUME)
  * First migration: shared mobile universal-drawer controller.
  * Desktop drawer layout remains owned by each page's existing CSS.
  */
