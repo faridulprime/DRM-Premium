@@ -13,7 +13,7 @@ let roots=[],activeFolder="",activeYear="",movies=[],offset=0,query="",loading=f
 let folderNameOverrides={};
 window.DUMCFolderNameOverrides=folderNameOverrides;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const folderName=s=>{const name=String(s??"").replace(/^\d+_/,"").replace(/_/g," ");return name.replace(/\bcinema\b/gi,"Movies")};
+const folderName=s=>{const name=String(s??"").replace(/^\\d+_/,"").replace(/_/g," ");return name.toLowerCase()==="dhallywood"?"Bangla Movies":name.replace(/\\bcinema\\b/gi,"Movies")};
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
 const folderIcon='<svg class="dumc-folder-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.75 6.5A2.75 2.75 0 0 1 5.5 3.75h4.1l2.05 2.1h6.85A2.75 2.75 0 0 1 21.25 8.6v8.9a2.75 2.75 0 0 1-2.75 2.75h-13a2.75 2.75 0 0 1-2.75-2.75z" fill="currentColor"/><path d="M2.9 9h18.2" fill="none" stroke="rgba(20,16,10,.55)" stroke-width="1.25"/></svg>';
 function findNode(nodes,id){for(const n of nodes||[]){if(n.id===id)return n;const f=findNode(n.children,id);if(f)return f}return null}
