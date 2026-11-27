@@ -20,6 +20,9 @@ on:
   pull_request:
     paths:
       - "assets/dumc/**"
+      - "assets/dulm/**"
+      - "app.js"
+      - "index.html"
       - "upload-studio.html"
       - "upload-studio.js"
       - "dumc-manager.js"
