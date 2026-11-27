@@ -127,11 +127,23 @@ function renderPanel(g){
   return '<button type="button" class="dumc-nav-item dufn-folder'+(selected?' active':'')+(isFutureYear?' dufn-future-year':'')+'" data-folder-id="'+esc(n.id)+'" data-folder-label="'+esc(label)+'" '+(isYear?'data-year="'+String(n.year)+'"':'data-category-folder="'+esc(n.id)+'" data-category-label="'+esc(label)+'"')+' aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(label)+'</span></button>'
  }).join("")+'</div></section>'
 }
+function folderGroupTabIcon(key){
+ const paths={
+  "all-movies":'<path d="m3 7 9-4 9 4-9 4-9-4Z"/><path d="m3 12 9 4 9-4M3 17l9 4 9-4"/>',
+  "dubbed-movies":'<path d="M4 5h16M4 10h10M4 15h16M4 20h10"/><path d="m17 9 3 3-3 3"/>',
+  country:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  collections:'<path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  genre:'<path d="M20 13 13 20 3 10V4h6z"/><circle cx="7.5" cy="7.5" r="1"/>',
+  subtitles:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h4M13 10h4M7 14h10"/>',
+  year:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h7"/>'
+ };
+ return '<span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">'+(paths[key]||paths["all-movies"])+'</svg></span>';
+}
 function renderCategories(){
  const gs=groups();
  if(activeMenu&&!gs.some(g=>g.key===activeMenu)){activeMenu="";document.body.classList.remove("dufn-focus-mode","dufn-focus-closing")}
  nav.innerHTML='<div class="dufn-tabs" role="group" aria-label="Movie folder categories">'+gs.map(g=>
-  '<button type="button" class="dufn-tab'+(activeMenu===g.key?' is-open':'')+'" data-category-menu="'+g.key+'" aria-expanded="'+(activeMenu===g.key)+'" aria-controls="dufnFolderPanel-'+g.key+'">'+esc(g.title)+'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
+  '<button type="button" class="dufn-tab'+(activeMenu===g.key?' is-open':'')+'" data-category-menu="'+g.key+'" aria-expanded="'+(activeMenu===g.key)+'" aria-controls="dufnFolderPanel-'+g.key+'">'+folderGroupTabIcon(g.key)+'<span class="tab-label">'+esc(g.title)+'</span><svg class="dufn-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
  ).join('')+'<span class="dumc-home-count" id="dumcHomeCount">'+count().toLocaleString("en-US")+' folders · '+movies.length.toLocaleString("en-US")+' movies</span></div>'+gs.map(renderPanel).join('');
  syncMenuState(true);
 }
