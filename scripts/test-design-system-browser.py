@@ -247,6 +247,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 fail(f"upload-studio/{viewport_name}: Create Post is not exposed as the initially selected Studio tab")
             if page.locator(".page-tabs").get_attribute("aria-orientation") != "horizontal":
                 fail(f"upload-studio/{viewport_name}: Studio tablist does not declare its horizontal orientation")
+            if page.locator(".page-tabs [role=tab]").count() != 6:
+                fail(f"upload-studio/{viewport_name}: Studio tablist does not expose six navigable tabs")
             page.locator("#studioTabCreate").focus()
             page.keyboard.press("ArrowRight")
             if page.evaluate("() => document.activeElement?.id") != "studioTabDrafts" or page.locator("#studioTabDrafts").get_attribute("aria-selected") != "true" or not page.locator("#view-drafts").is_visible():
