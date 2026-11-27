@@ -30,12 +30,48 @@ function items(g){
  return window.DUFS?.sortFolders?window.DUFS.sortFolders(children,folderNameOverrides):children.sort((a,b)=>folderName(folderNameOverrides[a.id]||a.name).localeCompare(folderName(folderNameOverrides[b.id]||b.name),undefined,{numeric:true,sensitivity:"base"}));
 }
 function count(){return groups().filter(g=>g.key!=="year").reduce((n,g)=>n+items(g).length,0)}
-function closeMenu(focus=false){clearTimeout(hoverTimer);clearTimeout(closeTimer);activeMenu="";renderCategories();if(focus)nav.querySelector("[data-category-menu]")?.focus()}
-function openMenu(key){clearTimeout(hoverTimer);clearTimeout(closeTimer);if(activeMenu===key)return;if(groups().some(g=>g.key===key)){activeMenu=key;renderCategories()}}
+function syncMenuState(animate=true){
+ for(const g of groups()){
+  const button=nav.querySelector('[data-category-menu="'+g.key+'"]');
+  const panel=nav.querySelector("#dufnFolderPanel-"+g.key);
+  const isOpen=activeMenu===g.key;
+  if(button){
+   button.classList.toggle("is-open",isOpen);
+   button.setAttribute("aria-expanded",String(isOpen));
+  }
+  if(!panel)continue;
+  const isMarkedHidden=panel.getAttribute("aria-hidden")==="true";
+  if(isOpen){
+   if(panel.hidden||isMarkedHidden){
+    if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:true});
+    else{panel.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false")}
+   }
+  }else if(!panel.hidden&&!isMarkedHidden){
+   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false});
+   else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true")}
+  }else{
+   panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true");
+  }
+ }
+}
+function closeMenu(focus=false){
+ activeMenu="";
+ syncMenuState(true);
+ if(focus)nav.querySelector("[data-category-menu]")?.focus();
+}
+function openMenu(key){
+ if(!groups().some(g=>g.key===key)||activeMenu===key)return;
+ activeMenu=key;
+ syncMenuState(true);
+}
+function toggleMenu(key){
+ if(activeMenu===key)closeMenu();
+ else openMenu(key);
+}
 function renderPanel(g){
  if(!g)return "";
  const list=items(g),isYear=g.key==="year";
- return '<section class="dufn-panel" id="dufnFolderPanel-'+esc(g.key)+'" aria-label="'+esc(g.title)+' folder list">'+
+ return '<section class="dufn-panel" id="dufnFolderPanel-'+esc(g.key)+'" aria-label="'+esc(g.title)+' folder list" hidden inert aria-hidden="true">'+
  '<header class="dufn-panel-head"><div class="dufn-panel-count">'+list.length+' Folders</div><button type="button" class="dufn-close" data-close-menu aria-label="Close folder menu">×</button></header>'+
  '<div class="dufn-folder-grid">'+list.map(n=>{
   const baseLabel=isYear?String(n.year):folderName(n.name),label=folderName(folderNameOverrides[n.id]||baseLabel),selected=isYear?activeYear===String(n.year):activeFolder===n.id,isFutureYear=isYear&&n.year>2026;
@@ -45,8 +81,9 @@ function renderPanel(g){
 function renderCategories(){
  const gs=groups();
  nav.innerHTML='<div class="dufn-tabs" role="group" aria-label="Movie folder categories">'+gs.map(g=>
-  '<div class="dufn-tab-wrap"><button type="button" class="dufn-tab'+(activeMenu===g.key?' is-open':'')+'" data-category-menu="'+g.key+'" aria-expanded="'+(activeMenu===g.key)+'" aria-controls="dufnFolderPanel-'+g.key+'">'+esc(g.title)+'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+(activeMenu===g.key?renderPanel(g):'')+'</div>'
- ).join("")+'</div><span class="dumc-home-count" id="dumcHomeCount">'+count().toLocaleString("en-US")+' folders · '+movies.length.toLocaleString("en-US")+' movies</span>'
+  '<div class="dufn-tab-wrap"><button type="button" class="dufn-tab'+(activeMenu===g.key?' is-open':'')+'" data-category-menu="'+g.key+'" aria-expanded="'+(activeMenu===g.key)+'" aria-controls="dufnFolderPanel-'+g.key+'">'+esc(g.title)+'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+renderPanel(g)+'</div>'
+ ).join("")+'</div><span class="dumc-home-count" id="dumcHomeCount">'+count().toLocaleString("en-US")+' folders · '+movies.length.toLocaleString("en-US")+' movies</span>';
+ syncMenuState(true);
 }
 function updateCount(){const el=$("#dumcHomeCount");if(el)el.textContent=count().toLocaleString("en-US")+" folders · "+movies.length.toLocaleString("en-US")+" movies"}
 async function loadTaxonomy(){
@@ -67,9 +104,7 @@ async function loadTaxonomy(){
 }
 function renderMovies(){host.innerHTML=movies.length?movies.map(v=>'<article class="dumc-movie-card" data-movie-id="'+esc(v.id)+'"><button type="button" class="dumc-movie-open" data-movie-id="'+esc(v.id)+'" aria-label="Play '+esc(v.title)+'"><img src="'+esc(thumb(v))+'" alt="" loading="lazy" decoding="async"><span class="dumc-movie-play" aria-hidden="true">▶</span></button><div class="dumc-movie-copy"><h3>'+esc(v.title)+'</h3><p>'+esc(v.description||v.category||"মুভি দেখুন")+'</p>'+(v.release_year?'<small>'+esc(v.release_year)+'</small>':"")+'</div></article>').join(""):'<p class="empty dumc-empty">'+(query?"কোনো মিল পাওয়া যায়নি।":"এই Category ও Year-এ এখনো কোনো প্রকাশিত মুভি নেই।")+'</p>';updateCount();$("#dumcHomeMore").hidden=!hasMore||Boolean(query)}
 async function loadMovies(reset=true){if(loading)return;loading=true;const status=$("#dumcHomeStatus");status.textContent="মুভি লোড হচ্ছে…";if(reset){offset=0;movies=[];host.innerHTML='<p class="empty">মুভি লোড হচ্ছে…</p>'}try{const p=new URLSearchParams({limit:"36",offset:String(offset)});if(activeFolder)p.set("folder_id",activeFolder);if(activeYear)p.set("year",activeYear);if(query)p.set("q",query);const d=window.DUFS?.browse?await window.DUFS.browse({limit:36,offset,folder_id:activeFolder,year:activeYear,q:query}):await (async()=>{const response=await fetch("/api/dufs/browse?"+p.toString(),{credentials:"same-origin",cache:"no-store"});const payload=await response.json().catch(()=>({}));if(!response.ok)throw Error(payload.error||"DUFS browse request failed.");return payload})();movies=reset?(d.movies||[]):movies.concat(d.movies||[]);offset+=d.movies?.length||0;hasMore=(d.movies||[]).length===36;renderMovies();status.textContent=""}catch(e){status.textContent=e.message;host.innerHTML='<p class="empty dumc-empty">'+esc(e.message)+'</p>';$("#dumcHomeMore").hidden=true;updateCount()}finally{loading=false}}
-nav.addEventListener("pointerover",e=>{if(!matchMedia("(hover: hover) and (pointer: fine)").matches)return;const t=e.target.closest("[data-category-menu]");if(!t)return;clearTimeout(hoverTimer);hoverTimer=setTimeout(()=>openMenu(t.dataset.categoryMenu),140)});
-nav.addEventListener("pointerleave",()=>{if(!matchMedia("(hover: hover) and (pointer: fine)").matches)return;clearTimeout(hoverTimer);closeTimer=setTimeout(()=>{if(!nav.contains(document.activeElement))closeMenu()},260)});
-nav.addEventListener("click",e=>{const x=e.target.closest("[data-close-menu]");if(x){closeMenu();return}const t=e.target.closest("[data-category-menu]");if(t){if(activeMenu===t.dataset.categoryMenu){if(!matchMedia("(hover: hover) and (pointer: fine)").matches)closeMenu()}else openMenu(t.dataset.categoryMenu);return}const f=e.target.closest("[data-category-folder]");if(f){activeFolder=f.dataset.categoryFolder;activeYear="";closeMenu();loadMovies(true);return}const y=e.target.closest("[data-year]");if(y){activeYear=y.dataset.year;activeFolder="";closeMenu();loadMovies(true)}});
+nav.addEventListener("click",e=>{const x=e.target.closest("[data-close-menu]");if(x){closeMenu();return}const t=e.target.closest("[data-category-menu]");if(t){toggleMenu(t.dataset.categoryMenu);return}const f=e.target.closest("[data-category-folder]");if(f){activeFolder=f.dataset.categoryFolder;activeYear="";closeMenu();loadMovies(true);return}const y=e.target.closest("[data-year]");if(y){activeYear=y.dataset.year;activeFolder="";closeMenu();loadMovies(true)}});
 document.addEventListener("click",e=>{if(!activeMenu||layout.contains(e.target))return;e.preventDefault();e.stopImmediatePropagation();closeMenu()},true);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&activeMenu){e.preventDefault();closeMenu(true);return}if(e.key==="ArrowDown"&&e.target.matches("[data-category-menu]")){e.preventDefault();openMenu(e.target.dataset.categoryMenu);nav.querySelector(".dufn-folder")?.focus()}});
 $("#dumcHomeSearch").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadMovies(true),250)});
