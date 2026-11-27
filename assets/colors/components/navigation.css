@@ -109,3 +109,26 @@ body .category-bar{
   .category-tabs{gap:15px!important;padding-inline:4px!important}
   :where(.dufn-tabs,.live-restrictions-tabs,.page-tabs,.type-switch){gap:15px!important;padding-inline:4px!important}
 }
+
+/* Strong, final surface reset after legacy and route styles. */
+html body .category-tabs,html body .dufn-tabs,html body .live-restrictions-tabs,
+body.upload-studio-page .page-tabs,body.upload-studio-page .type-switch,
+html body .page-tabs,html body .type-switch,html body [role="tablist"]{
+  border:0!important;border-bottom:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+:root[data-theme="light"] html body .category-tabs,
+:root[data-theme="light"] html body .dufn-tabs,
+:root[data-theme="light"] html body .live-restrictions-tabs,
+:root[data-theme="light"] body.upload-studio-page .page-tabs,
+:root[data-theme="light"] body.upload-studio-page .type-switch,
+:root[data-theme="light"] html body .page-tabs,
+:root[data-theme="light"] html body .type-switch,
+:root[data-theme="light"] html body [role="tablist"]{
+  border:0!important;border-bottom:0!important;background:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+body #dumcHomeCategories .dufn-tabs{border:0!important;border-bottom:0!important;background:transparent!important;background-image:none!important;box-shadow:none!important}
+body.admin-gate-state,body.admin-dashboard-state,body.live-users-page,body.live-users-page.sidebar-open,
+body.upload-studio-page,body.upload-studio-page.sidebar-open,body.home-page{padding-top:0!important}
+body.home-page:has(#headerLoginForm[hidden]),
+body.home-page:has(#profileMenuToggle:not([hidden])):has(#headerLoginForm[hidden]){padding-top:0!important}
