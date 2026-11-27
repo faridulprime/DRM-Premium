@@ -133,3 +133,36 @@ html body .dufn-tab-wrap .dufn-tab.is-open::after,html body .dufn-tab-wrap .dufn
   box-shadow:0 0 9px rgba(226,230,245,.42)!important;pointer-events:none!important;
 }
 body.movies-route #dumcHomeCategories .dufn-tabs{margin-top:32px!important}
+
+
+/* Premium tab interaction: text glow only on hover, with a brief water ripple on activation. */
+html body .category-tabs>.category-chip:hover,
+html body .dufn-tabs>.dufn-tab:hover,
+html body .live-restrictions-tabs>.live-restriction-tab:hover,
+html body .page-tabs>.tab:hover,
+html body .type-switch>.type:hover,
+html body .device-switch>button:hover{
+  background:transparent!important;background-image:none!important;border-color:transparent!important;
+  box-shadow:none!important;color:#F4F2F0!important;text-shadow:0 0 7px rgba(238,242,255,.66),0 0 18px rgba(211,223,255,.35)!important;
+}
+:root[data-theme="light"] body .category-tabs>.category-chip:hover,
+:root[data-theme="light"] body .dufn-tabs>.dufn-tab:hover,
+:root[data-theme="light"] body .live-restrictions-tabs>.live-restriction-tab:hover,
+:root[data-theme="light"] body .page-tabs>.tab:hover,
+:root[data-theme="light"] body .type-switch>.type:hover,
+:root[data-theme="light"] body .device-switch>button:hover{
+  color:#24232A!important;text-shadow:0 0 7px rgba(77,83,98,.3),0 0 16px rgba(108,119,143,.18)!important;
+}
+.tab-water-ripple{
+  position:absolute;z-index:0;left:var(--ripple-x,50%);top:var(--ripple-y,50%);width:10px;height:10px;
+  border:1px solid rgba(231,239,255,.78);border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(226,237,255,.24) 0%,rgba(226,237,255,.08) 35%,transparent 72%);
+  box-shadow:0 0 12px rgba(207,223,255,.28);transform:translate(-50%,-50%) scale(.18);
+  animation:tab-water-drop .72s cubic-bezier(.16,.72,.24,1) forwards;
+}
+@keyframes tab-water-drop{
+  0%{opacity:.72;transform:translate(-50%,-50%) scale(.18)}
+  42%{opacity:.5}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(8.5)}
+}
+@media(prefers-reduced-motion:reduce){.tab-water-ripple{animation-duration:.01ms}}
