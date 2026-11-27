@@ -143,3 +143,19 @@
   min-block-size:calc(var(--duss-touch-target-min, 44px) + 1px)!important;
 }
 
+/* Universal tabs and folder controls: preserve the DUSS 44px hit-area
+   even when later component styles declare compact visual heights. */
+.category-tabs>.category-chip,
+.dufn-tab,
+.dufn-folder,
+.dumc-nav-item,
+.live-restriction-tab,
+.upload-studio-page .page-tabs>.tab,
+.upload-studio-page .type-switch>.type,
+.upload-studio-page .device-switch>button {
+  min-height:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+.upload-studio-page .device-switch>button {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+}

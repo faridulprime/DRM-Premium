@@ -20,6 +20,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = {
     "homepage": ("/", "#menuToggle", "#ytSidebar", "#sidebarBackdrop", True),
+    "movies": ("/movies", "#menuToggle", "#ytSidebar", "#sidebarBackdrop", True),
     "admin": ("/admin.html", "#adminMenuToggle", "#adminSidebar", "#adminSidebarBackdrop", True),
     "live-users": ("/live-users.html", "#liveMenuToggle", "#liveSidebar", "#liveSidebarBackdrop", True),
     "upload-studio": ("/upload-studio.html", "#studioMenuToggle", "#liveSidebar", "#liveSidebarBackdrop", True),
@@ -1742,32 +1743,32 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     body='{"system":"DUFS","folders":[],"movies":[]}',
                 ),
             )
-            page.goto(base_url + "/", wait_until="load", timeout=30000)
+            page.goto(base_url + "/movies", wait_until="load", timeout=30000)
             page.wait_for_selector("#dumcHomeCategories .dufn-tab", timeout=10000)
             page.wait_for_function(
                 "() => document.querySelectorAll('#dumcHomeCategories .dufn-tab').length === 7"
             )
             config = page.evaluate("() => window.DRMMotion?.config || null")
             if not config:
-                fail(f"homepage/DUFS/{scenario}: DUME controller did not load")
+                fail(f"movies/DUFS/{scenario}: DUME controller did not load")
                 continue
             if bool(config["reducedMotion"]) != reduced_motion:
-                fail(f"homepage/DUFS/{scenario}: reduced-motion preference was not reflected by DUME")
+                fail(f"movies/DUFS/{scenario}: reduced-motion preference was not reflected by DUME")
 
             for key in keys:
                 tab = page.locator(f'[data-category-menu="{key}"]')
                 panel = page.locator(f"#dufnFolderPanel-{key}")
                 if tab.count() != 1 or panel.count() != 1:
-                    fail(f"homepage/DUFS/{scenario}: {key} dropdown is missing or duplicated")
+                    fail(f"movies/DUFS/{scenario}: {key} dropdown is missing or duplicated")
                     continue
                 if tab.get_attribute("aria-expanded") != "false" or not panel.evaluate("(el) => el.hidden"):
-                    fail(f"homepage/DUFS/{scenario}: {key} dropdown must start closed")
+                    fail(f"movies/DUFS/{scenario}: {key} dropdown must start closed")
 
                 if width > 760:
                     tab.hover()
                     page.wait_for_timeout(80)
                     if tab.get_attribute("aria-expanded") != "false":
-                        fail(f"homepage/DUFS/{scenario}: hovering {key} must not open its dropdown")
+                        fail(f"movies/DUFS/{scenario}: hovering {key} must not open its dropdown")
 
                 # First click opens; second click on the same category closes.
                 tab.dispatch_event("click")
@@ -1797,20 +1798,20 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                 )
                 if reduced_motion:
                     if opening["running"]:
-                        fail(f"homepage/DUFS/{scenario}: {key} animated despite reduced-motion preference")
+                        fail(f"movies/DUFS/{scenario}: {key} animated despite reduced-motion preference")
                 else:
                     if not opening["running"]:
-                        fail(f"homepage/DUFS/{scenario}: {key} did not use the DUME opening animation")
+                        fail(f"movies/DUFS/{scenario}: {key} did not use the DUME opening animation")
                     for timing in opening["running"]:
                         if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
-                            fail(f"homepage/DUFS/{scenario}: {key} opening duration does not match the DUME token")
+                            fail(f"movies/DUFS/{scenario}: {key} opening duration does not match the DUME token")
                         heights = [float(frame.get("height", "0px").replace("px", "")) for frame in timing["frames"]]
                         if len(heights) < 2 or heights[0] > 1 or heights[-1] <= heights[0]:
-                            fail(f"homepage/DUFS/{scenario}: {key} opening did not expand the actual list area from 0px to its full height")
+                            fail(f"movies/DUFS/{scenario}: {key} opening did not expand the actual list area from 0px to its full height")
                         if float(timing["duration"]) != 700 or float(config["dropdownDuration"]) != float(config["drawerDuration"]):
-                            fail(f"homepage/DUFS/{scenario}: {key} opening does not match the homepage 700ms DUME extended-area motion")
+                            fail(f"movies/DUFS/{scenario}: {key} opening does not match the Movies-page 700ms DUME extended-area motion")
                         if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
-                            fail(f"homepage/DUFS/{scenario}: {key} opening easing does not match the DUME token")
+                            fail(f"movies/DUFS/{scenario}: {key} opening easing does not match the DUME token")
                     page.wait_for_timeout(float(config["dropdownDuration"]) + 30)
 
                 tab.dispatch_event("click")
@@ -1834,22 +1835,22 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                 )
                 if reduced_motion:
                     if not closing["hidden"] or closing["running"]:
-                        fail(f"homepage/DUFS/{scenario}: {key} did not close immediately under reduced motion")
+                        fail(f"movies/DUFS/{scenario}: {key} did not close immediately under reduced motion")
                 else:
                     if closing["hidden"] or closing["ariaHidden"] != "true" or not closing["inert"]:
-                        fail(f"homepage/DUFS/{scenario}: {key} did not remain visible-but-inert during its exit animation")
+                        fail(f"movies/DUFS/{scenario}: {key} did not remain visible-but-inert during its exit animation")
                     if not closing["running"]:
-                        fail(f"homepage/DUFS/{scenario}: {key} did not use the DUME closing animation")
+                        fail(f"movies/DUFS/{scenario}: {key} did not use the DUME closing animation")
                     for timing in closing["running"]:
                         heights = [float(frame.get("height", "0px").replace("px", "")) for frame in timing["frames"]]
                         if len(heights) < 2 or heights[0] <= 0 or heights[-1] > 1:
-                            fail(f"homepage/DUFS/{scenario}: {key} closing did not collapse the actual list area back to 0px")
+                            fail(f"movies/DUFS/{scenario}: {key} closing did not collapse the actual list area back to 0px")
                         if float(timing["duration"]) != 700:
-                            fail(f"homepage/DUFS/{scenario}: {key} closing does not match the homepage 700ms DUME extended-area motion")
+                            fail(f"movies/DUFS/{scenario}: {key} closing does not match the Movies-page 700ms DUME extended-area motion")
                         if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
-                            fail(f"homepage/DUFS/{scenario}: {key} closing duration differs from opening/DUME token")
+                            fail(f"movies/DUFS/{scenario}: {key} closing duration differs from opening/DUME token")
                         if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
-                            fail(f"homepage/DUFS/{scenario}: {key} closing easing differs from opening/DUME token")
+                            fail(f"movies/DUFS/{scenario}: {key} closing easing differs from opening/DUME token")
 
                 page.wait_for_function(
                     "key => document.querySelector('#dufnFolderPanel-' + key)?.hidden === true",
@@ -1857,7 +1858,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     timeout=3000,
                 )
                 if tab.get_attribute("aria-expanded") != "false":
-                    fail(f"homepage/DUFS/{scenario}: {key} ARIA expanded state remained open after closing")
+                    fail(f"movies/DUFS/{scenario}: {key} ARIA expanded state remained open after closing")
 
             # A longer label must grow the intrinsic list width without escaping the viewport.
             all_tab_probe = page.locator('[data-category-menu="all-movies"]')
@@ -1891,9 +1892,9 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                 })"""
             )
             if measured_widths["width"] <= base_width + 20:
-                fail(f"homepage/DUFS/{scenario}: a longer folder label did not expand the dropdown width ({base_width}px -> {measured_widths})")
+                fail(f"movies/DUFS/{scenario}: a longer folder label did not expand the dropdown width ({base_width}px -> {measured_widths})")
             if measured_widths["width"] > measured_widths["viewport"] - 20:
-                fail(f"homepage/DUFS/{scenario}: adaptive dropdown width exceeded the viewport boundary ({measured_widths})")
+                fail(f"movies/DUFS/{scenario}: adaptive dropdown width exceeded the viewport boundary ({measured_widths})")
             all_tab_probe.dispatch_event("click")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-all-movies').hidden")
 
@@ -1914,7 +1915,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     timeout=3000,
                 )
             if second.get_attribute("aria-expanded") != "true":
-                fail(f"homepage/DUFS/{scenario}: switching categories did not leave the new dropdown open")
+                fail(f"movies/DUFS/{scenario}: switching categories did not leave the new dropdown open")
             second.dispatch_event("click")
             page.wait_for_function(
                 "() => document.querySelector('#dufnFolderPanel-genre')?.hidden === true",
@@ -1933,9 +1934,9 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                 page.wait_for_timeout(float(config["dropdownDuration"]) + 40)
             for old_key in ("all-movies", "genre"):
                 if not page.locator("#dufnFolderPanel-" + old_key).evaluate("(el) => el.hidden"):
-                    fail(f"homepage/DUFS/{scenario}: {old_key} exit animation did not complete after rapid category switching")
+                    fail(f"movies/DUFS/{scenario}: {old_key} exit animation did not complete after rapid category switching")
             if country_tab.get_attribute("aria-expanded") != "true" or page.locator("#dufnFolderPanel-country").evaluate("(el) => el.hidden"):
-                fail(f"homepage/DUFS/{scenario}: the final category did not stay open after rapid switching")
+                fail(f"movies/DUFS/{scenario}: the final category did not stay open after rapid switching")
             country_tab.dispatch_event("click")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-country').hidden")
 
@@ -1945,7 +1946,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
             page.keyboard.press("ArrowDown")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-collections')?.hidden === false")
             if not page.locator("#dufnFolderPanel-collections .dufn-folder").first.evaluate("(el) => el === document.activeElement"):
-                fail(f"homepage/DUFS/{scenario}: ArrowDown did not focus the selected category's first folder")
+                fail(f"movies/DUFS/{scenario}: ArrowDown did not focus the selected category's first folder")
             page.keyboard.press("Escape")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-collections').hidden")
 
@@ -1960,7 +1961,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
             if not reduced_motion:
                 page.wait_for_timeout(float(config["dropdownDuration"]) + 40)
             if rapid.get_attribute("aria-expanded") != "true" or page.locator("#dufnFolderPanel-country").evaluate("(el) => el.hidden"):
-                fail(f"homepage/DUFS/{scenario}: stale close animation hid a rapidly reopened dropdown")
+                fail(f"movies/DUFS/{scenario}: stale close animation hid a rapidly reopened dropdown")
             rapid.dispatch_event("click")
             page.wait_for_function(
                 "() => document.querySelector('#dufnFolderPanel-country')?.hidden === true",
@@ -1984,7 +1985,7 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
             page.keyboard.press("Escape")
             page.wait_for_function("() => document.querySelector('#dufnFolderPanel-subtitles').hidden")
         except Exception as exc:
-            fail(f"homepage/DUFS/{scenario}: dropdown lifecycle failed: {type(exc).__name__}: {exc}")
+            fail(f"movies/DUFS/{scenario}: dropdown lifecycle failed: {type(exc).__name__}: {exc}")
         finally:
             context.close()
 
