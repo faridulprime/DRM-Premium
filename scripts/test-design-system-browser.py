@@ -1622,6 +1622,19 @@ def inspect_live_overlay_interactions(browser, base_url):
             "() => document.querySelector('#liveUserDrawer')?.classList.contains('is-open') && document.body.style.overflow === 'hidden' && !document.querySelector('#liveDrawerBackdrop')?.hidden",
             timeout=5000,
         )
+        if page.locator("#liveUserDrawer").get_attribute("role") != "dialog" or page.locator("#liveUserDrawer").get_attribute("aria-modal") != "true" or page.locator("#liveUserDrawer").evaluate("(el) => el.inert"):
+            fail("live-users/overlay-interaction: open account drawer is missing modal semantics or is inert")
+        if page.evaluate("() => document.activeElement?.id") != "liveDrawerClose":
+            fail("live-users/overlay-interaction: opening the account drawer did not move focus to its close control")
+        page.locator("#liveDrawerBody button").last.focus()
+        page.keyboard.press("Tab")
+        if page.evaluate("() => document.activeElement?.id") != "liveDrawerClose":
+            fail("live-users/overlay-interaction: Tab did not wrap from the last account action to the drawer close control")
+        page.locator("#liveDrawerClose").focus()
+        page.keyboard.press("Shift+Tab")
+        if page.evaluate("() => document.activeElement?.dataset?.action") != "ban":
+            fail("live-users/overlay-interaction: Shift+Tab did not wrap from drawer close to the last account action")
+        page.locator("#liveDrawerClose").focus()
         backdrop_geometry = page.locator("#liveDrawerBackdrop").evaluate(
             """el => {
               const style = getComputedStyle(el);
@@ -1654,6 +1667,15 @@ def inspect_live_overlay_interactions(browser, base_url):
             "() => document.querySelector('#liveRestrictionsModal')?.classList.contains('is-open') && document.body.style.overflow === 'hidden'",
             timeout=5000,
         )
+        if page.locator("#liveRestrictionsModal").get_attribute("role") != "dialog" or page.locator("#liveRestrictionsModal").get_attribute("aria-modal") != "true" or page.locator("#liveRestrictionsModal").evaluate("(el) => el.inert"):
+            fail("live-users/overlay-interaction: open Block List window is missing modal semantics or is inert")
+        page.locator("#liveBannedTab").focus()
+        page.keyboard.press("ArrowRight")
+        if page.evaluate("() => document.activeElement?.id") != "liveSuspendedTab" or page.locator("#liveSuspendedTab").get_attribute("aria-selected") != "true" or page.locator("#liveRestrictionsList").get_attribute("aria-labelledby") != "liveSuspendedTab":
+            fail("live-users/overlay-interaction: Block List arrow-key navigation or tab-panel labelling is incorrect")
+        page.keyboard.press("ArrowLeft")
+        if page.evaluate("() => document.activeElement?.id") != "liveBannedTab" or page.locator("#liveBannedTab").get_attribute("aria-selected") != "true":
+            fail("live-users/overlay-interaction: Block List reverse tab navigation did not restore Banned")
         page.locator("#liveDrawerBackdrop").click()
         page.wait_for_timeout(120)
         if page.evaluate("() => document.body.style.overflow") != "hidden":
@@ -1662,6 +1684,8 @@ def inspect_live_overlay_interactions(browser, base_url):
             "() => document.body.style.overflow === '' && document.querySelector('#liveDrawerBackdrop')?.hidden",
             timeout=2000,
         )
+        if page.evaluate("() => document.activeElement?.id") != "liveRestrictionsOpen":
+            fail("live-users/overlay-interaction: closing Block List did not restore focus to its opener")
 
         # Restriction-list to account-drawer handoff must never expose the page.
         page.locator("#liveRestrictionsOpen").click()
@@ -1687,6 +1711,8 @@ def inspect_live_overlay_interactions(browser, base_url):
             "() => document.body.style.overflow === '' && document.querySelector('#liveDrawerBackdrop')?.hidden && !document.querySelector('#liveUserDialog')?.open",
             timeout=2500,
         )
+        if page.evaluate("() => document.activeElement?.id") != "liveRestrictionsOpen":
+            fail("live-users/overlay-interaction: closing the account drawer/dialog handoff did not restore focus to the originating control")
 
         # Fixed overlays live directly under body, avoiding transformed or
         # contained intermediate ancestors that would redefine their viewport.

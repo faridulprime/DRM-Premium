@@ -25,12 +25,41 @@ liveSidebarBackdrop?.addEventListener("click",()=>setLiveMenu(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")setLiveMenu(false)});
 liveSidebar?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>setLiveMenu(false)));
 window.matchMedia("(max-width:760px)").addEventListener?.("change",()=>setLiveMenu(false));
-let liveUser=null,refreshTimer=null,presenceTimer=null,latestUsers=[],accountUsers=[],selectedUser=null,drawerCloseTimer=null,restrictionCloseTimer=null,restrictionView="ban";
+let liveUser=null,refreshTimer=null,presenceTimer=null,latestUsers=[],accountUsers=[],selectedUser=null,drawerCloseTimer=null,restrictionCloseTimer=null,restrictionView="ban",drawerReturnFocus=null,restrictionsReturnFocus=null;
 const overlayState={drawer:false,restrictions:false,drawerClosing:false,restrictionsClosing:false,dialog:false,restrictionHandoff:false};
 const drawerBackdrop=$("#liveDrawerBackdrop");
 function syncOverlayLifecycle(){const active=overlayState.drawer||overlayState.restrictions||overlayState.drawerClosing||overlayState.restrictionsClosing||overlayState.dialog||overlayState.restrictionHandoff;if(drawerBackdrop)drawerBackdrop.hidden=!active;document.body.style.overflow=active?"hidden":""}
-function finishDrawerClose(){const drawer=$("#liveUserDrawer");drawer.classList.remove("is-closing");overlayState.drawerClosing=false;syncOverlayLifecycle()}
-function finishRestrictionsClose(){const modal=$("#liveRestrictionsModal");modal.classList.remove("is-closing");overlayState.restrictionsClosing=false;overlayState.restrictionHandoff=false;syncOverlayLifecycle()}
+function focusIfAvailable(target){
+ if(!target?.isConnected||target.closest("[hidden],[inert]")||target.getClientRects().length===0)return false;
+ target.focus({preventScroll:true});
+ return document.activeElement===target;
+}
+function trapOverlayTab(event,container){
+ const selector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+ const items=[...container.querySelectorAll(selector)].filter(el=>!el.closest("[hidden],[inert]")&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=="hidden");
+ if(!items.length){event.preventDefault();container.focus({preventScroll:true});return}
+ const first=items[0],last=items[items.length-1],active=document.activeElement;
+ if(event.shiftKey&&(active===first||!container.contains(active))){event.preventDefault();last.focus({preventScroll:true})}
+ else if(!event.shiftKey&&(active===last||!container.contains(active))){event.preventDefault();first.focus({preventScroll:true})}
+}
+function finishDrawerClose(){
+ const drawer=$("#liveUserDrawer");drawer.classList.remove("is-closing");drawer.inert=true;
+ overlayState.drawerClosing=false;syncOverlayLifecycle();
+ if(!overlayState.dialog&&!overlayState.restrictionHandoff){focusIfAvailable(drawerReturnFocus);drawerReturnFocus=null}
+}
+function finishRestrictionsClose(){
+ const modal=$("#liveRestrictionsModal"),restore=!overlayState.restrictionHandoff;
+ modal.classList.remove("is-closing");modal.inert=true;
+ overlayState.restrictionsClosing=false;overlayState.restrictionHandoff=false;syncOverlayLifecycle();
+ if(restore&&!overlayState.dialog&&!overlayState.drawer){focusIfAvailable(restrictionsReturnFocus);restrictionsReturnFocus=null}
+}
+function syncRestrictionTabs(){
+ document.querySelectorAll(".live-restriction-tab").forEach(tab=>{
+  const active=tab.dataset.restrictionView===restrictionView;
+  tab.classList.toggle("is-active",active);tab.setAttribute("aria-selected",String(active));tab.tabIndex=active?0:-1;
+ });
+ $("#liveRestrictionsList").setAttribute("aria-labelledby",restrictionView==="ban"?"liveBannedTab":"liveSuspendedTab");
+}
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 async function api(path,opts={}){const r=await fetch("/api/"+path,{...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})},credentials:"same-origin"});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||("Request failed ("+r.status+")"));return d}
 function notice(message){const n=$("#liveNotice");n.textContent=message;n.classList.add("show");setTimeout(()=>n.classList.remove("show"),2600)}
@@ -44,14 +73,14 @@ const groups=[["owner","Owner"],["admin","Admin"],["user","Member"],["guest","Gu
 async function loadUsers(){const [active,all]=await Promise.all([api("admin/active-users"),api("admin/users")]);latestUsers=flatten(active);accountUsers=Array.isArray(all)?all:[];render();if($("#liveRestrictionsModal")?.classList.contains("is-open"))renderRestrictions()}
 async function heartbeat(){try{await api("presence",{method:"POST",body:"{}"});await api("admin/presence",{method:"POST",body:"{}"});}catch{}}
 function syncSourceHighlight(){document.querySelectorAll(".live-user-row.is-source-highlight").forEach(row=>row.classList.remove("is-source-highlight"));if(!selectedUser||!$("#liveUserDrawer")?.classList.contains("is-open"))return;const row=[...document.querySelectorAll(".live-user-row")].find(item=>String(item.dataset.userId)===String(selectedUser.id));row?.classList.add("is-source-highlight")}
-function openDrawer(id){const u=accountUsers.find(x=>String(x.id)===String(id));if(!u){notice("এই ব্যবহারকারীর Account record পাওয়া যায়নি।");return}selectedUser=u;const restricted=isRestricted(u),role=u.role==="owner"?"Owner":u.role==="admin"?"Admin":"Member",created=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at)),date=Number.isNaN(created.getTime())?"Unavailable":created.toLocaleDateString(),displayName=String(u.name||u.username||u.email||"User account").trim(),initial=displayName.charAt(0).toUpperCase(),avatar=u.avatar_url?'<img src="'+esc(u.avatar_url)+'" alt="" decoding="async" onerror="this.remove()">':"";
+function openDrawer(id){const u=accountUsers.find(x=>String(x.id)===String(id));if(!u){notice("এই ব্যবহারকারীর Account record পাওয়া যায়নি।");return}if(!drawerReturnFocus){const active=document.activeElement;drawerReturnFocus=restrictionsReturnFocus&&overlayState.restrictionHandoff?restrictionsReturnFocus:$("#liveList").contains(active)?active:[...document.querySelectorAll(".live-user-row")].find(row=>String(row.dataset.userId)===String(id))||null;}selectedUser=u;const restricted=isRestricted(u),role=u.role==="owner"?"Owner":u.role==="admin"?"Admin":"Member",created=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at)),date=Number.isNaN(created.getTime())?"Unavailable":created.toLocaleDateString(),displayName=String(u.name||u.username||u.email||"User account").trim(),initial=displayName.charAt(0).toUpperCase(),avatar=u.avatar_url?'<img src="'+esc(u.avatar_url)+'" alt="" decoding="async" onerror="this.remove()">':"";
 $("#drawerTitle").textContent=displayName;const host=$("#liveDrawerBody");
 const action=(key,symbol,label,cls="")=>'<button type="button" class="live-drawer-action '+cls+'" data-action="'+key+'"><span class="action-symbol" aria-hidden="true">'+symbol+'</span>'+label+'</button>';
 const roleActions=u.role==="owner"?"":(u.role==="user"?action("promote","♛","Promote to Admin"):action("demote","♙","Remove Admin Access"));
 const securityActions=u.role==="owner"?'<div class="live-drawer-protected">Owner account is protected. Role and security controls are unavailable.</div>':restricted?action("restore","↻","Restore Account Access"):action("revoke","↗","Revoke All Sessions")+action("suspend","Ⅱ","Suspend for 24 Hours","warning")+action("ban","⊘","Permanently Ban","danger");
 host.innerHTML='<div class="live-drawer-profile"><span class="live-drawer-avatar">'+esc(initial)+avatar+'</span><div><strong>'+esc(displayName)+'</strong><small>'+esc(u.email||u.username||"")+'</small></div></div><div class="live-drawer-meta"><span class="live-drawer-chip role-badge '+(u.role==="owner"?"role-badge--owner":u.role==="admin"?"role-badge--admin":u.role==="user"?"role-badge--member":"")+'">'+role.toUpperCase()+'</span><span class="live-drawer-chip">'+(u.email_verified?"EMAIL VERIFIED":"EMAIL UNVERIFIED")+'</span><span class="live-drawer-chip '+(restricted?"restricted":"")+'">'+(restricted?(u.restriction_type==="ban"?"BANNED":"SUSPENDED"):"ACTIVE")+'</span><span class="live-drawer-chip">SINCE '+esc(date)+'</span></div><section class="live-drawer-section"><h3>ROLE & ACCESS</h3>'+roleActions+'</section><section class="live-drawer-section"><h3>ACCOUNT</h3>'+action("details","▤","Account Details")+action("activity","◷","Most Active Hours")+action("copy","▢","Copy Email Address")+'</section><section class="live-drawer-section"><h3>SECURITY & CONTROL</h3>'+securityActions+'</section>';
-const drawer=$("#liveUserDrawer"),backdrop=$("#liveDrawerBackdrop");clearTimeout(drawerCloseTimer);drawer.classList.remove("is-closing","is-opening");drawer.classList.add("is-open","is-opening");setTimeout(()=>drawer.classList.remove("is-opening"),450);drawer.setAttribute("aria-hidden","false");overlayState.drawerClosing=false;overlayState.drawer=true;overlayState.restrictionHandoff=false;syncOverlayLifecycle();syncSourceHighlight();$("#liveDrawerClose").focus()}
-function closeDrawer(){const drawer=$("#liveUserDrawer");if(!drawer.classList.contains("is-open"))return;drawer.classList.remove("is-open","is-opening");drawer.classList.add("is-closing");drawer.setAttribute("aria-hidden","true");overlayState.drawer=false;overlayState.drawerClosing=true;syncOverlayLifecycle();clearTimeout(drawerCloseTimer);drawerCloseTimer=setTimeout(finishDrawerClose,1050);selectedUser=null;document.querySelectorAll(".live-user-row.is-source-highlight").forEach(row=>row.classList.remove("is-source-highlight"))}
+const drawer=$("#liveUserDrawer");clearTimeout(drawerCloseTimer);drawer.inert=false;drawer.classList.remove("is-closing","is-opening");drawer.classList.add("is-open","is-opening");setTimeout(()=>drawer.classList.remove("is-opening"),450);drawer.setAttribute("aria-hidden","false");overlayState.drawerClosing=false;overlayState.drawer=true;overlayState.restrictionHandoff=false;syncOverlayLifecycle();syncSourceHighlight();$("#liveDrawerClose").focus({preventScroll:true})}
+function closeDrawer(){const drawer=$("#liveUserDrawer");if(!drawer.classList.contains("is-open"))return;drawer.classList.remove("is-open","is-opening");drawer.classList.add("is-closing");drawer.setAttribute("aria-hidden","true");drawer.inert=true;overlayState.drawer=false;overlayState.drawerClosing=true;syncOverlayLifecycle();clearTimeout(drawerCloseTimer);drawerCloseTimer=setTimeout(finishDrawerClose,1050);selectedUser=null;document.querySelectorAll(".live-user-row.is-source-highlight").forEach(row=>row.classList.remove("is-source-highlight"))}
 
 function restrictedAccounts(type){return accountUsers.filter(u=>u.restriction_type===type&&isRestricted(u)).sort((a,b)=>Number(b.created_at||0)-Number(a.created_at||0))}
 function renderRestrictions(){
@@ -59,6 +88,7 @@ function renderRestrictions(){
  $("#liveBannedCount").textContent=banned.length.toLocaleString();
  $("#liveSuspendedCount").textContent=suspended.length.toLocaleString();
  const rows=restrictionView==="ban"?banned:suspended,kind=restrictionView==="ban"?"BANNED":"SUSPENDED";
+ $("#liveRestrictionsList").setAttribute("aria-labelledby",restrictionView==="ban"?"liveBannedTab":"liveSuspendedTab");
  $("#liveRestrictionsList").innerHTML=rows.length?rows.map(u=>{
   const name=String(u.name||u.username||u.email||"User account").trim(),initial=esc(name.charAt(0).toUpperCase());
   const detail=restrictionView==="suspend"&&u.restriction_expires_at?"Access restores "+new Date(Number(u.restriction_expires_at)*1000).toLocaleString():String(u.restriction_reason||"Permanent restriction");
@@ -67,7 +97,7 @@ function renderRestrictions(){
 }
 function openRestrictionsModal(){
  const modal=$("#liveRestrictionsModal"),backdrop=$("#liveDrawerBackdrop"),panel=document.querySelector(".live-panel");if(!modal)return;
- clearTimeout(restrictionCloseTimer);overlayState.restrictionsClosing=false;overlayState.restrictionHandoff=false;overlayState.restrictions=true;restrictionView="ban";
+ clearTimeout(restrictionCloseTimer);restrictionsReturnFocus=$("#liveRestrictionsOpen");overlayState.restrictionsClosing=false;overlayState.restrictionHandoff=false;overlayState.restrictions=true;restrictionView="ban";
  /* Anchor the Block List window to the Live Users panel instead of viewport center. */
  if(panel){const rect=panel.getBoundingClientRect();modal.style.left=(rect.left+rect.width/2)+"px";modal.style.top=(rect.top+rect.height/2)+"px";}
  document.querySelectorAll(".live-restriction-tab").forEach(tab=>{const active=tab.dataset.restrictionView===restrictionView;tab.classList.toggle("is-active",active);tab.setAttribute("aria-selected",String(active))});
@@ -96,13 +126,31 @@ $("#liveRestrictionsOpen").addEventListener("click",openRestrictionsModal);
 $("#liveRestrictionsClose").addEventListener("click",()=>closeRestrictionsModal());
 $("#liveRestrictionsModal").addEventListener("click",e=>{
  const tab=e.target.closest("[data-restriction-view]");
- if(tab){restrictionView=tab.dataset.restrictionView;document.querySelectorAll(".live-restriction-tab").forEach(item=>{const active=item===tab;item.classList.toggle("is-active",active);item.setAttribute("aria-selected",String(active))});renderRestrictions();return}
+ if(tab){restrictionView=tab.dataset.restrictionView;syncRestrictionTabs();renderRestrictions();return}
  const row=e.target.closest("[data-restricted-user-id]");
  if(row){const id=row.dataset.restrictedUserId;closeRestrictionsModal(true);setTimeout(()=>openDrawer(id),390)}
 });
 $("#liveDrawerBackdrop").addEventListener("click",()=>{if($("#liveRestrictionsModal").classList.contains("is-open"))closeRestrictionsModal();else closeDrawer()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){if($("#liveRestrictionsModal").classList.contains("is-open"))closeRestrictionsModal();else if($("#liveUserDrawer").classList.contains("is-open"))closeDrawer()}});
+$("#liveRestrictionsModal").addEventListener("keydown",e=>{
+ const current=e.target.closest(".live-restriction-tab");if(!current)return;
+ const tabs=[...document.querySelectorAll(".live-restriction-tab")],index=tabs.indexOf(current);
+ let next=null;
+ if(e.key==="ArrowRight"||e.key==="ArrowDown")next=tabs[(index+1)%tabs.length];
+ else if(e.key==="ArrowLeft"||e.key==="ArrowUp")next=tabs[(index-1+tabs.length)%tabs.length];
+ else if(e.key==="Home")next=tabs[0];else if(e.key==="End")next=tabs[tabs.length-1];
+ if(next){e.preventDefault();next.focus();next.click()}
+});
+document.addEventListener("keydown",e=>{
+ if(e.key==="Tab"){
+  if(overlayState.restrictions){trapOverlayTab(e,$("#liveRestrictionsModal"));return}
+  if(overlayState.drawer){trapOverlayTab(e,$("#liveUserDrawer"));return}
+ }
+ if(e.key==="Escape"){
+  if($("#liveRestrictionsModal").classList.contains("is-open"))closeRestrictionsModal();
+  else if($("#liveUserDrawer").classList.contains("is-open"))closeDrawer();
+ }
+});
 
-$("#liveDialogClose").addEventListener("click",()=>$("#liveUserDialog").close());$("#liveUserDialog").addEventListener("close",()=>{overlayState.dialog=false;syncOverlayLifecycle()});$("#liveUserDialog").addEventListener("click",e=>{if(e.target===$("#liveUserDialog"))$("#liveUserDialog").close()});
+$("#liveDialogClose").addEventListener("click",()=>$("#liveUserDialog").close());$("#liveUserDialog").addEventListener("close",()=>{overlayState.dialog=false;syncOverlayLifecycle();if(!overlayState.drawer&&!overlayState.drawerClosing&&!overlayState.restrictions&&!overlayState.restrictionsClosing){focusIfAvailable(drawerReturnFocus);drawerReturnFocus=null}});$("#liveUserDialog").addEventListener("click",e=>{if(e.target===$("#liveUserDialog"))$("#liveUserDialog").close()});
 window.addEventListener("pagehide",()=>{clearInterval(refreshTimer);clearInterval(presenceTimer);clearTimeout(drawerCloseTimer);clearTimeout(restrictionCloseTimer);overlayState.drawer=false;overlayState.restrictions=false;overlayState.drawerClosing=false;overlayState.restrictionsClosing=false;overlayState.dialog=false;overlayState.restrictionHandoff=false;document.body.style.overflow=""});
 init();

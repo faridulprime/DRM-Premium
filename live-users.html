@@ -66,7 +66,7 @@
   </section>
   <aside class="live-empty-space" aria-hidden="true"></aside>
 </main>
-  <aside id="liveUserDrawer" class="live-user-drawer" aria-hidden="true" aria-labelledby="drawerTitle">
+  <aside id="liveUserDrawer" class="live-user-drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="drawerTitle" tabindex="-1" inert>
     <div class="live-drawer-head">
       <div><span class="live-drawer-kicker">ACCOUNT CONTROL / OWNER</span><h2 id="drawerTitle">Selected User</h2></div>
       <button id="liveDrawerClose" class="live-drawer-close" type="button" aria-label="Close user panel">×</button>
@@ -74,17 +74,17 @@
     <div id="liveDrawerBody" class="live-drawer-body"></div>
   </aside>
   <div id="liveDrawerBackdrop" class="live-drawer-backdrop" hidden></div>
-  <section id="liveRestrictionsModal" class="live-restrictions-modal" aria-hidden="true" aria-labelledby="liveRestrictionsTitle">
+  <section id="liveRestrictionsModal" class="live-restrictions-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="liveRestrictionsTitle" tabindex="-1" inert>
     <header class="live-restrictions-head">
       <div><span class="live-drawer-kicker">ACCOUNT SECURITY / OWNER</span><h2 id="liveRestrictionsTitle">Restricted Users</h2></div>
       <button id="liveRestrictionsClose" class="live-drawer-close" type="button" aria-label="Close restricted users">×</button>
     </header>
     <div class="live-restrictions-content">
       <div class="live-restrictions-tabs" role="tablist" aria-label="Restricted account type">
-        <button type="button" class="live-restriction-tab is-active" data-restriction-view="ban" role="tab" aria-selected="true"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6z"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span class="tab-label">Banned</span> <span id="liveBannedCount">0</span></button>
-        <button type="button" class="live-restriction-tab" data-restriction-view="suspend" role="tab" aria-selected="false"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 8v8M15 8v8"/></svg></span><span class="tab-label">Suspended</span> <span id="liveSuspendedCount">0</span></button>
+        <button type="button" id="liveBannedTab" class="live-restriction-tab is-active" data-restriction-view="ban" role="tab" aria-selected="true" aria-controls="liveRestrictionsList" tabindex="0"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6z"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span class="tab-label">Banned</span> <span id="liveBannedCount">0</span></button>
+        <button type="button" id="liveSuspendedTab" class="live-restriction-tab" data-restriction-view="suspend" role="tab" aria-selected="false" aria-controls="liveRestrictionsList" tabindex="-1"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 8v8M15 8v8"/></svg></span><span class="tab-label">Suspended</span> <span id="liveSuspendedCount">0</span></button>
       </div>
-      <div id="liveRestrictionsList" class="live-restrictions-list" aria-live="polite"></div>
+      <div id="liveRestrictionsList" class="live-restrictions-list" role="tabpanel" aria-labelledby="liveBannedTab" tabindex="0" aria-live="polite"></div>
     </div>
   </section>
 <dialog id="liveUserDialog" class="live-user-dialog">
