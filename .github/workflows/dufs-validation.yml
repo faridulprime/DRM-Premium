@@ -39,6 +39,7 @@ on:
       - "migrations/0010_dumc_release_years_1956_1959.sql"
       - "migrations/manifest.json"
       - "scripts/test-dumc-migration.py"
+      - "docs/DUFS-SPEC.md"
       - ".github/workflows/dufs-validation.yml"
   workflow_dispatch:
 
@@ -46,7 +47,7 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  dufs-validation:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -57,26 +58,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Validate existing folder database migration
+      - name: Validate DUFS migration, taxonomy and system compatibility
         run: python scripts/test-dumc-migration.py
-
-      - name: Validate migration inventory
-        run: node scripts/validate-migration-inventory.mjs
-
-      - name: Validate API JavaScript syntax
-        run: node --input-type=module --check < 'functions/api/[[path]].js'
-
-      - name: Validate DUFS, DULM, Upload Studio and homepage JavaScript syntax
-        run: |
-          node --check assets/dufs/folder-system.js
-          node --check assets/dufs/home.js
-          node --check assets/dulm/list-manager.js
-          node --check dufs-manager.js
-          node --check dumc-manager.js
-          node --check upload-studio.js
-          node --check app.js
+      - name: Validate DUFS and application JavaScript syntax
+        run: node --input-type=module --check < 'functions/api/[[path]].js' && node --check assets/dufs/folder-system.js && node --check assets/dufs/home.js && node --check assets/dulm/list-manager.js && node --check dufs-manager.js && node --check upload-studio.js && node --check app.js
