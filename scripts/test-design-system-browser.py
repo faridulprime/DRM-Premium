@@ -1787,7 +1787,8 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     """el => ({
                       running: el.getAnimations().filter(a => a.playState === "running").map(a => {
                         const timing = a.effect.getTiming();
-                        return {duration: timing.duration, easing: timing.easing};
+                        const frames = a.effect.getKeyframes();
+                        return {duration: timing.duration, easing: timing.easing, frames};
                       }),
                       hidden: el.hidden,
                       ariaHidden: el.getAttribute("aria-hidden"),
@@ -1803,6 +1804,10 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     for timing in opening["running"]:
                         if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
                             fail(f"homepage/DUFS/{scenario}: {key} opening duration does not match the DUME token")
+                        if len(timing["frames"]) < 2 or "22px" not in timing["frames"][0].get("transform", ""):
+                            fail(f"homepage/DUFS/{scenario}: {key} opening motion does not visibly travel through the DUME entrance frames")
+                        if timing["frames"][0].get("opacity") not in ("0", 0) or timing["frames"][-1].get("opacity") not in ("1", 1):
+                            fail(f"homepage/DUFS/{scenario}: {key} opening motion is missing its opacity transition")
                         if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
                             fail(f"homepage/DUFS/{scenario}: {key} opening easing does not match the DUME token")
                     page.wait_for_timeout(float(config["dropdownDuration"]) + 30)
@@ -1818,7 +1823,8 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     """el => ({
                       running: el.getAnimations().filter(a => a.playState === "running").map(a => {
                         const timing = a.effect.getTiming();
-                        return {duration: timing.duration, easing: timing.easing};
+                        const frames = a.effect.getKeyframes();
+                        return {duration: timing.duration, easing: timing.easing, frames};
                       }),
                       hidden: el.hidden,
                       ariaHidden: el.getAttribute("aria-hidden"),
@@ -1834,6 +1840,10 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                     if not closing["running"]:
                         fail(f"homepage/DUFS/{scenario}: {key} did not use the DUME closing animation")
                     for timing in closing["running"]:
+                        if len(timing["frames"]) < 2 or "22px" not in timing["frames"][-1].get("transform", ""):
+                            fail(f"homepage/DUFS/{scenario}: {key} closing motion does not reverse the DUME entrance path")
+                        if timing["frames"][0].get("opacity") not in ("1", 1) or timing["frames"][-1].get("opacity") not in ("0", 0):
+                            fail(f"homepage/DUFS/{scenario}: {key} closing motion is missing its opacity transition")
                         if abs(float(timing["duration"]) - float(config["dropdownDuration"])) > 1:
                             fail(f"homepage/DUFS/{scenario}: {key} closing duration differs from opening/DUME token")
                         if [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", timing["easing"])] != [float(x) for x in re.findall(r"[-+]?(?:\d*\.)?\d+", config["dropdownEasing"])] :
@@ -1846,6 +1856,44 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                 )
                 if tab.get_attribute("aria-expanded") != "false":
                     fail(f"homepage/DUFS/{scenario}: {key} ARIA expanded state remained open after closing")
+
+            # A longer label must grow the intrinsic list width without escaping the viewport.
+            all_tab_probe = page.locator('[data-category-menu="all-movies"]')
+            all_panel_probe = page.locator("#dufnFolderPanel-all-movies")
+            all_tab_probe.dispatch_event("click")
+            page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-all-movies').hidden")
+            base_width = all_panel_probe.evaluate("(el) => el.getBoundingClientRect().width")
+            all_tab_probe.dispatch_event("click")
+            page.wait_for_function("() => document.querySelector('#dufnFolderPanel-all-movies').hidden")
+            page.locator("#dufnFolderPanel-all-movies .dufn-folder-grid").evaluate(
+                """grid => {
+                  const item = document.createElement("button");
+                  item.type = "button";
+                  item.className = "dumc-nav-item dufn-folder";
+                  item.dataset.folderId = "TEST_FUTURE_LONG_LABEL";
+                  item.dataset.categoryFolder = "TEST_FUTURE_LONG_LABEL";
+                  item.dataset.folderLabel = "Future long folder label used to verify adaptive width";
+                  item.innerHTML = '<span>Future long folder label used to verify adaptive width</span>';
+                  grid.append(item);
+                  window.DULM?.refresh?.();
+                }"""
+            )
+            all_tab_probe.dispatch_event("click")
+            page.wait_for_function("() => !document.querySelector('#dufnFolderPanel-all-movies').hidden")
+            measured_widths = all_panel_probe.evaluate(
+                """el => ({
+                  width: el.getBoundingClientRect().width,
+                  maxWidth: parseFloat(getComputedStyle(el).maxWidth),
+                  longest: Math.max(...[...el.querySelectorAll(".dufn-folder span")].map(node => node.scrollWidth)),
+                  viewport: innerWidth
+                })"""
+            )
+            if measured_widths["width"] <= base_width + 20:
+                fail(f"homepage/DUFS/{scenario}: a longer folder label did not expand the dropdown width ({base_width}px -> {measured_widths})")
+            if measured_widths["width"] > measured_widths["viewport"] - 20:
+                fail(f"homepage/DUFS/{scenario}: adaptive dropdown width exceeded the viewport boundary ({measured_widths})")
+            all_tab_probe.dispatch_event("click")
+            page.wait_for_function("() => document.querySelector('#dufnFolderPanel-all-movies').hidden")
 
             # Opening another category closes the prior one with the same transition.
             first = page.locator('[data-category-menu="all-movies"]')
