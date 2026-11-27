@@ -1,10 +1,11 @@
-name: DUMC Movie Library Validation
+name: DUFS Folder System Validation
 
 on:
   push:
     branches: [feature/full-admin-panel]
     paths:
       - "assets/dumc/**"
+      - "assets/dufs/**"
       - "index.html"
       - "app.js"
       - "assets/dulm/**"
@@ -15,17 +16,20 @@ on:
       - "upload-studio.html"
       - "upload-studio.js"
       - "dumc-manager.js"
+      - "dufs-manager.js"
       - "scripts/test-dumc-migration.py"
       - ".github/workflows/dumc-validation.yml"
   pull_request:
     paths:
       - "assets/dumc/**"
+      - "assets/dufs/**"
       - "assets/dulm/**"
       - "app.js"
       - "index.html"
       - "upload-studio.html"
       - "upload-studio.js"
       - "dumc-manager.js"
+      - "dufs-manager.js"
       - "migrations/0009_dumc_movie_library.sql"
       - "migrations/0010_dumc_release_years_1956_1959.sql"
       - "migrations/manifest.json"
@@ -47,7 +51,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Validate DUMC migration and taxonomy
+      - name: Validate DUFS taxonomy and legacy storage migration
         run: python scripts/test-dumc-migration.py
       - name: Validate migration inventory
         run: node scripts/validate-migration-inventory.mjs
@@ -55,5 +59,5 @@ jobs:
         run: node --input-type=module --check < 'functions/api/[[path]].js'
       - name: Validate Upload Studio JavaScript syntax
         run: node --check upload-studio.js && node --check dumc-manager.js && node --check assets/dumc/home.js
-      - name: Validate DULM and application JavaScript syntax
-        run: node --check assets/dulm/list-manager.js && node --check app.js
+      - name: Validate DUFS, DULM and application JavaScript syntax
+        run: node --check assets/dufs/folder-system.js && node --check assets/dufs/home.js && node --check dufs-manager.js && node --check assets/dulm/list-manager.js && node --check app.js
