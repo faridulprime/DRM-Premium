@@ -37,7 +37,7 @@
   const fromHeight=currentFrame?currentFrame.height:(isOpen?0:panel.getBoundingClientRect().height);
   const fromOpacity=currentFrame?currentFrame.opacity:(isOpen?0:(Number(getComputedStyle(panel).opacity)||1));
   const toHeight=isOpen?targetHeight:0,toOpacity=isOpen?1:0;
-  const duration=REDUCED.matches?0:DROPDOWN_DURATION;
+  const requestedDuration=Number(options.duration);const duration=Number.isFinite(requestedDuration)?Math.max(0,requestedDuration):(REDUCED.matches?0:DROPDOWN_DURATION);
   const clearTemporaryStyles=()=>{panel.style.removeProperty("height");panel.style.removeProperty("opacity");panel.style.removeProperty("overflow");panel.style.removeProperty("will-change")};
   if(duration<=0||typeof panel.animate!=="function"){clearTemporaryStyles();if(!isOpen)panel.hidden=true;if(typeof onFinish==="function")onFinish();return Promise.resolve({cancelled:false,reducedMotion:REDUCED.matches})}
   panel.style.height=Math.max(0,fromHeight)+"px";
