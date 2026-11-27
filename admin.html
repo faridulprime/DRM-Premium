@@ -47,12 +47,12 @@
     <a class="side-link" href="/"><span class="side-icon">⌂</span><span>Home</span></a>
     <a class="side-link" href="/upload-studio.html"><span class="side-icon">＋</span><span>Upload Studio</span></a>
   </div>
-  <div class="sidebar-section">
+  <div class="sidebar-section" role="tablist" aria-label="Dashboard sections">
     <div class="sidebar-heading">Dashboard</div>
-    <button class="side-link active" type="button" data-tab="overview" aria-pressed="true" aria-controls="tab-overview"><span class="side-icon">▦</span><span>Overview</span></button>
-    <button class="side-link" type="button" data-tab="videos" aria-pressed="false" aria-controls="tab-videos"><span class="side-icon">▶</span><span>ভিডিও</span></button>
-    <button class="side-link" type="button" data-tab="categories" aria-pressed="false" aria-controls="tab-categories"><span class="side-icon">▤</span><span>ক্যাটাগরি</span></button>
-    <button class="side-link" type="button" data-tab="site" id="sidebarSiteTab" aria-pressed="false" aria-controls="tab-site" hidden><span class="side-icon">⚙</span><span>ওয়েবসাইট</span></button>
+    <button id="adminSideTabOverview" role="tab" aria-selected="true" class="side-link active" type="button" data-tab="overview" tabindex="0" aria-controls="tab-overview"><span class="side-icon">▦</span><span>Overview</span></button>
+    <button id="adminSideTabVideos" role="tab" aria-selected="false" class="side-link" type="button" data-tab="videos" tabindex="-1" aria-controls="tab-videos"><span class="side-icon">▶</span><span>ভিডিও</span></button>
+    <button id="adminSideTabCategories" role="tab" aria-selected="false" class="side-link" type="button" data-tab="categories" tabindex="-1" aria-controls="tab-categories"><span class="side-icon">▤</span><span>ক্যাটাগরি</span></button>
+    <button role="tab" aria-selected="false" class="side-link" type="button" data-tab="site" id="sidebarSiteTab" tabindex="-1" aria-controls="tab-site" hidden><span class="side-icon">⚙</span><span>ওয়েবসাইট</span></button>
     <a class="side-link" href="/live-users.html" id="liveUsersSidebarTab" hidden><span class="side-icon">●</span><span>Live Users</span></a>
   </div>
   <div class="sidebar-logout-area" id="adminSidebarLogoutArea" hidden>
@@ -63,7 +63,7 @@
   </div>
 </aside>
 <nav class="category-bar admin-category-bar" id="adminCategoryBar" aria-label="Dashboard sections" hidden>
-  <div class="category-tabs">
+  <div class="category-tabs" role="tablist" aria-label="Dashboard sections">
     <button class="category-chip active" type="button" data-tab="overview" aria-pressed="true" aria-controls="tab-overview"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg></span><span class="tab-label">Overview</span></button>
     <button class="category-chip" type="button" data-tab="videos" aria-pressed="false" aria-controls="tab-videos"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m7 4 13 8-13 8V4Z"/></svg></span><span class="tab-label">ভিডিও</span></button>
     <button class="category-chip" type="button" data-tab="categories" aria-pressed="false" aria-controls="tab-categories"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 4-9-4Z"/><path d="m3 12 9 4 9-4M3 17l9 4 9-4"/></svg></span><span class="tab-label">ক্যাটাগরি</span></button>
@@ -105,7 +105,7 @@
    <div><p class="eyebrow">DRM PREMIUM MANAGEMENT</p><h1>Dashboard</h1><p class="muted" id="adminIdentity"></p></div>
    <div class="dash-meta"><span class="dash-role" id="dashRole">ADMIN</span></div>
   </div>
-  <section id="tab-overview" class="tab-panel overview-panel" role="region" aria-labelledby="overviewPanelTitle" tabindex="-1">
+  <section id="tab-overview" class="tab-panel overview-panel" role="tabpanel" tabindex="0" aria-labelledby="adminSideTabOverview">
   <div class="overview-heading"><div><p class="eyebrow">WORKSPACE SUMMARY</p><h2 id="overviewPanelTitle">Overview</h2><p class="muted">আপনার DRM– Premium কনটেন্ট ও কার্যক্রমের সংক্ষিপ্ত চিত্র।</p></div><span class="overview-live"><i></i> Live workspace</span></div>
   <div class="overview-metrics" id="overviewMetrics" aria-live="polite">
    <article class="overview-metric"><span>Total Videos</span><strong>—</strong><small>লোড হচ্ছে</small></article><article class="overview-metric"><span>Published</span><strong>—</strong><small>লোড হচ্ছে</small></article><article class="overview-metric"><span>Categories</span><strong>—</strong><small>লোড হচ্ছে</small></article><article class="overview-metric"><span>Active Admins</span><strong>—</strong><small>লোড হচ্ছে</small></article>
@@ -117,7 +117,7 @@
    <section class="overview-card"><div class="overview-card-head"><div><h3>Workspace activity</h3><p class="muted">সিস্টেমে রেকর্ড হওয়া ভিজিট</p></div></div><div id="overviewActivity" class="overview-activity"><span>Tab views</span><strong>—</strong></div></section>
   </div>
  </section>
- <section id="tab-videos" class="panel tab-panel" role="region" aria-labelledby="videosPanelTitle" tabindex="-1" hidden>
+ <section id="tab-videos" class="panel tab-panel" role="tabpanel" tabindex="0" aria-labelledby="adminSideTabVideos" hidden>
    <div class="panel-head"><div><h2 id="videosPanelTitle">ভিডিও পরিচালনা</h2><p class="muted">YouTube URL/ID, Thumbnail, category ও প্রকাশের অবস্থা।</p></div><button id="newVideo" class="primary small">＋ নতুন ভিডিও</button></div>
    <form id="videoForm" class="editor" hidden>
     <input name="id" type="hidden">
@@ -131,12 +131,12 @@
    </form>
    <div id="videoList" class="data-list"></div>
   </section>
-  <section id="tab-categories" class="panel tab-panel" role="region" aria-labelledby="categoriesPanelTitle" tabindex="-1" hidden>
+  <section id="tab-categories" class="panel tab-panel" role="tabpanel" tabindex="0" aria-labelledby="adminSideTabCategories" hidden>
    <h2 id="categoriesPanelTitle">ক্যাটাগরি পরিচালনা</h2>
    <form id="categoryForm" class="inline-form"><label>নতুন ক্যাটাগরি<input name="name" maxlength="50" required placeholder="যেমন: Documentary"></label><button class="primary">যোগ করুন</button></form>
    <div id="categoryList" class="data-list"></div>
   </section>
-  <section id="tab-site" class="panel tab-panel" role="region" aria-labelledby="sitePanelTitle" tabindex="-1" hidden>
+  <section id="tab-site" class="panel tab-panel" role="tabpanel" tabindex="0" aria-labelledby="sidebarSiteTab" hidden>
    <h2 id="sitePanelTitle">ওয়েবসাইট ও ডিজাইন</h2>
    <form id="settingsForm" class="editor">
     <label>ওয়েবসাইটের নাম<input name="site_name" maxlength="40"></label>

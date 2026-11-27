@@ -56,10 +56,39 @@ $("#loginForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.tar
 $("#logout").onclick=async()=>{const button=$("#logout");button.disabled=true;try{await api("auth/logout",{method:"POST",body:"{}"});state.user=null;if(activeUsersTimer){clearInterval(activeUsersTimer);activeUsersTimer=null;}show("login");closeAdminMenu();notice("সফলভাবে Logout হয়েছে।")}catch(e){notice(e.message,true)}finally{button.disabled=false}};
 function validAdminTab(value){return ["overview","videos","categories","site"].includes(value)?value:"overview";}
 async function recordAdminTabView(tab){try{await api("analytics/event",{method:"POST",body:JSON.stringify({tab})});if(tab==="overview"){await loadOverviewAnalytics();renderOverview();}}catch(error){console.error("Admin analytics event failed:",error);}}
-function activateAdminTab(value){const target=validAdminTab(value);const allowedButton=document.querySelector('[data-tab="'+target+'"]:not([hidden])');const allowedPanel=$("#tab-"+target);if(!allowedButton||!allowedPanel)return;recordAdminTabView(target);document.querySelectorAll("[data-tab]").forEach(x=>{const selected=x.dataset.tab===target;x.classList.toggle("active",selected);x.setAttribute("aria-pressed",String(selected));});document.querySelectorAll(".tab-panel").forEach(x=>x.hidden=x.id!=="tab-"+target);closeAdminMenu();}
+function syncAdminTabAccessibility(target){
+ const tabs=[...document.querySelectorAll('[data-tab][role="tab"]')];
+ tabs.forEach(tab=>{
+  const visible=tab.getClientRects().length>0&&!tab.closest("[hidden]");
+  const selected=tab.dataset.tab===target&&visible&&!tab.hidden;
+  tab.setAttribute("aria-selected",String(selected));tab.tabIndex=selected?0:-1;
+ });
+ const panel=$("#tab-"+target);
+ if(panel){
+  const label=tabs.find(tab=>tab.dataset.tab===target&&tab.getAttribute("aria-selected")==="true")||tabs.find(tab=>tab.dataset.tab===target);
+  if(label)panel.setAttribute("aria-labelledby",label.id);
+ }
+}
+function activateAdminTab(value){
+ const target=validAdminTab(value),allowedButton=document.querySelector('[data-tab="'+target+'"]:not([hidden])'),allowedPanel=$("#tab-"+target);
+ if(!allowedButton||!allowedPanel)return;
+ recordAdminTabView(target);
+ document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===target));
+ document.querySelectorAll(".tab-panel").forEach(x=>x.hidden=x.id!=="tab-"+target);
+ syncAdminTabAccessibility(target);closeAdminMenu();
+}
 function currentAdminTab(){const match=location.hash.match(/^#tab=(overview|videos|categories|site)(?:&|$)/);return match?match[1]:"overview";}
 function navigateAdminTab(target){target=validAdminTab(target);if(target==="site"&&$("#headerSiteTab").hidden)return;if(location.hash!=="#tab="+target){location.hash="tab="+target;return;}activateAdminTab(target);}
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>navigateAdminTab(b.dataset.tab));
+document.querySelectorAll('[role="tablist"]').forEach(list=>list.addEventListener("keydown",event=>{
+ const current=event.target.closest('[role="tab"]');if(!current||!list.contains(current))return;
+ const tabs=[...list.querySelectorAll('[role="tab"]:not([hidden])')].filter(tab=>!tab.closest("[hidden]")&&tab.getClientRects().length>0);
+ const index=tabs.indexOf(current);if(index<0)return;let next=null;
+ if(event.key==="ArrowRight"||event.key==="ArrowDown")next=tabs[(index+1)%tabs.length];
+ else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=tabs[(index-1+tabs.length)%tabs.length];
+ else if(event.key==="Home")next=tabs[0];else if(event.key==="End")next=tabs[tabs.length-1];
+ if(next){event.preventDefault();next.focus();next.click();}
+}));
 window.addEventListener("hashchange",()=>{if(!$("#dashboard").hidden)activateAdminTab(currentAdminTab());});
 $("#newVideo").onclick=()=>editVideo("");$("#cancelVideo").onclick=()=>{$("#videoForm").hidden=true};
 $("#videoForm").onsubmit=async e=>{e.preventDefault();const f=e.target,body={title:f.elements.title.value.trim(),category:f.elements.category.value,youtube_id:ytId(f.elements.youtube_id.value),thumbnail_url:f.elements.thumbnail_url.value.trim(),description:f.elements.description.value.trim(),featured:f.elements.featured.checked,published:f.elements.published.checked};if(!body.youtube_id){notice("সঠিক YouTube URL বা Video ID দিন।",true);return}try{if(f.elements.id.value)await api("admin/videos/"+encodeURIComponent(f.elements.id.value),{method:"PUT",body:JSON.stringify(body)});else await api("admin/videos",{method:"POST",body:JSON.stringify(body)});f.reset();f.hidden=true;await refresh();notice("ভিডিও সংরক্ষণ হয়েছে।")}catch(err){notice(err.message,true)}};
