@@ -59,9 +59,9 @@
 .dumc-category-columns{display:block!important;min-width:0}
 .dufn-tabs{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:0;background:transparent;border:0}
 .dufn-tab{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 14px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:#242424;color:#e8e8e8;font:650 13px/1 "Space Grotesk","Hind Siliguri",sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s ease,border-color .16s ease,color .16s ease}
-.dufn-tab svg{width:13px;height:13px;opacity:.68;transition:transform .16s ease}
+.dufn-tab>.dufn-chevron{width:13px;height:13px;opacity:.68;transition:transform .16s ease}.dufn-tab>.tab-icon svg{width:17px;height:17px;opacity:1}
 .dufn-tab:hover,.dufn-tab:focus-visible,.dufn-tab.is-open{background:#30343a;border-color:rgba(215,173,101,.48);color:#ffe0a8;outline:none}
-.dufn-tab.is-open svg{transform:rotate(180deg)}
+.dufn-tab.is-open>.dufn-chevron{transform:rotate(180deg)}
 .dufn-tab:focus-visible{box-shadow:0 0 0 2px rgba(215,173,101,.25)}
 .dufn-panel{padding:18px 0 8px;transform-origin:top center}
 .dufn-panel::-webkit-scrollbar{width:6px;height:6px}
