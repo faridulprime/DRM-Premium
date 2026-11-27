@@ -89,7 +89,7 @@
 .dufn-panel{position:relative;z-index:32;display:block;width:auto;max-width:calc(100vw - 40px);max-height:min(68vh,560px);margin-top:9px;padding:48px 0 12px;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;background:#191b1f;border:1px solid rgba(215,173,101,.28);border-radius:11px;box-shadow:0 14px 36px rgba(0,0,0,.42);overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3B82F6 rgba(59,130,246,.10);transform-origin:top left}
 .dufn-panel[hidden]{display:none!important}
 .dufn-panel-head{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:5px;width:auto;box-sizing:border-box;margin:0;padding:8px;background:#191b1f;border-bottom:1px solid rgba(255,255,255,.09)}
-.dufn-panel-count{min-width:0;max-width:100%;color:#3B82F6;opacity:.5;font-size:10px;line-height:1.15;overflow-wrap:anywhere}
+.dufn-panel-count{min-width:0;max-width:100%;color:#4A7CE0;opacity:.65;font-size:10px;line-height:1.15;overflow-wrap:anywhere}
 .dufn-panel-head h3{font-size:13px}
 .dufn-panel-head p{font-size:10px}
 .dufn-folder-grid{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:max-content;max-width:100%;padding:0 8px;box-sizing:border-box;overflow:visible}
