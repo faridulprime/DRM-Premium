@@ -1,0 +1,79 @@
+(()=>{
+"use strict";
+function displayDumcFolderName(value){const clean=String(value??"").replaceAll("_"," ").trim();const label=clean.split(" ").map(part=>part.toLowerCase()==="cinema"?"Movies":part).join(" ");return label.toLowerCase()==="dhallywood"?"Bangla Movies":label}
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const api=async(path,opts={})=>{const r=await fetch("/api/"+path,{...opts,credentials:"same-origin",headers:{"Content-Type":"application/json",...(opts.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Request failed ("+r.status+")");return d;};
+let root=null,live=false,selected="DUMC",movies=[],current=null;
+const flatten=(n,out=[])=>{out.push(n);(n.children||[]).forEach(c=>flatten(c,out));return out;};
+const count=n=>1+(n.children||[]).reduce((a,c)=>a+count(c),0);
+const find=(n,id)=>n.id===id?n:(n.children||[]).map(c=>find(c,id)).find(Boolean)||null;
+function status(msg,error=false){const el=$("#dumcManagerStatus");if(el){el.textContent=msg;el.dataset.error=String(error);}}
+function renderTree(){
+ if(!root)return;const q=($("#dumcSearch")?.value||"").trim().toLowerCase();
+ function nodeHTML(n,depth=0){
+  const children=(n.children||[]).map(c=>nodeHTML(c,depth+1)).filter(Boolean).join("");
+  if(q&&!(displayDumcFolderName(n.name)+" "+(n.description||"")+" "+n.id).toLowerCase().includes(q)&&!children)return "";
+  const has=Boolean(n.children?.length),is=n.id===selected;
+  const label='<span class="dumc-folder-glyph">'+(has?"▸":"•")+'</span><span class="dumc-node-copy"><strong>'+esc(displayDumcFolderName(n.name))+'</strong><small>'+esc(n.description||"")+'</small></span><span class="dumc-node-count">'+(Number(n.movie_count||0)||"")+'</span>';
+  const summary='<'+(has?"summary":'button type="button')+'" class="dumc-node-summary'+(is?" is-selected":"")+'" data-dumc-id="'+esc(n.id)+'">'+label+(has?"</summary>":"</button>");
+  return has?'<details class="dumc-tree-node" '+(depth===0||q?"open":"")+'>'+summary+'<div class="dumc-children">'+children+'</div></details>':'<div class="dumc-leaf">'+summary+'</div>';
+ }
+ $("#dumcTree").innerHTML=nodeHTML(root)||'<div class="empty-state">No matching folders found.</div>';
+ $("#dumcStats").innerHTML='<span><strong>'+(root.children||[]).length+'</strong> top-level sections</span><span><strong>'+count(root)+'</strong> total folders</span><span><strong>'+flatten(root).reduce((n,x)=>n+Number(x.movie_count||0),0)+'</strong> movie-folder links</span>';
+ const validParents=["02_LANGUAGE","03_FILM_INDUSTRY","06_COUNTRIES","04_DUBBED_MOVIES","05_GENRES","07_COLLECTIONS","09_SUBTITLES","10_ARTWORK","11_METADATA"];const opts='<option value="">Select DUFS folder…</option>'+flatten(root).filter(x=>validParents.includes(parentOf(x.id))).map(x=>'<option value="'+esc(x.id)+'">'+esc(displayDumcFolderName(x.name))+' · '+esc(x.id)+'</option>').join("");
+ if($("#folderSelect")){$("#folderSelect").innerHTML=opts;$("#folderSelect").disabled=!live;}
+ if($("#newFolder")){$("#newFolder").disabled=!live;$("#newFolder").title=live?"Create a custom DUFS folder":"Apply migration 0009 to enable persistent folders";}
+ if($("#dumcAddFolder"))$("#dumcAddFolder").disabled=!live;
+ const detail=find(root,selected);if(detail){$("#dumcSelectedName").textContent=detail.name;$("#dumcSelectedDescription").textContent=detail.description||"";$("#dumcSelectedMeta").textContent=(detail.kind||"Folder")+" · "+(detail.children?.length||0)+" subfolders · "+detail.id;}
+}
+function addEditor(){
+ if($("#dumcEditor"))return;
+ const section=document.createElement("section");section.id="dumcEditor";section.className="dumc-editor";
+ section.innerHTML='<div><p class="eyebrow">MOVIE CLASSIFICATION</p><h3>Manage Movie Metadata</h3><p>One canonical movie record, multiple verified classifications.</p></div><label>Movie</label><select id="dumcMovieSelect"><option value="">Select a movie…</option></select><div class="dumc-editor-grid"><div><label>Original language</label><select id="dumcOriginal"></select></div><div><label>Film industry</label><select id="dumcIndustry"></select></div><div><label>Production country</label><select id="dumcCountry"></select></div><div><label>Release year</label><input id="dumcYear" type="number" min="1888" max="2100" placeholder="e.g. 2026"></div><div><label>Genres (multiple)</label><select id="dumcGenres" multiple size="5"></select></div><div><label>Dubbed languages (multiple)</label><select id="dumcDubs" multiple size="5"></select></div><div><label>Subtitle languages (multiple)</label><select id="dumcSubs" multiple size="5"></select></div><div><label>Collections (multiple)</label><select id="dumcCollections" multiple size="5"></select></div></div><div class="dumc-editor-actions"><button type="button" id="dumcSave">Save classification</button><span id="dumcManagerStatus" role="status">Select a movie to begin.</span></div><div class="dumc-assets-grid"><div><h4>Audio track reference</h4><select id="dumcAudioLang"></select><select id="dumcAudioType"><option value="original">Original audio</option><option value="dubbed">Dubbed audio</option></select><input id="dumcAudioRef" placeholder="HTTPS audio link"><button type="button" id="dumcAddAudio">Register audio track</button></div><div><h4>Subtitle reference</h4><select id="dumcSubtitleLang"></select><input id="dumcSubtitleRef" placeholder="HTTPS subtitle link (.srt/.vtt)"><button type="button" id="dumcAddSubtitle">Register subtitle</button></div></div>';
+ $("#view-folders .dumc-workspace")?.append(section);
+ if(!section.dataset.bound){section.dataset.bound="1";$("#dumcMovieSelect").addEventListener("change",()=>{current=null;loadMovie().catch(e=>status(e.message,true));});$("#dumcSave").addEventListener("click",saveMovie);$("#dumcAddAudio").addEventListener("click",()=>registerAsset("audio"));$("#dumcAddSubtitle").addEventListener("click",()=>registerAsset("subtitle"));}
+ const style=document.createElement("style");style.textContent='.dumc-editor{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:20px;display:grid;gap:13px}.dumc-editor h3{margin:0 0 5px}.dumc-editor p{color:var(--muted);font-size:12px}.dumc-editor label{display:block;color:var(--muted);font-size:12px;margin:5px 0}.dumc-editor select,.dumc-editor input{width:100%;min-height:40px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);color:var(--text)}.dumc-editor select[multiple]{min-height:118px}.dumc-editor-grid,.dumc-assets-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.dumc-editor-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.dumc-editor button{border:1px solid var(--line);border-radius:9px;background:var(--panel2);color:var(--text);padding:10px 14px}.dumc-assets-grid>div{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}.dumc-assets-grid h4{margin:0;font-size:13px}.dumc-editor [data-error=true]{color:#ffabb7}@media(max-width:650px){.dumc-editor-grid,.dumc-assets-grid{grid-template-columns:1fr}}';document.head.append(style);
+}
+function fill(id,parent){const nodes=flatten(root).filter(n=>n.parent_id===parent||n.parentId===parent);$(id).innerHTML='<option value="">Not specified</option>'+nodes.map(n=>'<option value="'+esc(n.id)+'">'+esc(displayDumcFolderName(n.name))+'</option>').join("");}
+const values=id=>Array.from($(id).selectedOptions).map(o=>o.value).filter(Boolean);
+async function loadTree(){
+ live=false;
+ try{const d=await api("admin/dufs/folders");root=(d.folders||[]).find(x=>x.id==="DUMC")||d.folders?.[0]||null;if(!root)throw new Error("DUFS root folder missing.");live=true;}
+ catch(e){const r=await fetch("/assets/dufs/taxonomy.json",{cache:"no-cache"});if(!r.ok)throw e;root=await r.json();}
+ renderTree();addEditor();fill("#dumcOriginal","02_LANGUAGE");fill("#dumcIndustry","03_FILM_INDUSTRY");fill("#dumcCountry","06_COUNTRIES");fill("#dumcGenres","05_GENRES");fill("#dumcDubs","04_DUBBED_MOVIES");fill("#dumcSubs","09_SUBTITLES");fill("#dumcCollections","07_COLLECTIONS");fill("#dumcAudioLang","02_LANGUAGE");fill("#dumcSubtitleLang","09_SUBTITLES");
+ const note=$(".dumc-storage-note");if(note)note.innerHTML=live?"<strong>Storage status:</strong> DUFS database is connected. Persistent folder and movie classification APIs are available. Audio/subtitle references can be registered when their media objects are stored in the movie asset store.":"<strong>Storage status:</strong> Showing the versioned taxonomy catalog. Apply migration 0009 to enable persistent folders and movie classification.";
+}
+async function loadMovies(){const d=await api("admin/dufs/movies?limit=100");movies=d.movies||[];$("#dumcMovieSelect").innerHTML='<option value="">Select a movie…</option>'+movies.map(m=>'<option value="'+esc(m.id)+'">'+esc(m.title)+' · '+esc(m.id.slice(0,8))+'</option>').join("");}
+async function loadMovie(){const id=$("#dumcMovieSelect").value;if(!id)return;current=await api("admin/dufs/movies/"+encodeURIComponent(id));const m=current.movie||{};$("#dumcOriginal").value=m.original_language_folder_id||"";$("#dumcIndustry").value=m.industry_folder_id||"";$("#dumcCountry").value=m.production_country_folder_id||"";$("#dumcYear").value=m.release_year||"";const map={genre:"#dumcGenres",dubbed_language:"#dumcDubs",subtitle_language:"#dumcSubs",collection:"#dumcCollections"};for(const [type,selector] of Object.entries(map)){const selected=new Set((current.assignments||[]).filter(a=>a.relation_type===type).map(a=>a.folder_id));Array.from($(selector).options).forEach(o=>o.selected=selected.has(o.value));}status("Movie metadata loaded.");}
+async function saveMovie(){const id=$("#dumcMovieSelect").value;if(!id)return status("Select a movie first.",true);try{if(!current)current=await api("admin/dufs/movies/"+encodeURIComponent(id));const m=current.movie||{},year=$("#dumcYear").value.trim(),metadata=m.metadata_json?JSON.parse(m.metadata_json):{};await api("admin/dufs/movies/"+encodeURIComponent(id),{method:"PUT",body:JSON.stringify({original_language_folder_id:$("#dumcOriginal").value||null,industry_folder_id:$("#dumcIndustry").value||null,production_country_folder_id:$("#dumcCountry").value||null,release_year:year?Number(year):null,runtime_seconds:m.runtime_seconds||null,metadata})});const keep=(current.assignments||[]).filter(a=>!["genre","dubbed_language","subtitle_language","collection"].includes(a.relation_type)).map(a=>({folder_id:a.folder_id,relation_type:a.relation_type}));for(const [type,selector] of [["genre","#dumcGenres"],["dubbed_language","#dumcDubs"],["subtitle_language","#dumcSubs"],["collection","#dumcCollections"]])values(selector).forEach(folder_id=>keep.push({folder_id,relation_type:type}));await api("admin/dufs/movies/"+encodeURIComponent(id)+"/folders",{method:"PUT",body:JSON.stringify({assignments:keep})});current=await api("admin/dufs/movies/"+encodeURIComponent(id));status("Movie classification saved.");}catch(e){status(e.message,true);}}
+async function addFolder(){if(!live)return status("Apply DUMC migration 0009 first.",true);const name=prompt("New folder name");if(!name?.trim())return;try{await api("admin/dufs/folders",{method:"POST",body:JSON.stringify({parent_id:selected,name:name.trim()})});await loadTree();status("Folder created.");}catch(e){status(e.message,true);}}
+async function registerAsset(kind){const videoId=$("#dumcMovieSelect").value;if(!videoId)return status("Select a movie first.",true);const audio=kind==="audio",language=$(audio?"#dumcAudioLang":"#dumcSubtitleLang").value,reference=$(audio?"#dumcAudioRef":"#dumcSubtitleRef").value.trim();if(!language||!reference.startsWith("https://"))return status("Choose a language and provide a valid HTTPS link.",true);const body={language_folder_id:language,label:"",is_default:false,source_url:reference};try{await api("admin/dufs/movies/"+encodeURIComponent(videoId)+(audio?"/audio":"/subtitles"),{method:"POST",body:JSON.stringify(audio?{...body,track_type:$("#dumcAudioType").value}:body)});$(audio?"#dumcAudioRef":"#dumcSubtitleRef").value="";status((audio?"Audio track":"Subtitle")+" reference registered.");}catch(e){status(e.message,true);}}
+async function createCustomFolder(){if(!live)return status("Apply DUMC migration 0009 first.",true);const name=prompt("New folder name");if(!name?.trim())return;try{await api("admin/dufs/folders",{method:"POST",body:JSON.stringify({parent_id:selected,name:name.trim()})});await loadTree();status("Folder created.");}catch(e){status(e.message,true);}}
+async function linkSelectedFolder(videoId,folderId){
+ const parent=parentOf(folderId),metaParents={"02_LANGUAGE":"original_language_folder_id","03_FILM_INDUSTRY":"industry_folder_id","06_COUNTRIES":"production_country_folder_id"};
+ const detail=await api("admin/dufs/movies/"+encodeURIComponent(videoId));
+ if(metaParents[parent]){
+  const m=detail.movie||{},metadata=m.metadata_json?JSON.parse(m.metadata_json):{};
+  const patch={original_language_folder_id:m.original_language_folder_id||null,industry_folder_id:m.industry_folder_id||null,production_country_folder_id:m.production_country_folder_id||null,release_year:m.release_year||null,runtime_seconds:m.runtime_seconds||null,metadata};
+  patch[metaParents[parent]]=folderId;
+  await api("admin/dufs/movies/"+encodeURIComponent(videoId),{method:"PUT",body:JSON.stringify(patch)});
+ }else{
+  const relation={"04_DUBBED_MOVIES":"dubbed_language","05_GENRES":"genre","07_COLLECTIONS":"collection","09_SUBTITLES":"subtitle_language","10_ARTWORK":"artwork","11_METADATA":"metadata"}[parent];
+  if(!relation)throw new Error("Select a classification folder, not a system folder.");
+  const assignments=(detail.assignments||[]).filter(a=>a.relation_type!==relation).map(a=>({folder_id:a.folder_id,relation_type:a.relation_type}));
+  assignments.push({folder_id:folderId,relation_type:relation});
+  await api("admin/dufs/movies/"+encodeURIComponent(videoId)+"/folders",{method:"PUT",body:JSON.stringify({assignments})});
+ }
+}
+window.DUMCLinkFolder=linkSelectedFolder;
+function bind(){
+ $("#dumcSearch")?.addEventListener("input",renderTree);
+ $("#dumcTree")?.addEventListener("click",e=>{const n=e.target.closest("[data-dumc-id]");if(n){selected=n.dataset.dumcId;const detail=find(root,selected);if(detail){$("#dumcSelectedName").textContent=detail.name;$("#dumcSelectedDescription").textContent=detail.description||"";$("#dumcSelectedMeta").textContent=(detail.kind||"Folder")+" · "+(detail.children?.length||0)+" subfolders · "+detail.id;}document.querySelectorAll(".dumc-node-summary").forEach(x=>x.classList.toggle("is-selected",x.dataset.dumcId===selected));}});
+ $("#dumcExpandAll")?.addEventListener("click",()=>$("#dumcTree").querySelectorAll("details").forEach(x=>x.open=true));
+ $("#dumcCollapseAll")?.addEventListener("click",()=>$("#dumcTree").querySelectorAll("details").forEach(x=>x.open=false));
+ const toolbar=$(".dumc-toolbar");if(toolbar&&!$("#dumcAddFolder")){const b=document.createElement("button");b.id="dumcAddFolder";b.type="button";b.textContent="＋ New folder";toolbar.append(b);}
+ $("#dumcAddFolder")?.addEventListener("click",createCustomFolder);$("#newFolder")?.addEventListener("click",createCustomFolder);
+}
+async function init(){try{await loadTree();if(live)await loadMovies();else status("Database migration is not applied; browsing the static taxonomy.");}catch(e){status(e.message,true);}}
+bind();init();
+})();
