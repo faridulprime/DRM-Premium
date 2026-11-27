@@ -1669,6 +1669,8 @@ def inspect_live_overlay_interactions(browser, base_url):
         )
         if page.locator("#liveRestrictionsModal").get_attribute("role") != "dialog" or page.locator("#liveRestrictionsModal").get_attribute("aria-modal") != "true" or page.locator("#liveRestrictionsModal").evaluate("(el) => el.inert"):
             fail("live-users/overlay-interaction: open Block List window is missing modal semantics or is inert")
+        if page.evaluate("() => document.activeElement?.id") != "liveRestrictionsClose":
+            fail("live-users/overlay-interaction: opening Block List did not move focus to its close control")
         page.locator("#liveBannedTab").focus()
         page.keyboard.press("ArrowRight")
         if page.evaluate("() => document.activeElement?.id") != "liveSuspendedTab" or page.locator("#liveSuspendedTab").get_attribute("aria-selected") != "true" or page.locator("#liveRestrictionsList").get_attribute("aria-labelledby") != "liveSuspendedTab":

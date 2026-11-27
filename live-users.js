@@ -100,13 +100,13 @@ function openRestrictionsModal(){
  clearTimeout(restrictionCloseTimer);restrictionsReturnFocus=$("#liveRestrictionsOpen");overlayState.restrictionsClosing=false;overlayState.restrictionHandoff=false;overlayState.restrictions=true;restrictionView="ban";
  /* Anchor the Block List window to the Live Users panel instead of viewport center. */
  if(panel){const rect=panel.getBoundingClientRect();modal.style.left=(rect.left+rect.width/2)+"px";modal.style.top=(rect.top+rect.height/2)+"px";}
- document.querySelectorAll(".live-restriction-tab").forEach(tab=>{const active=tab.dataset.restrictionView===restrictionView;tab.classList.toggle("is-active",active);tab.setAttribute("aria-selected",String(active))});
- renderRestrictions();modal.classList.remove("is-closing","is-opening");modal.classList.add("is-open","is-opening");
- setTimeout(()=>modal.classList.remove("is-opening"),450);modal.setAttribute("aria-hidden","false");syncOverlayLifecycle();$("#liveRestrictionsClose").focus();
+ syncRestrictionTabs();
+ syncRestrictionTabs();renderRestrictions();modal.inert=false;modal.classList.remove("is-closing","is-opening");modal.classList.add("is-open","is-opening");
+ setTimeout(()=>modal.classList.remove("is-opening"),450);modal.setAttribute("aria-hidden","false");syncOverlayLifecycle();$("#liveRestrictionsClose").focus({preventScroll:true});
 }
 function closeRestrictionsModal(keepBackdrop=false){
  const modal=$("#liveRestrictionsModal");if(!modal?.classList.contains("is-open"))return;
- modal.classList.remove("is-open","is-opening");modal.classList.add("is-closing");modal.setAttribute("aria-hidden","true");
+ modal.classList.remove("is-open","is-opening");modal.classList.add("is-closing");modal.setAttribute("aria-hidden","true");modal.inert=true;if(keepBackdrop)drawerReturnFocus=restrictionsReturnFocus;
  overlayState.restrictions=false;overlayState.restrictionsClosing=true;overlayState.restrictionHandoff=Boolean(keepBackdrop);syncOverlayLifecycle();clearTimeout(restrictionCloseTimer);restrictionCloseTimer=setTimeout(finishRestrictionsClose,390);
 }
 function detailRows(u){const d=new Date(Number(u.created_at)<1e12?Number(u.created_at)*1000:Number(u.created_at)),restriction=isRestricted(u)?(u.restriction_type==="ban"?"Permanently banned":u.restriction_expires_at?new Date(Number(u.restriction_expires_at)*1000).toLocaleString():"Suspended"):"None";return [["Email",u.email||"—"],["Username",u.username||"—"],["Role",String(u.role||"").toUpperCase()],["Account created",Number.isNaN(d.getTime())?"Unavailable":d.toLocaleString()],["Email status",u.email_verified?"Verified":"Unverified"],["Account restriction",restriction],["Restriction reason",u.restriction_reason||"—"]]}
