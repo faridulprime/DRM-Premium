@@ -12,7 +12,7 @@ const defs=[
 let roots=[],activeFolder="",activeYear="",movies=[],offset=0,query="",loading=false,hasMore=false,searchTimer=null,activeMenu="",hoverTimer=null,closeTimer=null;
 let folderNameOverrides={};
 window.DUFSFolderNameOverrides=folderNameOverrides;
-window.DUFSFolderNameOverrides=folderNameOverrides;
+window.DUMCFolderNameOverrides=folderNameOverrides;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const folderName=s=>window.DUFS?.displayFolderName(s)||String(s??"").replace(/^\\d+_/,"").replaceAll("_"," ").trim();
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
@@ -27,7 +27,7 @@ function items(g){
   const allowed=new Set(["bangla dubbed","hindi dubbed","english dubbed","other dubbed"]);
   return children.filter(n=>allowed.has(folderName(n.name).trim().toLowerCase()));
  }
- return children.sort((a,b)=>(folderName(folderNameOverrides[a.id]||a.name)).localeCompare(folderName(folderNameOverrides[b.id]||b.name),undefined,{numeric:true,sensitivity:"base"}));
+ return window.DUFS?.sortFolders?window.DUFS.sortFolders(children,folderNameOverrides):children.sort((a,b)=>folderName(folderNameOverrides[a.id]||a.name).localeCompare(folderName(folderNameOverrides[b.id]||b.name),undefined,{numeric:true,sensitivity:"base"}));
 }
 function count(){return groups().filter(g=>g.key!=="year").reduce((n,g)=>n+items(g).length,0)}
 function closeMenu(focus=false){clearTimeout(hoverTimer);clearTimeout(closeTimer);activeMenu="";renderCategories();if(focus)nav.querySelector("[data-category-menu]")?.focus()}
