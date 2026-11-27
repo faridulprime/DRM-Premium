@@ -1,0 +1,106 @@
+:root{--dusb-track:rgba(156,163,175,.025);--dusb-thumb:#9ca3af;--dusb-thumb-hover:#9ca3af;--dusb-width:9px}
+.dumc-home{padding-top:0;padding-bottom:clamp(36px,5vw,72px);color:#f4f5f7}
+.dumc-home-count{align-self:center;color:#f0d69e!important;font-size:.88rem;font-weight:650;white-space:nowrap;text-shadow:0 2px 4px #000,0 0 8px #000}
+.dumc-directory-layout{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;align-items:stretch;margin:0 0 26px}
+.dumc-category-columns{display:contents}
+.dumc-directory-panel{display:flex;flex-direction:column;min-width:0;height:min(62vh,620px);min-height:390px;max-height:620px;border:0;border-radius:0;background:transparent;overflow:hidden}
+.dumc-directory-panel-head{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-height:55px;padding:8px 2px 10px;border-bottom:1px solid rgba(255,255,255,.14)}
+.dumc-directory-panel-head h3{margin:0;color:#fff;font-size:.9rem;line-height:1.25;font-weight:750;letter-spacing:.005em;text-shadow:0 2px 4px #000;overflow-wrap:anywhere}
+.dumc-directory-panel-body{flex:1;min-width:0;min-height:0;max-height:none;overflow:hidden;position:relative;padding:7px 3px 4px 0}
+.dusb-viewport{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,max-content) var(--dusb-width);column-gap:38px;align-items:stretch;width:max-content;max-width:100%;height:100%;padding:0;overflow:visible}
+.dusb-scrollbar{position:relative;grid-column:1;grid-row:1;align-self:stretch;width:max-content;min-width:0;max-width:100%;height:100%;max-height:100%;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:auto;overscroll-behavior-x:contain;scrollbar-width:none;scrollbar-gutter:auto;box-sizing:border-box;padding:7px 0 4px 0}
+.dusb-scrollbar::-webkit-scrollbar{display:none!important;width:0;height:0}
+.dusb-rail{position:relative;grid-column:2;grid-row:1;z-index:4;align-self:stretch;width:var(--dusb-width);min-height:100%;height:100%;border-radius:10px;background:var(--dusb-track);cursor:pointer;touch-action:none}
+.dusb-thumb{position:absolute;top:0;left:0;width:100%;min-height:26px;border:2px solid transparent;border-radius:10px;background:var(--dusb-thumb);background-clip:padding-box;opacity:.16;cursor:grab;touch-action:none;transition:opacity .15s ease,background-color .15s ease}
+.dusb-rail:hover .dusb-thumb{background-color:var(--dusb-thumb-hover);background-clip:padding-box;opacity:.32}
+.dumc-category-list{display:flex;flex-direction:column;align-items:flex-start;gap:1px}
+.dumc-category-panel .dumc-directory-panel-head{padding-inline:3px}
+.dumc-nav-item{display:flex;align-items:center;gap:7px;width:max-content;max-width:100%;min-width:0;min-height:42px;padding:6px 5px;border:0;border-radius:5px;background:transparent;color:#edf1f5;text-align:left;font:600 .78rem/1.3 "Hind Siliguri","Space Grotesk",sans-serif;cursor:pointer;text-shadow:0 2px 3px rgba(0,0,0,.98),0 0 7px rgba(0,0,0,.95);transition:color .15s ease,background-color .15s ease}
+.dumc-nav-item:hover,.dumc-nav-item:focus-visible{color:#ffe1a5;background:rgba(255,255,255,.055);outline:none}
+.dumc-nav-item:focus-visible{box-shadow:inset 0 0 0 1px rgba(231,184,95,.7)}
+.dumc-nav-item.active{color:#ffd27a;background:transparent;box-shadow:inset 2px 0 #dca94f}
+.dumc-folder-icon{display:block;flex:0 0 15px;width:15px;height:15px;color:#e7b85f;filter:drop-shadow(0 2px 3px rgba(0,0,0,.95))}
+.dumc-nav-item.active .dumc-folder-icon{color:#ffd27a}
+.dumc-nav-item span{min-width:0;overflow-wrap:anywhere}
+.dumc-year-directory-panel{width:auto;min-width:0;max-width:none}.dumc-year-directory-panel .dumc-directory-panel-head{justify-content:space-between;gap:5px}.dumc-year-directory-panel .dumc-home-count{margin-left:auto;align-self:center;font-size:clamp(.58rem,.66vw,.76rem);line-height:1.2;text-align:right;white-space:nowrap}
+.dumc-year-panel-body{padding:7px 0 4px 0}
+.dumc-year-grid{display:flex;flex-direction:column;gap:1px}
+.dumc-year-item{width:max-content;max-width:100%;min-height:42px;padding:6px 5px;gap:6px;font-variant-numeric:tabular-nums;font-family:"Space Grotesk","Hind Siliguri",sans-serif;font-size:.8rem}
+.dumc-year-item .dumc-folder-icon{width:14px;height:14px;flex-basis:14px}
+.dumc-nav-empty{padding:16px 5px;color:#c5cbd3;font-size:.86rem}
+.dumc-home-toolbar{display:grid;grid-template-columns:minmax(150px,1fr) minmax(220px,420px) auto;align-items:center;gap:16px;margin:0 0 16px;min-height:48px}
+.dumc-contents-title h3{font-size:1.05rem}
+.dumc-home-search{display:flex;align-items:center;gap:9px;width:100%;padding:0 14px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(255,255,255,.045)}
+.dumc-home-search>span{font-size:1.35rem;color:#d8bd8a}
+.dumc-home-search input{width:100%;min-width:0;min-height:44px;border:0;outline:0;background:transparent;color:#fff;padding:11px 0;font:inherit}
+.dumc-home-search input::placeholder{color:#adb4bf}
+#dumcHomeStatus{font-size:.84rem;color:#f0d69e;text-shadow:0 2px 4px #000}
+.dumc-home-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.dumc-movie-card{min-width:0;overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:15px;background:#151515;transition:transform .2s,border-color .2s}
+.dumc-movie-card:hover{transform:translateY(-3px);border-color:#c69a52}
+.dumc-movie-open{position:relative;display:block;width:100%;aspect-ratio:16/9;padding:0;border:0;background:#161616;cursor:pointer;overflow:hidden}
+.dumc-movie-open img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .35s}
+.dumc-movie-card:hover img{transform:scale(1.035)}
+.dumc-movie-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:16px;padding-left:3px;opacity:0;transition:opacity .2s}
+.dumc-movie-card:hover .dumc-movie-play,.dumc-movie-open:focus-visible .dumc-movie-play{opacity:1}
+.dumc-movie-copy{padding:13px 14px 15px}
+.dumc-movie-copy h3{margin:0;color:#f5f5f5;font-size:.98rem;line-height:1.4;font-weight:650}
+.dumc-movie-copy p{margin:6px 0 0;color:#c1c6ce;font-size:.82rem;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dumc-movie-copy small{display:inline-block;margin-top:8px;color:#d9bd8c}
+.dumc-empty{grid-column:1/-1;padding:30px 10px;color:#e5e7eb}
+.dumc-home-more{display:block;margin:24px auto 0}
+@media(max-width:1280px){.dumc-directory-layout{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 12px}.dumc-directory-panel{height:430px;min-height:360px}}
+@media(max-width:900px){.dumc-directory-layout{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 11px}.dumc-directory-panel{height:400px;min-height:340px}.dumc-directory-panel-head h3{font-size:.86rem}.dumc-year-directory-panel .dumc-home-count{font-size:.64rem}}
+@media(max-width:680px){.dusb-viewport{max-width:100%;grid-template-columns:minmax(0,max-content) var(--dusb-width);column-gap:36px}.dusb-scrollbar{max-width:100%}.dumc-directory-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}.dumc-directory-panel{height:390px;min-height:320px}.dumc-directory-panel-head{min-height:49px}.dumc-directory-panel-head h3{font-size:.82rem}.dumc-year-directory-panel .dumc-home-count{font-size:.61rem}.dumc-nav-item{font-size:.8rem}.dumc-home-toolbar{grid-template-columns:1fr;gap:9px;align-items:stretch}.dumc-home-search{width:100%}.dumc-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.dumc-movie-copy{padding:10px}.dumc-movie-copy h3{font-size:.88rem}.dumc-home-count{font-size:.77rem}}
+@media(max-width:420px){.dumc-directory-layout{grid-template-columns:1fr 1fr;gap:14px 10px}.dumc-directory-panel{height:360px;min-height:300px}.dumc-category-panel .dumc-directory-panel-head{padding-inline:1px}.dumc-directory-panel-head h3{font-size:.78rem}.dumc-year-directory-panel .dumc-home-count{font-size:.58rem}.dumc-nav-item{font-size:.76rem;gap:5px}.dumc-folder-icon{width:14px;height:14px;flex-basis:14px}.dumc-home-grid{grid-template-columns:1fr}.dumc-home-count{display:none}}
+#movies{scroll-margin-top:88px}
+/* DUFN — Hybrid expandable folder navigation */
+.dumc-directory-layout{display:block!important;margin:0 0 26px!important;min-width:0}
+.dumc-category-columns{display:block!important;min-width:0}
+.dufn-tabs{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:0 0 12px;border-bottom:1px solid rgba(255,255,255,.12)}
+.dufn-tab{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 14px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:#242424;color:#e8e8e8;font:650 13px/1 "Space Grotesk","Hind Siliguri",sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s ease,border-color .16s ease,color .16s ease}
+.dufn-tab svg{width:13px;height:13px;opacity:.68;transition:transform .16s ease}
+.dufn-tab:hover,.dufn-tab:focus-visible,.dufn-tab.is-open{background:#30343a;border-color:rgba(215,173,101,.48);color:#ffe0a8;outline:none}
+.dufn-tab.is-open svg{transform:rotate(180deg)}
+.dufn-tab:focus-visible{box-shadow:0 0 0 2px rgba(215,173,101,.25)}
+.dufn-panel{padding:18px 0 8px;animation:dufnReveal .18s ease both}
+.dufn-panel[hidden]{display:none!important}
+@keyframes dufnReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.dufn-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 12px}
+.dufn-panel-head h3{margin:0;color:#f5f5f5;font-size:15px;font-weight:750}
+.dufn-panel-head p{margin:4px 0 0;color:#9299a3;font-size:11px}
+.dufn-close{width:30px;height:30px;flex:0 0 30px;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:#202226;color:#cbd0d7;font-size:20px;line-height:1;cursor:pointer}
+.dufn-close:hover{background:#34383f;color:#fff}
+.dufn-folder-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px 16px;align-items:start;overflow:visible}
+.dufn-folder{width:100%!important;max-width:none!important;min-height:39px!important;padding:7px 9px!important;border-radius:7px!important}
+.dufn-folder.active{background:rgba(215,173,101,.09)!important;box-shadow:inset 2px 0 #dca94f!important}
+.dumc-home-count{display:block;margin:0 0 5px;color:#d8bd8a!important;font-size:11px;font-weight:600;text-align:right}
+.dumc-home-toolbar{margin-top:20px}
+.dumc-year-directory-panel,.dusb-viewport,.dusb-scrollbar,.dusb-rail{display:none!important}
+@media(max-width:1100px){.dufn-folder-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px 12px}}
+@media(max-width:760px){.dufn-tabs{gap:7px}.dufn-tab{min-height:39px;padding:0 11px;font-size:12px}.dufn-panel{padding-top:14px}.dufn-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px}.dufn-folder{font-size:.79rem!important;min-height:40px!important}}
+@media(max-width:420px){.dufn-tabs{gap:6px}.dufn-tab{min-height:37px;padding:0 9px;font-size:11px}.dufn-folder-grid{grid-template-columns:1fr}}
+
+/* DUFN refinement — one vertical dropdown, anchored to its own category tab. */
+.dumc-directory-layout{position:relative;z-index:30}
+.dumc-category-columns{position:relative;z-index:30}
+.dufn-tabs{position:relative;z-index:31;overflow:visible}
+.dufn-tab-wrap{position:relative;display:inline-flex;align-items:flex-start;flex:0 0 auto}
+.dufn-tab-wrap .dufn-panel{position:absolute;top:calc(100% + 9px);left:0;z-index:1000;width:min(290px,calc(100vw - 32px));max-height:min(68vh,560px);overflow-y:auto;overflow-x:hidden;padding:12px;background:#191b1f;border:1px solid rgba(215,173,101,.28);border-radius:11px;box-shadow:0 14px 36px rgba(0,0,0,.58);overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(215,173,101,.5) rgba(255,255,255,.04)}
+.dufn-tab-wrap .dufn-panel[hidden]{display:none!important}
+.dufn-tab-wrap .dufn-panel-head{position:sticky;top:-12px;z-index:2;margin:-12px -12px 8px;padding:12px;background:#191b1f;border-bottom:1px solid rgba(255,255,255,.09)}
+.dufn-tab-wrap .dufn-panel-head h3{font-size:13px}
+.dufn-tab-wrap .dufn-panel-head p{font-size:10px}
+.dufn-tab-wrap .dufn-folder-grid{display:flex;flex-direction:column;align-items:stretch;gap:1px;overflow:visible}
+.dufn-tab-wrap .dufn-folder{display:flex;width:100%!important;min-height:36px!important;justify-content:flex-start;padding:7px 9px!important;font-size:12px!important}
+.dufn-tab-wrap .dufn-folder span{overflow-wrap:anywhere}
+.dufn-tab-wrap .dufn-close{width:26px;height:26px;flex-basis:26px;font-size:18px}
+.dumc-home-count{position:relative;z-index:1}
+@media(max-width:760px){
+ .dufn-tabs{row-gap:8px}
+ .dufn-tab-wrap .dufn-panel{width:min(270px,calc(100vw - 28px));max-height:62vh;padding:10px}
+ .dufn-tab-wrap .dufn-panel-head{top:-10px;margin:-10px -10px 8px;padding:10px}
+}
+
+/* Keep the final dropdown inside the viewport edge. */
+.dufn-tab-wrap:last-child .dufn-panel{left:auto;right:0}
