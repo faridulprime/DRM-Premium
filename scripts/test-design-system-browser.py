@@ -139,6 +139,49 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
 
         if not page.title().strip():
             fail(f"{name}/{viewport_name}: empty document title")
+        if viewport_name == "desktop":
+            original_theme = page.locator("html").get_attribute("data-theme") or "dark"
+            page.evaluate(
+                """() => {
+                  const probe = document.createElement("button");
+                  probe.id = "ducs-hover-probe";
+                  probe.type = "button";
+                  probe.className = "category-chip";
+                  probe.textContent = "Hover state";
+                  probe.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:2147483000";
+                  document.body.appendChild(probe);
+                }"""
+            )
+            for theme_name in ("dark", "light"):
+                page.locator("html").evaluate("(el, theme) => { el.dataset.theme = theme; }", theme_name)
+                probe = page.locator("#ducs-hover-probe")
+                probe.hover()
+                hover = probe.evaluate(
+                    """el => {
+                      const parse = value => {
+                        const match = value.match(/rgba?\\(\\s*([\\d.]+)[,\\s]+([\\d.]+)[,\\s]+([\\d.]+)(?:\\s*[,/]\\s*([\\d.]+))?/i);
+                        return match ? [Number(match[1]),Number(match[2]),Number(match[3]),match[4]===undefined?1:Number(match[4])] : null;
+                      };
+                      const fg = parse(getComputedStyle(el).color);
+                      const raw = parse(getComputedStyle(el).backgroundColor);
+                      const body = parse(getComputedStyle(document.body).backgroundColor);
+                      const root = parse(getComputedStyle(document.documentElement).backgroundColor);
+                      const base = body && body[3]>0 ? body : root && root[3]>0 ? root : (el.dataset.theme==="light"?[248,250,252,1]:[18,22,28,1]);
+                      const bg = raw ? raw.slice(0,3).map((v,i)=>Math.round(v*raw[3]+base[i]*(1-raw[3]))) : null;
+                      return {
+                        hovered:el.matches(":hover"),
+                        foreground:fg&&fg.slice(0,3).map(Math.round),
+                        background:bg,
+                        rawBackground:getComputedStyle(el).backgroundColor
+                      };
+                    }"""
+                )
+                if not hover["hovered"] or hover["background"] is None:
+                    fail(f"{name}/{viewport_name}: {theme_name} tab hover background is not rendered ({hover})")
+                elif contrast_ratio(tuple(hover["foreground"]), tuple(hover["background"])) < 4.5:
+                    fail(f"{name}/{viewport_name}: {theme_name} tab hover text contrast is below 4.5:1 ({hover})")
+            page.locator("#ducs-hover-probe").evaluate("(el) => el.remove()")
+            page.locator("html").evaluate("(el, theme) => { el.dataset.theme = theme; }", original_theme)
 
         accessibility_names = page.evaluate(
             """() => {
