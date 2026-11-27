@@ -161,10 +161,18 @@ def main() -> int:
         flags=re.DOTALL,
     ):
         fail("Admin New Video action does not consume the 44px DUSS touch-target token")
-    if not re.search(
-        r"\.home-page \.topbar \.account-controls #profileMenuToggle,\s*\.profile-drawer \.profile-drawer-close\s*\{[^}]*inline-size\s*:\s*var\(--duss-touch-target-min\s*,",
-        source_files["assets/sizing/touch-targets.css"],
-        flags=re.DOTALL,
+    touch_css = source_files["assets/sizing/touch-targets.css"]
+    profile_target_selector = ".home-page .topbar .account-controls #profileMenuToggle,\n.profile-drawer .profile-drawer-close"
+    profile_target_start = touch_css.find(profile_target_selector)
+    profile_target_end = touch_css.find("}", profile_target_start) if profile_target_start >= 0 else -1
+    profile_target_block = touch_css[profile_target_start:profile_target_end] if profile_target_end >= 0 else ""
+    if profile_target_start < 0 or not all(
+        value in profile_target_block for value in (
+            "inline-size:var(--duss-touch-target-min, 44px)",
+            "block-size:var(--duss-touch-target-min, 44px)",
+            "min-inline-size:var(--duss-touch-target-min, 44px)",
+            "min-block-size:var(--duss-touch-target-min, 44px)",
+        )
     ):
         fail("Homepage Profile Drawer opener/close controls do not consume the 44px DUSS target")
     live_users_js = read("live-users.js")
