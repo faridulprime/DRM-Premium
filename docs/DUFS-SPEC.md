@@ -96,3 +96,7 @@ The seven Movies category menus (All Movies, Dubbed Movies, Country, Collections
 ## Adaptive dropdown width — 2026-11-27
 
 DULM now uses an intrinsic content width for the category dropdowns. The panel expands according to the widest current folder label and new longer labels naturally increase its width; a viewport-aware maximum prevents the menu from spilling off-screen without imposing an arbitrary desktop width cap. Year keeps a smaller minimum width while remaining content-adaptive.
+
+## DUFS list extended-area transition — 2026-11-27
+
+Opening and closing any of the seven category lists now uses the homepage menu's same DUME 700ms extended-area motion. The actual dropdown panel height expands from zero to its measured visible height and collapses to zero using the same `cubic-bezier(.16,1,.3,1)` easing; the panel is not merely translated or faded into view.
