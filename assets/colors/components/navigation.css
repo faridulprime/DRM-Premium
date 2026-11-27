@@ -166,3 +166,17 @@ html body .device-switch>button:hover{
   100%{opacity:0;transform:translate(-50%,-50%) scale(8.5)}
 }
 @media(prefers-reduced-motion:reduce){.tab-water-ripple{animation-duration:.01ms}}
+
+
+/* Include wrapped DUFN tabs: legacy markup places each tab inside .dufn-tab-wrap. */
+html body .dufn-tab-wrap .dufn-tab:hover{
+  background:transparent!important;background-image:none!important;border-color:transparent!important;
+  box-shadow:none!important;color:#F4F2F0!important;text-shadow:0 0 7px rgba(238,242,255,.66),0 0 18px rgba(211,223,255,.35)!important;
+}
+:root[data-theme="light"] body .dufn-tab-wrap .dufn-tab:hover{
+  color:#24232A!important;text-shadow:0 0 7px rgba(77,83,98,.3),0 0 16px rgba(108,119,143,.18)!important;
+}
+body .topbar{
+  background:#111216!important;background-image:none!important;
+  border-bottom-color:rgba(255,255,255,.055)!important;
+}
