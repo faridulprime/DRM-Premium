@@ -437,7 +437,8 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
   .drm-theme-switch{left:8px;right:auto;bottom:3px;width:32px;height:70px}
   .drm-theme-switch .drm-theme-icon-sun{top:10px}
   .drm-theme-switch .drm-theme-icon-moon{bottom:10px}
-  .drm-theme-switch .drm-theme-knob{left:6px;top:10px;bottom:10px;width:20px;height:20px}
+  .drm-theme-switch .drm-theme-knob{left:6px;top:auto;bottom:10px;width:20px;height:20px}
+  :root[data-theme="light"] .drm-theme-switch .drm-theme-knob{top:10px;bottom:auto}
 }
 @media(prefers-reduced-motion:reduce){
   .drm-theme-switch,.drm-theme-switch *{transition:none!important}
