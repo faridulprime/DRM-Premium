@@ -18,45 +18,89 @@
  function dropdown(options){
   const {panel,open,onFinish}=options||{};
   if(!panel)return Promise.resolve({cancelled:false,skipped:true});
+  const isOpen=Boolean(open);
+  const animatedProperties=["height","opacity","paddingTop","paddingBottom","marginTop","marginBottom","borderTopWidth","borderBottomWidth"];
+  const clearTemporaryStyles=()=>{
+   animatedProperties.forEach(property=>panel.style.removeProperty(property.replace(/[A-Z]/g,m=>"-"+m.toLowerCase())));
+   panel.style.removeProperty("overflow");
+   panel.style.removeProperty("will-change");
+  };
+  const readFrame=()=>{
+   const computed=getComputedStyle(panel);
+   return {
+    height:panel.getBoundingClientRect().height,
+    opacity:Number(computed.opacity),
+    paddingTop:computed.paddingTop,
+    paddingBottom:computed.paddingBottom,
+    marginTop:computed.marginTop,
+    marginBottom:computed.marginBottom,
+    borderTopWidth:computed.borderTopWidth,
+    borderBottomWidth:computed.borderBottomWidth
+   };
+  };
+  const applyFrame=frame=>{
+   panel.style.height=Math.max(0,frame.height)+"px";
+   panel.style.opacity=String(Math.max(0,Math.min(1,frame.opacity)));
+   panel.style.paddingTop=frame.paddingTop;
+   panel.style.paddingBottom=frame.paddingBottom;
+   panel.style.marginTop=frame.marginTop;
+   panel.style.marginBottom=frame.marginBottom;
+   panel.style.borderTopWidth=frame.borderTopWidth;
+   panel.style.borderBottomWidth=frame.borderBottomWidth;
+  };
+  const keyframe=frame=>({
+   height:Math.max(0,frame.height)+"px",
+   opacity:Math.max(0,Math.min(1,frame.opacity)),
+   paddingTop:frame.paddingTop,
+   paddingBottom:frame.paddingBottom,
+   marginTop:frame.marginTop,
+   marginBottom:frame.marginBottom,
+   borderTopWidth:frame.borderTopWidth,
+   borderBottomWidth:frame.borderBottomWidth
+  });
+  const zeroFrame={height:0,opacity:0,paddingTop:"0px",paddingBottom:"0px",marginTop:"0px",marginBottom:"0px",borderTopWidth:"0px",borderBottomWidth:"0px"};
   const previous=dropdownJobs.get(panel);
   let currentFrame=null;
   if(previous){
-   const computed=getComputedStyle(panel);
-   currentFrame={height:panel.getBoundingClientRect().height,opacity:Number(computed.opacity)};
-   panel.style.height=currentFrame.height+"px";
-   panel.style.opacity=String(currentFrame.opacity);
-   panel.style.overflow="hidden";
+   currentFrame=readFrame();
    dropdownJobs.delete(panel);
    previous.animation.cancel();
   }
-  const isOpen=Boolean(open);
   if(isOpen){panel.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false")}
   else{panel.inert=true;panel.setAttribute("aria-hidden","true")}
-  let targetHeight=0;
-  if(isOpen){panel.style.height="auto";panel.style.overflow="hidden";targetHeight=panel.getBoundingClientRect().height}
-  const fromHeight=currentFrame?currentFrame.height:(isOpen?0:panel.getBoundingClientRect().height);
-  const fromOpacity=currentFrame?currentFrame.opacity:(isOpen?0:(Number(getComputedStyle(panel).opacity)||1));
-  const toHeight=isOpen?targetHeight:0,toOpacity=isOpen?1:0;
-  const requestedDuration=Number(options.duration);const duration=Number.isFinite(requestedDuration)?Math.max(0,requestedDuration):(REDUCED.matches?0:DROPDOWN_DURATION);
-  const clearTemporaryStyles=()=>{panel.style.removeProperty("height");panel.style.removeProperty("opacity");panel.style.removeProperty("overflow");panel.style.removeProperty("will-change")};
-  if(duration<=0||typeof panel.animate!=="function"){clearTemporaryStyles();if(!isOpen)panel.hidden=true;if(typeof onFinish==="function")onFinish();return Promise.resolve({cancelled:false,reducedMotion:REDUCED.matches})}
-  panel.style.height=Math.max(0,fromHeight)+"px";
-  panel.style.opacity=String(Math.max(0,Math.min(1,fromOpacity)));
+  clearTemporaryStyles();
+  if(isOpen)panel.style.height="auto";
+  const naturalFrame=readFrame();
+  const fromFrame=currentFrame||(isOpen?zeroFrame:naturalFrame);
+  const toFrame=isOpen?naturalFrame:zeroFrame;
+  const requestedDuration=Number(options.duration);
+  const duration=REDUCED.matches?0:(Number.isFinite(requestedDuration)?Math.max(0,requestedDuration):DROPDOWN_DURATION);
+  if(duration<=0||typeof panel.animate!=="function"){
+   clearTemporaryStyles();
+   if(!isOpen)panel.hidden=true;
+   if(typeof onFinish==="function")onFinish();
+   return Promise.resolve({cancelled:false,reducedMotion:REDUCED.matches});
+  }
+  applyFrame(fromFrame);
   panel.style.overflow="hidden";
-  panel.style.willChange="height, opacity";
-  const animation=panel.animate([
-   {height:Math.max(0,fromHeight)+"px",opacity:Math.max(0,Math.min(1,fromOpacity))},
-   {height:Math.max(0,toHeight)+"px",opacity:toOpacity}
-  ],{duration,easing:DROPDOWN_EASING,fill:"both"});
+  panel.style.willChange="height, opacity, padding, margin, border-width";
+  const animation=panel.animate([keyframe(fromFrame),keyframe(toFrame)],{duration,easing:DROPDOWN_EASING,fill:"both"});
   const job={animation,open:isOpen};dropdownJobs.set(panel,job);
   const finish=()=>{
    if(dropdownJobs.get(panel)!==job)return;
-   dropdownJobs.delete(panel);clearTemporaryStyles();animation.cancel();
+   dropdownJobs.delete(panel);
+   clearTemporaryStyles();
+   animation.cancel();
    if(!isOpen)panel.hidden=true;
    if(typeof onFinish==="function")onFinish();
   };
   animation.addEventListener("finish",finish,{once:true});
-  animation.addEventListener("cancel",()=>{if(dropdownJobs.get(panel)===job){dropdownJobs.delete(panel);clearTemporaryStyles()}},{once:true});
+  animation.addEventListener("cancel",()=>{
+   if(dropdownJobs.get(panel)===job){
+    dropdownJobs.delete(panel);
+    clearTemporaryStyles();
+   }
+  },{once:true});
   return animation.finished.then(()=>({cancelled:false})).catch(()=>({cancelled:true}));
  }
  function mobile(){return window.matchMedia("(max-width:760px)").matches;}
