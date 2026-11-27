@@ -1,4 +1,4 @@
-# DRM Universal Motion Engine (DUME)
+# DRM Universal Motion System (DUME)
 Version: 0.3.0 — Shared drawer and dropdown lifecycle motion
 Status: Shared mobile drawer motion and reusable dropdown disclosure motion are integrated. Homepage DUFS category dropdowns use the DUME controller for symmetric open/close transitions, rapid-toggle cancellation and reduced-motion behavior. Other motion families and Profile remain outside this controller migration.
 
@@ -44,7 +44,7 @@ The controller reads the duration and easing from computed root custom propertie
 A component is migrated only when timing and easing are tokenized, state changes remain correct under rapid interaction, reduced motion is respected, keyboard interaction is preserved, and desktop/mobile behavior is validated in a browser.
 
 ## Remaining work and limitations
-- Only the shared mobile universal sidebar-drawer controller is centralized; this is not a migration of every motion family.
+- The shared mobile universal sidebar-drawer and DUFS category-dropdown disclosure controllers are centralized; this is not a migration of every motion family.
 - Profile drawer, Live Users user drawers/modals and cinematic effects, Site Builder, dialogs, and other page-specific animations still contain local motion rules.
 - Browser validation covers the four integrated pages and the listed lifecycle states. It does not provide a visual/optical approval of every animation or native browser-zoom validation.
 - Broader keyboard review, visual frame-by-frame review, and motion consistency review across the remaining local animation families remain pending.
@@ -82,3 +82,7 @@ The controller now uses the opacity-duration token rather than a hard-coded 520m
 The DRM Universal Motion System owns the shared category-dropdown motion used by DUFS on the Movies homepage. All seven category dropdowns use one interaction contract: click/keyboard activation opens a closed menu; activating the same category again closes it; activating a different category closes the old menu while opening the new one; Escape, outside click and the explicit close control close the active menu. Pointer hover does not mutate open/closed state, so mouse and touch clicks have identical toggle semantics.
 
 The controller animates from a compact, slightly raised and transparent state to the normal panel state. Closing runs the exact same duration/easing and motion path in reverse. The panel becomes `aria-hidden` and inert at the start of closing, but remains rendered until the exit animation completes. Reopening during either transition cancels the old animation and begins from the current computed frame. Under `prefers-reduced-motion: reduce`, the same state changes happen immediately with no animation.
+
+## Browser acceptance — dropdown disclosure rule — 2026-11-27
+
+The Design System browser audit now exercises all seven DUFS category dropdowns in desktop normal-motion, mobile normal-motion and mobile reduced-motion contexts. It verifies click-to-open/click-same-to-close, hover non-activation, symmetric token duration/easing on open and close, visible-but-inert close state, category hand-off, rapid open-close-open cancellation, explicit close control, outside click, Escape, and immediate reduced-motion state changes. This is a static Chromium rendering test; it does not exercise deployed Pages Functions or D1.
