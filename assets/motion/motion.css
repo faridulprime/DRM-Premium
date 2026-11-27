@@ -1,6 +1,6 @@
 /* DRM-Premium Universal Motion Engine — shared drawer primitives.
    State and timing are owned by /assets/motion/motion-controller.js. */
-:root{--dume-drawer-duration:700ms;--dume-drawer-opacity-duration:520ms;--dume-drawer-easing:cubic-bezier(.16,1,.3,1);--dume-backdrop-duration:240ms}
+:root{--dume-drawer-duration:700ms;--dume-drawer-opacity-duration:520ms;--dume-drawer-easing:cubic-bezier(.16,1,.3,1);--dume-backdrop-duration:240ms;--dume-dropdown-duration:220ms;--dume-dropdown-easing:cubic-bezier(.16,1,.3,1);--dume-dropdown-offset:8px;--dume-dropdown-scale:.985}
 @media(max-width:760px){
  .yt-sidebar.dume-mobile-drawer{will-change:transform,opacity;backface-visibility:hidden;transform:translate3d(-110%,0,0)}
  .sidebar-backdrop.dume-mobile-backdrop{transition:opacity var(--dume-backdrop-duration) ease}
