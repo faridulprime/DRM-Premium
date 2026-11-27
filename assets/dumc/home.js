@@ -13,7 +13,7 @@ let roots=[],activeFolder="",activeYear="",movies=[],offset=0,query="",loading=f
 let folderNameOverrides={};
 window.DUMCFolderNameOverrides=folderNameOverrides;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const folderName=s=>{const name=String(s??"").replace(/^\\d+_/,"").replace(/_/g," ");return name.toLowerCase()==="dhallywood"?"Bangla Movies":name.replace(/\\bcinema\\b/gi,"Movies")};
+const folderName=s=>{const name=String(s??"").replace(/^\d+_/,"").replaceAll("_"," ").trim();const label=name.split(" ").map(part=>part.toLowerCase()==="cinema"?"Movies":part).join(" ");return label.toLowerCase()==="dhallywood"?"Bangla Movies":label};
 const thumb=v=>v.thumbnail_url||(v.youtube_id?"https://img.youtube.com/vi/"+encodeURIComponent(v.youtube_id)+"/hqdefault.jpg":"https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM");
 const folderIcon='<svg class="dumc-folder-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.75 6.5A2.75 2.75 0 0 1 5.5 3.75h4.1l2.05 2.1h6.85A2.75 2.75 0 0 1 21.25 8.6v8.9a2.75 2.75 0 0 1-2.75 2.75h-13a2.75 2.75 0 0 1-2.75-2.75z" fill="currentColor"/><path d="M2.9 9h18.2" fill="none" stroke="rgba(20,16,10,.55)" stroke-width="1.25"/></svg>';
 function findNode(nodes,id){for(const n of nodes||[]){if(n.id===id)return n;const f=findNode(n.children,id);if(f)return f}return null}
@@ -26,7 +26,7 @@ function items(g){
   const allowed=new Set(["bangla dubbed","hindi dubbed","english dubbed","other dubbed"]);
   return children.filter(n=>allowed.has(folderName(n.name).trim().toLowerCase()));
  }
- return children.sort((a,b)=>(folderNameOverrides[a.id]||folderName(a.name)).localeCompare(folderNameOverrides[b.id]||folderName(b.name),undefined,{numeric:true,sensitivity:"base"}));
+ return children.sort((a,b)=>(folderName(folderNameOverrides[a.id]||a.name)).localeCompare(folderName(folderNameOverrides[b.id]||b.name),undefined,{numeric:true,sensitivity:"base"}));
 }
 function count(){return groups().filter(g=>g.key!=="year").reduce((n,g)=>n+items(g).length,0)}
 function closeMenu(focus=false){clearTimeout(hoverTimer);clearTimeout(closeTimer);activeMenu="";renderCategories();if(focus)nav.querySelector("[data-category-menu]")?.focus()}
@@ -37,7 +37,7 @@ function renderPanel(g){
  return '<section class="dufn-panel" id="dufnFolderPanel-'+esc(g.key)+'" aria-label="'+esc(g.title)+' folder list">'+
  '<header class="dufn-panel-head"><div class="dufn-panel-count">'+list.length+' Folders</div><button type="button" class="dufn-close" data-close-menu aria-label="Close folder menu">×</button></header>'+
  '<div class="dufn-folder-grid">'+list.map(n=>{
-  const baseLabel=isYear?String(n.year):folderName(n.name),label=folderNameOverrides[n.id]||baseLabel,selected=isYear?activeYear===String(n.year):activeFolder===n.id,isFutureYear=isYear&&n.year>2026;
+  const baseLabel=isYear?String(n.year):folderName(n.name),label=folderName(folderNameOverrides[n.id]||baseLabel),selected=isYear?activeYear===String(n.year):activeFolder===n.id,isFutureYear=isYear&&n.year>2026;
   return '<button type="button" class="dumc-nav-item dufn-folder'+(selected?' active':'')+(isFutureYear?' dufn-future-year':'')+'" data-folder-id="'+esc(n.id)+'" data-folder-label="'+esc(label)+'" '+(isYear?'data-year="'+String(n.year)+'"':'data-category-folder="'+esc(n.id)+'" data-category-label="'+esc(label)+'"')+' aria-pressed="'+(selected?'true':'false')+'">'+folderIcon+'<span>'+esc(label)+'</span></button>'
  }).join("")+'</div></section>'
 }
