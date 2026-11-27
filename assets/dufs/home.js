@@ -47,7 +47,7 @@ function measurePanelWidth(panel,button){
  labels.forEach(label=>{label.style.whiteSpace="nowrap";label.style.width="max-content"});
  const panelLeft=panel.getBoundingClientRect().left;
  const widestRight=rows.reduce((max,row)=>Math.max(max,row.getBoundingClientRect().right),panelLeft);
- const desiredWidth=Math.ceil(widestRight-panelLeft+35);
+ const desiredWidth=Math.ceil(widestRight-panelLeft+43);
  const maxWidth=Math.max(120,Math.min(nav.clientWidth,window.innerWidth-40));
  panel.style.width=Math.min(desiredWidth,maxWidth)+"px";
  panel.style.maxWidth=maxWidth+"px";
