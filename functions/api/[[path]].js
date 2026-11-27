@@ -34,7 +34,8 @@ const DEFAULT_SETTINGS={site_name:"FRAME",hero_eyebrow:"EDITOR'S PICK",hero_titl
 const json=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff",...headers}});
 const fail=(message,status=400)=>json({error:message},status);
 function safeJsonArray(value){try{const parsed=JSON.parse(value);return Array.isArray(parsed)?parsed:[]}catch{return []}}
-function displayDumcFolderName(value){const clean=String(value??"").replaceAll("_"," ").trim();const label=clean.split(" ").map(part=>part.toLowerCase()==="cinema"?"Movies":part).join(" ");return label.toLowerCase()==="dhallywood"?"Bangla Movies":label}
+function displayDufsFolderName(value){const clean=String(value??"").replaceAll("_"," ").trim();const label=clean.split(" ").map(part=>part.toLowerCase()==="cinema"?"Movies":part).join(" ");if(label.toLowerCase()==="dhallywood")return "Bangla Movies";if(label.toUpperCase()==="DUMC")return "DUFS";return label}
+const displayDumcFolderName=displayDufsFolderName;
 
 const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 const un64=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
@@ -83,6 +84,9 @@ async function sendVerificationEmail(env,{to,code,type="user-registration",expir
 async function handle(req,env){
  if(!env.DB)return fail("D1 database binding DB is not configured. Follow the setup guide.",503);
  const u=new URL(req.url),p=u.pathname.replace(/^\/api\/?/,"").split("/").filter(Boolean),m=req.method;
+ // DUFS is the canonical public/API namespace; DUMC routes remain as compatibility aliases.
+ if(p[0]==="dufs")p[0]="dumc";
+ if(p[0]==="admin"&&p[1]==="dufs")p[1]="dumc";
  if(m!=="GET"){if(!originOK(req))return fail("Cross-origin request blocked.",403);if(!(req.headers.get("content-type")||"").toLowerCase().includes("application/json"))return fail("JSON content type required.",415)}
  if(p[0]==="presence"&&m==="POST"){
   const now=Math.floor(Date.now()/1000),visitor=await getSession(req,env);
