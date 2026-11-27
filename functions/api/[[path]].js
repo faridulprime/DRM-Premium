@@ -214,7 +214,7 @@ async function handle(req,env){
        OR EXISTS(SELECT 1 FROM dumc_movie_folder_assignments a WHERE a.video_id=v.id AND a.folder_id=f.id)
       )
     ) AS movie_count
-    FROM dumc_folders f WHERE f.is_archived=0 ORDER BY f.parent_id,f.sort_order,f.name`).all();
+    FROM dumc_folders f WHERE f.is_archived=0 ORDER BY f.parent_id,f.sort_order,name`).all();
    const byId=new Map((folders.results||[]).map(x=>[x.id,{...x,children:[]}]));
    const roots=[];
    for(const node of byId.values()){if(node.parent_id&&byId.has(node.parent_id))byId.get(node.parent_id).children.push(node);else if(!node.parent_id)roots.push(node);}
@@ -347,7 +347,7 @@ async function handle(req,env){
    artwork:"10_ARTWORK",metadata:"11_METADATA"
   };
   if(p.length===3&&p[2]==="folders"&&m==="GET"){
-   const rows=await env.DB.prepare("SELECT f.id,f.parent_id,COALESCE((SELECT value FROM settings WHERE key='dumc_folder_name_override:'||f.id),f.name) AS name,f.description,f.kind,f.sort_order,f.is_system,f.owner_id,f.is_archived,COUNT(DISTINCT a.video_id) AS movie_count FROM dumc_folders f LEFT JOIN dumc_movie_folder_assignments a ON a.folder_id=f.id WHERE f.is_archived=0 AND (f.is_system=1 OR f.owner_id=? OR ?='owner') GROUP BY f.id ORDER BY f.parent_id,f.sort_order,f.name").bind(user.id,user.role).all();
+   const rows=await env.DB.prepare("SELECT f.id,f.parent_id,COALESCE((SELECT value FROM settings WHERE key='dumc_folder_name_override:'||f.id),f.name) AS name,f.description,f.kind,f.sort_order,f.is_system,f.owner_id,f.is_archived,COUNT(DISTINCT a.video_id) AS movie_count FROM dumc_folders f LEFT JOIN dumc_movie_folder_assignments a ON a.folder_id=f.id WHERE f.is_archived=0 AND (f.is_system=1 OR f.owner_id=? OR ?='owner') GROUP BY f.id ORDER BY f.parent_id,f.sort_order,name").bind(user.id,user.role).all();
    const byId=new Map((rows.results||[]).map(x=>[x.id,{...x,children:[]}]));
    const roots=[];
    for(const node of byId.values()){if(node.parent_id&&byId.has(node.parent_id))byId.get(node.parent_id).children.push(node);else if(!node.parent_id)roots.push(node);}
@@ -392,7 +392,7 @@ async function handle(req,env){
    const videoId=p[3];if(!await canAccessVideo(videoId))return fail("Movie not found or not accessible.",404);
    const [movie,assignments,audio,subtitles]=await Promise.all([
     env.DB.prepare("SELECT v.id,v.title,v.category,v.youtube_id,v.thumbnail_url,v.description,v.featured,v.published,v.created_at,v.updated_at,dm.original_language_folder_id,dm.industry_folder_id,dm.production_country_folder_id,dm.release_year,dm.runtime_seconds,dm.metadata_json FROM videos v LEFT JOIN dumc_movies dm ON dm.video_id=v.id WHERE v.id=?").bind(videoId).first(),
-    env.DB.prepare("SELECT a.folder_id,a.relation_type,f.name,f.parent_id FROM dumc_movie_folder_assignments a JOIN dumc_folders f ON f.id=a.folder_id WHERE a.video_id=? ORDER BY a.relation_type,f.name").bind(videoId).all(),
+    env.DB.prepare("SELECT a.folder_id,a.relation_type,COALESCE((SELECT value FROM settings WHERE key='dumc_folder_name_override:'||f.id),f.name) AS name,f.parent_id FROM dumc_movie_folder_assignments a JOIN dumc_folders f ON f.id=a.folder_id WHERE a.video_id=? ORDER BY a.relation_type,name").bind(videoId).all(),
     env.DB.prepare("SELECT id,language_folder_id,track_type,label,asset_key,source_url,is_default,sort_order FROM dumc_audio_tracks WHERE video_id=? ORDER BY track_type,sort_order").bind(videoId).all(),
     env.DB.prepare("SELECT id,language_folder_id,label,asset_key,source_url,is_default FROM dumc_subtitles WHERE video_id=? ORDER BY language_folder_id").bind(videoId).all()
    ]);
