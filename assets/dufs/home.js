@@ -127,6 +127,7 @@ function renderPanel(g){
 }
 function renderCategories(){
  const gs=groups();
+ if(activeMenu&&!gs.some(g=>g.key===activeMenu)){activeMenu="";document.body.classList.remove("dufn-focus-mode")}
  nav.innerHTML='<div class="dufn-tabs" role="group" aria-label="Movie folder categories">'+gs.map(g=>
   '<button type="button" class="dufn-tab'+(activeMenu===g.key?' is-open':'')+'" data-category-menu="'+g.key+'" aria-expanded="'+(activeMenu===g.key)+'" aria-controls="dufnFolderPanel-'+g.key+'">'+esc(g.title)+'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
  ).join('')+'<span class="dumc-home-count" id="dumcHomeCount">'+count().toLocaleString("en-US")+' folders · '+movies.length.toLocaleString("en-US")+' movies</span></div>'+gs.map(renderPanel).join('');
@@ -156,7 +157,7 @@ panelContentObserver.observe(nav,{subtree:true,childList:true,characterData:true
 window.addEventListener("resize",scheduleOpenPanelMeasure,{passive:true});
 if(document.fonts?.ready)document.fonts.ready.then(scheduleOpenPanelMeasure);
 nav.addEventListener("click",e=>{const x=e.target.closest("[data-close-menu]");if(x){closeMenu();return}const t=e.target.closest("[data-category-menu]");if(t){toggleMenu(t.dataset.categoryMenu);return}const f=e.target.closest("[data-category-folder]");if(f){activeFolder=f.dataset.categoryFolder;activeYear="";closeMenu();loadMovies(true);return}const y=e.target.closest("[data-year]");if(y){activeYear=y.dataset.year;activeFolder="";closeMenu();loadMovies(true)}});
-document.addEventListener("click",e=>{if(!activeMenu||layout.contains(e.target))return;e.preventDefault();e.stopImmediatePropagation();closeMenu()},true);
+document.addEventListener("click",e=>{if(!activeMenu||layout.contains(e.target))return;if(e.target.closest(".topbar .brand")){closeMenu();return}e.preventDefault();e.stopImmediatePropagation();closeMenu()},true);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&activeMenu){e.preventDefault();closeMenu(true);return}if(e.key==="ArrowDown"&&e.target.matches("[data-category-menu]")){e.preventDefault();openMenu(e.target.dataset.categoryMenu);nav.querySelector("#dufnFolderPanel-"+activeMenu+" .dufn-folder")?.focus()}});
 $("#dumcHomeSearch").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadMovies(true),250)});
 $("#dumcHomeMore").addEventListener("click",()=>loadMovies(false));
