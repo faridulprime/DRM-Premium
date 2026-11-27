@@ -396,9 +396,9 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 
 /* Shared floating vertical sun/moon switch. */
 .drm-theme-switch{
-  position:fixed;left:12px;right:auto;bottom:8px;z-index:175;
+  position:fixed;left:12px;right:auto;bottom:5px;z-index:175;
   display:flex;flex-direction:column;align-items:center;justify-content:space-between;
-  width:36px;height:78px;padding:5px 0;
+  width:36px;height:84px;padding:5px 0;
   border:1px solid rgba(255,255,255,.06);border-radius:999px;
   background:#242a32;color:#aab5c4;
   box-shadow:6px 6px 14px rgba(0,0,0,.42),-5px -5px 12px rgba(255,255,255,.035);
@@ -426,7 +426,7 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-sun{opacity:1;color:#31445b}
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-moon{opacity:.46;color:#718096}
 @media(max-width:600px){
-  .drm-theme-switch{left:8px;right:auto;bottom:6px;width:32px;height:70px;padding:4px 0}
+  .drm-theme-switch{left:8px;right:auto;bottom:3px;width:32px;height:76px;padding:4px 0}
   .drm-theme-switch .drm-theme-knob{left:6px;width:20px;height:20px}
 }
 @media(prefers-reduced-motion:reduce){
