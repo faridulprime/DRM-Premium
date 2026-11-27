@@ -2,6 +2,7 @@
 @import url("./primitives/palette.css");
 @import url("./semantic/foundations.css");
 @import url("./components/buttons.css");
+@import url("./components/tabs.css?v=ducs-tabs-01");
 @import url("./components/fields.css");
 @import url("./components/badges.css");
 @import url("./components/surfaces.css");
