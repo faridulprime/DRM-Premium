@@ -17,7 +17,15 @@ const folderIcon='<svg class="dumc-folder-icon" viewBox="0 0 24 24" aria-hidden=
 function findNode(nodes,id){for(const n of nodes||[]){if(n.id===id)return n;const f=findNode(n.children,id);if(f)return f}return null}
 function years(){const root=findNode(roots,"08_RELEASE_YEARS"),out=[];const walk=nodes=>{for(const n of nodes||[]){const m=/^YEAR_(\d{4})$/.exec(n.id);if(m){const y=+m[1];if(y>=1950&&y<=2026)out.push({year:y,node:n})}else if(n.children?.length)walk(n.children)}};walk(root?.children||[]);return out.sort((a,b)=>b.year-a.year)}
 function groups(){return defs.map(d=>({...d,node:findNode(roots,d.rootId)})).filter(g=>g.node)}
-function items(g){return g.key==="year"?years().map(x=>({id:x.node.id,name:String(x.year),year:x.year})):(g.node.children||[]).filter(n=>n.id!=="ARCHIVED")}
+function items(g){
+ if(g.key==="year")return years().map(x=>({id:x.node.id,name:String(x.year),year:x.year}));
+ const children=(g.node.children||[]).filter(n=>n.id!=="ARCHIVED");
+ if(g.key==="dubbed-movies"){
+  const allowed=new Set(["bangla dubbed","hindi dubbed","english dubbed","other dubbed"]);
+  return children.filter(n=>allowed.has(folderName(n.name).trim().toLowerCase()));
+ }
+ return children;
+}
 function count(){return groups().filter(g=>g.key!=="year").reduce((n,g)=>n+items(g).length,0)}
 function closeMenu(focus=false){clearTimeout(hoverTimer);clearTimeout(closeTimer);activeMenu="";renderCategories();if(focus)nav.querySelector("[data-category-menu]")?.focus()}
 function openMenu(key){clearTimeout(hoverTimer);clearTimeout(closeTimer);if(activeMenu===key)return;if(groups().some(g=>g.key===key)){activeMenu=key;renderCategories()}}
