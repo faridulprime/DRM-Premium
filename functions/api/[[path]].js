@@ -71,7 +71,7 @@ function yt(s){if(typeof s!=="string")return"";const v=s.trim();if(/^[\w-]{11}$/
 async function adminsExist(DB){const r=await DB.prepare("SELECT COUNT(*) AS n FROM users WHERE role IN ('owner','admin')").first();return Number(r.n)>0}
 async function getSession(req,env){const token=cookieToken(req);if(!token)return null;const now=Math.floor(Date.now()/1000);return await env.DB.prepare("SELECT u.id,u.email,u.username,u.role FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?").bind(await hash(token),now).first()}
 async function newSession(id,env){const token=b64(crypto.getRandomValues(new Uint8Array(32))),now=Math.floor(Date.now()/1000);await env.DB.prepare("INSERT INTO sessions(token_hash,user_id,expires_at,created_at) VALUES(?,?,?,?)").bind(await hash(token),id,now+SESSION_SECONDS,now).run();return token}
-async function settings(DB){const rows=await DB.prepare("SELECT key,value FROM settings").all(),out={...DEFAULT_SETTINGS};for(const r of rows.results||[])out[r.key]=r.value;return out}
+async function settings(DB){const rows=await DB.prepare("SELECT key,value FROM settings").all(),out={...DEFAULT_SETTINGS};for(const r of rows.results||[])if(!String(r.key||"").startsWith("dumc_folder_name_override:"))out[r.key]=r.value;return out}
 function originOK(req){const origin=req.headers.get("Origin");return !!origin&&origin===new URL(req.url).origin}
 async function sendVerificationEmail(env,{to,code,type="user-registration",expiresInMinutes=10,expiresAt,reason}){
  const response=await fetch(env.GOOGLE_APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:env.GOOGLE_APPS_SCRIPT_TOKEN,type,to,code,expiresInMinutes,expiresAt,reason})});
