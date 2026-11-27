@@ -12,7 +12,7 @@ function renderTree(){
  if(!root)return;const q=($("#dumcSearch")?.value||"").trim().toLowerCase();
  function nodeHTML(n,depth=0){
   const children=(n.children||[]).map(c=>nodeHTML(c,depth+1)).filter(Boolean).join("");
-  if(q&&!(n.name+" "+(n.description||"")+" "+n.id).toLowerCase().includes(q)&&!children)return "";
+  if(q&&!(displayDumcFolderName(n.name)+" "+(n.description||"")+" "+n.id).toLowerCase().includes(q)&&!children)return "";
   const has=Boolean(n.children?.length),is=n.id===selected;
   const label='<span class="dumc-folder-glyph">'+(has?"▸":"•")+'</span><span class="dumc-node-copy"><strong>'+esc(displayDumcFolderName(n.name))+'</strong><small>'+esc(n.description||"")+'</small></span><span class="dumc-node-count">'+(Number(n.movie_count||0)||"")+'</span>';
   const summary='<'+(has?"summary":'button type="button')+'" class="dumc-node-summary'+(is?" is-selected":"")+'" data-dumc-id="'+esc(n.id)+'">'+label+(has?"</summary>":"</button>");
