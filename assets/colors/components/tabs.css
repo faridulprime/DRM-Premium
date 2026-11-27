@@ -1,59 +1,87 @@
-/* Category/filter tab styling — Dark Claymorphism reference supplied by the user.
-   The card and button colors/shadows below follow the supplied CSS values.
-   Scoped only to the existing seven category/filter tabs in #categoryTabs. */
-
-#categoryTabs.category-tabs{
-  background:#2a2e35!important;
-  box-shadow:
-    -30px 30px 60px #15181c,
-    inset 8px -8px 16px rgba(0,0,0,.5),
-    inset 0 14px 28px rgba(255,255,255,.05)!important;
+/* Flat Neumorphism tabs — applies to existing navigation/selection tabs only. */
+:where(
+  #categoryTabs .category-chip,
+  #adminCategoryBar .category-chip,
+  .dufn-tabs>.dufn-tab,
+  .live-restrictions-tabs>.live-restriction-tab,
+  .upload-studio-page .page-tabs>.tab,
+  .upload-studio-page .type-switch>.type
+){
+  appearance:none!important;-webkit-appearance:none!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+  min-height:38px!important;padding:0 15px!important;border:0!important;border-radius:12px!important;
+  background:#242a32!important;color:#e8edf5!important;
+  font-family:"Space Grotesk","Hind Siliguri",sans-serif!important;font-size:12px!important;font-weight:650!important;
+  line-height:1.15!important;text-decoration:none!important;white-space:nowrap!important;
+  box-shadow:8px 8px 16px rgba(0,0,0,.46),-8px -8px 16px rgba(255,255,255,.035)!important;
+  text-shadow:none!important;transform:translateY(0);
+  transition:background-color .3s ease,color .3s ease,box-shadow .3s ease,transform .3s ease!important;
 }
-
-#categoryTabs .category-chip{
-  appearance:none!important;
-  -webkit-appearance:none!important;
-  background:#3a3f47!important;
-  color:#fff!important;
-  box-shadow:
-    -6px 6px 12px #16181c,
-    inset 3px -3px 6px rgba(0,0,0,.5),
-    inset -2px 2px 4px rgba(255,255,255,.05)!important;
-  text-shadow:none!important;
-  transition:
-    transform .3s ease,
-    box-shadow .3s ease,
-    background-color .3s ease,
-    color .3s ease!important;
+:where(
+  #categoryTabs .category-chip:hover,#adminCategoryBar .category-chip:hover,
+  .dufn-tabs>.dufn-tab:hover,.live-restrictions-tabs>.live-restriction-tab:hover,
+  .upload-studio-page .page-tabs>.tab:hover,.upload-studio-page .type-switch>.type:hover
+){
+  background:#29313c!important;color:#fff!important;
+  box-shadow:11px 11px 22px rgba(0,0,0,.5),-11px -11px 22px rgba(255,255,255,.045)!important;
+  transform:translateY(-1px);
 }
-
-#categoryTabs .category-chip:hover{
-  background:#3a3f47!important;
-  color:#fff!important;
-  box-shadow:inset -4px 4px 8px #15181c!important;
+:where(
+  #categoryTabs .category-chip.active,#categoryTabs .category-chip[aria-current="page"],
+  #adminCategoryBar .category-chip.active,#adminCategoryBar .category-chip[aria-current="page"],
+  .dufn-tabs>.dufn-tab.is-open,.live-restrictions-tabs>.live-restriction-tab.is-active,
+  .upload-studio-page .page-tabs>.tab.active,.upload-studio-page .type-switch>.type.active
+){
+  background:#202630!important;color:#f4f7fc!important;
+  box-shadow:inset 6px 6px 12px rgba(0,0,0,.48),inset -6px -6px 12px rgba(255,255,255,.045)!important;
+  transform:translateY(0);
 }
-
-/* Keep the selected tab's existing state and behavior; only its surface uses the clay button. */
-#categoryTabs .category-chip.active,
-#categoryTabs .category-chip[aria-current="page"]{
-  background:#3a3f47!important;
-  color:#fff!important;
-  box-shadow:
-    -6px 6px 12px #16181c,
-    inset 3px -3px 6px rgba(0,0,0,.5),
-    inset -2px 2px 4px rgba(255,255,255,.05)!important;
+:where(
+  #categoryTabs .category-chip.active:hover,#categoryTabs .category-chip[aria-current="page"]:hover,
+  #adminCategoryBar .category-chip.active:hover,#adminCategoryBar .category-chip[aria-current="page"]:hover,
+  .dufn-tabs>.dufn-tab.is-open:hover,.live-restrictions-tabs>.live-restriction-tab.is-active:hover,
+  .upload-studio-page .page-tabs>.tab.active:hover,.upload-studio-page .type-switch>.type.active:hover
+){
+  box-shadow:inset 7px 7px 13px rgba(0,0,0,.52),inset -7px -7px 13px rgba(255,255,255,.055)!important;
 }
-
-#categoryTabs .category-chip.active:hover,
-#categoryTabs .category-chip[aria-current="page"]:hover{
-  box-shadow:inset -4px 4px 8px #15181c!important;
+:where(
+  #categoryTabs .category-chip:focus-visible,#adminCategoryBar .category-chip:focus-visible,
+  .dufn-tabs>.dufn-tab:focus-visible,.live-restrictions-tabs>.live-restriction-tab:focus-visible,
+  .upload-studio-page .page-tabs>.tab:focus-visible,.upload-studio-page .type-switch>.type:focus-visible
+){outline:2px solid #91bfff!important;outline-offset:3px!important}
+:where(
+  #categoryTabs .category-chip:active,#adminCategoryBar .category-chip:active,
+  .dufn-tabs>.dufn-tab:active,.live-restrictions-tabs>.live-restriction-tab:active,
+  .upload-studio-page .page-tabs>.tab:active,.upload-studio-page .type-switch>.type:active
+){
+  transform:translateY(1px) scale(.985)!important;
+  box-shadow:inset 7px 7px 14px rgba(0,0,0,.54),inset -7px -7px 14px rgba(255,255,255,.04)!important;
 }
+:where(
+  #categoryTabs .category-chip:disabled,#adminCategoryBar .category-chip:disabled,
+  .dufn-tabs>.dufn-tab:disabled,.live-restrictions-tabs>.live-restriction-tab:disabled,
+  .upload-studio-page .page-tabs>.tab:disabled,.upload-studio-page .type-switch>.type:disabled
+){opacity:.48!important;cursor:not-allowed!important;transform:none!important;box-shadow:none!important}
 
-#categoryTabs .category-chip:focus-visible{
-  outline:2px solid rgba(190,164,255,.9)!important;
-  outline-offset:3px!important;
+#categoryTabs.category-tabs,#adminCategoryBar .category-tabs{gap:12px!important}
+.dufn-tabs{gap:10px!important}
+.upload-studio-page .page-tabs{border-bottom:0!important;gap:10px!important}
+.upload-studio-page .page-tabs>.tab,.upload-studio-page .page-tabs>.tab.active{border-bottom:0!important}
+.live-restrictions-tabs>.live-restriction-tab>span{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  min-width:19px;min-height:19px;margin-left:1px;padding:0 6px;border-radius:999px;
+  background:rgba(0,0,0,.18)!important;color:inherit!important;font-size:10px!important;line-height:1!important;
+  box-shadow:inset 1px 1px 2px rgba(0,0,0,.18),inset -1px -1px 2px rgba(255,255,255,.05)!important;
 }
-
+@media(max-width:760px){
+  :where(#categoryTabs .category-chip,#adminCategoryBar .category-chip,.dufn-tabs>.dufn-tab,
+  .live-restrictions-tabs>.live-restriction-tab,.upload-studio-page .page-tabs>.tab,
+  .upload-studio-page .type-switch>.type){min-height:40px!important;padding-inline:13px!important}
+  #categoryTabs.category-tabs{gap:9px!important}
+  .upload-studio-page .page-tabs{gap:8px!important}
+}
 @media(prefers-reduced-motion:reduce){
-  #categoryTabs .category-chip{transition:none!important}
+  :where(#categoryTabs .category-chip,#adminCategoryBar .category-chip,.dufn-tabs>.dufn-tab,
+  .live-restrictions-tabs>.live-restriction-tab,.upload-studio-page .page-tabs>.tab,
+  .upload-studio-page .type-switch>.type){transition:none!important}
 }
