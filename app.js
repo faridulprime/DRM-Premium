@@ -97,6 +97,19 @@ function initVisualEditor(){
 function videoCardHTML(v){
  return `<article class="video-card" data-id="${esc(v.id)}"><img class="thumb" src="${esc(thumb(v))}" alt="" width="640" height="360" loading="lazy" decoding="async" fetchpriority="low" onerror="this.onerror=null;this.src='https://placehold.co/640x360/17152e/e9e2ff?text=DRM+PREMIUM'"><div class="card-copy"><h4>${esc(v.title)}</h4><p>${esc(v.description||"ভিডিও দেখুন")}</p></div></article>`;
 }
+function categoryTabIcon(name){
+ const value=String(name||"").trim().toLowerCase();
+ let path;
+ if(value==="all"||value==="all movies")path='<path d="m3 7 9-4 9 4-9 4-9-4Z"/><path d="m3 12 9 4 9-4M3 17l9 4 9-4"/>';
+ else if(value==="movies"||/\bmovie|film\b/.test(value))path='<path d="M4 4h16v16H4z"/><path d="m4 8 16 0M8 4l2 4m4-4 2 4M8 8v12m8-12v12"/>';
+ else if(/video/.test(value))path='<path d="m7 4 13 8-13 8V4Z"/>';
+ else if(/reference/.test(value))path='<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>';
+ else if(/book/.test(value))path='<path d="M3 5.5A3.5 3.5 0 0 1 6.5 2H12v19H6.5A3.5 3.5 0 0 0 3 24.5z"/><path d="M21 5.5A3.5 3.5 0 0 0 17.5 2H12v19h5.5a3.5 3.5 0 0 1 3.5 3.5z"/>';
+ else if(/journal|paper|research|scientific|science/.test(value))path='<path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path d="M7.5 15h9"/>';
+ else if(/folder|collection/.test(value))path='<path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/>';
+ else path='<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 7h16M8 11h8M8 15h6"/>';
+ return '<span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">'+path+'</svg></span>';
+}
 function renderCategoryTabs(){
  const host=$("#categoryTabs");if(!host)return;
  const names=[...new Set(categories.map(c=>c.name).filter(Boolean))];
@@ -104,9 +117,10 @@ function renderCategoryTabs(){
  const onMoviesPage=location.pathname.replace(/\/+$/,"")==="/movies";
  const activeValue=onMoviesPage?"__movies__":($("#categoryFilter")?.value||"all");
  host.innerHTML=all.map(item=>{
-  const active=activeValue===item.value;
-  if(item.value==="__movies__")return '<a class="category-chip '+(active?'active':'')+'" href="/movies" data-category="__movies__"'+(active?' aria-current="page"':'')+'>Movies</a>';
-  return '<button type="button" class="category-chip '+(active?'active':'')+'" data-category="'+esc(item.value)+'">'+esc(item.name)+'</button>';
+  const active=activeValue===item.value,icon=categoryTabIcon(item.name);
+  const label='<span class="tab-label">'+esc(item.name)+'</span>';
+  if(item.value==="__movies__")return '<a class="category-chip '+(active?'active':'')+'" href="/movies" data-category="__movies__"'+(active?' aria-current="page"':'')+'>'+icon+label+'</a>';
+  return '<button type="button" class="category-chip '+(active?'active':'')+'" data-category="'+esc(item.value)+'">'+icon+label+'</button>';
  }).join("");
 }
 function render(append=false){
