@@ -27,7 +27,7 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 function studioRoleBadge(role){const key=role==="owner"?"owner":role==="admin"?"admin":role==="user"?"member":"";const label=key?key.toUpperCase():"GUEST";return '<span class="studio-role-badge role-badge '+(key?"role-badge--"+key:"")+'">'+label+'</span>';}
 async function api(path,opts={}){const r=await fetch("/api/"+path,{...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})},credentials:"same-origin"});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Request failed ("+r.status+")");return d;}
 function ytId(v){try{const s=v.trim();if(/^[\w-]{11}$/.test(s))return s;const u=new URL(s),host=u.hostname.toLowerCase();if(host==="youtu.be"){const id=u.pathname.split("/").filter(Boolean)[0]||"";return /^[\w-]{11}$/.test(id)?id:""}if(!["youtube.com","www.youtube.com","m.youtube.com","youtube-nocookie.com","www.youtube-nocookie.com"].includes(host))return"";const id=u.searchParams.get("v")||u.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/)?.[1]||"";return /^[\w-]{11}$/.test(id)?id:""}catch{return""}}
-function setMessage(t,error=false){const el=$("#formMessage");el.textContent=t;el.style.color=error?"#ffabb7":"#9de2c1"}
+function setMessage(t,error=false){const el=$("#formMessage");el.textContent=t;el.classList.toggle("error",Boolean(error));el.classList.toggle("success",!error)}
 const STUDIO_VIEWS=["create","drafts","manage","categories","folders","media"];
 function readStudioRoute(){
  const raw=location.hash.slice(1),params=new URLSearchParams(raw.startsWith("view=")?raw:"");

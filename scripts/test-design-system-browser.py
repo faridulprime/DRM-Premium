@@ -1175,6 +1175,78 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
             if ratio + 0.01 < minimum:
                 fail(f"{name}/{viewport_name}: DUCS {pair_name} contrast {ratio:.2f}:1 is below {minimum}:1")
 
+        if name in ("profile", "admin", "upload-studio"):
+            original_theme = page.locator("html").get_attribute("data-theme") or "dark"
+            page.locator("html").evaluate("(el) => { el.dataset.theme = 'light'; }")
+            palette = page.evaluate(
+                """(pageName) => {
+                  const color = el => getComputedStyle(el).color;
+                  const bg = el => getComputedStyle(el).backgroundColor;
+                  const getPair = (foreground, background) => ({foreground: color(foreground), background: bg(background)});
+                  if (pageName === "profile") {
+                    const card = document.querySelector(".profile-card");
+                    const save = document.querySelector(".save-profile");
+                    const label = document.querySelector(".profile-field > span");
+                    const status = document.querySelector(".profile-status");
+                    const remove = document.querySelector(".remove-avatar");
+                    status.classList.remove("error");
+                    const success = color(status);
+                    status.classList.add("error");
+                    const error = color(status);
+                    status.classList.remove("error");
+                    return {pairs: [
+                      ["Profile save action", getPair(save, save)],
+                      ["Profile field label", getPair(label, card)],
+                      ["Profile remove-avatar action", getPair(remove, card)],
+                      ["Profile success status", {foreground: success, background: bg(card)}],
+                      ["Profile error status", {foreground: error, background: bg(card)}]
+                    ]};
+                  }
+                  if (pageName === "admin") {
+                    const host = document.querySelector(".admin-main");
+                    const row = document.createElement("div"); row.className = "data-row";
+                    const actions = document.createElement("div"); actions.className = "row-actions";
+                    const button = document.createElement("button"); button.className = "delete"; button.textContent = "Delete";
+                    actions.appendChild(button); row.appendChild(actions); host.appendChild(row);
+                    const notice = document.createElement("p"); notice.className = "notice error"; notice.textContent = "Error"; host.appendChild(notice);
+                    const result = {pairs: [
+                      ["Admin delete action", getPair(button, button)],
+                      ["Admin error feedback", {foreground: color(notice), background: bg(host)}]
+                    ]};
+                    row.remove(); notice.remove(); return result;
+                  }
+                  const sidebar = document.querySelector(".sidebar");
+                  const secondary = document.querySelector(".secondary-button");
+                  const inline = document.querySelector(".url-row button");
+                  const formMessage = document.querySelector(".form-message");
+                  const sideLink = sidebar?.querySelector(".side-nav a");
+                  formMessage?.classList.remove("error");
+                  const success = formMessage ? color(formMessage) : "";
+                  formMessage?.classList.add("error");
+                  const error = formMessage ? color(formMessage) : "";
+                  formMessage?.classList.remove("error");
+                  return {pairs: [
+                    ["Upload Studio secondary action", secondary ? getPair(secondary, secondary) : null],
+                    ["Upload Studio inline action", inline ? getPair(inline, inline) : null],
+                    ["Upload Studio sidebar link", sideLink && sidebar ? getPair(sideLink, sidebar) : null],
+                    ["Upload Studio success feedback", formMessage ? {foreground: success, background: bg(document.querySelector(".panel"))} : null],
+                    ["Upload Studio error feedback", formMessage ? {foreground: error, background: bg(document.querySelector(".panel"))} : null]
+                  ]};
+                }""",
+                name,
+            )
+            for label, pair in palette["pairs"]:
+                if pair is None:
+                    continue
+                fg_rgb, bg_rgb = parse_color(pair["foreground"]), parse_color(pair["background"])
+                if fg_rgb is None or bg_rgb is None:
+                    fail(f"{name}/{viewport_name}: could not parse Light Mode {label} colors ({pair})")
+                    continue
+                ratio = contrast_ratio(fg_rgb, bg_rgb)
+                if ratio + 0.01 < 4.5:
+                    fail(f"{name}/{viewport_name}: Light Mode {label} contrast {ratio:.2f}:1 is below 4.5:1 ({pair})")
+            page.locator("html").evaluate("(el, theme) => { el.dataset.theme = theme; }", original_theme)
+
         if asset_errors:
             fail(f"{name}/{viewport_name}: failed local CSS/JS assets: {'; '.join(asset_errors[:5])}")
 

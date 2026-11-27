@@ -135,12 +135,27 @@
   --ducs-upload-preview-bg:#f8fafc;
   --ducs-upload-field-border:#bdc9d6;
   --ducs-upload-active-text:#22543d;
+  --ducs-upload-inline-action-bg:#e2f0e7;
+  --ducs-upload-inline-action-border:#9ebca8;
 
   --profile-bg:#e6edf3;
   --profile-panel:#f8fafc;
   --profile-line:#cbd5df;
   --profile-text:#263445;
   --profile-muted:#5e6f83;
+  --ducs-profile-muted:#64758a;
+  --ducs-profile-label:#35465a;
+  --ducs-profile-divider:#d5dee7;
+  --ducs-profile-field-placeholder:#64758a;
+  --ducs-profile-status-success:#276749;
+  --ducs-profile-status-error:#b42318;
+  --ducs-profile-save-bg:#dcefe3;
+  --ducs-profile-save-hover-bg:#cce6d4;
+  --ducs-profile-save-border:#4f8864;
+  --ducs-profile-save-text:#24543a;
+  --ducs-profile-upload-bg:#e2f0e7;
+  --ducs-profile-upload-border:#84ad91;
+  --ducs-profile-upload-text:#24543a;
 }
 :root[data-theme="dark"]{color-scheme:dark}
 html[data-theme="light"],html[data-theme="light"] body{
@@ -307,6 +322,10 @@ html[data-theme="light"] .admin-main .row-actions button{
 html[data-theme="light"] .admin-main .primary:hover,
 html[data-theme="light"] .admin-main .outline:hover,
 html[data-theme="light"] .admin-main .row-actions button:hover{background:#dce5ee!important}
+html[data-theme="light"] .admin-main .row-actions .delete{background:#fee2e2!important;color:#991b1b!important;border-color:#f1aeb5!important}
+html[data-theme="light"] .admin-main .row-actions .delete:hover{background:#fecaca!important;color:#7f1d1d!important;border-color:#dc8b95!important}
+html[data-theme="light"] .admin-main .notice{color:#276749!important}
+html[data-theme="light"] .admin-main .notice.error{color:#b42318!important}
 
 /* Live users and account surfaces. */
 html[data-theme="light"] .live-panel,
@@ -360,6 +379,19 @@ html[data-theme="light"] .profile-card select,
 html[data-theme="light"] .profile-card textarea{
   background:#f8fafc!important;color:#263445!important;border-color:#bdc9d6!important;
 }
+html[data-theme="light"] .profile-field>span{color:#35465a!important}
+html[data-theme="light"] .avatar-copy p,
+html[data-theme="light"] .avatar-copy small,
+html[data-theme="light"] .profile-field i,
+html[data-theme="light"] .profile-field small,
+html[data-theme="light"] .profile-footer>span,
+html[data-theme="light"] .remove-avatar{color:#64758a!important}
+html[data-theme="light"] .profile-card input::placeholder,
+html[data-theme="light"] .profile-card textarea::placeholder{color:#64758a!important;opacity:1}
+html[data-theme="light"] .profile-status{color:#276749!important}
+html[data-theme="light"] .profile-status.error{color:#b42318!important}
+html[data-theme="light"] .profile-card .save-profile{background:#dcefe3!important;color:#24543a!important;border-color:#4f8864!important}
+html[data-theme="light"] .profile-card .save-profile:hover{background:#cce6d4!important;color:#173f2c!important;border-color:#3c7651!important}
 
 /* Upload Studio. */
 html[data-theme="light"] body.upload-studio-page .main-area,
@@ -395,6 +427,50 @@ html[data-theme="light"] body.upload-studio-page .list-row strong{color:#263445!
 html[data-theme="light"] body.upload-studio-page .status-pill,
 html[data-theme="light"] body.upload-studio-page .identity{background:#edf2f7!important;color:#475569!important;border-color:#cbd5df!important}
 html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!important}
+html[data-theme="light"] body.upload-studio-page .sidebar .brand-muted,
+html[data-theme="light"] body.upload-studio-page .sidebar .brand small,
+html[data-theme="light"] body.upload-studio-page .sidebar .side-label,
+html[data-theme="light"] body.upload-studio-page .sidebar-bottom a,
+html[data-theme="light"] body.upload-studio-page .sidebar .secure-mark span{color:#64758a!important}
+html[data-theme="light"] body.upload-studio-page .sidebar .secure-mark{color:#276749!important}
+html[data-theme="light"] body.upload-studio-page .sidebar .side-nav a{color:#3c4c60!important}
+html[data-theme="light"] body.upload-studio-page .sidebar .side-nav a span{color:#49668a!important}
+html[data-theme="light"] body.upload-studio-page .sidebar .side-nav a:hover,
+html[data-theme="light"] body.upload-studio-page .sidebar .side-nav a.active{background:#dce5ee!important;color:#1e2b3b!important;border-color:#cbd5df!important}
+html[data-theme="light"] body.upload-studio-page .sidebar .side-nav a b{background:#dce5ee!important;color:#35465a!important}
+html[data-theme="light"] body.upload-studio-page .panel .eyebrow,
+html[data-theme="light"] body.upload-studio-page .sidebar .eyebrow{color:#64758a!important}
+html[data-theme="light"] body.upload-studio-page .panel label em{color:#b42318!important}
+html[data-theme="light"] body.upload-studio-page .optional{color:#64758a!important}
+html[data-theme="light"] body.upload-studio-page .url-row button,
+html[data-theme="light"] body.upload-studio-page .use-button,
+html[data-theme="light"] body.upload-studio-page .manage-inline button{background:#e2f0e7!important;color:#22543d!important;border-color:#9ebca8!important}
+html[data-theme="light"] body.upload-studio-page .url-row button:hover,
+html[data-theme="light"] body.upload-studio-page .use-button:hover,
+html[data-theme="light"] body.upload-studio-page .manage-inline button:hover{background:#d2e8d9!important;color:#194b32!important;border-color:#7fa98e!important}
+html[data-theme="light"] body.upload-studio-page .secondary-button,
+html[data-theme="light"] body.upload-studio-page .list-row button{background:#edf2f7!important;color:#263445!important;border-color:#aebbc9!important}
+html[data-theme="light"] body.upload-studio-page .secondary-button:hover,
+html[data-theme="light"] body.upload-studio-page .list-row button:hover{background:#dce5ee!important;color:#1e2b3b!important;border-color:#8b9bad!important}
+html[data-theme="light"] body.upload-studio-page .form-message{color:#276749!important}
+html[data-theme="light"] body.upload-studio-page .form-message.error{color:#b42318!important}
+html[data-theme="light"] body.upload-studio-page .markdown-preview h1,
+html[data-theme="light"] body.upload-studio-page .markdown-preview h2,
+html[data-theme="light"] body.upload-studio-page .markdown-preview h3{color:#263445!important}
+html[data-theme="light"] body.upload-studio-page .post-preview-copy p{color:#53657a!important}
+html[data-theme="light"] body.upload-studio-page .preview-type{color:#5b4a94!important}
+html[data-theme="light"] body.upload-studio-page .preview-meta,
+html[data-theme="light"] body.upload-studio-page .preview-foot,
+html[data-theme="light"] body.upload-studio-page .preview-empty,
+html[data-theme="light"] body.upload-studio-page .empty-state,
+html[data-theme="light"] body.upload-studio-page .autosave{color:#64758a!important}
+html[data-theme="light"] body.upload-studio-page .dumc-mark{background:#eee9fa!important;border-color:#c4b8e2!important;color:#5e4c99!important}
+html[data-theme="light"] body.upload-studio-page .dumc-folder-glyph,
+html[data-theme="light"] body.upload-studio-page .dumc-selected-meta{color:#5e4c99!important}
+html[data-theme="light"] body.upload-studio-page .dumc-node-summary:hover{background:#dce5ee!important}
+html[data-theme="light"] body.upload-studio-page .dumc-node-summary.is-selected{background:#e9e1fa!important;outline-color:#9a88cb!important}
+html[data-theme="light"] body.upload-studio-page .dumc-storage-note{background:#f3f0fb!important;border-color:#c3b6e3!important;color:#53657a!important}
+html[data-theme="light"] body.upload-studio-page .dumc-storage-note strong{color:#263445!important}
 
 /* Shared floating vertical sun/moon switch.
    The visual pill grows via ::before; the icon/knob layout keeps its prior geometry. */
