@@ -66,8 +66,8 @@
   --ducs-admin-login-button-hover-bg: #303030;
 
   /* Shared shell surfaces — exact existing theme.css colors preserved. */
-  --ducs-shell-header-bg: #0f0f0f;
-  --ducs-shell-header-border: #202020;
+  --ducs-shell-header-bg: #111216;
+  --ducs-shell-header-border: #111216;
   --ducs-shell-sidebar-bg: #0f0f0f;
   --ducs-shell-category-bg: #0f0f0f;
   --ducs-shell-category-border: #202020;
