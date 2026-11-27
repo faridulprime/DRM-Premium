@@ -4,36 +4,36 @@ on:
   push:
     branches: [feature/full-admin-panel]
     paths:
-      - "assets/dumc/**"
       - "assets/dufs/**"
+      - "assets/dumc/**"
+      - "assets/dulm/**"
       - "index.html"
       - "app.js"
-      - "assets/dulm/**"
+      - "functions/api/[[path]].js"
+      - "dufs-manager.js"
+      - "dumc-manager.js"
+      - "upload-studio.html"
+      - "upload-studio.js"
       - "migrations/0009_dumc_movie_library.sql"
       - "migrations/0010_dumc_release_years_1956_1959.sql"
       - "migrations/manifest.json"
-      - "functions/api/[[path]].js"
-      - "upload-studio.html"
-      - "upload-studio.js"
-      - "dumc-manager.js"
-      - "dufs-manager.js"
       - "scripts/test-dumc-migration.py"
       - ".github/workflows/dumc-validation.yml"
   pull_request:
     paths:
-      - "assets/dumc/**"
       - "assets/dufs/**"
+      - "assets/dumc/**"
       - "assets/dulm/**"
-      - "app.js"
       - "index.html"
+      - "app.js"
+      - "functions/api/[[path]].js"
+      - "dufs-manager.js"
+      - "dumc-manager.js"
       - "upload-studio.html"
       - "upload-studio.js"
-      - "dumc-manager.js"
-      - "dufs-manager.js"
       - "migrations/0009_dumc_movie_library.sql"
       - "migrations/0010_dumc_release_years_1956_1959.sql"
       - "migrations/manifest.json"
-      - "functions/api/[[path]].js"
       - "scripts/test-dumc-migration.py"
       - ".github/workflows/dumc-validation.yml"
 
@@ -52,12 +52,12 @@ jobs:
         with:
           node-version: "22"
       - name: Validate DUFS taxonomy and legacy storage migration
-        run: python scripts/test-dumc-migration.py
+        run: python scripts/test-dumc-migration.py && python -c "import json; from pathlib import Path; a=json.loads(Path('assets/dumc/taxonomy.json').read_text()); b=json.loads(Path('assets/dufs/taxonomy.json').read_text()); assert a['children']==b['children'], 'DUFS and compatibility taxonomy trees differ'; assert b['system']=='DUFS' and b['name']=='DUFS', 'DUFS taxonomy identity mismatch'"
       - name: Validate migration inventory
         run: node scripts/validate-migration-inventory.mjs
       - name: Validate API JavaScript syntax
         run: node --input-type=module --check < 'functions/api/[[path]].js'
-      - name: Validate Upload Studio JavaScript syntax
-        run: node --check upload-studio.js && node --check dumc-manager.js && node --check assets/dumc/home.js
-      - name: Validate DUFS, DULM and application JavaScript syntax
-        run: node --check assets/dufs/folder-system.js && node --check assets/dufs/home.js && node --check dufs-manager.js && node --check assets/dulm/list-manager.js && node --check app.js
+      - name: Validate homepage, admin manager and Upload Studio syntax
+        run: node --check assets/dufs/folder-system.js && node --check assets/dufs/home.js && node --check dufs-manager.js && node --check upload-studio.js && node --check dumc-manager.js
+      - name: Validate DULM and application JavaScript syntax
+        run: node --check assets/dulm/list-manager.js && node --check app.js
