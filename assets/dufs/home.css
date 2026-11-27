@@ -106,7 +106,11 @@
 /* DUFN focus mode — keep the active folder menu and site brand crisp. */
 body.dufn-focus-mode::before{content:"";position:fixed;inset:0;z-index:110;background:rgba(7,10,14,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);pointer-events:auto}
 .home-page.dufn-focus-mode .topbar{z-index:120!important;background:transparent!important;border-bottom-color:transparent!important}
-.home-page.dufn-focus-mode .topbar>:not(.brand){filter:blur(5px)!important;opacity:.55!important;pointer-events:none!important}
+.home-page.dufn-focus-mode .topbar>:not(.brand){filter:blur(5px);opacity:.55;pointer-events:none!important}
+.home-page.dufn-focus-mode.dufn-focus-closing .topbar>:not(.brand){animation:dufn-header-blur-exit 700ms linear both}
+.home-page.dufn-focus-mode.dufn-focus-closing::before{animation:dufn-backdrop-blur-exit 700ms linear both}
+@keyframes dufn-backdrop-blur-exit{0%,84%{opacity:1}100%{opacity:0}}
+@keyframes dufn-header-blur-exit{0%,84%{filter:blur(5px);opacity:.55}100%{filter:blur(0);opacity:1}}
 .home-page.dufn-focus-mode .dumc-directory-layout,.home-page.dufn-focus-mode .dumc-category-columns{z-index:auto!important}
 .home-page.dufn-focus-mode .dufn-tabs{z-index:auto!important;background:transparent!important;border:0!important}
 .home-page.dufn-focus-mode .dufn-tab.is-open,.home-page.dufn-focus-mode .dufn-panel:not([hidden]){position:relative;z-index:111!important;filter:none!important}
