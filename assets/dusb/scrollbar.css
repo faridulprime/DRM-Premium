@@ -1,8 +1,8 @@
-/* DUSB 1.1 — synchronized, draggable blue scrollbar for DULM lists. */
-.dusb-managed-scroll{scrollbar-width:none!important;scrollbar-color:transparent transparent!important;position:relative;overscroll-behavior:contain;scroll-behavior:auto!important}
+/* DUSB 1.2 — viewport-pinned, slim blue scrollbar. */
+.dusb-managed-scroll{scrollbar-width:none!important;scrollbar-color:transparent transparent!important;overscroll-behavior:contain;scroll-behavior:auto!important}
 .dusb-managed-scroll::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}
-.dusb-managed-rail{display:block!important;position:absolute!important;z-index:30!important;top:8px!important;right:5px!important;bottom:8px!important;width:8px!important;height:auto!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;border-radius:99px!important;background:rgba(59,130,246,.14)!important;cursor:pointer!important;touch-action:none!important;user-select:none!important;opacity:1!important;overflow:visible!important}
+.dusb-managed-rail{display:block!important;position:fixed!important;z-index:2147483000!important;width:5px!important;height:100px;min-height:0!important;padding:0!important;margin:0!important;border:0!important;border-radius:99px!important;background:rgba(59,130,246,.10)!important;cursor:pointer!important;touch-action:none!important;user-select:none!important;opacity:1!important;overflow:visible!important}
 .dusb-managed-rail[hidden]{display:none!important}
-.dusb-managed-thumb{position:absolute!important;display:block!important;top:0;left:0;width:100%!important;min-height:34px!important;height:34px;border:0!important;border-radius:99px!important;background:#3B82F6!important;opacity:1!important;cursor:grab!important;touch-action:none!important;will-change:top,height!important;transition:background-color .12s ease!important}
+.dusb-managed-thumb{position:absolute!important;display:block!important;top:0;left:0;width:5px!important;min-height:28px!important;height:28px;border:0!important;border-radius:99px!important;background:#3B82F6!important;opacity:.9!important;cursor:grab!important;touch-action:none!important;will-change:top,height!important;transition:background-color .12s ease!important}
 .dusb-managed-rail:hover .dusb-managed-thumb{background:#60A5FA!important}
 .dusb-managed-rail:active .dusb-managed-thumb{background:#93C5FD!important;cursor:grabbing!important}
