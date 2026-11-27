@@ -71,7 +71,7 @@ function scheduleOpenPanelMeasure(){
 }
 let panelMeasureFrame=0;
 function clearFocusModeIfIdle(){
- if(!activeMenu&&!nav.querySelector(".dufn-panel:not([hidden])"))document.body.classList.remove("dufn-focus-mode");
+ if(!activeMenu&&!nav.querySelector(".dufn-panel:not([hidden])"))document.body.classList.remove("dufn-focus-mode","dufn-focus-closing");
 }
 function syncMenuState(animate=true){
  for(const g of groups()){
@@ -101,12 +101,14 @@ function syncMenuState(animate=true){
  clearFocusModeIfIdle();
 }
 function closeMenu(focus=false){
+ if(activeMenu)document.body.classList.add("dufn-focus-closing");
  activeMenu="";
  syncMenuState(true);
  if(focus)nav.querySelector("[data-category-menu]")?.focus();
 }
 function openMenu(key){
  if(!groups().some(g=>g.key===key)||activeMenu===key)return;
+ document.body.classList.remove("dufn-focus-closing");
  document.body.classList.add("dufn-focus-mode");
  activeMenu=key;
  syncMenuState(true);
@@ -127,7 +129,7 @@ function renderPanel(g){
 }
 function renderCategories(){
  const gs=groups();
- if(activeMenu&&!gs.some(g=>g.key===activeMenu)){activeMenu="";document.body.classList.remove("dufn-focus-mode")}
+ if(activeMenu&&!gs.some(g=>g.key===activeMenu)){activeMenu="";document.body.classList.remove("dufn-focus-mode","dufn-focus-closing")}
  nav.innerHTML='<div class="dufn-tabs" role="group" aria-label="Movie folder categories">'+gs.map(g=>
   '<button type="button" class="dufn-tab'+(activeMenu===g.key?' is-open':'')+'" data-category-menu="'+g.key+'" aria-expanded="'+(activeMenu===g.key)+'" aria-controls="dufnFolderPanel-'+g.key+'">'+esc(g.title)+'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 6 4.5 4 4.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
  ).join('')+'<span class="dumc-home-count" id="dumcHomeCount">'+count().toLocaleString("en-US")+' folders · '+movies.length.toLocaleString("en-US")+' movies</span></div>'+gs.map(renderPanel).join('');
