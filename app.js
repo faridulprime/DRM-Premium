@@ -120,7 +120,7 @@ function renderCategoryTabs(){
   const active=activeValue===item.value,icon=categoryTabIcon(item.name);
   const label='<span class="tab-label">'+esc(item.name)+'</span>';
   if(item.value==="__movies__")return '<a class="category-chip '+(active?'active':'')+'" href="/movies" data-category="__movies__"'+(active?' aria-current="page"':'')+'>'+icon+label+'</a>';
-  return '<button type="button" class="category-chip '+(active?'active':'')+'" data-category="'+esc(item.value)+'">'+icon+label+'</button>';
+  return '<button type="button" class="category-chip '+(active?'active':'')+'" data-category="'+esc(item.value)+'" aria-pressed="'+(active?'true':'false')+'">'+icon+label+'</button>';
  }).join("");
 }
 function render(append=false){

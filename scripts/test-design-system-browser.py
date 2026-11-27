@@ -140,6 +140,44 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
         if not page.title().strip():
             fail(f"{name}/{viewport_name}: empty document title")
 
+        if name == "admin":
+            admin_tabs = page.evaluate(
+                """() => [...document.querySelectorAll("[data-tab]")].map(el => ({
+                  tab: el.dataset.tab, pressed: el.getAttribute("aria-pressed"),
+                  controls: el.getAttribute("aria-controls"),
+                  exists: !!document.getElementById(el.getAttribute("aria-controls") || "")
+                }))"""
+            )
+            for item in admin_tabs:
+                if item["pressed"] not in ("true", "false") or not item["controls"] or not item["exists"]:
+                    fail(f"admin/{viewport_name}: dashboard navigation lacks an accessible selected state or panel relationship ({item})")
+            if not any(item["tab"] == "overview" and item["pressed"] == "true" for item in admin_tabs):
+                fail(f"admin/{viewport_name}: Overview is not exposed as the initially selected dashboard view")
+
+        if name == "upload-studio":
+            studio_tabs = page.evaluate(
+                """() => [...document.querySelectorAll(".page-tabs [data-tab]")].map(el => ({
+                  tab: el.dataset.tab, pressed: el.getAttribute("aria-pressed"),
+                  controls: el.getAttribute("aria-controls"),
+                  exists: !!document.getElementById(el.getAttribute("aria-controls") || "")
+                }))"""
+            )
+            for item in studio_tabs:
+                if item["pressed"] not in ("true", "false") or not item["controls"] or not item["exists"]:
+                    fail(f"upload-studio/{viewport_name}: Studio navigation lacks an accessible selected state or view relationship ({item})")
+            if not any(item["tab"] == "create" and item["pressed"] == "true" for item in studio_tabs):
+                fail(f"upload-studio/{viewport_name}: Create Post is not exposed as the initially selected Studio view")
+
+        if name == "homepage":
+            category_state = page.evaluate(
+                """() => {
+                  const first = document.querySelector("#categoryTabs button[data-category]");
+                  return first ? {pressed:first.getAttribute("aria-pressed"), active:first.classList.contains("active")} : null;
+                }"""
+            )
+            if category_state and (category_state["pressed"] not in ("true", "false") or category_state["pressed"] !== String(category_state["active"])):
+                fail(f"homepage/{viewport_name}: category filter selected state is not exposed to assistive technology ({category_state})")
+
         for system, asset in SYSTEM_STYLES.items():
             link_count = page.locator(f'link[rel="stylesheet"][href*="{asset}"]').count()
             if link_count != 1:
