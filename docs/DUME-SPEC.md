@@ -1,5 +1,5 @@
 # DRM Universal Motion System (DUME)
-Version: 0.3.0 — Shared drawer and dropdown lifecycle motion
+Version: 0.3.1 — Visible dropdown motion and adaptive list width
 Status: Shared mobile drawer motion and reusable dropdown disclosure motion are integrated. Homepage DUFS category dropdowns use the DUME controller for symmetric open/close transitions, rapid-toggle cancellation and reduced-motion behavior. Other motion families and Profile remain outside this controller migration.
 
 ## Purpose
@@ -23,9 +23,10 @@ DUME centralizes interaction motion: transition duration, easing, animation sequ
 - `--dume-drawer-opacity-duration`: drawer opacity transition duration.
 - `--dume-drawer-easing`: drawer transition easing.
 - `--dume-backdrop-duration`: backdrop opacity transition duration.
-- `--dume-dropdown-duration`: symmetric dropdown enter/exit duration.
+- `--dume-dropdown-duration`: symmetric dropdown enter/exit duration (380ms default).
 - `--dume-dropdown-easing`: shared dropdown enter/exit easing.
-- `--dume-dropdown-offset`: vertical translation used by the dropdown motion.
+- `--dume-dropdown-offset`: vertical translation used by the dropdown motion (22px default).
+- Dropdown opening/closing also applies a subtle 2px-to-0px blur so the panel motion remains visually legible rather than relying on the small arrow rotation.
 - `--dume-dropdown-scale`: starting/ending scale for the dropdown motion.
 
 The controller reads the duration and easing from computed root custom properties. JavaScript fallbacks are retained for resilience if a token stylesheet is unavailable.
@@ -86,3 +87,9 @@ The controller animates from a compact, slightly raised and transparent state to
 ## Browser acceptance — dropdown disclosure rule — 2026-11-27
 
 The Design System browser audit now exercises all seven DUFS category dropdowns in desktop normal-motion, mobile normal-motion and mobile reduced-motion contexts. It verifies click-to-open/click-same-to-close, hover non-activation, symmetric token duration/easing on open and close, visible-but-inert close state, category hand-off, rapid open-close-open cancellation, explicit close control, outside click, Escape, and immediate reduced-motion state changes. This is a static Chromium rendering test; it does not exercise deployed Pages Functions or D1.
+
+## DUME dropdown visual clarity refinement — 2026-11-27
+
+The shared dropdown transition was visually strengthened after review: 380ms duration, 22px vertical travel, 0.97 starting scale and a subtle 2px blur all resolve to the natural panel state. Closing reverses these same frames using the same easing and duration. `prefers-reduced-motion` still disables the visual transition.
+
+DUFS list width remains a DULM layout concern, not a DUME motion concern. DULM now sizes category lists intrinsically to the widest folder label, with a 460px/viewport cap; Year retains a 172px minimum and 240px cap. The width is content-driven, so a longer future folder label naturally expands the panel until the viewport safety bound is reached.
