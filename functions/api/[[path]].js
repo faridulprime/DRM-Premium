@@ -319,6 +319,13 @@ async function handle(req,env){
      const raw=String(value||"").replace(/_/g," ").trim().replace(/cinema/gi,"Movies");
      return raw.toLowerCase()==="dhallywood"?"Bangla Movies":raw;
     };
+    if(parentId==="YEAR_BEFORE_1960"){
+     for(const year of ["1956","1957","1958","1959"]){
+      const siblingId="YEAR_"+year;if(siblingId===folderId)continue;
+      const savedName=await env.DB.prepare("SELECT value FROM settings WHERE key=?").bind("dumc_folder_name_override:"+siblingId).first();
+      siblings.results.push({id:siblingId,name:year,override_name:savedName?.value||null});
+     }
+    }
     const target=name.toLocaleLowerCase();
     const duplicate=(siblings.results||[]).some(row=>displayName(row.override_name||row.name).toLocaleLowerCase()===target);
     if(duplicate)return fail("এই Folder-এর মধ্যে একই নামে আরেকটি Folder রয়েছে।",409);
