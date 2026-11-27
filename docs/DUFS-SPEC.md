@@ -92,3 +92,7 @@ Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration 
 ## Category dropdown interaction — 2026-11-27
 
 The seven Movies category menus (All Movies, Dubbed Movies, Country, Collections, Genre, Subtitles and Year) are click/keyboard toggles. Activating the open category again closes it; switching category closes the old panel and opens the new one. Mouse hover does not open menus. Closing uses the shared DUME dropdown transition and the panel remains in the DOM until the exit motion completes.
+
+## Adaptive dropdown width — 2026-11-27
+
+DULM now uses an intrinsic content width for the category dropdowns. The panel expands according to the widest current folder label and new longer labels naturally increase its width; a viewport-aware maximum prevents the menu from spilling off-screen. Year keeps a smaller minimum and maximum width while remaining content-adaptive.
