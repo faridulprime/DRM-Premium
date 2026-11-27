@@ -140,6 +140,43 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
         if not page.title().strip():
             fail(f"{name}/{viewport_name}: empty document title")
 
+        accessibility_names = page.evaluate(
+            """() => {
+              const visible = el => !el.closest("[hidden],[inert]") &&
+                getComputedStyle(el).display !== "none" &&
+                getComputedStyle(el).visibility !== "hidden" &&
+                el.getClientRects().length > 0;
+              const accessibleName = el => {
+                const labelledBy = el.getAttribute("aria-labelledby");
+                const labelledText = labelledBy ? labelledBy.split(/\\s+/).map(id => document.getElementById(id)?.innerText || "").join(" ").trim() : "";
+                return (el.getAttribute("aria-label") || labelledText || el.getAttribute("title") ||
+                  el.innerText || el.value || "").replace(/\\s+/g, " ").trim();
+              };
+              const controls = [...document.querySelectorAll('a[href],button,input:not([type="hidden"]),select,textarea,[role="button"]')]
+                .filter(el => visible(el) && !el.disabled && el.getAttribute("aria-disabled") !== "true");
+              const unnamed = controls.filter(el => {
+                if (el.matches("input,select,textarea")) {
+                  if (el.getAttribute("aria-label") || el.getAttribute("aria-labelledby") || el.labels?.length) return false;
+                  return !el.getAttribute("title");
+                }
+                return !accessibleName(el);
+              }).map(el => ({tag:el.tagName.toLowerCase(),id:el.id,className:typeof el.className==="string"?el.className:""}));
+              const dialogs = [...document.querySelectorAll('dialog,[role="dialog"],[role="alertdialog"]')];
+              const unnamedDialogs = dialogs.filter(el => {
+                const labelledBy = el.getAttribute("aria-labelledby");
+                const label = el.getAttribute("aria-label");
+                const labelledText = labelledBy ? labelledBy.split(/\\s+/).map(id => document.getElementById(id)?.innerText || "").join(" ").trim() : "";
+                const heading = el.querySelector("h1,h2,h3,h4,h5,h6");
+                return !(label?.trim() || labelledText || heading?.innerText?.trim());
+              }).map(el => el.id || el.className || el.tagName);
+              return {unnamed,unnamedDialogs};
+            }"""
+        )
+        if accessibility_names["unnamed"]:
+            fail(f"{name}/{viewport_name}: visible interactive controls lack an accessible name: {accessibility_names['unnamed'][:8]}")
+        if accessibility_names["unnamedDialogs"]:
+            fail(f"{name}/{viewport_name}: dialog surfaces lack an accessible name: {accessibility_names['unnamedDialogs']}")
+
         if name == "admin":
             admin_tabs = page.evaluate(
                 """() => [...document.querySelectorAll("[data-tab]")].map(el => ({
