@@ -67,7 +67,11 @@ function applyVisualConfig(){
  for(const item of Object.values(visualConfig)){if(!item||typeof item.selector!=="string")continue;let el;try{el=document.querySelector(item.selector)}catch{}if(!el)continue;if(typeof item.text==="string"&&item.replaceText===true&&el.children.length===0)el.textContent=item.text;const s=item.style||{};if(Number.isFinite(s.fontSize))el.style.fontSize=s.fontSize+"px";if(/^#[0-9a-f]{6}$/i.test(s.color||""))el.style.color=s.color;if(/^#[0-9a-f]{6}$/i.test(s.background||""))el.style.backgroundColor=s.background;if(s.shadow&&/^#[0-9a-f]{6}$/i.test(s.shadow.color||""))el.style.textShadow=(s.shadow.x||0)+"px "+(s.shadow.y||0)+"px "+(s.shadow.blur||0)+"px "+s.shadow.color;}
 }
 function setVisualEditor(user){
- const toggle=$("#visualEditorToggle");if(!toggle)return;toggle.hidden=Boolean(new URLSearchParams(location.search).has("builderPreview"))||!(user&&user.role==="owner");
+ const toggle=$("#visualEditorToggle");if(!toggle)return;
+ const isOwner=Boolean(user&&user.role==="owner");
+ toggle.hidden=Boolean(new URLSearchParams(location.search).has("builderPreview"))||!isOwner;
+ toggle.dataset.owner=isOwner?"true":"false";
+ if(!isOwner)window.DULM?.setOwner(false);
 }
 function selectVisualElement(el){
  visualSelected=el;const id=visualSelector(el),saved=visualConfig[id]||{};$("#veText").value=el.textContent;$("#veFontSize").value=parseFloat(getComputedStyle(el).fontSize)||16;$("#veColor").value=saved.style?.color||"#183d5c";$("#veBackground").value=saved.style?.background||"#ffffff";$("#veShadowColor").value=saved.style?.shadow?.color||"#000000";$("#veShadowX").value=saved.style?.shadow?.x||0;$("#veShadowY").value=saved.style?.shadow?.y||0;$("#veShadowBlur").value=saved.style?.shadow?.blur||0;$("#veHelp").textContent="নির্বাচিত: "+el.tagName.toLowerCase()+(el.id?"#"+el.id:"");
@@ -81,7 +85,7 @@ function applyVisualDraft(item){
 }
 function initVisualEditor(){
  const toggle=$("#visualEditorToggle"),panel=$("#visualEditorPanel");
- toggle.addEventListener("click",()=>openSiteBuilder());
+ // The floating Owner pencil is now the DULM Folder Editing Mode toggle.
  $("#veClose").onclick=()=>{visualMode=false;panel.hidden=true;document.body.classList.remove("visual-editor-active");toggle.classList.remove("active");};
  document.addEventListener("click",e=>{if(!visualMode||panel.contains(e.target)||e.target===toggle)return;const el=e.target.closest("h1,h2,h3,h4,p,a,button,label,span,small,strong,li");if(!el||el.closest("#visualEditorPanel")||el.children.length)return;e.preventDefault();e.stopPropagation();selectVisualElement(el);},{capture:true});
  $("#veApply").onclick=()=>{const item=visualDraft();if(!item){$("#veStatus").textContent="আগে একটি লেখা নির্বাচন করুন।";return;}applyVisualDraft(item);visualConfig[item.selector]=item;$("#veStatus").textContent="Preview প্রয়োগ হয়েছে। Save Changes চাপলে স্থায়ী হবে।";};
