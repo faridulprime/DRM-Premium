@@ -398,7 +398,7 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 .drm-theme-switch{
   position:fixed;left:12px;right:auto;bottom:10px;z-index:175;
   display:flex;flex-direction:column;align-items:center;justify-content:space-between;
-  width:34px;height:72px;padding:5px 0;
+  width:36px;height:74px;padding:5px 0;
   border:1px solid rgba(255,255,255,.06);border-radius:999px;
   background:#242a32;color:#aab5c4;
   box-shadow:6px 6px 14px rgba(0,0,0,.42),-5px -5px 12px rgba(255,255,255,.035);
@@ -409,7 +409,7 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 .drm-theme-switch .drm-theme-icon{position:relative;z-index:2;display:grid;place-items:center;width:20px;height:20px;opacity:.62;transition:opacity .25s ease,color .25s ease}
 .drm-theme-switch svg{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .drm-theme-switch .drm-theme-knob{
-  position:absolute;left:4px;bottom:4px;z-index:1;width:24px;height:24px;border-radius:50%;
+  position:absolute;left:6px;bottom:4px;z-index:1;width:24px;height:24px;border-radius:50%;
   background:#2b323d;box-shadow:4px 4px 8px rgba(0,0,0,.42),-3px -3px 7px rgba(255,255,255,.055);
   transition:top .3s cubic-bezier(.2,.8,.2,1),bottom .3s cubic-bezier(.2,.8,.2,1),background .3s ease,box-shadow .3s ease;
 }
@@ -417,7 +417,7 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 :root:not([data-theme="light"]) .drm-theme-switch .drm-theme-icon-moon{opacity:1;color:#e2e8f0}
 :root[data-theme="light"] .drm-theme-switch{
   background:#e6edf3;border-color:rgba(255,255,255,.72);color:#6b7c8f;
-  box-shadow:6px 6px 14px rgba(45,62,82,.18),-6px -6px 14px rgba(255,255,255,.9);
+  box-shadow:6px 6px 14px rgba(45,62,82,.18),-6px -6px 14px rgba(0,0,0,.18);
 }
 :root[data-theme="light"] .drm-theme-switch .drm-theme-knob{
   top:4px;bottom:auto;background:#e6edf3;
@@ -426,8 +426,8 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-sun{opacity:1;color:#31445b}
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-moon{opacity:.46;color:#718096}
 @media(max-width:600px){
-  .drm-theme-switch{left:8px;right:auto;bottom:8px;width:30px;height:64px;padding:4px 0}
-  .drm-theme-switch .drm-theme-knob{left:4px;width:20px;height:20px}
+  .drm-theme-switch{left:8px;right:auto;bottom:8px;width:32px;height:66px;padding:4px 0}
+  .drm-theme-switch .drm-theme-knob{left:6px;width:20px;height:20px}
 }
 @media(prefers-reduced-motion:reduce){
   .drm-theme-switch,.drm-theme-switch *{transition:none!important}
