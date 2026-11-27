@@ -397,14 +397,14 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 /* Shared floating vertical sun/moon switch.
    The visual pill grows via ::before; the icon/knob layout keeps its prior geometry. */
 .drm-theme-switch{
-  position:fixed;left:12px;right:auto;bottom:5px;z-index:175;
+  position:fixed;left:12px;right:auto;bottom:9px;z-index:175;
   display:block;width:36px;height:78px;padding:0;
   border:0;border-radius:999px;background:transparent;color:#aab5c4;
   box-shadow:none;cursor:pointer;isolation:isolate;appearance:none;
 }
 .drm-theme-switch::before{
   content:"";position:absolute;inset:-6px 0;z-index:0;pointer-events:auto;
-  border:1px solid rgba(255,255,255,.06);border-radius:999px;background:#242a32;
+  border:1px solid rgba(255,255,255,.06);border-radius:999px;background:#14161A;
   box-shadow:6px 6px 14px rgba(0,0,0,.42),-5px -5px 12px rgba(255,255,255,.035);
   transition:background .3s ease,box-shadow .3s ease,border-color .3s ease;
 }
@@ -424,7 +424,7 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 :root[data-theme="dark"] .drm-theme-switch .drm-theme-icon-moon,
 :root:not([data-theme="light"]) .drm-theme-switch .drm-theme-icon-moon{opacity:1;color:#e2e8f0}
 :root[data-theme="light"] .drm-theme-switch::before{
-  background:#e6edf3;border-color:rgba(255,255,255,.72);
+  background:#C9CDD1;border-color:rgba(255,255,255,.72);
   box-shadow:6px 6px 14px rgba(45,62,82,.18),-6px -6px 14px rgba(0,0,0,.18);
 }
 :root[data-theme="light"] .drm-theme-switch .drm-theme-knob{
@@ -434,7 +434,7 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-sun{opacity:1;color:#31445b}
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-moon{opacity:.46;color:#718096}
 @media(max-width:600px){
-  .drm-theme-switch{left:8px;right:auto;bottom:3px;width:32px;height:70px}
+  .drm-theme-switch{left:8px;right:auto;bottom:7px;width:32px;height:70px}
   .drm-theme-switch .drm-theme-icon-sun{top:10px}
   .drm-theme-switch .drm-theme-icon-moon{bottom:10px}
   .drm-theme-switch .drm-theme-knob{left:6px;top:auto;bottom:10px;width:20px;height:20px}
