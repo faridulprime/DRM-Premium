@@ -115,6 +115,11 @@
   min-block-size:var(--duss-touch-target-min, 44px)!important;
 }
 
+/* Compact Admin header actions must retain the universal 44px hit area. */
+#newVideo {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
 /* High-specificity component overrides: preserve each page's responsive layout. */
 #menuToggle {
   inline-size:44px!important;

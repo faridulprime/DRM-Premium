@@ -155,6 +155,12 @@ def main() -> int:
         "--duss-touch-target-min",
         "assets/sizing/touch-targets.css",
     )
+    if not re.search(
+        r"#newVideo\s*\{[^}]*min-block-size\s*:\s*var\(--duss-touch-target-min\s*,",
+        source_files["assets/sizing/touch-targets.css"],
+        flags=re.DOTALL,
+    ):
+        fail("Admin New Video action does not consume the 44px DUSS touch-target token")
     live_users_js = read("live-users.js")
     if 'class="live-error-link"' not in live_users_js:
         fail("Live Users fallback dashboard link is missing its DUSS touch-target class")
