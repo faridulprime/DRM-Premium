@@ -355,7 +355,7 @@ async function handle(req,env){
    const d=await readBody(req);if(!textOK(d?.name,100)||!textOK(d?.parent_id,120))return fail("Folder name and parent_id are required.",400);
    const parent=await canAccessFolder(d.parent_id);if(!parent)return fail("Parent folder not found or not accessible.",404);
    const id="custom_"+crypto.randomUUID(),now=Math.floor(Date.now()/1000);
-   try{await env.DB.prepare("INSERT INTO dumc_folders(id,parent_id,name,description,kind,sort_order,is_system,owner_id,is_archived,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,0,?,?)").bind(id,parent.id,d.name.trim(),String(d.description||"").slice(0,500),"Custom",Number.isInteger(d.sort_order)?d.sort_order:now,0,user.id,now,now).run();}
+   try{await env.DB.prepare("INSERT INTO dumc_folders(id,parent_id,name,description,kind,sort_order,is_system,owner_id,is_archived,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,0,?,?)") .bind(id,parent.id,displayDumcFolderName(d.name),String(d.description||"").slice(0,500),"Custom",Number.isInteger(d.sort_order)?d.sort_order:now,0,user.id,now,now).run();}
    catch{return fail("A folder with this name already exists at this level.",409)}
    return json({ok:true,id},201);
   }
@@ -366,7 +366,7 @@ async function handle(req,env){
    if(d?.description!==undefined&&(typeof d.description!=="string"||d.description.length>500))return fail("Folder description is too long.",400);
    if(d?.sort_order!==undefined&&(!Number.isInteger(d.sort_order)||d.sort_order<0||d.sort_order>2147483647))return fail("Folder sort_order must be a non-negative integer.",400);
    const now=Math.floor(Date.now()/1000);
-   try{await env.DB.prepare("UPDATE dumc_folders SET name=COALESCE(?,name),description=COALESCE(?,description),sort_order=COALESCE(?,sort_order),updated_at=? WHERE id=? AND (?='owner' OR owner_id=?)").bind(d.name===undefined?null:d.name.trim(),d.description===undefined?null:d.description,d.sort_order===undefined?null:d.sort_order,now,p[3],user.role,user.id).run();}
+   try{await env.DB.prepare("UPDATE dumc_folders SET name=COALESCE(?,name),description=COALESCE(?,description),sort_order=COALESCE(?,sort_order),updated_at=? WHERE id=? AND (?='owner' OR owner_id=?)").bind(d.name===undefined?null:displayDumcFolderName(d.name.trim()),d.description===undefined?null:d.description,d.sort_order===undefined?null:d.sort_order,now,p[3],user.role,user.id).run();}
    catch{return fail("Folder name conflicts with another folder.",409)}
    return json({ok:true});
   }
