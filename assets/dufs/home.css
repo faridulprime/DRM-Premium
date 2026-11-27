@@ -64,6 +64,10 @@
 .dufn-tab.is-open svg{transform:rotate(180deg)}
 .dufn-tab:focus-visible{box-shadow:0 0 0 2px rgba(215,173,101,.25)}
 .dufn-panel{padding:18px 0 8px;transform-origin:top center}
+.dufn-panel::-webkit-scrollbar{width:6px;height:6px}
+.dufn-panel::-webkit-scrollbar-track{background:rgba(59,130,246,.10);border-radius:99px}
+.dufn-panel::-webkit-scrollbar-thumb{background:#3B82F6;border-radius:99px}
+.dufn-panel::-webkit-scrollbar-thumb:hover{background:#60A5FA}
 .dufn-panel[hidden]{display:none!important}
 .dufn-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 12px}
 .dufn-panel-head h3{margin:0;color:#f5f5f5;font-size:15px;font-weight:750}
@@ -84,7 +88,7 @@
 .dumc-directory-layout{position:relative;z-index:30}
 .dumc-category-columns{position:relative;z-index:30}
 .dufn-tabs{position:relative;z-index:31;overflow:visible}
-.dufn-panel{position:relative;z-index:32;display:block;width:max-content;max-width:calc(100vw - 40px);max-height:min(68vh,560px);margin-top:9px;padding:12px 0;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;background:#191b1f;border:1px solid rgba(215,173,101,.28);border-radius:11px;box-shadow:0 14px 36px rgba(0,0,0,.42);overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(215,173,101,.5) rgba(255,255,255,.04);transform-origin:top left}
+.dufn-panel{position:relative;z-index:32;display:block;width:max-content;max-width:calc(100vw - 40px);max-height:min(68vh,560px);margin-top:9px;padding:12px 0;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;background:#191b1f;border:1px solid rgba(215,173,101,.28);border-radius:11px;box-shadow:0 14px 36px rgba(0,0,0,.42);overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3B82F6 rgba(59,130,246,.10);transform-origin:top left}
 .dufn-panel[hidden]{display:none!important}
 .dufn-panel-head{position:sticky;top:-12px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;box-sizing:border-box;margin:-12px 0 8px;padding:12px;background:#191b1f;border-bottom:1px solid rgba(255,255,255,.09)}
 .dufn-panel-head h3{font-size:13px}
