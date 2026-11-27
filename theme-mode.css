@@ -263,7 +263,9 @@ html[data-theme="light"] .dufn-panel{
   box-shadow:10px 10px 20px rgba(45,62,82,.12),-10px -10px 20px rgba(255,255,255,.9)!important;
 }
 html[data-theme="light"] .dufn-panel-head{background:#e6edf3!important;border-color:#cbd5df!important}
-html[data-theme="light"] .dufn-panel-count{color:#2563eb!important}
+html[data-theme="light"] .dufn-panel-count{color:#315a86!important;opacity:1!important;font-size:12px!important}
+html[data-theme="light"] .dufn-panel-close{background:#f8fafc!important;color:#263445!important;border-color:#bdc9d6!important}
+html[data-theme="light"] .dufn-panel-close:hover{background:#dce5ee!important;color:#172534!important;border-color:#8fa7c0!important}
 html[data-theme="light"] .dufn-folder{color:#35465a!important;text-shadow:none!important}
 html[data-theme="light"] .dufn-folder:hover{background:#dce5ee!important}
 html[data-theme="light"] .dufn-folder.active{background:#d7e3ef!important;color:#1e2b3b!important}

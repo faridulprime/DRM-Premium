@@ -1836,6 +1836,39 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                       inert: el.inert
                     })"""
                 )
+                if key == "all-movies" and scenario == "desktop-normal":
+                    original_theme = page.locator("html").get_attribute("data-theme") or "dark"
+                    dark_palette = panel.evaluate(
+                        """el => {
+                          const count = getComputedStyle(el.querySelector(".dufn-panel-count"));
+                          const close = getComputedStyle(el.querySelector(".dufn-panel-close"));
+                          return {
+                            panel: getComputedStyle(el).backgroundColor,
+                            count: count.color, countOpacity: Number(count.opacity), countSize: parseFloat(count.fontSize),
+                            close: close.color, closeBg: close.backgroundColor
+                          };
+                        }"""
+                    )
+                    page.locator("html").evaluate("(el) => { el.dataset.theme = 'light'; }")
+                    light_palette = panel.evaluate(
+                        """el => {
+                          const count = getComputedStyle(el.querySelector(".dufn-panel-count"));
+                          const close = getComputedStyle(el.querySelector(".dufn-panel-close"));
+                          return {
+                            panel: getComputedStyle(el).backgroundColor,
+                            count: count.color, countOpacity: Number(count.opacity), countSize: parseFloat(count.fontSize),
+                            close: close.color, closeBg: close.backgroundColor
+                          };
+                        }"""
+                    )
+                    page.locator("html").evaluate("(el, theme) => { el.dataset.theme = theme; }", original_theme)
+                    for theme_name, palette in (("dark", dark_palette), ("light", light_palette)):
+                        count_ratio = contrast_ratio(parse_color(palette["count"]), parse_color(palette["panel"]))
+                        close_ratio = contrast_ratio(parse_color(palette["close"]), parse_color(palette["closeBg"]))
+                        if count_ratio < 4.5 or palette["countOpacity"] < .99 or palette["countSize"] < 12:
+                            fail(f"movies/DUFS/{scenario}: {theme_name} folder-count label does not meet readable text styling ({palette}, contrast={count_ratio:.2f}:1)")
+                        if close_ratio < 4.5:
+                            fail(f"movies/DUFS/{scenario}: {theme_name} dropdown close control text contrast is below 4.5:1 ({palette}, contrast={close_ratio:.2f}:1)")
                 if reduced_motion:
                     if opening["running"]:
                         fail(f"movies/DUFS/{scenario}: {key} animated despite reduced-motion preference")
