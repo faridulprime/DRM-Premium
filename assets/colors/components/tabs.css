@@ -1,0 +1,255 @@
+/* DUCS — Universal Blue Premium Tab System.
+   Visual direction: concept 20 / Creative Blend.
+   Applied only to navigation and selection tabs, never to destructive/action buttons. */
+
+:root{
+  --ducs-tab-blue-text:#f4f8ff;
+  --ducs-tab-blue-muted:#d8e8fb;
+  --ducs-tab-blue-border:rgba(56,151,255,.38);
+  --ducs-tab-blue-top:#0d4e91;
+  --ducs-tab-blue-mid:#08386f;
+  --ducs-tab-blue-bottom:#06234c;
+  --ducs-tab-blue-hover-top:#1269bd;
+  --ducs-tab-blue-hover-mid:#0b4b96;
+  --ducs-tab-blue-hover-bottom:#07336c;
+  --ducs-tab-blue-active-top:#159aff;
+  --ducs-tab-blue-active-mid:#0877eb;
+  --ducs-tab-blue-active-bottom:#064fba;
+  --ducs-tab-blue-focus:#64b7ff;
+}
+
+.category-bar .category-chip,
+#adminCategoryBar .category-chip,
+.home-page .category-tabs>.category-chip,
+.dufn-tabs>.dufn-tab,
+.live-restrictions-tabs>.live-restriction-tab,
+.upload-studio-page .page-tabs>.tab{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  display:inline-flex!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  min-height:38px!important;
+  padding:0 15px!important;
+  border:1px solid var(--ducs-tab-blue-border)!important;
+  border-radius:999px!important;
+  background:linear-gradient(155deg,var(--ducs-tab-blue-top) 0%,var(--ducs-tab-blue-mid) 52%,var(--ducs-tab-blue-bottom) 100%)!important;
+  color:var(--ducs-tab-blue-text)!important;
+  font-family:"Space Grotesk","Hind Siliguri",sans-serif!important;
+  font-size:12px!important;
+  font-weight:650!important;
+  line-height:1.15!important;
+  letter-spacing:.005em!important;
+  text-decoration:none!important;
+  text-shadow:0 1px 1px rgba(0,0,0,.24)!important;
+  white-space:nowrap!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.17),
+    inset 0 -1px 0 rgba(0,0,0,.18),
+    0 3px 9px rgba(0,68,160,.22)!important;
+  cursor:pointer!important;
+  transform:translateY(0);
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms cubic-bezier(.2,.8,.2,1)!important;
+}
+
+.category-bar .category-chip:hover,
+#adminCategoryBar .category-chip:hover,
+.home-page .category-tabs>.category-chip:hover,
+.dufn-tabs>.dufn-tab:hover,
+.live-restrictions-tabs>.live-restriction-tab:hover,
+.upload-studio-page .page-tabs>.tab:hover{
+  border-color:rgba(91,177,255,.72)!important;
+  background:linear-gradient(155deg,var(--ducs-tab-blue-hover-top) 0%,var(--ducs-tab-blue-hover-mid) 52%,var(--ducs-tab-blue-hover-bottom) 100%)!important;
+  color:#fff!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -1px 0 rgba(0,0,0,.2),
+    0 5px 13px rgba(0,91,205,.28)!important;
+  transform:translateY(-1px);
+}
+
+.category-bar .category-chip.active,
+.category-bar .category-chip[aria-current="page"],
+#adminCategoryBar .category-chip.active,
+#adminCategoryBar .category-chip[aria-current="page"],
+.home-page .category-tabs>.category-chip.active,
+.home-page .category-tabs>.category-chip[aria-current="page"],
+.dufn-tabs>.dufn-tab.is-open,
+.live-restrictions-tabs>.live-restriction-tab.is-active,
+.upload-studio-page .page-tabs>.tab.active{
+  border-color:rgba(91,183,255,.9)!important;
+  background:linear-gradient(155deg,var(--ducs-tab-blue-active-top) 0%,var(--ducs-tab-blue-active-mid) 54%,var(--ducs-tab-blue-active-bottom) 100%)!important;
+  color:#fff!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -1px 0 rgba(0,0,0,.2),
+    0 5px 15px rgba(0,103,235,.34),
+    0 0 14px rgba(0,112,255,.14)!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.22)!important;
+}
+
+.category-bar .category-chip.active:hover,
+.category-bar .category-chip[aria-current="page"]:hover,
+#adminCategoryBar .category-chip.active:hover,
+#adminCategoryBar .category-chip[aria-current="page"]:hover,
+.home-page .category-tabs>.category-chip.active:hover,
+.home-page .category-tabs>.category-chip[aria-current="page"]:hover,
+.dufn-tabs>.dufn-tab.is-open:hover,
+.live-restrictions-tabs>.live-restriction-tab.is-active:hover,
+.upload-studio-page .page-tabs>.tab.active:hover{
+  border-color:#8bcaff!important;
+  background:linear-gradient(155deg,#27a4ff 0%,#0d83f4 54%,#075bc9 100%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.31),
+    inset 0 -1px 0 rgba(0,0,0,.2),
+    0 6px 17px rgba(0,112,255,.4)!important;
+}
+
+.category-bar .category-chip:focus-visible,
+#adminCategoryBar .category-chip:focus-visible,
+.home-page .category-tabs>.category-chip:focus-visible,
+.dufn-tabs>.dufn-tab:focus-visible,
+.live-restrictions-tabs>.live-restriction-tab:focus-visible,
+.upload-studio-page .page-tabs>.tab:focus-visible{
+  outline:2px solid var(--ducs-tab-blue-focus)!important;
+  outline-offset:3px!important;
+}
+
+.category-bar .category-chip:active,
+#adminCategoryBar .category-chip:active,
+.home-page .category-tabs>.category-chip:active,
+.dufn-tabs>.dufn-tab:active,
+.live-restrictions-tabs>.live-restriction-tab:active,
+.upload-studio-page .page-tabs>.tab:active{
+  transform:translateY(0) scale(.985)!important;
+}
+
+.category-bar .category-chip:disabled,
+#adminCategoryBar .category-chip:disabled,
+.dufn-tabs>.dufn-tab:disabled,
+.live-restrictions-tabs>.live-restriction-tab:disabled,
+.upload-studio-page .page-tabs>.tab:disabled{
+  opacity:.48!important;
+  cursor:not-allowed!important;
+  transform:none!important;
+  box-shadow:none!important;
+}
+
+#categoryTabs.category-tabs,
+#adminCategoryBar .category-tabs{
+  gap:9px!important;
+}
+
+.home-page .category-tabs>.category-chip{
+  min-height:38px!important;
+  padding:0 15px!important;
+  border-radius:999px!important;
+  font-size:12px!important;
+}
+
+.dufn-tabs{
+  gap:9px!important;
+}
+
+.dufn-tabs>.dufn-tab{
+  min-height:38px!important;
+  padding:0 15px!important;
+  border-radius:999px!important;
+  font-size:12px!important;
+}
+
+.live-restrictions-tabs>.live-restriction-tab{
+  min-height:38px!important;
+  padding:0 14px!important;
+}
+
+.live-restrictions-tabs>.live-restriction-tab>span{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:19px!important;
+  min-height:19px!important;
+  margin-left:1px!important;
+  padding:0 6px!important;
+  border:1px solid rgba(177,215,255,.22)!important;
+  border-radius:999px!important;
+  background:rgba(3,20,43,.48)!important;
+  color:#eaf4ff!important;
+  font-size:10px!important;
+  line-height:1!important;
+}
+
+.live-restrictions-tabs>.live-restriction-tab.is-active>span{
+  border-color:rgba(255,255,255,.3)!important;
+  background:rgba(2,43,94,.48)!important;
+  color:#fff!important;
+}
+
+.upload-studio-page .page-tabs{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+  gap:8px!important;
+  padding:12px 0 4px!important;
+  border-bottom:0!important;
+}
+
+.upload-studio-page .page-tabs>.tab{
+  min-height:38px!important;
+  padding:0 14px!important;
+  border-bottom:1px solid var(--ducs-tab-blue-border)!important;
+}
+
+.upload-studio-page .page-tabs>.tab.active{
+  border-bottom-color:rgba(91,183,255,.9)!important;
+}
+
+.upload-studio-page .page-tabs>.tab>span{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:18px!important;
+  min-height:18px!important;
+  margin-left:2px!important;
+  padding:0 5px!important;
+  border-radius:999px!important;
+  background:rgba(3,20,43,.52)!important;
+  color:#eaf4ff!important;
+  font-size:10px!important;
+  line-height:1!important;
+}
+
+@media(max-width:760px){
+  .category-bar .category-chip,
+  #adminCategoryBar .category-chip,
+  .home-page .category-tabs>.category-chip,
+  .dufn-tabs>.dufn-tab,
+  .live-restrictions-tabs>.live-restriction-tab,
+  .upload-studio-page .page-tabs>.tab{
+    min-height:40px!important;
+    padding-inline:13px!important;
+    font-size:12px!important;
+  }
+  .upload-studio-page .page-tabs{
+    gap:7px!important;
+    padding-top:9px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .category-bar .category-chip,
+  #adminCategoryBar .category-chip,
+  .home-page .category-tabs>.category-chip,
+  .dufn-tabs>.dufn-tab,
+  .live-restrictions-tabs>.live-restriction-tab,
+  .upload-studio-page .page-tabs>.tab{
+    transition:none!important;
+  }
+}
