@@ -95,7 +95,7 @@
 .dufn-panel-head h3{font-size:13px}
 .dufn-panel-head p{font-size:10px}
 .dufn-folder-grid{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:max-content;max-width:100%;padding:0 8px;box-sizing:border-box;overflow:visible}
-.dufn-folder{display:flex;width:max-content!important;max-width:calc(100vw - 60px);min-height:36px!important;justify-content:flex-start;padding:7px 20px 7px 9px!important;font-size:12px!important;box-sizing:border-box}
+.dufn-folder{display:flex;width:max-content!important;max-width:calc(100vw - 60px);min-height:36px!important;justify-content:flex-start;padding:7px 0 7px 9px!important;font-size:12px!important;box-sizing:border-box}
 .dufn-folder span{overflow-wrap:anywhere}
 .dufn-close{width:26px;height:26px;flex-basis:26px;font-size:18px}
 .dumc-home-count{position:relative;z-index:1}
