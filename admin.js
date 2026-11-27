@@ -72,10 +72,12 @@ function syncAdminTabAccessibility(target){
 function activateAdminTab(value){
  const target=validAdminTab(value),allowedButton=document.querySelector('[data-tab="'+target+'"]:not([hidden])'),allowedPanel=$("#tab-"+target);
  if(!allowedButton||!allowedPanel)return;
+ const selectionOriginatedInSidebar=$("#adminSidebar")?.contains(document.activeElement);
  recordAdminTabView(target);
  document.querySelectorAll("[data-tab]").forEach(x=>{const selected=x.dataset.tab===target;x.classList.toggle("active",selected);if(x.getAttribute("role")==="tab")x.setAttribute("aria-selected",String(selected));else if(x.tagName==="BUTTON")x.setAttribute("aria-pressed",String(selected));});
  document.querySelectorAll(".tab-panel").forEach(x=>x.hidden=x.id!=="tab-"+target);
  syncAdminTabAccessibility(target);closeAdminMenu();
+ if(selectionOriginatedInSidebar)$("#adminMenuToggle")?.focus({preventScroll:true});
 }
 function currentAdminTab(){const match=location.hash.match(/^#tab=(overview|videos|categories|site)(?:&|$)/);return match?match[1]:"overview";}
 function navigateAdminTab(target){target=validAdminTab(target);if(target==="site"&&$("#headerSiteTab").hidden)return;if(location.hash!=="#tab="+target){location.hash="tab="+target;return;}activateAdminTab(target);}

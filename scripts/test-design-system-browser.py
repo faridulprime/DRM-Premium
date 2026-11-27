@@ -167,9 +167,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 )
                 page.locator("#adminSideTabOverview").focus()
                 page.keyboard.press("ArrowDown")
-                page.wait_for_function("() => document.activeElement?.id === 'adminSideTabVideos' && document.querySelector('#adminSideTabVideos')?.getAttribute('aria-selected') === 'true'", timeout=2500)
+                page.wait_for_function("() => document.querySelector('#adminSideTabVideos')?.getAttribute('aria-selected') === 'true' && document.activeElement?.id === 'adminMenuToggle'", timeout=2500)
 
-                page.locator("#adminMenuToggle").click()
                 page.locator("#adminMenuToggle").click()
                 page.wait_for_function(
                     "() => document.body.classList.contains('sidebar-open') && getComputedStyle(document.querySelector('#adminSidebar')).visibility === 'visible'",
@@ -177,9 +176,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 )
                 page.locator("#adminSideTabVideos").focus()
                 page.keyboard.press("End")
-                page.wait_for_function("() => document.activeElement?.id === 'adminSideTabCategories' && document.querySelector('#adminSideTabCategories')?.getAttribute('aria-selected') === 'true'", timeout=2500)
+                page.wait_for_function("() => document.querySelector('#adminSideTabCategories')?.getAttribute('aria-selected') === 'true' && document.activeElement?.id === 'adminMenuToggle'", timeout=2500)
 
-                page.locator("#adminMenuToggle").click()
                 page.locator("#adminMenuToggle").click()
                 page.wait_for_function(
                     "() => document.body.classList.contains('sidebar-open') && getComputedStyle(document.querySelector('#adminSidebar')).visibility === 'visible'",
@@ -187,7 +185,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                 )
                 page.locator("#adminSideTabCategories").focus()
                 page.keyboard.press("Home")
-                page.wait_for_function("() => document.activeElement?.id === 'adminSideTabOverview' && document.querySelector('#adminSideTabOverview')?.getAttribute('aria-selected') === 'true'", timeout=2500)
+                page.wait_for_function("() => document.querySelector('#adminSideTabOverview')?.getAttribute('aria-selected') === 'true' && document.activeElement?.id === 'adminMenuToggle'", timeout=2500)
 
                 page.locator('#adminCategoryBar button[data-tab="videos"]').evaluate("(el) => el.click()")
                 if page.locator('#adminCategoryBar button[data-tab="videos"]').get_attribute("aria-pressed") != "true":
