@@ -157,6 +157,19 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     fail(f"admin/{viewport_name}: dashboard tab does not use roving tabindex ({item})")
             if not any(item["tab"] == "overview" and ((item["role"] == "tab" and item["selected"] == "true") or (item["role"] != "tab" and item["pressed"] == "true")) for item in admin_tabs):
                 fail(f"admin/{viewport_name}: Overview is not exposed as the initially selected dashboard view")
+            if viewport_name == "desktop":
+                page.locator("#dashboard").evaluate("(el) => { el.hidden = false; }")
+                page.locator("#adminCategoryBar").evaluate("(el) => { el.hidden = false; }")
+                page.locator("#adminSideTabOverview").focus()
+                page.keyboard.press("ArrowDown")
+                page.wait_for_function("() => document.activeElement?.id === 'adminSideTabVideos' && document.querySelector('#adminSideTabVideos')?.getAttribute('aria-selected') === 'true'", timeout=2500)
+                page.keyboard.press("End")
+                page.wait_for_function("() => document.activeElement?.id === 'adminSideTabCategories' && document.querySelector('#adminSideTabCategories')?.getAttribute('aria-selected') === 'true'", timeout=2500)
+                page.keyboard.press("Home")
+                page.wait_for_function("() => document.activeElement?.id === 'adminSideTabOverview' && document.querySelector('#adminSideTabOverview')?.getAttribute('aria-selected') === 'true'", timeout=2500)
+                page.locator('#adminCategoryBar button[data-tab="videos"]').click()
+                if page.locator('#adminCategoryBar button[data-tab="videos"]').get_attribute("aria-pressed") != "true":
+                    fail("admin/desktop: mobile category button did not expose its selected state after switching to Videos")
 
         if name == "upload-studio":
             page.locator("#studioContent").evaluate("(el) => { el.hidden = false; }")
@@ -171,6 +184,8 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                     fail(f"upload-studio/{viewport_name}: Studio navigation lacks selected state, roving tabindex or panel relationship ({item})")
             if not any(item["tab"] == "create" and item["selected"] == "true" and item["tabindex"] == "0" for item in studio_tabs):
                 fail(f"upload-studio/{viewport_name}: Create Post is not exposed as the initially selected Studio tab")
+            if page.locator(".page-tabs").get_attribute("aria-orientation") != "horizontal":
+                fail(f"upload-studio/{viewport_name}: Studio tablist does not declare its horizontal orientation")
             page.locator("#studioTabCreate").focus()
             page.keyboard.press("ArrowRight")
             if page.evaluate("() => document.activeElement?.id") != "studioTabDrafts" or page.locator("#studioTabDrafts").get_attribute("aria-selected") != "true" or not page.locator("#view-drafts").is_visible():
