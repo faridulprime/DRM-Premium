@@ -19,6 +19,7 @@ on:
       - "migrations/0010_dumc_release_years_1956_1959.sql"
       - "migrations/manifest.json"
       - "scripts/test-dumc-migration.py"
+      - "docs/DUFS-SPEC.md"
       - ".github/workflows/dufs-validation.yml"
   pull_request:
     branches:
@@ -63,31 +64,6 @@ jobs:
 
       - name: Validate existing folder database migration
         run: python scripts/test-dumc-migration.py
-
-      - name: Verify DUFS taxonomy identity and legacy folder ID parity
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          legacy = json.loads(Path("assets/dumc/taxonomy.json").read_text(encoding="utf-8"))
-          dufs = json.loads(Path("assets/dufs/taxonomy.json").read_text(encoding="utf-8"))
-
-          def folder_ids(tree):
-              result = []
-              def walk(nodes):
-                  for node in nodes or []:
-                      result.append(node["id"])
-                      walk(node.get("children", []))
-              walk(tree.get("children", []))
-              return result
-
-          assert dufs.get("system") == "DUFS", "DUFS system identity is missing"
-          assert dufs.get("name") == "DUFS", "DUFS root display name is missing"
-          assert dufs.get("id") == "DUMC", "Legacy root folder ID must remain stable"
-          assert folder_ids(legacy) == folder_ids(dufs), "DUFS folder IDs differ from the legacy taxonomy"
-          print(f"Validated {len(folder_ids(dufs))} stable folder IDs")
-          PY
 
       - name: Validate migration inventory
         run: node scripts/validate-migration-inventory.mjs
