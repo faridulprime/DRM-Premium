@@ -117,8 +117,8 @@
 
 /* Compact Admin header actions must retain the universal 44px hit area. */
 #newVideo {
-  min-block-size:46px!important;
-  min-height:46px!important;
+  min-block-size:calc(var(--duss-touch-target-min, 44px) + 2px)!important;
+  min-height:calc(var(--duss-touch-target-min, 44px) + 2px)!important;
 }
 
 /* High-specificity component overrides: preserve each page's responsive layout. */
