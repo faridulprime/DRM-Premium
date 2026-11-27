@@ -56,7 +56,7 @@ function measurePanelWidth(panel,button){
  panel.style.overflowX=saved.overflowX;
  if(wasHidden){panel.style.visibility=saved.visibility;panel.hidden=true;}
  const navRect=nav.getBoundingClientRect(),tabRect=button.getBoundingClientRect();
- const finalWidth=panel.getBoundingClientRect().width;
+ const finalWidth=parseFloat(panel.style.width)||panel.getBoundingClientRect().width;
  const availableWidth=Math.max(0,nav.clientWidth-finalWidth);
  panel.style.marginLeft=Math.max(0,Math.min(tabRect.left-navRect.left,availableWidth))+"px";
 }
