@@ -57,7 +57,7 @@
 /* DUFN — Hybrid expandable folder navigation */
 .dumc-directory-layout{display:block!important;margin:0 0 26px!important;min-width:0}
 .dumc-category-columns{display:block!important;min-width:0}
-.dufn-tabs{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:0 0 12px;border-bottom:1px solid rgba(255,255,255,.12)}
+.dufn-tabs{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:0;background:transparent;border:0}
 .dufn-tab{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 14px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:#242424;color:#e8e8e8;font:650 13px/1 "Space Grotesk","Hind Siliguri",sans-serif;white-space:nowrap;cursor:pointer;transition:background .16s ease,border-color .16s ease,color .16s ease}
 .dufn-tab svg{width:13px;height:13px;opacity:.68;transition:transform .16s ease}
 .dufn-tab:hover,.dufn-tab:focus-visible,.dufn-tab.is-open{background:#30343a;border-color:rgba(215,173,101,.48);color:#ffe0a8;outline:none}
@@ -85,7 +85,7 @@
 /* DUFN refinement — one vertical dropdown, anchored to its own category tab. */
 .dumc-directory-layout{position:relative;z-index:30}
 .dumc-category-columns{position:relative;z-index:30}
-.dufn-tabs{position:relative;z-index:31;overflow:visible};display:flex;align-items:center;flex-wrap:wrap;gap:9px
+.dufn-tabs{position:relative;z-index:auto;overflow:visible;background:transparent;border:0;padding-bottom:0}
 .dufn-panel{position:relative;z-index:32;display:block;width:auto;max-width:calc(100vw - 40px);max-height:min(68vh,560px);margin-top:9px;padding:48px 0 12px;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;background:#191b1f;border:1px solid rgba(215,173,101,.28);border-radius:11px;box-shadow:0 14px 36px rgba(0,0,0,.42);overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3B82F6 rgba(59,130,246,.10);transform-origin:top left}
 .dufn-panel[hidden]{display:none!important}
 .dufn-panel-head{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:5px;width:auto;box-sizing:border-box;margin:0;padding:8px;background:#191b1f;border-bottom:1px solid rgba(255,255,255,.09)}
@@ -95,9 +95,19 @@
 .dufn-folder-grid{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:max-content;max-width:100%;padding:0 8px;box-sizing:border-box;overflow:visible}
 .dufn-folder{display:flex;width:max-content!important;max-width:calc(100vw - 60px);min-height:36px!important;justify-content:flex-start;padding:7px 0 7px 9px!important;font-size:12px!important;box-sizing:border-box}
 .dufn-folder span{overflow-wrap:anywhere}
-.dumc-home-count{position:relative;z-index:1;display:inline-flex;align-items:center;width:max-content;max-width:100%;margin:0 0 0 auto;align-self:center;flex:0 0 auto}
+.dumc-home-count{position:relative;z-index:1;display:inline-flex;align-items:center;width:max-content;max-width:100%;margin:0 auto 0 clamp(180px,19vw,315px);align-self:center;flex:0 0 auto}
+@media(max-width:1100px){.dumc-home-count{margin-left:auto;margin-right:0}}
 @media(max-width:760px){
  .dufn-tabs{row-gap:8px}
  .dufn-panel{max-height:62vh;padding:10px}
  .dufn-panel{padding-top:44px}.dufn-panel-head{padding:7px}
 }
+
+
+/* DUFN focus mode — keep the active folder menu and site brand crisp. */
+body.dufn-focus-mode::before{content:"";position:fixed;inset:0;z-index:110;background:rgba(7,10,14,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);pointer-events:auto}
+.home-page.dufn-focus-mode .topbar{z-index:120!important;background:transparent!important;border-bottom-color:transparent!important}
+.home-page.dufn-focus-mode .topbar>:not(.brand){filter:blur(5px)!important;opacity:.55!important;pointer-events:none!important}
+.home-page.dufn-focus-mode .dumc-directory-layout,.home-page.dufn-focus-mode .dumc-category-columns{z-index:auto!important}
+.home-page.dufn-focus-mode .dufn-tabs{z-index:auto!important;background:transparent!important;border:0!important}
+.home-page.dufn-focus-mode .dufn-tab.is-open,.home-page.dufn-focus-mode .dufn-panel:not([hidden]){position:relative;z-index:111!important;filter:none!important}
