@@ -394,19 +394,27 @@ html[data-theme="light"] body.upload-studio-page .status-pill,
 html[data-theme="light"] body.upload-studio-page .identity{background:#edf2f7!important;color:#475569!important;border-color:#cbd5df!important}
 html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!important}
 
-/* Shared floating vertical sun/moon switch. */
+/* Shared floating vertical sun/moon switch.
+   The visual pill grows via ::before; the icon/knob layout keeps its prior geometry. */
 .drm-theme-switch{
   position:fixed;left:12px;right:auto;bottom:5px;z-index:175;
-  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
-  width:36px;height:84px;padding:5px 0;
-  border:1px solid rgba(255,255,255,.06);border-radius:999px;
-  background:#242a32;color:#aab5c4;
+  display:block;width:36px;height:78px;padding:0;
+  border:0;border-radius:999px;background:transparent;color:#aab5c4;
+  box-shadow:none;cursor:pointer;isolation:isolate;appearance:none;
+}
+.drm-theme-switch::before{
+  content:"";position:absolute;inset:-3px 0;z-index:0;pointer-events:none;
+  border:1px solid rgba(255,255,255,.06);border-radius:999px;background:#242a32;
   box-shadow:6px 6px 14px rgba(0,0,0,.42),-5px -5px 12px rgba(255,255,255,.035);
-  cursor:pointer;isolation:isolate;
   transition:background .3s ease,box-shadow .3s ease,border-color .3s ease;
 }
 .drm-theme-switch:focus-visible{outline:2px solid #8ab4f8;outline-offset:3px}
-.drm-theme-switch .drm-theme-icon{position:relative;z-index:2;display:grid;place-items:center;width:20px;height:20px;opacity:.62;transition:opacity .25s ease,color .25s ease}
+.drm-theme-switch .drm-theme-icon{
+  position:absolute;z-index:2;display:grid;place-items:center;width:20px;height:20px;
+  opacity:.62;transition:opacity .25s ease,color .25s ease;
+}
+.drm-theme-switch .drm-theme-icon-sun{top:5px;left:50%;transform:translateX(-50%)}
+.drm-theme-switch .drm-theme-icon-moon{bottom:5px;left:50%;transform:translateX(-50%)}
 .drm-theme-switch svg{width:13px;height:13px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .drm-theme-switch .drm-theme-knob{
   position:absolute;left:6px;bottom:4px;z-index:1;width:24px;height:24px;border-radius:50%;
@@ -415,8 +423,8 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 }
 :root[data-theme="dark"] .drm-theme-switch .drm-theme-icon-moon,
 :root:not([data-theme="light"]) .drm-theme-switch .drm-theme-icon-moon{opacity:1;color:#e2e8f0}
-:root[data-theme="light"] .drm-theme-switch{
-  background:#e6edf3;border-color:rgba(255,255,255,.72);color:#6b7c8f;
+:root[data-theme="light"] .drm-theme-switch::before{
+  background:#e6edf3;border-color:rgba(255,255,255,.72);
   box-shadow:6px 6px 14px rgba(45,62,82,.18),-6px -6px 14px rgba(0,0,0,.18);
 }
 :root[data-theme="light"] .drm-theme-switch .drm-theme-knob{
@@ -426,7 +434,9 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-sun{opacity:1;color:#31445b}
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-moon{opacity:.46;color:#718096}
 @media(max-width:600px){
-  .drm-theme-switch{left:8px;right:auto;bottom:3px;width:32px;height:76px;padding:4px 0}
+  .drm-theme-switch{left:8px;right:auto;bottom:3px;width:32px;height:70px}
+  .drm-theme-switch .drm-theme-icon-sun{top:4px}
+  .drm-theme-switch .drm-theme-icon-moon{bottom:4px}
   .drm-theme-switch .drm-theme-knob{left:6px;width:20px;height:20px}
 }
 @media(prefers-reduced-motion:reduce){
