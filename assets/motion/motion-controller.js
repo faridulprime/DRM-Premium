@@ -24,7 +24,7 @@
   let currentFrame=null;
   if(previous){
    const computed=getComputedStyle(panel);
-   currentFrame={opacity:computed.opacity,transform:computed.transform==="none"?"translate3d(0,0,0) scale(1)":computed.transform};
+   currentFrame={opacity:computed.opacity,transform:computed.transform==="none"?"translate3d(0,0,0) scale(1)":computed.transform,filter:computed.filter==="none"?"blur(0px)":computed.filter};
    previous.animation.cancel();
    dropdownJobs.delete(panel);
   }
