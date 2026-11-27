@@ -70,6 +70,9 @@ function scheduleOpenPanelMeasure(){
  });
 }
 let panelMeasureFrame=0;
+function clearFocusModeIfIdle(){
+ if(!activeMenu&&!nav.querySelector(".dufn-panel:not([hidden])"))document.body.classList.remove("dufn-focus-mode");
+}
 function syncMenuState(animate=true){
  for(const g of groups()){
   const button=nav.querySelector('[data-category-menu="'+g.key+'"]');
@@ -88,13 +91,14 @@ function syncMenuState(animate=true){
     else{panel.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false")}
    }
   }else if(!panel.hidden&&!isMarkedHidden){
-   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,duration:700,onFinish:()=>{if(!activeMenu)document.body.classList.remove("dufn-focus-mode")}});
-   else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true");if(!activeMenu)document.body.classList.remove("dufn-focus-mode")}
+   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,duration:700,onFinish:clearFocusModeIfIdle});
+   else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true");clearFocusModeIfIdle()}
   }else if(panel.hidden){
    panel.inert=true;
    panel.setAttribute("aria-hidden","true");
   }
  }
+ clearFocusModeIfIdle();
 }
 function closeMenu(focus=false){
  activeMenu="";
