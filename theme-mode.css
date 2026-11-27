@@ -424,11 +424,11 @@ html[data-theme="light"] body.upload-studio-page .studio-footer{color:#64758a!im
 :root[data-theme="dark"] .drm-theme-switch .drm-theme-icon-moon,
 :root:not([data-theme="light"]) .drm-theme-switch .drm-theme-icon-moon{opacity:1;color:#e2e8f0}
 :root[data-theme="light"] .drm-theme-switch::before{
-  background:#C9CDD1;border-color:#D5D9DE;
+  background:#B5B7BA;border-color:#D5D9DE;
   box-shadow:6px 6px 14px rgba(45,62,82,.18),-6px -6px 14px rgba(0,0,0,.18);
 }
 :root[data-theme="light"] .drm-theme-switch .drm-theme-knob{
-  top:9px;bottom:auto;background:#B5B7BA;
+  top:9px;bottom:auto;background:#e6edf3;
   box-shadow:0 0 8px rgba(255,255,255,.95),0 0 2px rgba(45,62,82,.18);
 }
 :root[data-theme="light"] .drm-theme-switch .drm-theme-icon-sun{opacity:1;color:#31445b}
