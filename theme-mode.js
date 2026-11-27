@@ -37,7 +37,7 @@
   document.addEventListener("click", event => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const tab = event.target.closest(".category-tabs>.category-chip,.dufn-tabs .dufn-tab,.live-restrictions-tabs>.live-restriction-tab,.page-tabs>.tab,.type-switch>.type,.device-switch>button");
-    if (!tab || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!tab) return;
     const oldRipple = tab.querySelector(".tab-water-ripple");
     if (oldRipple) oldRipple.remove();
     const rect = tab.getBoundingClientRect();
