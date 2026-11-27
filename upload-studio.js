@@ -1,3 +1,4 @@
+function displayDumcFolderName(value){const clean=String(value??"").replaceAll("_"," ").trim();const label=clean.split(" ").map(part=>part.toLowerCase()==="cinema"?"Movies":part).join(" ");return label.toLowerCase()==="dhallywood"?"Bangla Movies":label}
 const $=s=>document.querySelector(s);
 const studioMenuToggle=$("#studioMenuToggle"),studioSidebar=$("#liveSidebar"),studioSidebarBackdrop=$("#liveSidebarBackdrop");
 let studioMenuCloseTimer=null;
@@ -78,13 +79,13 @@ function dumcNodeHTML(node,depth=0,query=""){
  if(!match)return "";
  const hasChildren=Boolean(node.children?.length);
  const selected=dumcSelectedNode===node.id?" is-selected":"";
- const tag=hasChildren?"summary":"button";const summary='<'+tag+(hasChildren?'':' type="button"')+' class="dumc-node-summary'+selected+'" data-dumc-id="'+esc(node.id)+'"><span class="dumc-folder-glyph">'+(hasChildren?"▸":"•")+'</span><span class="dumc-node-copy"><strong>'+esc(node.name)+'</strong><small>'+esc(node.description||"")+'</small></span><span class="dumc-node-count">'+(hasChildren?dumcCount(node)-1:"")+'</span>'+(hasChildren?"</summary>":"</button>");
+ const tag=hasChildren?"summary":"button";const summary='<'+tag+(hasChildren?'':' type="button"')+' class="dumc-node-summary'+selected+'" data-dumc-id="'+esc(node.id)+'"><span class="dumc-folder-glyph">'+(hasChildren?"▸":"•")+'</span><span class="dumc-node-copy"><strong>'+esc(displayDumcFolderName(node.name))+'</strong><small>'+esc(node.description||"")+'</small></span><span class="dumc-node-count">'+(hasChildren?dumcCount(node)-1:"")+'</span>'+(hasChildren?"</summary>":"</button>");
  return hasChildren?'<details class="dumc-tree-node" '+(depth===0||Boolean(query)?"open":"")+'>'+summary+'<div class="dumc-children">'+children+'</div></details>':'<div class="dumc-leaf">'+summary+'</div>';
 }
 function selectDUMCNode(id){
  const node=dumcFind(dumcTaxonomy,id);if(!node)return;
  dumcSelectedNode=id;
- $("#dumcSelectedName").textContent=node.name;
+ $("#dumcSelectedName").textContent=displayDumcFolderName(node.name);
  $("#dumcSelectedDescription").textContent=node.description||"No description available.";
  $("#dumcSelectedMeta").textContent=(node.kind||"Folder")+" · "+(node.children?.length?node.children.length+" direct subfolders":"Leaf folder")+" · "+id;
  document.querySelectorAll(".dumc-node-summary").forEach(el=>el.classList.toggle("is-selected",el.dataset.dumcId===id));
