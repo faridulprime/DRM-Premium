@@ -165,7 +165,7 @@ html body .device-switch>button:hover{
   42%{opacity:.5}
   100%{opacity:0;transform:translate(-50%,-50%) scale(8.5)}
 }
-@media(prefers-reduced-motion:reduce){.tab-water-ripple{animation-duration:.01ms}}
+@media(prefers-reduced-motion:reduce){.tab-water-ripple{animation-name:tab-water-drop-reduced;animation-duration:.28s}@keyframes tab-water-drop-reduced{0%{opacity:.5;transform:translate(-50%,-50%) scale(.18)}100%{opacity:0;transform:translate(-50%,-50%) scale(3.4)}}}
 
 
 /* Include wrapped DUFN tabs: legacy markup places each tab inside .dufn-tab-wrap. */
