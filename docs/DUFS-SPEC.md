@@ -80,3 +80,11 @@ Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration 
 - This naming migration does not execute a D1 migration, alter movie data, change stable IDs or modify Production.
 
 - The DULM Owner rename UI and DUFS API integration have passed source-level JavaScript syntax checks. Live browser interaction and authenticated Preview D1 rename persistence still require verification.
+
+## DUFS core service surface — 1.1
+
+- Hierarchy/discovery: `flatten`, `findFolder`, `buildHierarchy`, `searchFolders`, `countFolders` and `sortFolders` provide stable-ID-aware folder tree/search/organization primitives.
+- Folder lifecycle service: `createFolder`, `renameFolder`, `updateFolderMetadata` and `archiveFolder` are centralized in the DUFS core. Custom folders may be updated/soft-archived under the existing server authorization and integrity constraints. Display-name changes always use the persistent override path so stable folder IDs and relationships remain intact.
+- Relationship service: `loadMovies`, `loadMovie`, `updateMovie`, `updateMovieFolders`, `registerAudio`, `removeAudio`, `registerSubtitle` and `removeSubtitle` expose the existing movie relationship APIs without moving movie records into the folder core.
+- Authorization remains server-side: Owner/Admin role checks and custom-folder ownership constraints are enforced by the existing authenticated DUFS API handlers.
+- Audit/restore is not marked implemented. The current schema has no folder-audit/event table and the archive route is a soft-archive operation without a corresponding restore endpoint. A persistent audit/recovery feature needs a separately reviewed schema/API design; no migration is silently introduced during this identity transition.
