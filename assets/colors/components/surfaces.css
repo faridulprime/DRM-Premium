@@ -8,7 +8,7 @@
   --ducs-dialog-backdrop: var(--ducs-overlay-scrim);
 
   /* Live Users graphite surfaces — exact legacy values preserved. */
-  --ducs-live-page-bg: #0d0d0d;
+  --ducs-live-page-bg: #111216;
   --ducs-live-surface: #101010;
   --ducs-live-surface-raised: #171717;
   --ducs-live-surface-hover: #1c1c1c;
@@ -103,7 +103,7 @@
   --ducs-profile-label: #d8d8d8;
 
   /* Upload Studio graphite creator workspace. */
-  --ducs-upload-page-bg: #0d0d0d;
+  --ducs-upload-page-bg: #111216;
   --ducs-upload-panel-bg: #141414;
   --ducs-upload-panel-border: #303030;
   --ducs-upload-input-bg: #0d0d0d;
@@ -118,7 +118,7 @@
   --ducs-upload-dialog-backdrop: #000b;
 
   /* Homepage editorial content surfaces. */
-  --ducs-home-page-bg: #f5f0e9;
+  --ducs-home-page-bg: #111216;
   --ducs-home-page-border: #d9d1c7;
   --ducs-home-status-border: #cfc7bd;
   --ducs-home-secondary-border: #77716a;
