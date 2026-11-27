@@ -1573,8 +1573,8 @@ def inspect_live_overlay_interactions(browser, base_url):
     user = {
         "id": "overlay-test-user",
         "name": "Overlay Test User",
-        "username": "overlay-test",
-        "email": "overlay-test@example.invalid",
+        "username": "unique-overlay-handle",
+        "email": "overlay-user@example.invalid",
         "role": "user",
         "created_at": 1760000000,
         "email_verified": True,
@@ -1614,6 +1614,18 @@ def inspect_live_overlay_interactions(browser, base_url):
         page.route("https://**/*", lambda route: route.abort())
         page.goto(base_url + "/live-users.html", wait_until="load", timeout=30000)
         page.wait_for_selector('.live-user-row[data-user-id="overlay-test-user"]', timeout=10000)
+
+        # Search contract: username, display name and email are all searchable.
+        page.locator("#liveSearch").fill("unique-overlay-handle")
+        if not page.locator('.live-user-row[data-user-id="overlay-test-user"]').is_visible():
+            fail("live-users/search: an active account was not found by its username")
+        page.locator("#liveSearch").fill("overlay-user@example.invalid")
+        if not page.locator('.live-user-row[data-user-id="overlay-test-user"]').is_visible():
+            fail("live-users/search: an active account was not found by its email address")
+        page.locator("#liveSearch").fill("Overlay Test User")
+        if not page.locator('.live-user-row[data-user-id="overlay-test-user"]').is_visible():
+            fail("live-users/search: an active account was not found by its display name")
+        page.locator("#liveSearch").fill("")
 
         # Drawer close must retain the shared backdrop and scroll lock until its
         # close animation cleanup timer finishes.
