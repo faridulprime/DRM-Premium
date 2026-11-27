@@ -95,4 +95,4 @@ The seven Movies category menus (All Movies, Dubbed Movies, Country, Collections
 
 ## Adaptive dropdown width — 2026-11-27
 
-DULM now uses an intrinsic content width for the category dropdowns. The panel expands according to the widest current folder label and new longer labels naturally increase its width; a viewport-aware maximum prevents the menu from spilling off-screen. Year keeps a smaller minimum and maximum width while remaining content-adaptive.
+DULM now uses an intrinsic content width for the category dropdowns. The panel expands according to the widest current folder label and new longer labels naturally increase its width; a viewport-aware maximum prevents the menu from spilling off-screen without imposing an arbitrary desktop width cap. Year keeps a smaller minimum width while remaining content-adaptive.
