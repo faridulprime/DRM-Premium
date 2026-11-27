@@ -88,8 +88,8 @@ function syncMenuState(animate=true){
     else{panel.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false")}
    }
   }else if(!panel.hidden&&!isMarkedHidden){
-   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,duration:700});
-   else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true")}
+   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,duration:700,onFinish:()=>{if(!activeMenu)document.body.classList.remove("dufn-focus-mode")}});
+   else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true");if(!activeMenu)document.body.classList.remove("dufn-focus-mode")}
   }else if(panel.hidden){
    panel.inert=true;
    panel.setAttribute("aria-hidden","true");
@@ -103,6 +103,7 @@ function closeMenu(focus=false){
 }
 function openMenu(key){
  if(!groups().some(g=>g.key===key)||activeMenu===key)return;
+ document.body.classList.add("dufn-focus-mode");
  activeMenu=key;
  syncMenuState(true);
 }
