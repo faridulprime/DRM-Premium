@@ -100,9 +100,8 @@ function renderDUFS(){
 }
 async function loadDUFS(){
  try{
-  const response=await fetch("/assets/dufs/taxonomy.json",{cache:"no-cache"});
-  if(!response.ok)throw new Error("Taxonomy file unavailable ("+response.status+").");
-  dumcTaxonomy=await response.json();
+  if(window.DUFS?.loadTaxonomy)dumcTaxonomy=await window.DUFS.loadTaxonomy();
+  else{const response=await fetch("/assets/dufs/taxonomy.json",{cache:"no-cache"});if(!response.ok)throw new Error("DUFS taxonomy file unavailable ("+response.status+").");dumcTaxonomy=await response.json();}
   dumcSelectedNode=dumcTaxonomy.id;
   renderDUFS();selectDUFSNode(dumcSelectedNode);
  }catch(error){$("#dumcTree").innerHTML='<div class="empty-state">'+esc(error.message)+'</div>';}
