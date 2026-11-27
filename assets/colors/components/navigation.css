@@ -106,3 +106,30 @@ html body :is(.category-tabs>.category-chip,.dufn-tabs>.dufn-tab,.live-restricti
   min-height:50px!important;padding:12px 0 15px!important;border:0!important;border-radius:0!important;
   background:transparent!important;background-image:none!important;font-size:17px!important;font-weight:500!important;
 }
+
+/* Match the secondary movie navigation to the selected text-only tab design. */
+html body .dufn-tabs{
+  gap:clamp(18px,4vw,42px)!important;padding:0 4px!important;flex-wrap:nowrap!important;
+  border:0!important;border-bottom:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+html body .dufn-tab-wrap .dufn-tab{
+  position:relative!important;min-height:50px!important;padding:12px 0 15px!important;
+  border:0!important;border-radius:0!important;background:transparent!important;background-image:none!important;
+  color:#A6A4A6!important;font-family:"Space Grotesk","Hind Siliguri",sans-serif!important;
+  font-size:17px!important;font-weight:500!important;line-height:1.35!important;letter-spacing:.005em!important;
+  text-shadow:0 1px 12px rgba(235,238,255,.18)!important;box-shadow:none!important;
+}
+html body .dufn-tab-wrap .dufn-tab.is-open,html body .dufn-tab-wrap .dufn-tab[aria-expanded="true"]{
+  color:#F3F0ED!important;font-weight:500!important;
+}
+html body .dufn-tab-wrap .dufn-tab.is-open::before,html body .dufn-tab-wrap .dufn-tab[aria-expanded="true"]::before{
+  content:none!important;display:none!important;
+}
+html body .dufn-tab-wrap .dufn-tab.is-open::after,html body .dufn-tab-wrap .dufn-tab[aria-expanded="true"]::after{
+  content:""!important;position:absolute!important;left:50%!important;right:auto!important;bottom:3px!important;
+  width:44px!important;height:2px!important;transform:translateX(-50%)!important;border:0!important;border-radius:3px!important;
+  background:linear-gradient(90deg,transparent,#F0F1F5,transparent)!important;
+  box-shadow:0 0 9px rgba(226,230,245,.42)!important;pointer-events:none!important;
+}
+body.movies-route #dumcHomeCategories .dufn-tabs{margin-top:32px!important}
