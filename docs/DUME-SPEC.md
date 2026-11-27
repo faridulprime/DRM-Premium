@@ -1,5 +1,5 @@
 # DRM Universal Motion System (DUME)
-Version: 0.3.1 — Visible dropdown motion and adaptive list width
+Version: 0.3.2 — Reversible dropdown frame continuity
 Status: Shared mobile drawer motion and reusable dropdown disclosure motion are integrated. Homepage DUFS category dropdowns use the DUME controller for symmetric open/close transitions, rapid-toggle cancellation and reduced-motion behavior. Other motion families and Profile remain outside this controller migration.
 
 ## Purpose
@@ -93,3 +93,5 @@ The Design System browser audit now exercises all seven DUFS category dropdowns 
 The shared dropdown transition was visually strengthened after review: 380ms duration, 22px vertical travel, 0.97 starting scale and a subtle 2px blur all resolve to the natural panel state. Closing reverses these same frames using the same easing and duration. `prefers-reduced-motion` still disables the visual transition.
 
 DUFS list width remains a DULM layout concern, not a DUME motion concern. DULM now sizes category lists intrinsically to the widest folder label, with a 460px/viewport cap; Year retains a 172px minimum and 240px cap. The width is content-driven, so a longer future folder label naturally expands the panel until the viewport safety bound is reached.
+
+The controller also captures the in-flight blur value when a dropdown is toggled mid-transition. Rapid reversals therefore continue from the current opacity, transform and blur frame rather than snapping one visual property back to its endpoint.
