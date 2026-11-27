@@ -175,7 +175,7 @@ def inspect_page(browser, base_url, name, route, viewport_name, width, height):
                   return first ? {pressed:first.getAttribute("aria-pressed"), active:first.classList.contains("active")} : null;
                 }"""
             )
-            if category_state and (category_state["pressed"] not in ("true", "false") or category_state["pressed"] !== String(category_state["active"])):
+            if category_state and (category_state["pressed"] not in ("true", "false") or category_state["pressed"] != ("true" if category_state["active"] else "false")):
                 fail(f"homepage/{viewport_name}: category filter selected state is not exposed to assistive technology ({category_state})")
 
         for system, asset in SYSTEM_STYLES.items():
