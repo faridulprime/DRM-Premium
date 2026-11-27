@@ -1727,11 +1727,20 @@ def inspect_live_overlay_interactions(browser, base_url):
               });
               const warning = actions.find(el => el.classList.contains("warning"));
               const danger = actions.find(el => el.classList.contains("danger"));
+              const roleBadges = ["owner", "admin", "member"].map(role => {
+                const badge = document.createElement("span");
+                badge.className = "live-drawer-chip role-badge role-badge--" + role;
+                badge.textContent = role;
+                drawer.appendChild(badge);
+                return [role, pair(badge, badge)];
+              });
+              roleBadges.forEach(([role]) => drawer.querySelector(".role-badge--" + role)?.remove());
               return [
                 ["Live Users drawer title", pair(drawer.querySelector("h2"), drawer)],
                 ["Live Users drawer profile name", pair(profile.querySelector("strong"), profile)],
                 ["Live Users drawer account email", pair(profile.querySelector("small"), profile)],
-                ["Live Users drawer metadata chip", pair(drawer.querySelector(".live-drawer-chip"), drawer)],
+                ["Live Users drawer metadata chip", pair(drawer.querySelector(".live-drawer-chip"), drawer.querySelector(".live-drawer-chip"))],
+                ...roleBadges.map(([role, colors]) => ["Live Users " + role + " role badge", colors]),
                 ["Live Users standard action", pair(actions.find(el => !el.classList.contains("warning") && !el.classList.contains("danger")), actions.find(el => !el.classList.contains("warning") && !el.classList.contains("danger")))],
                 ["Live Users warning action", warning ? pair(warning, warning) : null],
                 ["Live Users danger action", danger ? pair(danger, danger) : null]

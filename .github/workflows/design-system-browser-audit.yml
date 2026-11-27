@@ -21,6 +21,8 @@ on:
       - "profile.html"
       - "styles.css"
       - "theme.css"
+      - "theme-mode.css"
+      - "theme-mode.js"
       - "admin.css"
       - "live-users.css"
       - "upload-studio.css"
