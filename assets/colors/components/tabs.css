@@ -1,221 +1,100 @@
-/* Text-only tab treatment: transparent surfaces with a theme-matched active underline. */
-:where(
-  .category-chip,
-  .dufn-tab,
-  .live-restriction-tab,
-  .tab,
-  .upload-studio-page .type-switch>.type,
-  .upload-studio-page .device-switch>button,
-  #adminSidebar .side-link[data-tab],
-  .upload-studio-page [data-local-tab],
-  [role="tab"]
-){
-  box-sizing:border-box!important;
-  appearance:none!important;
-  -webkit-appearance:none!important;
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:7px!important;
-  min-width:0!important;
-  min-height:0!important;
-  padding:5px!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  background-image:none!important;
-  color:#D1D7DE!important;
-  font-family:"Space Grotesk","Hind Siliguri",sans-serif!important;
-  font-size:12px!important;
-  font-weight:600!important;
-  line-height:1.2!important;
-  text-decoration:none!important;
-  text-shadow:0 1px 1px rgba(0,0,0,.78),0 0 3px rgba(188,205,227,.18)!important;
-  white-space:nowrap!important;
-  box-shadow:none!important;
-  transform:none!important;
-  position:relative;
+/* Neo Minimal + Icon Navigation — Design 10 structure with Design 8 iconography. */
+:where(.category-chip,.dufn-tab,.live-restriction-tab,.upload-studio-page .page-tabs>.tab,.upload-studio-page .type-switch>.type,.upload-studio-page .device-switch>button,[role="tab"]){
+  box-sizing:border-box!important;appearance:none!important;-webkit-appearance:none!important;position:relative!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;flex:0 0 auto!important;
+  min-width:0!important;min-height:36px!important;padding:5px!important;border:0!important;border-radius:8px!important;
+  background:transparent!important;background-image:none!important;color:#D1D7DE!important;
+  font-family:"Space Grotesk","Hind Siliguri",sans-serif!important;font-size:12px!important;font-weight:600!important;
+  line-height:1.2!important;text-decoration:none!important;text-shadow:0 1px 1px rgba(0,0,0,.58),0 0 5px rgba(188,205,227,.12)!important;
+  white-space:nowrap!important;box-shadow:none!important;transform:none!important;cursor:pointer;
   transition:color .22s ease,text-shadow .22s ease,opacity .22s ease!important;
 }
-:root[data-theme="light"] :where(
-  .category-chip,
-  .dufn-tab,
-  .live-restriction-tab,
-  .tab,
-  .upload-studio-page .type-switch>.type,
-  .upload-studio-page .device-switch>button,
-  #adminSidebar .side-link[data-tab],
-  .upload-studio-page [data-local-tab],
-  [role="tab"]
-){
-  background:transparent!important;
-  background-image:none!important;
-  color:#1F2121!important;
-  text-shadow:0 1px 1px rgba(255,255,255,.85),0 0 3px rgba(31,33,33,.12)!important;
+:root[data-theme="light"] :where(.category-chip,.dufn-tab,.live-restriction-tab,.upload-studio-page .page-tabs>.tab,.upload-studio-page .type-switch>.type,.upload-studio-page .device-switch>button,[role="tab"]){
+  color:#1F2121!important;text-shadow:0 1px 1px rgba(255,255,255,.82),0 0 4px rgba(31,33,33,.10)!important;
+}
+.tab-icon{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 17px!important;width:17px!important;height:17px!important;color:currentColor!important;line-height:0!important}
+.tab-icon svg{display:block!important;width:17px!important;height:17px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.tab-label{display:inline-block!important;min-width:0!important}
+:where(.category-chip,.dufn-tab,.live-restriction-tab,.upload-studio-page .page-tabs>.tab) .tab-label{line-height:1.2!important}
+
+/* Main public navigation rail: keep the existing fixed category-bar dimensions. */
+.category-bar{box-sizing:border-box!important;height:52px!important;min-height:52px!important;padding:4px 16px!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.category-tabs{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:clamp(12px,1.45vw,22px)!important;width:100%!important;
+  min-width:0!important;min-height:44px!important;height:44px!important;padding:0 12px!important;overflow-x:auto!important;overflow-y:hidden!important;
+  border:1px solid rgba(145,176,207,.48)!important;border-radius:17px!important;
+  background:linear-gradient(180deg,rgba(24,37,52,.96),rgba(13,22,33,.96))!important;
+  box-shadow:0 0 0 1px rgba(125,164,205,.07),0 8px 20px rgba(0,0,0,.20),0 0 18px rgba(116,164,216,.08),inset 0 1px 0 rgba(255,255,255,.055)!important;
+  scrollbar-width:none!important;overscroll-behavior-x:contain;
+}
+.category-tabs::-webkit-scrollbar{display:none!important}
+:root[data-theme="light"] .category-tabs{
+  border-color:#C8D8E8!important;background:linear-gradient(180deg,#F9FCFF 0%,#EEF4FA 56%,#E7EFF7 100%)!important;
+  box-shadow:0 0 0 1px rgba(132,169,204,.08),0 8px 20px rgba(52,83,113,.10),0 0 18px rgba(117,164,210,.12),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+.category-tabs>.category-chip{min-height:38px!important;padding:5px 7px!important;border-radius:7px!important}
+
+/* Active underline: rounded, gently glowing and theme-aware. */
+:where(.category-chip.active,.category-chip[aria-current="page"],.dufn-tab.is-open,.live-restriction-tab.is-active,.upload-studio-page .page-tabs>.tab.active,.upload-studio-page .type-switch>.type.active,.upload-studio-page .device-switch>button.active,[role="tab"][aria-selected="true"])::before{
+  content:""!important;position:absolute!important;left:5px!important;right:5px!important;bottom:0!important;height:3px!important;border:0!important;border-radius:999px!important;
+  background:#BCCDE3!important;box-shadow:0 0 4px rgba(188,205,227,.82),0 0 9px rgba(188,205,227,.38)!important;pointer-events:none!important;
+}
+:root[data-theme="light"] :where(.category-chip.active,.category-chip[aria-current="page"],.dufn-tab.is-open,.live-restriction-tab.is-active,.upload-studio-page .page-tabs>.tab.active,.upload-studio-page .type-switch>.type.active,.upload-studio-page .device-switch>button.active,[role="tab"][aria-selected="true"])::before{
+  background:#1F2121!important;box-shadow:0 0 4px rgba(0,0,0,.55),0 0 9px rgba(0,0,0,.22)!important;
+}
+:where(.category-chip.active,.category-chip[aria-current="page"],.dufn-tab.is-open,.live-restriction-tab.is-active,.upload-studio-page .page-tabs>.tab.active,.upload-studio-page .type-switch>.type.active,.upload-studio-page .device-switch>button.active,[role="tab"][aria-selected="true"]){font-weight:700!important}
+:where(.category-chip:hover,.dufn-tab:hover,.live-restriction-tab:hover,.upload-studio-page .page-tabs>.tab:hover,.upload-studio-page .type-switch>.type:hover,.upload-studio-page .device-switch>button:hover,[role="tab"]:hover){
+  background:transparent!important;background-image:none!important;color:#F3F7FB!important;text-shadow:0 0 6px rgba(188,205,227,.28),0 1px 1px rgba(0,0,0,.55)!important;box-shadow:none!important;
+}
+:root[data-theme="light"] :where(.category-chip:hover,.dufn-tab:hover,.live-restriction-tab:hover,.upload-studio-page .page-tabs>.tab:hover,.upload-studio-page .type-switch>.type:hover,.upload-studio-page .device-switch>button:hover,[role="tab"]:hover){
+  background:transparent!important;background-image:none!important;color:#000!important;text-shadow:0 0 5px rgba(31,33,33,.18),0 1px 1px rgba(255,255,255,.78)!important;box-shadow:none!important;
 }
 
-/* No filled badge or pill is left behind inside a tab label/counter. */
-:where(
-  .category-chip>span,
-  .dufn-tab>span,
-  .live-restriction-tab>span,
-  .tab>span,
-  .upload-studio-page .type-switch>.type>span,
-  .upload-studio-page .device-switch>button>span,
-  #adminSidebar .side-link[data-tab]>span,
-  .upload-studio-page [data-local-tab]>span
-){
-  background:transparent!important;
-  background-image:none!important;
-  box-shadow:none!important;
-  border:0!important;
+/* DUFS folder-category rail. */
+.dufn-tabs{
+  box-sizing:border-box!important;display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:clamp(10px,1.2vw,18px)!important;
+  width:max-content!important;max-width:100%!important;padding:5px 10px!important;overflow-x:auto!important;overflow-y:hidden!important;
+  border:1px solid rgba(145,176,207,.44)!important;border-radius:16px!important;
+  background:linear-gradient(180deg,rgba(24,37,52,.92),rgba(13,22,33,.94))!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.18),0 0 14px rgba(116,164,216,.07),inset 0 1px 0 rgba(255,255,255,.05)!important;scrollbar-width:none!important;
 }
+.dufn-tabs::-webkit-scrollbar{display:none!important}
+:root[data-theme="light"] .dufn-tabs{border-color:#C8D8E8!important;background:linear-gradient(180deg,#F9FCFF,#EAF1F8)!important;box-shadow:0 6px 18px rgba(52,83,113,.09),0 0 14px rgba(117,164,210,.10),inset 0 1px 0 #fff!important}
+.dufn-tab .tab-icon svg{width:17px!important;height:17px!important}
+.dufn-tab .dufn-chevron{width:13px!important;height:13px!important;flex:0 0 13px!important;opacity:.72}
+.dufn-tab.is-open>.dufn-chevron{transform:rotate(180deg)!important}
 
-/* Hover changes text treatment only; no surface/background appears. */
-:where(
-  .category-chip:hover,
-  .dufn-tab:hover,
-  .live-restriction-tab:hover,
-  .tab:hover,
-  .upload-studio-page .type-switch>.type:hover,
-  .upload-studio-page .device-switch>button:hover,
-  #adminSidebar .side-link[data-tab]:hover,
-  .upload-studio-page [data-local-tab]:hover,
-  [role="tab"]:hover
-){
-  background:transparent!important;
-  background-image:none!important;
-  color:#E8EDF3!important;
-  text-shadow:0 0 4px rgba(188,205,227,.28),0 1px 2px rgba(0,0,0,.75)!important;
-  box-shadow:none!important;
+/* Other tab rows use the same compact rail surface. */
+.live-restrictions-tabs,.upload-studio-page .page-tabs,.upload-studio-page .type-switch{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:clamp(10px,1.25vw,18px)!important;
+  width:max-content!important;max-width:100%!important;padding:6px 10px!important;overflow-x:auto!important;overflow-y:hidden!important;
+  border:1px solid rgba(145,176,207,.42)!important;border-radius:16px!important;border-bottom:1px solid rgba(145,176,207,.42)!important;
+  background:linear-gradient(180deg,rgba(24,37,52,.90),rgba(13,22,33,.92))!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.16),0 0 14px rgba(116,164,216,.06),inset 0 1px 0 rgba(255,255,255,.045)!important;scrollbar-width:none!important;
 }
-:root[data-theme="light"] :where(
-  .category-chip:hover,
-  .dufn-tab:hover,
-  .live-restriction-tab:hover,
-  .tab:hover,
-  .upload-studio-page .type-switch>.type:hover,
-  .upload-studio-page .device-switch>button:hover,
-  #adminSidebar .side-link[data-tab]:hover,
-  .upload-studio-page [data-local-tab]:hover,
-  [role="tab"]:hover
-){
-  background:transparent!important;
-  background-image:none!important;
-  color:#000000!important;
-  text-shadow:0 0 3px rgba(31,33,33,.2),0 1px 1px rgba(255,255,255,.8)!important;
+.live-restrictions-tabs::-webkit-scrollbar,.upload-studio-page .page-tabs::-webkit-scrollbar,.upload-studio-page .type-switch::-webkit-scrollbar{display:none!important}
+:root[data-theme="light"] .live-restrictions-tabs,:root[data-theme="light"] .upload-studio-page .page-tabs,:root[data-theme="light"] .upload-studio-page .type-switch{
+  border-color:#C8D8E8!important;border-bottom-color:#C8D8E8!important;background:linear-gradient(180deg,#F9FCFF,#EAF1F8)!important;
+  box-shadow:0 6px 18px rgba(52,83,113,.08),0 0 14px rgba(117,164,210,.09),inset 0 1px 0 #fff!important;
 }
+.live-restriction-tab>span[id^="live"]{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:18px!important;min-height:18px!important;
+  margin-left:2px!important;padding:0 4px!important;border:0!important;border-radius:999px!important;background:rgba(188,205,227,.12)!important;
+  color:inherit!important;font-size:10px!important;line-height:1!important;box-shadow:none!important;text-shadow:none!important;
+}
+:root[data-theme="light"] .live-restriction-tab>span[id^="live"]{background:rgba(31,33,33,.08)!important}
+.upload-studio-page .page-tabs{border-bottom:1px solid rgba(145,176,207,.42)!important}
+:root[data-theme="light"] .upload-studio-page .page-tabs{border-bottom-color:#C8D8E8!important}
 
-/* Active tabs receive only a 2px underline with a restrained matching glow. */
-:where(
-  .category-chip.active,
-  .category-chip[aria-current="page"],
-  .dufn-tab.is-open,
-  .live-restriction-tab.is-active,
-  .tab.active,
-  .type.active,
-  .device-switch>button.active,
-  #adminSidebar .side-link[data-tab].active,
-  [data-local-tab].active,
-  [role="tab"][aria-selected="true"]
-)::before{
-  content:"";
-  position:absolute;
-  left:5px;
-  right:5px;
-  bottom:0;
-  height:2px;
-  border-radius:999px;
-  background:#BCCDE3;
-  box-shadow:0 0 3px rgba(188,205,227,.72),0 0 6px rgba(188,205,227,.38);
-  pointer-events:none;
-}
-:root[data-theme="light"] :where(
-  .category-chip.active,
-  .category-chip[aria-current="page"],
-  .dufn-tab.is-open,
-  .live-restriction-tab.is-active,
-  .tab.active,
-  .type.active,
-  .device-switch>button.active,
-  #adminSidebar .side-link[data-tab].active,
-  [data-local-tab].active,
-  [role="tab"][aria-selected="true"]
-)::before{
-  background:#000000;
-  box-shadow:0 0 3px rgba(0,0,0,.65),0 0 6px rgba(0,0,0,.28);
-}
-:where(
-  .category-chip.active,
-  .category-chip[aria-current="page"],
-  .dufn-tab.is-open,
-  .live-restriction-tab.is-active,
-  .tab.active,
-  .type.active,
-  .device-switch>button.active,
-  #adminSidebar .side-link[data-tab].active,
-  [data-local-tab].active,
-  [role="tab"][aria-selected="true"]
-){
-  background:transparent!important;
-  background-image:none!important;
-  box-shadow:none!important;
-}
-
-/* Keep the existing spacing of tab rows. */
-#categoryTabs.category-tabs,#adminCategoryBar .category-tabs{gap:12px!important}
-.dufn-tabs{gap:10px!important}
-.upload-studio-page .page-tabs{border-bottom:0!important;gap:10px!important}
-.upload-studio-page .page-tabs>.tab,.upload-studio-page .page-tabs>.tab.active{border-bottom:0!important}
-#adminSidebar .side-link[data-tab]{
-  display:flex!important;
-  width:100%!important;
-  justify-content:flex-start!important;
-  text-align:left!important;
-}
-:where(
-  .category-chip:focus-visible,
-  .dufn-tab:focus-visible,
-  .live-restriction-tab:focus-visible,
-  .tab:focus-visible,
-  .upload-studio-page .type-switch>.type:focus-visible,
-  .upload-studio-page .device-switch>button:focus-visible,
-  #adminSidebar .side-link[data-tab]:focus-visible,
-  .upload-studio-page [data-local-tab]:focus-visible,
-  [role="tab"]:focus-visible
-){outline:2px solid #91bfff!important;outline-offset:3px!important}
-:root[data-theme="light"] :where(
-  .category-chip:focus-visible,
-  .dufn-tab:focus-visible,
-  .live-restriction-tab:focus-visible,
-  .tab:focus-visible,
-  .upload-studio-page .type-switch>.type:focus-visible,
-  .upload-studio-page .device-switch>button:focus-visible,
-  #adminSidebar .side-link[data-tab]:focus-visible,
-  .upload-studio-page [data-local-tab]:focus-visible,
-  [role="tab"]:focus-visible
-){outline-color:#477fbd!important}
-:where(
-  .category-chip:disabled,
-  .dufn-tab:disabled,
-  .live-restriction-tab:disabled,
-  .tab:disabled,
-  .upload-studio-page .type-switch>.type:disabled,
-  .upload-studio-page .device-switch>button:disabled,
-  #adminSidebar .side-link[data-tab]:disabled,
-  [role="tab"]:disabled
-){opacity:.48!important;cursor:not-allowed!important}
+/* Accessibility and responsive scrolling. */
+:where(.category-chip:focus-visible,.dufn-tab:focus-visible,.live-restriction-tab:focus-visible,.upload-studio-page .page-tabs>.tab:focus-visible,.upload-studio-page .type-switch>.type:focus-visible,.upload-studio-page .device-switch>button:focus-visible,[role="tab"]:focus-visible){outline:2px solid #91bfff!important;outline-offset:3px!important}
+:root[data-theme="light"] :where(.category-chip:focus-visible,.dufn-tab:focus-visible,.live-restriction-tab:focus-visible,.upload-studio-page .page-tabs>.tab:focus-visible,.upload-studio-page .type-switch>.type:focus-visible,.upload-studio-page .device-switch>button:focus-visible,[role="tab"]:focus-visible){outline-color:#477fbd!important}
+:where(.category-chip:disabled,.dufn-tab:disabled,.live-restriction-tab:disabled,.upload-studio-page .page-tabs>.tab:disabled,.upload-studio-page .type-switch>.type:disabled,.upload-studio-page .device-switch>button:disabled,[role="tab"]:disabled){opacity:.48!important;cursor:not-allowed!important}
 @media(max-width:760px){
-  #categoryTabs.category-tabs{gap:9px!important}
-  .upload-studio-page .page-tabs{gap:8px!important}
+  .category-bar{padding-inline:9px!important}
+  .category-tabs{gap:12px!important;padding-inline:9px!important}
+  .category-tabs>.category-chip{min-height:38px!important}
+  .dufn-tabs{max-width:calc(100vw - 28px)!important}
+  .live-restrictions-tabs,.upload-studio-page .page-tabs,.upload-studio-page .type-switch{max-width:100%!important}
 }
-@media(prefers-reduced-motion:reduce){
-  :where(
-    .category-chip,.dufn-tab,.live-restriction-tab,.tab,
-    .upload-studio-page .type-switch>.type,
-    .upload-studio-page .device-switch>button,
-    #adminSidebar .side-link[data-tab],
-    .upload-studio-page [data-local-tab],
-    [role="tab"]
-  ){transition:none!important}
-}
+@media(prefers-reduced-motion:reduce){:where(.category-chip,.dufn-tab,.live-restriction-tab,.upload-studio-page .page-tabs>.tab,.upload-studio-page .type-switch>.type,.upload-studio-page .device-switch>button,[role="tab"]){transition:none!important}}
