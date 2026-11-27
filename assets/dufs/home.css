@@ -121,3 +121,6 @@ body.dufn-focus-mode::before{content:"";position:fixed;inset:0;z-index:110;backg
 
 /* Future release years are visually de-emphasized until their calendar year arrives. */
 .dufn-folder.dufn-future-year{opacity:.5}
+
+/* Muted premium color for the folder and movie count status. */
+.dumc-home-count{color:#a8c0df!important;opacity:.5!important}
