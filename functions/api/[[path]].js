@@ -85,6 +85,7 @@ async function handle(req,env){
  if(!env.DB)return fail("D1 database binding DB is not configured. Follow the setup guide.",503);
  const u=new URL(req.url),p=u.pathname.replace(/^\/api\/?/,"").split("/").filter(Boolean),m=req.method;
  // DUFS is the canonical public/API namespace; DUMC routes remain as compatibility aliases.
+ if(p[0]==="dufs"&&p[1]==="system"&&p.length===2&&m==="GET")return json({system:"DUFS",name:"DRM Universal Folder System",version:"1.0.0",api:{public:"/api/dufs",admin:"/api/admin/dufs"},taxonomy:"/assets/dufs/taxonomy.json",storage:{provider:"Cloudflare D1",legacySchema:"dumc_*"},compatibility:{legacyNamespace:"/api/dumc",status:"supported"}});
  if(p[0]==="dufs")p[0]="dumc";
  if(p[0]==="admin"&&p[1]==="dufs")p[1]="dumc";
  if(m!=="GET"){if(!originOK(req))return fail("Cross-origin request blocked.",403);if(!(req.headers.get("content-type")||"").toLowerCase().includes("application/json"))return fail("JSON content type required.",415)}
@@ -254,8 +255,8 @@ async function handle(req,env){
    movieSql+=" ORDER BY v.featured DESC,v.created_at DESC LIMIT ? OFFSET ?";
    binds.push(limit,offset);
    const movies=await env.DB.prepare(movieSql).bind(...binds).all();
-   return json({system:"DUMC",version:"1.0.0",folders:roots,movies:movies.results||[],folder_id:folderId,year:yearParam||null,limit,offset});
-  }catch{return fail("DUMC database migration is not installed yet.",503)}
+   return json({system:"DUFS",version:"1.0.0",folders:roots,movies:movies.results||[],folder_id:folderId,year:yearParam||null,limit,offset});
+  }catch{return fail("DUFS folder database is not installed yet. Apply the existing folder schema migration.",503)}
  }
  if(p[0]==="videos"&&m==="GET"){const r=await env.DB.prepare("SELECT id,title,category,youtube_id,thumbnail_url,description,featured,published,created_at FROM videos WHERE published=1 ORDER BY featured DESC,sort_order ASC,created_at DESC").all();return json(r.results||[])}
  if(p[0]==="categories"&&m==="GET"){const r=await env.DB.prepare("SELECT id,name,sort_order FROM categories ORDER BY sort_order,name").all();return json(r.results||[])}
@@ -353,7 +354,7 @@ async function handle(req,env){
    const byId=new Map((rows.results||[]).map(x=>[x.id,{...x,name:displayDumcFolderName(x.name),children:[]}]));
    const roots=[];
    for(const node of byId.values()){if(node.parent_id&&byId.has(node.parent_id))byId.get(node.parent_id).children.push(node);else if(!node.parent_id)roots.push(node);}
-   return json({system:"DUMC",version:"1.0.0",folders:roots,total:(rows.results||[]).length});
+   return json({system:"DUFS",version:"1.0.0",folders:roots,total:(rows.results||[]).length});
   }
   if(p.length===3&&p[2]==="folders"&&m==="POST"){
    const d=await readBody(req);if(!textOK(d?.name,100)||!textOK(d?.parent_id,120))return fail("Folder name and parent_id are required.",400);
@@ -463,7 +464,7 @@ async function handle(req,env){
    const result=await env.DB.prepare("DELETE FROM dumc_subtitles WHERE id=? AND video_id=?").bind(p[5],videoId).run();
    return result.meta.changes?json({ok:true}):fail("Subtitle not found.",404);
   }
-  return fail("DUMC route not found.",404);
+  return fail("DUFS route not found.",404);
  }
 
  // DUGA foundation health probe: authenticated Owner only; read-only and table-independent.
