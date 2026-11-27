@@ -87,11 +87,11 @@ function syncMenuState(animate=true){
   if(isOpen){
    if(button)measurePanelWidth(panel,button);
    if(panel.hidden||isMarkedHidden){
-    if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:true,duration:700});
+    if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:true,duration:600});
     else{panel.hidden=false;panel.inert=false;panel.setAttribute("aria-hidden","false")}
    }
   }else if(!panel.hidden&&!isMarkedHidden){
-   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,duration:700,onFinish:clearFocusModeIfIdle});
+   if(animate&&window.DRMMotion?.dropdown)window.DRMMotion.dropdown({panel,open:false,duration:500,onFinish:clearFocusModeIfIdle});
    else{panel.hidden=true;panel.inert=true;panel.setAttribute("aria-hidden","true");clearFocusModeIfIdle()}
   }else if(panel.hidden){
    panel.inert=true;
