@@ -74,7 +74,8 @@
   const fromFrame=currentFrame||(isOpen?zeroFrame:naturalFrame);
   const toFrame=isOpen?naturalFrame:zeroFrame;
   const requestedDuration=Number(options.duration);
-  const duration=REDUCED.matches?0:(Number.isFinite(requestedDuration)?Math.max(0,requestedDuration):DROPDOWN_DURATION);
+  const hasExplicitDuration=options.duration!==undefined&&options.duration!==null&&Number.isFinite(requestedDuration);
+  const duration=hasExplicitDuration?Math.max(0,requestedDuration):(REDUCED.matches?0:DROPDOWN_DURATION);
   if(duration<=0||typeof panel.animate!=="function"){
    clearTemporaryStyles();
    if(!isOpen)panel.hidden=true;
