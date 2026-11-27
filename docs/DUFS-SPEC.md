@@ -40,7 +40,7 @@ DUFS provides the canonical folder identity, hierarchy, navigation and managemen
 - Additive D1 migrations: `migrations/0009_dumc_movie_library.sql` creates the DUMC tables and seeds the original 226 taxonomy nodes; `migrations/0010_dumc_release_years_1956_1959.sql` adds the four missing pre-1960 year folders. Migration 0009 also backfills one metadata row per existing video without guessing missing metadata.
 - Authenticated Owner/Admin APIs: `GET/POST /api/admin/dufs/folders`, `PATCH/DELETE /api/admin/dufs/folders/:id`, `GET /api/admin/dufs/movies`, `GET/PUT /api/admin/dufs/movies/:videoId`, `PUT /api/admin/dufs/movies/:videoId/folders`, and audio/subtitle reference creation/deletion routes.
 - Upload Studio includes a searchable folder explorer, custom-folder creation, movie metadata editor, multi-select Genre/Dubbed/Subtitle/Collection classification, audio/subtitle reference registration, and optional folder assignment when creating a video.
-- The migration inventory is updated. A dedicated GitHub Actions workflow runs SQLite migration tests, migration-inventory validation and JavaScript syntax checks.
+- The migration inventory is updated. The legacy SQLite migration integration suite is maintained at `scripts/test-dumc-migration.py` and now includes DUFS identity and stable-folder compatibility assertions. A dedicated DUFS GitHub Actions workflow has not yet been activated successfully.
 
 ## Important execution boundary
 
@@ -51,7 +51,7 @@ Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration 
 
 ## Public homepage integration and media policy
 
-- The homepage has a dedicated Movies tab and DUMC browsing section. The public directory is organized into seven independent columns: All Movies (Film Industry folders), Dubbed Movies, Country, Collections, Genre, Subtitles and Year. Each column uses the shared DUSB scrollbar component (blue thumb, right-side vertical scrolling); each category contains one flat folder list, while Year runs from 2026 down to 1950. The redundant Movies title, intro description and breadcrumb are omitted so the seven-column Movies directory starts immediately below the Universal Tab Bar. The live folder/movie count is aligned to the right of the Year heading. Selecting a category then a year applies both filters together.
+- The homepage has a dedicated Movies tab and DUFS folder-browsing section. The public directory is organized into seven independent columns: All Movies (Film Industry folders), Dubbed Movies, Country, Collections, Genre, Subtitles and Year. Each column uses the shared DUSB scrollbar component (blue thumb, right-side vertical scrolling); each category contains one flat folder list, while Year runs from 2026 down to 1950. The redundant Movies title, intro description and breadcrumb are omitted so the seven-column Movies directory starts immediately below the Universal Tab Bar. The live folder/movie count is aligned to the right of the Year heading. Selecting a category then a year applies both filters together.
 - Public browsing uses `GET /api/dufs/browse`, which returns published movies only and supports recursive folder filtering, server-side search and pagination.
 - **Media policy:** movie/video files are never uploaded to this website, regardless of whether they are 50 MB, 100 MB or another size. Movie playback uses external video links. Only cover/poster images may be uploaded. Audio and subtitle references are HTTPS links only; DUFS APIs reject asset-key based media registration.
 - DUFS homepage integration is deployed to Cloudflare Pages Preview. Public year-folder navigation is served from the versioned static taxonomy; movie contents are returned by the read-only browse API using the Preview D1 binding.
@@ -59,13 +59,13 @@ Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration 
 ## DULM Owner folder rename — 2026-11-27
 
 - The floating Owner pencil on the homepage is repurposed as the Folder Editing Mode toggle; it no longer opens the legacy visual/site editor.
-- While Owner editing mode is enabled, each public DUMC folder item displays a compact inline pencil. Non-Owner accounts cannot enable the mode, and the write API independently enforces Owner role.
+- While Owner editing mode is enabled, each public DUFS folder item displays a compact inline pencil. Non-Owner accounts cannot enable the mode, and the write API independently enforces Owner role.
 - Rename uses a compact native dialog with one name field and Save/Cancel actions. Save validates the name, rejects duplicate sibling display names, writes a read-back-verified override, and refreshes the active list without changing the stable folder ID.
 - Overrides are stored in the existing D1 settings table under the key prefix dumc_folder_name_override:. No new schema or migration is required. Public read-only endpoint: GET /api/dufs/folder-name-overrides. Owner write endpoint: PUT /api/admin/dufs/folder-name-overrides.
-- DUMC public browsing, authenticated folder browsing, movie-assignment labels and the homepage read the override while retaining canonical taxonomy IDs. Internal override keys are excluded from the general public settings response.
+- DUFS public browsing, authenticated folder browsing, movie-assignment labels and the homepage read the override while retaining canonical taxonomy IDs. Internal override keys are excluded from the general public settings response.
 - The static taxonomy remains the source of canonical folder identity. The special 1956–1959 taxonomy entries, documented as absent from Preview D1 until migration 0010 is applied, can still receive a display-name override without running that migration.
 - Implemented only on feature/full-admin-panel. No D1 migration was executed, no live D1 write was made in this implementation session, and Production main was not changed.
-- Source-level JavaScript syntax checks and a disposable SQLite settings/query smoke test passed. The DUMC GitHub Actions workflow currently reports failure with zero jobs created; it has not provided a failing step/log, so CI validation remains unresolved. Live Cloudflare Pages/browser and authenticated D1 save verification remain outstanding.
+- Source-level JavaScript syntax checks and a disposable SQLite settings/query smoke test passed. GitHub Actions currently creates zero jobs for the attempted DUFS validation workflow runs, so there is no failing test step or job log to diagnose. The ineffective dedicated workflow was removed and the previously working DUSS workflow was restored. Dedicated DUFS CI execution remains unresolved. Live Cloudflare Pages/browser and authenticated D1 save verification remain outstanding.
 
 ## DUFS official architecture — 2026-11-27
 
@@ -78,3 +78,5 @@ Audio/subtitle APIs accept HTTPS source URLs only; asset-key media registration 
 - Existing D1 table names, settings-key prefixes, stable root folder ID `DUMC`, CSS/DOM hooks and migration file names remain unchanged as internal compatibility identifiers. The displayed root label and API system identity are DUFS.
 - DULM remains a separate reusable presentation/management layer and calls the DUFS core service for rename operations. DUSB remains a separate shared scrollbar component.
 - This naming migration does not execute a D1 migration, alter movie data, change stable IDs or modify Production.
+
+- The DULM Owner rename UI and DUFS API integration have passed source-level JavaScript syntax checks. Live browser interaction and authenticated Preview D1 rename persistence still require verification.
