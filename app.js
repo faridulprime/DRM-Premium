@@ -71,6 +71,7 @@ function setVisualEditor(user){
  const isOwner=Boolean(user&&user.role==="owner");
  toggle.hidden=Boolean(new URLSearchParams(location.search).has("builderPreview"))||!isOwner;
  toggle.dataset.owner=isOwner?"true":"false";
+ window.DUFSOwner=isOwner;
  window.DULM?.setOwner(isOwner);
 }
 function selectVisualElement(el){
