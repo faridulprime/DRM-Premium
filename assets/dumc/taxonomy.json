@@ -196,12 +196,12 @@
       "children": [
         {
           "id": "INDUSTRY_DHALLYWOOD",
-          "name": "Dhallywood",
+          "name": "Bangla Movies",
           "description": "Bangladesh film industry."
         },
         {
           "id": "INDUSTRY_BENGALI_CINEMA_INDIA",
-          "name": "Bengali_Cinema_India",
+          "name": "Bengali_Movies_India",
           "description": "Indian Bengali cinema."
         },
         {
@@ -211,22 +211,22 @@
         },
         {
           "id": "INDUSTRY_TELUGU_CINEMA",
-          "name": "Telugu_Cinema",
+          "name": "Telugu_Movies",
           "description": "Telugu film industry."
         },
         {
           "id": "INDUSTRY_TAMIL_CINEMA",
-          "name": "Tamil_Cinema",
+          "name": "Tamil_Movies",
           "description": "Tamil film industry."
         },
         {
           "id": "INDUSTRY_MALAYALAM_CINEMA",
-          "name": "Malayalam_Cinema",
+          "name": "Malayalam_Movies",
           "description": "Malayalam film industry."
         },
         {
           "id": "INDUSTRY_KANNADA_CINEMA",
-          "name": "Kannada_Cinema",
+          "name": "Kannada_Movies",
           "description": "Kannada film industry."
         },
         {
@@ -236,27 +236,27 @@
         },
         {
           "id": "INDUSTRY_MARATHI_CINEMA",
-          "name": "Marathi_Cinema",
+          "name": "Marathi_Movies",
           "description": "Marathi film industry."
         },
         {
           "id": "INDUSTRY_PUNJABI_CINEMA",
-          "name": "Punjabi_Cinema",
+          "name": "Punjabi_Movies",
           "description": "Punjabi film industry."
         },
         {
           "id": "INDUSTRY_KOREAN_CINEMA",
-          "name": "Korean_Cinema",
+          "name": "Korean_Movies",
           "description": "South Korean film industry."
         },
         {
           "id": "INDUSTRY_JAPANESE_CINEMA",
-          "name": "Japanese_Cinema",
+          "name": "Japanese_Movies",
           "description": "Japanese film industry."
         },
         {
           "id": "INDUSTRY_CHINESE_CINEMA",
-          "name": "Chinese_Cinema",
+          "name": "Chinese_Movies",
           "description": "Chinese-language film industries."
         },
         {
