@@ -1,5 +1,5 @@
 # DRM Universal Motion System (DUME)
-Version: 0.3.2 — Reversible dropdown frame continuity
+Version: 0.4.0 — Shared 700ms extended-area disclosure motion
 Status: Shared mobile drawer motion and reusable dropdown disclosure motion are integrated. Homepage DUFS category dropdowns use the DUME controller for symmetric open/close transitions, rapid-toggle cancellation and reduced-motion behavior. Other motion families and Profile remain outside this controller migration.
 
 ## Purpose
@@ -23,10 +23,9 @@ DUME centralizes interaction motion: transition duration, easing, animation sequ
 - `--dume-drawer-opacity-duration`: drawer opacity transition duration.
 - `--dume-drawer-easing`: drawer transition easing.
 - `--dume-backdrop-duration`: backdrop opacity transition duration.
-- `--dume-dropdown-duration`: symmetric dropdown enter/exit duration (380ms default).
+- `--dume-dropdown-duration`: symmetric dropdown enter/exit duration, aligned to the homepage sidebar's 700ms token.
 - `--dume-dropdown-easing`: shared dropdown enter/exit easing.
-- `--dume-dropdown-offset`: vertical translation used by the dropdown motion (22px default).
-- Dropdown opening/closing also applies a subtle 2px-to-0px blur so the panel motion remains visually legible rather than relying on the small arrow rotation.
+- Dropdown panels animate their real layout height from 0px to their measured, max-height-constrained height and back to 0px on close.
 - `--dume-dropdown-scale`: starting/ending scale for the dropdown motion.
 
 The controller reads the duration and easing from computed root custom properties. JavaScript fallbacks are retained for resilience if a token stylesheet is unavailable.
@@ -90,8 +89,12 @@ The Design System browser audit now exercises all seven DUFS category dropdowns 
 
 ## DUME dropdown visual clarity refinement — 2026-11-27
 
-The shared dropdown transition was visually strengthened after review: 380ms duration, 22px vertical travel, 0.97 starting scale and a subtle 2px blur all resolve to the natural panel state. Closing reverses these same frames using the same easing and duration. `prefers-reduced-motion` still disables the visual transition.
+The DUFS dropdown now uses the same 700ms extended-area motion signature as the homepage universal sidebar: `cubic-bezier(.16,1,.3,1)`. DUME animates the panel's actual height from zero to its measured, max-height-constrained height; closing reverses the same height expansion back to zero. This is a real extended-area reveal rather than a translate/scale-only effect. `prefers-reduced-motion` disables animation but preserves the state change.
 
 DUFS list width remains a DULM layout concern, not a DUME motion concern. DULM now sizes category lists intrinsically to the widest folder label, with a viewport-only maximum; Year retains a 172px minimum. The width is content-driven, so a longer future folder label naturally expands the panel until the viewport safety bound is reached.
 
 The controller also captures the in-flight blur value when a dropdown is toggled mid-transition. Rapid reversals therefore continue from the current opacity, transform and blur frame rather than snapping one visual property back to its endpoint.
+
+## Shared extended-area disclosure motion — 2026-11-27
+
+The DUFS category dropdown uses the same timing and easing as the homepage universal sidebar: 700ms and `cubic-bezier(.16,1,.3,1)`. DUME animates the list panel's actual layout height from 0px to its measured, max-height-constrained height. Closing animates that height back to 0px. The panel remains in the DOM while closing, becomes inert immediately, and is hidden only after the close animation completes. Reversing an in-flight animation captures its current height and opacity so stale callbacks cannot hide a reopened panel. Reduced-motion bypasses the animation.
