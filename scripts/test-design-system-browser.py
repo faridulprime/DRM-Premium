@@ -1871,6 +1871,24 @@ def inspect_dufs_dropdown_lifecycle(browser, base_url):
                 timeout=3000,
             )
 
+            # Repeated category switches must let every previously closing panel finish.
+            all_tab = page.locator('[data-category-menu="all-movies"]')
+            genre_tab = page.locator('[data-category-menu="genre"]')
+            country_tab = page.locator('[data-category-menu="country"]')
+            all_tab.dispatch_event("click")
+            genre_tab.dispatch_event("click")
+            country_tab.dispatch_event("click")
+            page.wait_for_function("() => document.querySelector('[data-category-menu=country]')?.getAttribute('aria-expanded') === 'true'")
+            if not reduced_motion:
+                page.wait_for_timeout(float(config["dropdownDuration"]) + 40)
+            for old_key in ("all-movies", "genre"):
+                if not page.locator("#dufnFolderPanel-" + old_key).evaluate("(el) => el.hidden"):
+                    fail(f"homepage/DUFS/{scenario}: {old_key} exit animation did not complete after rapid category switching")
+            if country_tab.get_attribute("aria-expanded") != "true" or page.locator("#dufnFolderPanel-country").evaluate("(el) => el.hidden"):
+                fail(f"homepage/DUFS/{scenario}: the final category did not stay open after rapid switching")
+            country_tab.dispatch_event("click")
+            page.wait_for_function("() => document.querySelector('#dufnFolderPanel-country').hidden")
+
             # ArrowDown focuses the first folder in the selected category; Escape closes it.
             keyboard_tab = page.locator('[data-category-menu="collections"]')
             keyboard_tab.focus()
