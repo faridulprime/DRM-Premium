@@ -389,3 +389,6 @@ html[data-theme] body #dumcHomeCategories .dufn-folder:hover .dumc-folder-icon,
 html[data-theme] body #dumcHomeCategories .dufn-folder.active .dumc-folder-icon{
   color:#696b70!important;filter:none!important;
 }
+
+/* Set every folder name in the directory lists to 15px. */
+html[data-theme] body #dumcHomeCategories .dufn-folder{font-size:15px!important}
