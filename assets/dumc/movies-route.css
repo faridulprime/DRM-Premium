@@ -8,3 +8,7 @@
 @media(max-width:760px){
  .movies-route main#home{padding-inline:14px}
 }
+
+/* Keep one movie search control: use the shared header search on /movies. */
+.movies-route .dumc-home-toolbar{grid-template-columns:minmax(0,1fr) auto!important}
+.movies-route .dumc-home-search{display:none!important}
