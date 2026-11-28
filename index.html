@@ -121,7 +121,7 @@
   <div id="registerOtpGroup" hidden><label>Email verification code<input id="registerCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="৬ সংখ্যার কোড"></label><p class="register-hint">ইমেইলে পাঠানো ৬ সংখ্যার কোড দিন। কোড ১০ মিনিট কার্যকর থাকবে।</p><p id="registerDeliveryHint" class="register-delivery-hint" role="status" aria-live="polite" hidden>ইমেইলের Primary Inbox-এ OTP না পেলে Spam বা Junk ফোল্ডারটিও চেক করুন। প্রয়োজনে Promotions ফোল্ডারও দেখুন।</p></div>
   <p id="registerStatus" class="register-status" role="status" aria-live="polite"></p>
   <div class="register-actions"><button id="registerSendCode" class="register-primary" type="button">Send verification code</button><button id="registerVerify" class="register-primary" type="submit" hidden>Verify & create account</button></div>
-  <p class="register-footnote">অ্যাকাউন্টটি সাধারণ User হিসেবে তৈরি হবে। Admin বা Owner permission স্বয়ংক্রিয়ভাবে দেওয়া হবে না।</p>
+  <p class="register-footnote">এই environment-এ প্রথম account হলে যাচাই শেষে Owner হিসেবে তৈরি হতে পারে।</p>
  </form>
 </dialog>
 <footer id="about"><span id="footerBrand">DRM PREMIUM</span><span id="footerText">একটি ব্যক্তিগত ভিডিও লাইব্রেরি</span></footer>
@@ -151,7 +151,7 @@
  </div>
 </section>
 <script src="/assets/motion/motion-controller.js?v=dume-10"></script>
-<script src="app.js?v=dufs-04"></script>
+<script src="app.js?v=dufs-05"></script>
 <script src="/assets/dufs/folder-system.js?v=dufs-03"></script>
 <script src="/assets/dufs/home.js?v=dufs-18"></script>
 <script src="/assets/dusb/scrollbar.js?v=dusb-04"></script>
