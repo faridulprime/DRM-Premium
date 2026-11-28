@@ -1340,3 +1340,13 @@ body.profile-drawer-open main{
     transition:none!important;
   }
 }
+
+
+/* Preserve the complete fixed category header while the page content reflows. */
+body.profile-drawer-open .category-bar{
+  right:0!important;
+  transition:none!important;
+}
+@media(max-width:760px){
+  :root{--duss-profile-drawer-width:min(280px,82vw)}
+}
