@@ -1730,3 +1730,20 @@ html body>.profile-topbar>*{
  translate:none!important;
  transform:none!important;
 }
+
+/* Sidebar-open must preserve the shared header stack offset. */
+body.home-page.sidebar-open{
+ padding-top:var(--duss-home-shell-offset-desktop,116px)!important;
+}
+body.home-page.sidebar-open .category-bar{
+ position:fixed!important;
+ top:var(--duss-header-height-desktop,64px)!important;
+}
+@media(max-width:760px){
+ body.home-page.sidebar-open{
+  padding-top:var(--duss-home-shell-offset-mobile,108px)!important;
+ }
+ body.home-page.sidebar-open .category-bar{
+  top:var(--duss-header-height-mobile,58px)!important;
+ }
+}
