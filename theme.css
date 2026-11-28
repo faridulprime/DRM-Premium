@@ -1378,3 +1378,93 @@ body.profile-drawer-open .category-bar{
   body.profile-drawer-open{padding-right:0!important}
   body.profile-drawer-open main{width:auto!important}
 }
+
+
+/* Profile drawer finish: keep the shell fixed, blend the panel into the page,
+   and center the profile identity, details, controls and logout action. */
+.profile-drawer{
+  background:var(--paper)!important;
+  background-color:var(--paper)!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.profile-drawer-head{
+  position:relative!important;
+  justify-content:center!important;
+}
+.profile-drawer-kicker{
+  flex:1 1 auto;
+  text-align:center!important;
+}
+.profile-drawer-close{
+  position:absolute!important;
+  top:50%!important;
+  right:0!important;
+  transform:translateY(-50%)!important;
+}
+.profile-drawer-identity{
+  flex-direction:column!important;
+  justify-content:center!important;
+  gap:12px!important;
+  margin:30px 0 22px!important;
+  text-align:center!important;
+}
+.profile-drawer-avatar{margin-inline:auto!important}
+.profile-drawer-name{
+  width:100%;
+  align-items:center!important;
+  text-align:center!important;
+}
+.profile-drawer-view{
+  position:relative!important;
+  justify-content:center!important;
+  padding-inline:42px!important;
+  text-align:center!important;
+}
+.profile-drawer-view span{
+  position:absolute;
+  right:15px;
+}
+.profile-drawer-divider{
+  width:100%;
+  margin:20px auto!important;
+}
+.profile-drawer-details{
+  width:100%;
+  align-items:center!important;
+  text-align:center!important;
+}
+.profile-drawer-detail{
+  width:100%;
+  text-align:center!important;
+}
+.profile-drawer-detail-grid{
+  width:100%;
+  justify-items:center!important;
+  text-align:center!important;
+}
+.profile-drawer-detail-grid .profile-drawer-detail{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.profile-drawer .profile-drawer-logout-area{
+  display:flex;
+  justify-content:center!important;
+}
+.profile-drawer .profile-drawer-logout-button{
+  display:inline-flex!important;
+  width:auto!important;
+  min-width:120px;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px;
+}
+body.profile-drawer-open .topbar,
+body.profile-drawer-open .category-bar{
+  left:0!important;
+  right:0!important;
+  transform:none!important;
+  transition:none!important;
+}
