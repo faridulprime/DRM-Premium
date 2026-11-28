@@ -1704,3 +1704,29 @@ body.sidebar-open main,body.profile-drawer-open main{
 }
 body.sidebar-open main{margin-left:var(--duss-sidebar-width,240px)!important}
 body.profile-drawer-open main{margin-right:390px!important}
+
+/* Final header isolation: anchor to viewport edges; never derive width from body/content. */
+html body>.topbar,
+html body.profile-drawer-open>.topbar,
+html body.sidebar-open>.topbar,
+html body>.profile-topbar,
+html body.profile-drawer-open>.profile-topbar,
+html body.sidebar-open>.profile-topbar{
+ position:fixed!important;
+ inset-block-start:0!important;
+ inset-inline:0!important;
+ width:auto!important;
+ max-width:none!important;
+ margin-inline:0!important;
+ transform:none!important;
+ translate:none!important;
+ transition:none!important;
+ animation:none!important;
+}
+html body>.topbar>*,
+html body>.profile-topbar>*{
+ transition:none!important;
+ animation:none!important;
+ translate:none!important;
+ transform:none!important;
+}
