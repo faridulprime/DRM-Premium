@@ -1468,3 +1468,95 @@ body.profile-drawer-open .category-bar{
   transform:none!important;
   transition:none!important;
 }
+
+
+/* Profile drawer: preserve viewport headers; reflow only the page content. */
+@media(min-width:761px){
+  body.profile-drawer-open{
+    padding-right:0!important;
+    transition:none!important;
+  }
+  body.profile-drawer-open main{
+    box-sizing:border-box!important;
+    width:calc(100% - var(--duss-profile-drawer-width,390px))!important;
+    max-width:none!important;
+    transition:width 700ms cubic-bezier(.16,1,.3,1)!important;
+  }
+}
+body.profile-drawer-open .topbar,
+body.profile-drawer-open .category-bar{
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  width:100vw!important;
+  max-width:100vw!important;
+  box-sizing:border-box!important;
+  transform:none!important;
+  transition:none!important;
+}
+body.profile-drawer-open .category-bar{
+  z-index:var(--dups-layer-category-bar,90)!important;
+}
+
+/* Profile information arranged as clean, aligned rows with subtle separators. */
+.profile-drawer-details{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:start!important;
+  gap:0 20px!important;
+  width:100%!important;
+  text-align:center!important;
+}
+.profile-drawer-details>.profile-drawer-detail{
+  min-width:0;
+  padding:14px 4px!important;
+  border-bottom:1px solid rgba(255,255,255,.075);
+  text-align:center!important;
+}
+.profile-drawer-details>.profile-drawer-detail:first-child,
+.profile-drawer-details>.profile-drawer-detail-grid,
+.profile-drawer-details>.profile-drawer-detail:last-child{
+  grid-column:1/-1!important;
+}
+.profile-drawer-detail-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:0 18px!important;
+  text-align:center!important;
+}
+.profile-drawer-detail-grid .profile-drawer-detail{
+  min-width:0;
+  padding:14px 4px!important;
+  border-bottom:1px solid rgba(255,255,255,.075);
+  text-align:center!important;
+}
+.profile-drawer-detail>span{
+  margin-bottom:6px!important;
+  font-size:10px!important;
+  letter-spacing:.12em!important;
+}
+.profile-drawer-detail p{
+  font-size:14px!important;
+  line-height:1.55!important;
+}
+.profile-drawer .profile-drawer-logout-area{
+  flex:0 0 auto!important;
+  margin-top:auto!important;
+  padding-top:14px!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+}
+.profile-drawer .profile-drawer-logout-button{
+  align-self:flex-start!important;
+  justify-content:flex-start!important;
+  width:max-content!important;
+  min-width:0!important;
+  margin:0 auto 0 0!important;
+  padding:0 4px!important;
+}
+@media(max-width:430px){
+  .profile-drawer-details{grid-template-columns:minmax(0,1fr)!important}
+  .profile-drawer-details>.profile-drawer-detail,
+  .profile-drawer-details>.profile-drawer-detail-grid,
+  .profile-drawer-details>.profile-drawer-detail:last-child{grid-column:1!important}
+}
