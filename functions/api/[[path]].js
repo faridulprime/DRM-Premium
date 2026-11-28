@@ -1,4 +1,4 @@
-const COOKIE="frame_admin_session",VISITOR_COOKIE="frame_visitor_id",SESSION_SECONDS=604800,ITERATIONS=100000;
+const COOKIE="frame_admin_session",VISITOR_COOKIE="frame_visitor_id",SESSION_SECONDS=604800,ITERATIONS=100000,LEGACY_ITERATIONS=210000;
 
 const BUILDER_NODE_TYPES=new Set(["section","container","grid","column","text","heading","image","button","link","icon","card","list","divider","spacer","video","form","input","textarea","select","checkbox","navbar","footer","hero"]);
 const BUILDER_DEFAULT={schemaVersion:1,pages:[{id:"home",slug:"/",title:"Home",nodes:[]}],designTokens:{}};
@@ -40,10 +40,11 @@ const displayDumcFolderName=displayDufsFolderName;
 const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 const un64=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
 async function hash(s){return b64(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))}
-async function passwordHash(password,salt){const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveBits"]);return b64(await crypto.subtle.deriveBits({name:"PBKDF2",salt:un64(salt),iterations:ITERATIONS,hash:"SHA-256"},key,256))}
+async function passwordHash(password,salt,iterations=ITERATIONS){const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveBits"]);return b64(await crypto.subtle.deriveBits({name:"PBKDF2",salt:un64(salt),iterations,hash:"SHA-256"},key,256))}
 async function makePassword(password){const salt=b64(crypto.getRandomValues(new Uint8Array(16)));return salt+"."+await passwordHash(password,salt)}
-async function makePasswordForRegistrationCheck(password,stored){const salt=String(stored||"").split(".")[0];if(!salt)return "";return salt+"."+await passwordHash(password,salt)}
-async function verifyPassword(password,stored){const [salt,want]=String(stored).split(".");if(!salt||!want)return false;const got=await passwordHash(password,salt);let d=got.length^want.length;for(let i=0;i<Math.max(got.length,want.length);i++)d|=(got.charCodeAt(i)||0)^(want.charCodeAt(i)||0);return d===0}
+async function passwordHashMatches(password,stored,iterations){const [salt,want]=String(stored||"").split(".");if(!salt||!want)return false;try{const got=await passwordHash(password,salt,iterations);let d=got.length^want.length;for(let i=0;i<Math.max(got.length,want.length);i++)d|=(got.charCodeAt(i)||0)^(want.charCodeAt(i)||0);return d===0}catch{return false}}
+async function makePasswordForRegistrationCheck(password,stored){return await verifyPassword(password,stored)?stored:""}
+async function verifyPassword(password,stored){if(await passwordHashMatches(password,stored,ITERATIONS))return true;return LEGACY_ITERATIONS!==ITERATIONS&&await passwordHashMatches(password,stored,LEGACY_ITERATIONS)}
 const cookie=v=>`${COOKIE}=${v}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}`;
 const clearCookie=()=>`${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
 function cookieToken(req){return (req.headers.get("Cookie")||"").split(";").map(v=>v.trim()).find(v=>v.startsWith(COOKIE+"="))?.slice(COOKIE.length+1)||""}
