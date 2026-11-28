@@ -41,3 +41,96 @@ body.site-shell-menu-open .site-shell-backdrop{opacity:1;pointer-events:auto}
  .site-shell-sidebar{top:0;width:min(280px,82vw);padding-top:18px}
  .site-shell-profile-drawer{top:var(--duss-header-height-mobile,58px);width:min(390px,100vw)}
 }
+
+/* Keep the page header in the same flow and isolate drawer motion to content. */
+:root{--duss-profile-drawer-width:390px}
+html body>header.topbar.topbar,
+html body>header.admin-topbar.admin-topbar,
+html body>header.live-topbar.live-topbar,
+html body>header.studio-global-topbar.studio-global-topbar{
+ position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important;
+ transform:none!important;translate:none!important;animation:none!important;transition:none!important;
+}
+html body>.category-bar.category-bar{
+ position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ width:auto!important;max-width:none!important;margin-left:0!important;margin-right:0!important;
+ transform:none!important;transition:margin-left 700ms cubic-bezier(.16,1,.3,1),margin-right 700ms cubic-bezier(.16,1,.3,1)!important;
+}
+html body main{
+ transition:margin-left 700ms cubic-bezier(.16,1,.3,1),margin-right 700ms cubic-bezier(.16,1,.3,1),width 700ms cubic-bezier(.16,1,.3,1),max-width 700ms cubic-bezier(.16,1,.3,1)!important;
+}
+html body :is(main#home,.admin-main,.live-layout){width:100%!important}
+@media(min-width:761px){
+ html body.sidebar-open.sidebar-open,html body.profile-drawer-open.profile-drawer-open{
+  padding-top:0!important;padding-left:0!important;padding-right:0!important;transition:none!important;
+ }
+ html body.sidebar-open.sidebar-open main{
+  margin-left:var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px))!important;
+  margin-right:0!important;
+ }
+ html body.sidebar-open.sidebar-open>.category-bar.category-bar{
+  margin-left:var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px))!important;margin-right:0!important;
+ }
+ html body.profile-drawer-open.profile-drawer-open main{
+  margin-right:var(--duss-profile-drawer-width,390px)!important;
+ }
+ html body.profile-drawer-open.profile-drawer-open>.category-bar.category-bar{
+  margin-right:var(--duss-profile-drawer-width,390px)!important;
+ }
+ html body.sidebar-open.sidebar-open.profile-drawer-open main{
+  margin-left:var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px))!important;
+  margin-right:var(--duss-profile-drawer-width,390px)!important;
+ }
+ html body.sidebar-open.sidebar-open.profile-drawer-open>.category-bar.category-bar{
+  margin-left:var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px))!important;
+  margin-right:var(--duss-profile-drawer-width,390px)!important;
+ }
+ html body.sidebar-open.sidebar-open :is(main#home,.admin-main,.live-layout),
+ html body.profile-drawer-open.profile-drawer-open :is(main#home,.admin-main,.live-layout){
+  box-sizing:border-box!important;width:auto!important;max-width:100%!important;
+ }
+ html body.sidebar-open.sidebar-open :is(main#home,.admin-main,.live-layout){
+  width:calc(100% - var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px)))!important;
+  max-width:calc(100% - var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px)))!important;
+ }
+ html body.profile-drawer-open.profile-drawer-open :is(main#home,.admin-main,.live-layout){
+  width:calc(100% - var(--duss-profile-drawer-width,390px))!important;
+  max-width:calc(100% - var(--duss-profile-drawer-width,390px))!important;
+ }
+ html body.sidebar-open.sidebar-open.profile-drawer-open :is(main#home,.admin-main,.live-layout){
+  width:calc(100% - var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px)) - var(--duss-profile-drawer-width,390px))!important;
+  max-width:calc(100% - var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px)) - var(--duss-profile-drawer-width,390px))!important;
+ }
+ html body.sidebar-open.sidebar-open main.main-area{margin-left:252px!important}
+ html body.profile-page.sidebar-open.sidebar-open main.profile-shell{
+  --shell-left-offset:var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px));
+  --shell-open-width:min(760px,calc(100% - var(--shell-left-offset) - 32px));
+  width:var(--shell-open-width)!important;max-width:760px!important;
+  margin-left:calc(var(--shell-left-offset) + max(0px,calc((100% - var(--shell-left-offset) - var(--shell-open-width))/2)))!important;
+  margin-right:0!important;
+ }
+ html body.profile-page.profile-drawer-open.profile-drawer-open main.profile-shell{
+  --shell-right-offset:var(--duss-profile-drawer-width,390px);
+  --shell-open-width:min(760px,calc(100% - var(--shell-right-offset) - 32px));
+  width:var(--shell-open-width)!important;max-width:760px!important;
+  margin-left:max(0px,calc((100% - var(--shell-right-offset) - var(--shell-open-width))/2))!important;
+  margin-right:var(--shell-right-offset)!important;
+ }
+ html body.profile-page.sidebar-open.sidebar-open.profile-drawer-open main.profile-shell{
+  --shell-left-offset:var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px));
+  --shell-right-offset:var(--duss-profile-drawer-width,390px);
+  --shell-open-width:min(760px,calc(100% - var(--shell-left-offset) - var(--shell-right-offset) - 32px));
+  width:var(--shell-open-width)!important;max-width:760px!important;
+  margin-left:calc(var(--shell-left-offset) + max(0px,calc((100% - var(--shell-left-offset) - var(--shell-right-offset) - var(--shell-open-width))/2)))!important;
+  margin-right:var(--shell-right-offset)!important;
+ }
+}
+@media(min-width:761px){
+ html body .yt-sidebar.yt-sidebar{transition:transform 700ms cubic-bezier(.16,1,.3,1),visibility 0s linear 700ms!important}
+ html body.sidebar-open.sidebar-open .yt-sidebar.yt-sidebar{transition:transform 700ms cubic-bezier(.16,1,.3,1),visibility 0s linear 0s!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body main,html body>.category-bar.category-bar,html body .yt-sidebar.yt-sidebar,
+ html body .profile-drawer,html body .site-shell-profile-drawer{transition:none!important}
+}
