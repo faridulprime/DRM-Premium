@@ -63,7 +63,26 @@
     createTabRipple(tab, event);
   }, { passive: true, capture: true });
 
+  let sidebarWidthObserver = null;
+  function syncSidebarWidth() {
+    const sidebar = document.querySelector("#ytSidebar");
+    if (!sidebar) return;
+    const measure = () => {
+      const width = sidebar.getBoundingClientRect().width;
+      if (width > 0) root.style.setProperty("--duss-sidebar-dynamic-width", width + "px");
+    };
+    measure();
+    if (typeof ResizeObserver === "function") {
+      sidebarWidthObserver?.disconnect();
+      sidebarWidthObserver = new ResizeObserver(measure);
+      sidebarWidthObserver.observe(sidebar);
+    } else {
+      window.addEventListener("resize", measure, { passive: true });
+    }
+  }
+
   function mount() {
+    syncSidebarWidth();
     if (!document.body || document.querySelector(".drm-theme-switch")) return;
     const button = document.createElement("button");
     button.type = "button";
