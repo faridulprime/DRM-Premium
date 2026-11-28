@@ -1247,3 +1247,56 @@ html::-webkit-scrollbar-thumb:hover{
   text-shadow:0 0 7px rgba(255,220,224,.62),0 0 18px rgba(233,154,159,.34)!important;
   transform:none!important;
 }
+
+
+/* Profile drawer — apply the final text-only glow system while preserving its
+   established 390px drawer and compact inner content area. */
+.profile-drawer-kicker,
+.profile-drawer-name span,
+.profile-drawer-detail>span,
+.profile-drawer-footer{
+  color:#A7ABB4!important;
+  font-family:'Space Grotesk','Hind Siliguri',Arial,sans-serif!important;
+  font-size:11px!important;
+  font-weight:600!important;
+  letter-spacing:.12em!important;
+  text-shadow:0 1px 10px rgba(225,232,246,.24)!important;
+}
+.profile-drawer-name strong{
+  color:#F3F5F8!important;
+  font-size:20px!important;
+  font-weight:650!important;
+  letter-spacing:.01em!important;
+  text-shadow:0 0 8px rgba(230,237,250,.24),0 1px 16px rgba(210,222,246,.18)!important;
+}
+.profile-drawer-detail p{
+  color:#E5E7EB!important;
+  font-family:'Space Grotesk','Hind Siliguri',Arial,sans-serif!important;
+  font-size:15px!important;
+  line-height:1.5!important;
+  text-shadow:0 1px 12px rgba(225,232,246,.22)!important;
+}
+.profile-drawer-view{
+  color:#F1F3F6!important;
+  font-size:14px!important;
+  text-shadow:0 1px 10px rgba(225,232,246,.24)!important;
+}
+.profile-drawer-view:hover{
+  color:#FFFFFF!important;
+  text-shadow:0 0 8px rgba(238,242,255,.72),0 0 18px rgba(211,223,255,.4)!important;
+}
+.profile-drawer-close{
+  color:#F3F5F8!important;
+  text-shadow:0 0 9px rgba(230,237,250,.3)!important;
+}
+.profile-drawer-close:hover{
+  color:#FFFFFF!important;
+  text-shadow:0 0 8px rgba(238,242,255,.72),0 0 18px rgba(211,223,255,.4)!important;
+}
+.profile-drawer .profile-drawer-logout-button{
+  font-size:14px!important;
+  text-shadow:0 1px 10px rgba(235,180,184,.24)!important;
+}
+.profile-drawer .profile-drawer-logout-button:hover{
+  text-shadow:0 0 8px rgba(255,220,224,.7),0 0 18px rgba(233,154,159,.38)!important;
+}
