@@ -186,6 +186,14 @@ html[data-theme="dark"] body :is(.yt-menu-trigger,.site-shell-menu-toggle) svg{
   width:24px!important;height:24px!important;fill:none!important;stroke:currentColor!important;
 }
 
+/* DUCS resets controls to square corners. Keep profile photo controls circular. */
+html[data-theme="dark"] body button:is(.profile-menu-toggle,.site-shell-profile-toggle){
+  border-radius:50%!important;overflow:hidden!important;clip-path:circle(50% at 50% 50%)!important;
+}
+html[data-theme="dark"] body button:is(.profile-menu-toggle,.site-shell-profile-toggle)>img{
+  border-radius:50%!important;object-fit:cover!important;
+}
+
 /* The page drawers share the homepage's transparent, silver-glow navigation. */
 html[data-theme="dark"] body :is(.yt-sidebar,.site-shell-sidebar){
   background:#111216!important;border:0!important;box-shadow:none!important;

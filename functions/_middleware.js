@@ -11,8 +11,8 @@ export async function onRequest(context) {
   const html = await response.text();
   if (html.includes("/site-shell.js")) return new Response(html, response);
 
-  const styles = '<link rel="stylesheet" href="/site-shell.css?v=site-shell-01">';
-  const script = '<script src="/site-shell.js?v=site-shell-01" defer></script>';
+  const styles = '<link rel="stylesheet" href="/site-shell.css?v=site-shell-04">';
+  const script = '<script src="/site-shell.js?v=site-shell-04" defer></script>';
   const withStyles = html.includes("</head>") ? html.replace("</head>", styles + "</head>") : styles + html;
   const withShell = withStyles.includes("</body>") ? withStyles.replace("</body>", script + "</body>") : withStyles + script;
 
