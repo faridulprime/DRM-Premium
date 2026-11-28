@@ -1560,3 +1560,28 @@ body.profile-drawer-open .category-bar{
   .profile-drawer-details>.profile-drawer-detail-grid,
   .profile-drawer-details>.profile-drawer-detail:last-child{grid-column:1!important}
 }
+
+
+/* Keep header controls on the layout viewport, not the 100vw scrollbar width. */
+body.profile-drawer-open .topbar,
+body.profile-drawer-open .category-bar{
+  left:0!important;
+  right:0!important;
+  width:auto!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+}
+
+/* Match the drawer fade to its full 700ms slide in both directions. */
+.profile-drawer{
+  transition:
+    transform 700ms cubic-bezier(.16,1,.3,1),
+    opacity 700ms cubic-bezier(.16,1,.3,1),
+    visibility 0s linear 700ms!important;
+}
+.profile-drawer.is-open{
+  transition:
+    transform 700ms cubic-bezier(.16,1,.3,1),
+    opacity 700ms cubic-bezier(.16,1,.3,1),
+    visibility 0s linear 0s!important;
+}
