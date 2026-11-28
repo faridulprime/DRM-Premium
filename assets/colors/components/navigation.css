@@ -509,3 +509,6 @@ html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-acti
   html[data-theme] body .topbar .yt-search.yt-search{flex:1 1 160px!important;width:auto!important;max-width:320px!important;min-width:80px!important;height:40px!important;gap:7px!important}
   html[data-theme] body .topbar .yt-search.yt-search>button{flex-basis:38px!important;width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important}
 }
+
+/* Respect auth visibility after sign-in despite the flex layout above. */
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions[hidden]{display:none!important}
