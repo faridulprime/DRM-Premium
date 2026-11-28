@@ -1300,3 +1300,19 @@ html::-webkit-scrollbar-thumb:hover{
 .profile-drawer .profile-drawer-logout-button:hover{
   text-shadow:0 0 8px rgba(255,220,224,.7),0 0 18px rgba(233,154,159,.38)!important;
 }
+
+
+/* Align the profile drawer with the navigation panel's header-bottom edge.
+   Keeping the topbar clear also leaves the profile toggle visible. */
+.profile-drawer{
+  top:var(--duss-header-height-desktop,64px)!important;
+}
+@media(max-width:760px){
+  .profile-drawer{
+    top:var(--duss-home-mobile-header-height,86px)!important;
+  }
+  .profile-drawer-backdrop:not([hidden]){
+    top:var(--duss-home-mobile-header-height,86px)!important;
+    right:0!important;bottom:0!important;left:0!important;
+  }
+}
