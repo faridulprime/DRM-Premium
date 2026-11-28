@@ -12,3 +12,10 @@
 /* Keep one movie search control: use the shared header search on /movies. */
 .movies-route .dumc-home-toolbar{grid-template-columns:minmax(0,1fr) auto!important}
 .movies-route .dumc-home-search{display:none!important}
+
+/* White icons for the secondary movie filter tabs only. */
+html[data-theme] body.movies-route #dumcHomeCategories .dufn-tabs .tab-icon,
+html[data-theme] body.movies-route #dumcHomeCategories .dufn-tabs .dufn-tab:hover .tab-icon,
+html[data-theme] body.movies-route #dumcHomeCategories .dufn-tabs .dufn-tab.is-open .tab-icon{
+  color:#F3F0ED!important;opacity:1!important;filter:drop-shadow(0 0 5px rgba(235,238,255,.24))!important;
+}
