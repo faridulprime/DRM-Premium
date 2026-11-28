@@ -413,3 +413,99 @@ html body #ytSidebar#ytSidebar{
     margin-left:calc(0px - var(--duss-sidebar-dynamic-width,var(--duss-sidebar-width,240px)))!important;
   }
 }
+
+
+/* Quiet Halo header controls: shorter search, silver icon glow, and clean paired credentials. */
+html[data-theme] body .topbar .yt-search.yt-search{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:10px!important;
+  flex:0 1 312px!important;width:min(312px,100%)!important;min-width:180px!important;max-width:312px!important;
+  height:44px!important;margin:0 auto!important;padding:0!important;
+  overflow:visible!important;border:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+}
+html[data-theme] body .topbar .yt-search.yt-search>input{
+  box-sizing:border-box!important;flex:1 1 auto!important;min-width:0!important;width:100%!important;height:38px!important;
+  padding:0 4px!important;border:0!important;border-bottom:1px solid rgba(210,214,224,.27)!important;border-radius:0!important;
+  outline:0!important;background:transparent!important;color:var(--ink)!important;
+  font:400 15px Arial,Helvetica,sans-serif!important;
+  transition:border-color .18s ease,box-shadow .18s ease!important;
+}
+html[data-theme] body .topbar .yt-search.yt-search>input::placeholder{color:#A6A4A6!important;opacity:1!important}
+html[data-theme] body .topbar .yt-search.yt-search>input:hover,
+html[data-theme] body .topbar .yt-search.yt-search>input:focus{
+  border-bottom-color:rgba(235,239,248,.78)!important;
+  box-shadow:0 9px 17px -13px rgba(228,235,250,.88)!important;
+}
+html[data-theme] body .topbar .yt-search.yt-search>button{
+  box-sizing:border-box!important;display:grid!important;place-items:center!important;
+  flex:0 0 42px!important;width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important;
+  margin:0!important;padding:0!important;border:1px solid rgba(220,224,234,.14)!important;border-radius:50%!important;
+  background:#1b1d22!important;color:#E9EDF5!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.015),0 4px 14px rgba(0,0,0,.22)!important;
+  text-shadow:0 0 7px rgba(238,242,255,.66),0 0 18px rgba(211,223,255,.35)!important;
+  transition:border-color .18s ease,box-shadow .18s ease,color .18s ease!important;
+}
+html[data-theme] body .topbar .yt-search.yt-search>button:hover,
+html[data-theme] body .topbar .yt-search.yt-search>button:focus-visible{
+  background:#1b1d22!important;color:#F3F5FA!important;border-color:rgba(231,236,247,.36)!important;
+  box-shadow:0 0 14px rgba(220,230,250,.2),0 0 25px rgba(211,223,255,.14)!important;
+}
+html[data-theme] body .topbar .yt-search.yt-search>button svg{
+  width:20px!important;height:20px!important;fill:none!important;stroke:#E9EDF5!important;stroke-width:1.8!important;
+  filter:drop-shadow(0 0 5px rgba(225,233,247,.42))!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions{
+  display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:12px!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-auth-field{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:8px!important;
+  flex:0 1 136px!important;width:clamp(104px,8vw,136px)!important;min-width:92px!important;height:38px!important;min-height:38px!important;
+  padding:0 3px!important;border:0!important;border-bottom:1px solid rgba(210,214,224,.27)!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+  transition:border-color .18s ease,box-shadow .18s ease!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-auth-field:hover,
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-auth-field:focus-within{
+  border-bottom-color:rgba(235,239,248,.78)!important;
+  box-shadow:0 8px 16px -13px rgba(228,235,250,.82)!important;
+  background:transparent!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-auth-field svg{
+  width:15px!important;height:15px!important;flex:0 0 15px!important;stroke:#A6A9B0!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-auth-field:focus-within svg{stroke:#E9EDF5!important}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-auth-field input{
+  min-width:0!important;width:100%!important;height:100%!important;padding:0!important;border:0!important;border-radius:0!important;
+  outline:0!important;background:transparent!important;color:var(--ink)!important;font:400 14px Arial,Helvetica,sans-serif!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-auth-field input::placeholder{color:#A6A4A6!important;opacity:1!important}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-action,
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-create-button{
+  appearance:none!important;-webkit-appearance:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;min-width:0!important;width:auto!important;height:38px!important;min-height:38px!important;
+  margin:0!important;padding:0 5px!important;border:0!important;border-radius:0!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+  font:600 14px Arial,Helvetica,sans-serif!important;letter-spacing:0!important;white-space:nowrap!important;
+  text-shadow:0 1px 12px rgba(235,238,255,.18)!important;
+  transition:color .18s ease,text-shadow .18s ease!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-action{color:#56E386!important}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-create-button{color:#DB2D0F!important}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-action:hover:not(:disabled){
+  color:#56E386!important;text-shadow:0 0 7px rgba(235,255,241,.72),0 0 18px rgba(86,227,134,.42)!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-create-button:hover:not(:disabled){
+  color:#DB2D0F!important;text-shadow:0 0 7px rgba(255,235,231,.68),0 0 18px rgba(219,45,15,.4)!important;
+}
+html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-action:disabled{opacity:.55!important;cursor:wait!important}
+@media(min-width:761px) and (max-width:1100px){
+  html[data-theme] body .topbar .yt-search.yt-search{flex-basis:260px!important;width:260px!important;max-width:260px!important;min-width:150px!important}
+  html[data-theme] body .topbar #headerLoginForm.yt-account-actions{gap:8px!important}
+  html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-auth-field{flex-basis:104px!important;width:104px!important;min-width:86px!important}
+  html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-action,
+  html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-create-button{font-size:13px!important}
+}
+@media(max-width:760px){
+  html[data-theme] body .topbar .yt-search.yt-search{flex:1 1 160px!important;width:auto!important;max-width:320px!important;min-width:80px!important;height:40px!important;gap:7px!important}
+  html[data-theme] body .topbar .yt-search.yt-search>button{flex-basis:38px!important;width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important}
+}
