@@ -1,0 +1,72 @@
+/* DUCS button color aliases. */
+:root {
+  --ducs-button-primary-bg: var(--ducs-action-primary);
+  --ducs-button-primary-text: var(--ducs-ink-on-primary);
+  --ducs-button-primary-hover-bg: var(--ducs-action-primary-hover);
+  --ducs-button-secondary-bg: var(--ducs-surface-raised);
+  --ducs-button-secondary-text: var(--ducs-text-primary);
+  --ducs-button-secondary-border: var(--ducs-border-default);
+
+  /* Admin dashboard action controls — legacy colors preserved. */
+  --ducs-admin-button-border: #454545;
+  --ducs-admin-button-hover-bg: #383838;
+  --ducs-admin-button-hover-border: #555;
+  --ducs-admin-outline-border: #444;
+  --ducs-admin-row-action-bg: #222;
+  --ducs-admin-row-action-hover-bg: #333;
+  --ducs-admin-action-border: #343434;
+  --ducs-admin-action-bg: #1d1d1d;
+  --ducs-admin-action-hover-bg: #272727;
+  --ducs-admin-login-button-border: #414141;
+
+  /* Shared shell controls — exact existing theme.css colors preserved. */
+  --ducs-shell-menu-hover-bg: #272727;
+  --ducs-shell-menu-active-bg: #3a3a3a;
+  --ducs-shell-search-button-bg: #222;
+  --ducs-shell-search-button-hover-bg: #303030;
+  --ducs-shell-auth-button-bg: #272727;
+  --ducs-shell-auth-button-hover-bg: #3f3f3f;
+  --ducs-shell-auth-button-active-bg: #505050;
+  --ducs-shell-create-hover-bg: #263747;
+  --ducs-shell-sidebar-link-hover-bg: #272727;
+
+  /* Profile avatar and save actions. */
+  --ducs-profile-upload-bg: #1c3225;
+  --ducs-profile-upload-border: #4a7057;
+  --ducs-profile-save-bg: rgba(131, 239, 165, .13);
+  --ducs-profile-save-hover-bg: rgba(131, 239, 165, .22);
+  --ducs-profile-save-border: #83efa5;
+
+  /* Upload Studio creator actions and selected controls. */
+  --ducs-upload-accent: #7ce2bd;
+  --ducs-upload-step-bg: #193126;
+  --ducs-upload-step-border: #315d47;
+  --ducs-upload-type-active-bg: #1c2b23;
+  --ducs-upload-type-active-border: #4c8566;
+  --ducs-upload-inline-action-bg: #17251d;
+  --ducs-upload-inline-action-border: #416b54;
+  --ducs-upload-publish-bg: #203b2c;
+  --ducs-upload-publish-border: #57916f;
+  --ducs-upload-publish-text: #d5f6e2;
+  --ducs-upload-active-text: #b9efd2;
+  --ducs-upload-secondary-border: #383838;
+
+  /* Homepage actions and visual-editor controls. */
+  --ducs-home-primary-bg: #e51b13;
+  --ducs-home-secondary-bg: #242321;
+  --ducs-home-editor-button-bg: #d8e5f2;
+  --ducs-home-editor-button-border: #8ca6c0;
+  --ducs-home-builder-button-bg: #e9eff5;
+  --ducs-home-builder-button-border: #c8d3df;
+  --ducs-home-register-action-bg: rgba(131,239,165,.12);
+  --ducs-home-register-action-hover: rgba(131,239,165,.2);
+  --ducs-home-profilebar-action-bg: rgba(131,239,165,.14);
+  --ducs-home-profilebar-action-hover: rgba(131,239,165,.23);
+  /* Shared profile drawer actions. */
+  --ducs-shell-profile-drawer-close-border: #343b45;
+  --ducs-shell-profile-drawer-close-bg: #20252d;
+  --ducs-shell-profile-drawer-view-border: rgba(106,197,146,.38);
+  --ducs-shell-profile-drawer-view-hover-bg: rgba(58,133,95,.25);
+  --ducs-shell-profile-drawer-view-hover-border: #70c99a;
+
+}

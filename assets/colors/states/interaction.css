@@ -1,0 +1,12 @@
+/* DUCS state tokens. Components map these values to their own selectors. */
+:root {
+  --ducs-state-hover-overlay: rgb(255 255 255 / 6%);
+  --ducs-state-active-overlay: rgb(255 255 255 / 10%);
+  --ducs-state-selected-bg: rgb(62 166 255 / 14%);
+  --ducs-state-selected-border: var(--ducs-action-primary);
+  --ducs-state-focus-outline: var(--ducs-focus-ring);
+  --ducs-state-disabled-bg: var(--ducs-surface-raised);
+  --ducs-state-disabled-text: #737373;
+  --ducs-state-disabled-border: var(--ducs-border-subtle);
+  --ducs-state-loading: var(--ducs-action-primary);
+}

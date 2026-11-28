@@ -1,0 +1,194 @@
+/* DUCS card, divider, tooltip and dialog color aliases. */
+:root {
+  --ducs-card-bg: var(--ducs-surface-base);
+  --ducs-card-border: var(--ducs-border-subtle);
+  --ducs-divider: var(--ducs-border-subtle);
+  --ducs-tooltip-bg: var(--ducs-surface-raised);
+  --ducs-tooltip-text: var(--ducs-text-primary);
+  --ducs-dialog-backdrop: var(--ducs-overlay-scrim);
+
+  /* Live Users graphite surfaces — exact legacy values preserved. */
+  --ducs-live-page-bg: #111216;
+  --ducs-live-surface: #101010;
+  --ducs-live-surface-raised: #171717;
+  --ducs-live-surface-hover: #1c1c1c;
+  --ducs-live-surface-active: #202020;
+  --ducs-live-border: #292929;
+  --ducs-live-border-strong: #383838;
+  --ducs-live-overlay: rgba(0, 0, 0, .58);
+  --ducs-live-text: #ededed;
+  --ducs-live-text-secondary: #aaa;
+  --ducs-live-text-muted: #808080;
+  --ducs-live-text-subtle: #858585;
+  --ducs-live-dialog-bg: #171717;
+  --ducs-live-dialog-header-bg: #191919;
+  --ducs-live-dialog-border: #3a3a3a;
+  --ducs-live-dialog-backdrop: rgba(0, 0, 0, .72);
+  --ducs-live-dialog-close-border: #3b3b3b;
+  --ducs-live-dialog-close-bg: #222;
+  --ducs-live-dialog-close-text: #ddd;
+  --ducs-live-profile-bg: #1d1d1d;
+  --ducs-live-avatar-bg: #292929;
+  --ducs-live-action-bg: #171717;
+  --ducs-live-action-hover-bg: #202020;
+  --ducs-live-tab-active-bg: #2a1919;
+  --ducs-live-tab-count-bg: #292929;
+  --ducs-live-restricted-row-bg: #151515;
+  --ducs-live-restricted-row-hover-bg: #1d1919;
+  --ducs-live-activity-track-bg: #2b2b2b;
+  --ducs-live-chart-bar-start: #777;
+  --ducs-live-chart-bar-end: #c7c7c7;
+  --ducs-live-modal-gradient-start: #171717;
+  --ducs-live-modal-gradient-mid: #101010;
+  --ducs-live-modal-gradient-end: #0d0d0d;
+  --ducs-live-header-gradient-start: #1a1a1a;
+  --ducs-live-header-gradient-end: #121212;
+  --ducs-live-profile-gradient-start: #1d1d1d;
+  --ducs-live-profile-gradient-end: #151515;
+
+  /* Admin dashboard surfaces and data visualization — legacy colors preserved. */
+  --ducs-admin-row-bg: #141414;
+  --ducs-admin-metric-gradient-start: #191919;
+  --ducs-admin-metric-gradient-end: #131313;
+  --ducs-admin-card-bg: #151515;
+  --ducs-admin-progress-track: #303030;
+  --ducs-admin-progress-start: #6f9ed8;
+  --ducs-admin-progress-end: #a9c9ef;
+  --ducs-admin-row-divider: rgba(255, 255, 255, .055);
+  --ducs-admin-activity-dot: #8cb8f2;
+  --ducs-admin-login-title: #ededed;
+  --ducs-admin-login-field-bg: #171717;
+  --ducs-admin-login-field-text: #eee;
+  --ducs-admin-login-placeholder: #858585;
+  --ducs-admin-login-focus-ring: rgba(255, 255, 255, .035);
+  --ducs-admin-login-button-bg: #242424;
+  --ducs-admin-login-button-text: #eee;
+  --ducs-admin-login-button-hover-bg: #303030;
+
+  /* Shared shell surfaces — exact existing theme.css colors preserved. */
+  --ducs-shell-header-bg: #111216;
+  --ducs-shell-header-border: #111216;
+  --ducs-shell-sidebar-bg: #0f0f0f;
+  --ducs-shell-category-bg: #0f0f0f;
+  --ducs-shell-category-border: #202020;
+  --ducs-shell-control-hover-bg: #272727;
+  --ducs-shell-control-active-bg: #3a3a3a;
+  --ducs-shell-search-bg: #121212;
+  --ducs-shell-search-border: #303030;
+  --ducs-shell-search-action-bg: #222;
+  --ducs-shell-search-action-hover-bg: #303030;
+  --ducs-shell-auth-field-bg: #121212;
+  --ducs-shell-auth-field-focus-bg: #161616;
+  --ducs-shell-status-bg: #272727;
+  --ducs-shell-status-border: #444;
+  --ducs-shell-category-chip-bg: #272727;
+  --ducs-shell-category-chip-hover-bg: #3f3f3f;
+  --ducs-shell-category-chip-active-bg: #f1f1f1;
+  --ducs-shell-logout-divider: #303030;
+  --ducs-shell-logout-hover-bg: #272727;
+
+  /* Profile page surfaces — exact legacy palette retained. */
+  --ducs-profile-card-bg-start: #171717;
+  --ducs-profile-card-bg-end: #111;
+  --ducs-profile-avatar-bg-start: #282e34;
+  --ducs-profile-avatar-bg-end: #17191c;
+  --ducs-profile-divider: #2a2a2a;
+  --ducs-profile-topbar-bg: rgba(13, 13, 13, .9);
+  --ducs-profile-topbar-border: #242424;
+  --ducs-profile-card-shadow: #0005;
+  --ducs-profile-muted: #929292;
+  --ducs-profile-heading: #f3f3f3;
+  --ducs-profile-card-border: #303030;
+  --ducs-profile-avatar-border: #444;
+  --ducs-profile-label: #d8d8d8;
+
+  /* Upload Studio graphite creator workspace. */
+  --ducs-upload-page-bg: #111216;
+  --ducs-upload-panel-bg: #141414;
+  --ducs-upload-panel-border: #303030;
+  --ducs-upload-input-bg: #0d0d0d;
+  --ducs-upload-preview-bg: #101010;
+  --ducs-upload-list-bg: #121212;
+  --ducs-upload-control-bg: #181818;
+  --ducs-upload-dialog-bg: #181818;
+  --ducs-upload-header-bg: #0f0f0f;
+  --ducs-upload-header-border: #292929;
+  --ducs-upload-notice-error-bg: #291616;
+  --ducs-upload-notice-error-border: #633737;
+  --ducs-upload-dialog-backdrop: #000b;
+
+  /* Homepage editorial content surfaces. */
+  --ducs-home-page-bg: #111216;
+  --ducs-home-page-border: rgba(255, 255, 255, .055);
+  --ducs-home-status-border: #cfc7bd;
+  --ducs-home-secondary-border: #77716a;
+  --ducs-home-header-bg: #111216;
+  --ducs-home-hero-bg: #f8f3ec;
+  --ducs-home-card-bg: #fffdfa;
+  --ducs-home-card-border: #e4ddd4;
+  --ducs-home-select-border: #8d8984;
+  --ducs-home-report-track: #e7e0d7;
+  --ducs-home-modal-backdrop: #000b;
+  --ducs-home-modal-border: #aaa;
+  --ducs-home-editor-panel-bg: #edf3fa;
+  --ducs-home-editor-border: #9bb0c7;
+  --ducs-home-builder-bg: #edf1f5;
+  --ducs-home-builder-sidebar: #f8fafc;
+  --ducs-home-builder-canvas: #fff;
+
+  /* Homepage editor, builder and account overlays. */
+  --ducs-home-editor-toggle-bg: #e7eef7;
+  --ducs-home-editor-panel-border: #9bb0c7;
+  --ducs-home-builder-border: #cbd5df;
+  --ducs-home-builder-stage: #f3f6f9;
+  --ducs-home-builder-canvas-border: #d5dde6;
+  --ducs-home-register-bg-start: #171717;
+  --ducs-home-register-bg-mid: #101010;
+  --ducs-home-register-bg-end: #0d0d0d;
+  --ducs-home-register-border: #383838;
+  --ducs-home-register-input-bg: #0e0e0e;
+  --ducs-home-suspension-bg-start: #202833;
+  --ducs-home-suspension-bg-mid: #11151b;
+  --ducs-home-suspension-bg-end: #090b0f;
+  --ducs-home-suspension-panel-border: rgba(177,194,214,.16);
+  --ducs-home-profilebar-bg-start: #202832;
+  --ducs-home-profilebar-bg-end: #171d25;
+  --ducs-home-profilebar-border: #343b43;
+  /* Shared profile drawer and secondary homepage search surfaces. */
+  --ducs-shell-profile-drawer-bg-start: #171a20;
+  --ducs-shell-profile-drawer-bg-mid: #101216;
+  --ducs-shell-profile-drawer-bg-end: #0d0f12;
+  --ducs-shell-profile-drawer-border: rgba(255,255,255,.1);
+  --ducs-shell-profile-drawer-shadow: rgba(0,0,0,.42);
+  --ducs-shell-profile-drawer-avatar-bg-start: #303946;
+  --ducs-shell-profile-drawer-avatar-bg-end: #1b2028;
+  --ducs-shell-profile-drawer-view-bg-start: rgba(58,133,95,.2);
+  --ducs-shell-profile-drawer-view-bg-end: rgba(58,133,95,.07);
+  --ducs-shell-profile-drawer-divider-start: rgba(255,255,255,.15);
+  --ducs-shell-profile-drawer-divider-end: rgba(255,255,255,.025);
+  --ducs-shell-home-search-bg: #151515;
+  --ducs-shell-home-search-border: #303030;
+  --ducs-shell-home-search-button-bg: #202020;
+
+  --ducs-shell-profile-menu-bg: #202329;
+  --ducs-shell-profile-menu-border: #41464e;
+  --ducs-shell-profile-menu-hover-ring: rgba(91,190,137,.12);
+  --ducs-shell-profile-drawer-avatar-border: #414a55;
+  /* Live Users page chrome and list-state surfaces. */
+  --ducs-live-topbar-border: #252525;
+  --ducs-live-heading-gradient-start: #151515;
+  --ducs-live-heading-gradient-end: #101010;
+  --ducs-live-row-highlight-bg: #1b1b1b;
+  --ducs-live-avatar-surface: #303030;
+  /* Live Users account drawer and dialog surfaces. */
+  --ducs-live-drawer-close-border: #3b3b3b;
+  --ducs-live-drawer-scrollbar: #414141;
+  --ducs-live-drawer-profile-border: #454545;
+  --ducs-live-dialog-shadow: rgba(0,0,0,.72);
+  --ducs-live-dialog-detail-divider: #292929;
+  /* Upload Studio legacy palette aliases and opaque workspace surfaces */
+  --ducs-upload-panel-strong-bg: #242943;
+  --ducs-upload-sidebar-bg: #171b30;
+  --ducs-upload-pink-accent: #e49a9a;
+  --ducs-upload-panel-secondary-bg: #181818;
+}

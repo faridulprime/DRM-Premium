@@ -1,0 +1,61 @@
+/* DUCS primitives — raw color values only; consume through semantic tokens. */
+:root {
+  --ducs-white: #ffffff;
+  --ducs-black: #000000;
+  --ducs-neutral-0: #ffffff;
+  --ducs-neutral-50: #f8f8f8;
+  --ducs-neutral-75: #f1f1f1;
+  --ducs-neutral-100: #ededed;
+  --ducs-neutral-200: #d9d9d9;
+  --ducs-neutral-300: #bdbdbd;
+  --ducs-neutral-400: #929292;
+  --ducs-neutral-450: #aaaaaa;
+  --ducs-neutral-500: #737373;
+  --ducs-neutral-600: #66615b;
+  --ducs-neutral-650: #666666;
+  --ducs-neutral-700: #414141;
+  --ducs-neutral-800: #303030;
+  --ducs-neutral-850: #272727;
+  --ducs-neutral-900: #181818;
+  --ducs-neutral-925: #141414;
+  --ducs-neutral-940: #131313;
+  --ducs-neutral-950: #0f0f0f;
+  --ducs-neutral-975: #0d0d0d;
+
+  --ducs-brand-blue-300: #68b8ff;
+  --ducs-brand-blue-400: #3ea6ff;
+  --ducs-brand-blue-500: #183d5c;
+  --ducs-brand-red-500: #e51b13;
+  --ducs-brand-mint-400: #7ce2bd;
+  --ducs-brand-violet-400: #a58cff;
+  --ducs-brand-indigo-500: #5b62d9;
+  --ducs-brand-gold-400: #c7a97b;
+  --ducs-brand-steel-400: #8cb8f2;
+  --ducs-brand-rose-400: #ffb8c0;
+  --ducs-brand-lavender-50: #f3f0ff;
+
+  --ducs-green-400: #83efa5;
+  --ducs-green-450: #35bd72;
+  --ducs-green-500: #16834a;
+  --ducs-yellow-400: #f4c96b;
+  --ducs-orange-400: #f0a36b;
+  --ducs-red-350: #ff9292;
+  --ducs-red-400: #f87171;
+  --ducs-red-450: #ff9b9b;
+  --ducs-red-500: #dc2626;
+  --ducs-blue-400: #60a5fa;
+  --ducs-purple-400: #b69cff;
+
+  --ducs-alpha-black-08: rgb(0 0 0 / 8%);
+  --ducs-alpha-black-16: rgb(0 0 0 / 16%);
+  --ducs-alpha-black-32: rgb(0 0 0 / 32%);
+  --ducs-alpha-black-56: rgb(0 0 0 / 56%);
+  --ducs-alpha-white-06: rgb(255 255 255 / 6%);
+  --ducs-alpha-white-10: rgb(255 255 255 / 10%);
+  --ducs-alpha-white-16: rgb(255 255 255 / 16%);
+  --ducs-alpha-success-12: rgb(131 239 165 / 12%);
+  --ducs-alpha-warning-12: rgb(244 201 107 / 12%);
+  --ducs-alpha-danger-12: rgb(248 113 113 / 12%);
+  --ducs-alpha-info-12: rgb(96 165 250 / 12%);
+  --ducs-ink-on-primary: #07131f;
+}

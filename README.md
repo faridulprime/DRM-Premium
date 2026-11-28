@@ -16,7 +16,7 @@ All current work is on `feature/full-admin-panel`. Production `main` has not bee
 - Owner-only website settings.
 - Owner-only user/role management. Owner can promote a verified user to Admin or revoke that Admin role.
 - Removing an Admin revokes their sessions and demotes the account to User. Their content is retained; Owner continues to control it.
-- Passwords use PBKDF2-HMAC-SHA-256 with a unique random salt per account and 210,000 iterations.
+- Passwords use PBKDF2-HMAC-SHA-256 with a unique random salt per account and 100,000 iterations.
 - Sessions use random opaque tokens stored as SHA-256 hashes in D1, with HttpOnly, Secure and SameSite=Strict cookies; session lifetime is seven days.
 - Login throttling: up to 8 failed attempts per IP hash in a 15-minute window.
 - Mutating API requests require a matching same-origin Origin header.
@@ -27,38 +27,69 @@ All current work is on `feature/full-admin-panel`. Production `main` has not bee
 The management API requires the D1 database binding and encrypted secrets.
 
 1. Cloudflare Pages project `drm-premium` → Settings → Bindings → D1 database.
-2. Keep the existing Production database `drmdatabase` untouched for now. Create a separate D1 database named `drmdatabase-preview` and bind it as `DB` in the Preview environment only. Do not point Preview at the Production database.
-3. In the `drmdatabase-preview` Console, run `migrations/0001_admin.sql` once.
-4. Then run `migrations/0002_owner_roles_and_content_ownership.sql` once.
-5. Pages project → Settings → Variables and Secrets. Add encrypted secrets:
+2. Keep the existing Production database `drmdatabase` untouched. Create a separate D1 database named `drmdatabase-preview` and bind it as `DB` in the Preview environment only. Do not point Preview at the Production database.
+3. For a **brand-new, empty Preview database only**, open its D1 Console and execute the SQL files individually, in this exact order:
+   - `migrations/0001_admin.sql`
+   - `migrations/0002_owner_roles_and_content_ownership.sql`
+   - `migrations/0003_single_owner_guard.sql`
+   - `migrations/0004_admin_analytics.sql`
+   - `migrations/0004_owner_email_otp.sql`
+   - `migrations/0005_site_builder_foundation.sql`
+   - `migrations/0006_active_user_presence.sql`
+   - `migrations/0007_user_registration.sql`
+   - `migrations/0007_user_restrictions_and_activity.sql`
+   - `migrations/0008_user_profiles.sql`
+   
+   Both files sharing prefix `0004` and both files sharing prefix `0007` are required. The complete inventory and dependency notes are in [`migrations/manifest.json`](migrations/manifest.json). Run one file at a time and inspect the result before continuing.
+4. Create a free Google Apps Script project and paste `google-apps-script/Code.gs` into its editor.
+   - In Project Settings → Script Properties, add `DRM_OTP_TOKEN` (a long random value) and `OWNER_EMAIL` (the same Owner email).
+   - Deploy → New deployment → Web app. Execute as **Me**; access: **Anyone**. Authorize Gmail sending when prompted and copy the Web app URL ending in `/exec`.
+5. Pages project → Settings → Variables and Secrets. Add encrypted secrets in the **Preview** environment:
    - `OWNER_EMAIL`: the one email address allowed to create the single Owner account.
-   - `BOOTSTRAP_SECRET`: a one-time random secret, at least 32 random characters.
+   - `GOOGLE_APPS_SCRIPT_URL`: the Apps Script Web app `/exec` URL.
+   - `GOOGLE_APPS_SCRIPT_TOKEN`: exactly the same random value saved as Apps Script property `DRM_OTP_TOKEN`.
    - `SESSION_SECRET`: a separate random secret, at least 32 random characters.
 6. Deploy the `feature/full-admin-panel` branch to a Preview URL.
-7. Open the preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), desired username, a new password of at least 12 characters, and the Bootstrap Secret.
-8. After Owner setup succeeds, remove `BOOTSTRAP_SECRET` from the Preview environment. Keep `OWNER_EMAIL` and `SESSION_SECRET`. Do not change Production secrets or bindings yet.
-9. Test Owner and Admin permissions using separate test accounts before merging.
+7. Open the Preview `/admin`. Enter the Owner email (must match `OWNER_EMAIL`), username, a password of at least **8 characters**, request the email code, then enter the 6-digit code to create the Owner account.
+8. Test Owner and Admin permissions using separate test accounts before merging.
 
 Never commit secrets to GitHub or send them in chat/screenshots. Use Cloudflare encrypted secrets only. Do not use a password previously shared in chat.
 
 ## D1 migrations
 
-The first migration creates the original users, sessions, login-attempt throttling, videos, categories and settings tables, plus sample content.
+The complete migration inventory, fresh-database execution order, dependencies and known filename-prefix collisions are recorded in [`migrations/manifest.json`](migrations/manifest.json). The manifest is documentation only: it is not a Wrangler migrations configuration and does not record applied state.
 
-The second migration adds usernames, email-verification state, Owner role and content ownership columns. It promotes the first existing account to Owner. If the Owner is created after migration, the bootstrap endpoint assigns any legacy unowned content to that Owner.
+For a brand-new empty database, apply all ten SQL files individually in the order listed in the Cloudflare setup section above. Both `0004` files and both `0007` files are required. The `0002` migration promotes the earliest existing account to Owner; review that behavior before using it on a database with existing users.
 
-Run each migration only once per database, in numerical order. Keep D1 backups/exports before applying schema changes to a database containing important data.
+**Existing database warning:** Do not rerun these files against an existing Preview or Production database. A schema inspection that finds the expected tables does not prove which migration files ran or in what order. The current Preview preflight found no migration/meta table, so its historical migration ledger is unverified. Do not run `wrangler d1 migrations apply` or create a synthetic migration baseline until the database has been backed up and its complete schema/data state has been reconciled against a fresh-install test. Keep D1 backups/exports before any schema change.
 
 ## Important implementation status / limitations
 
-- Public account registration and email-verification delivery are not implemented yet. The Owner can only promote an existing verified User once registration/verification is added. Until then, the Owner role controls are not yet a complete public onboarding flow.
+- Public account registration is implemented as a two-step email-verified flow. The required `user_registration_otps` table is created by `migrations/0007_user_registration.sql` in the fresh-database sequence above. Before enabling registration on an existing database, verify that table exists; do not rerun the migration if it is already present. New public accounts are created with the `user` role only; Owner/Admin privileges remain Owner-controlled.
 - Google Authenticator (TOTP), SMS OTP, password reset and email-based account recovery are not implemented yet.
-- The initial Owner bootstrap is protected by Cloudflare secrets; no Owner password is stored in source code.
+- The initial Owner setup verifies the configured Owner email with a one-time code sent through Gmail using the Google Apps Script mailer; no Owner password, OTP, or mailer token is stored in source code.
 - Direct binary image upload is not included; the current site accepts HTTPS image URLs.
 - Admin content ownership currently covers videos and categories. Article, reference and folder content types need their own owner_id schema/API before those features are enabled.
-- Dashboard activity/online indicators and upload-count analytics are not implemented yet.
+- Website Builder: Owner-only draft/state/history API for schema-validated JSON documents, optimistic revision conflict checks and a 30-day revision timeline. The JSON document editor remains draft-only: `/api/builder/state` reports `publishEnabled: false`, and no public renderer/publish pipeline for that JSON document exists. Separate style overrides are saved by `Save website style` through `/api/builder/style` (or the legacy visual editor through `/api/admin/settings`); these write `settings.visual_editor_config`, which the homepage reads from `/api/settings` and applies. These style-save/reset actions therefore change the current environment's public appearance rather than remain in the JSON draft. The UI now requires confirmation and identifies that live effect. Media management is not implemented.
+- Dashboard tab-view analytics, online Admin presence and video post counts are implemented. Analytics currently records main navigation tab visits; it does not yet measure unique visitors or detailed engagement.
 - Use YouTube videos you own or are authorized to embed. Unlisted links are not access-controlled.
 
 ## Site identity
 
 The public-facing product name is DRM- Premium. The current UI still has a few legacy FRAME labels that will be updated in the public-site redesign.
+
+## Governance foundation (DUGA)
+
+DUGA is being introduced as a separate governance layer. The Git-based governance foundation and CI checks are implemented. The D1 operational schema remains a non-executable draft; an initial Owner-only health probe exists, but the full governance API and Control Center are not implemented. DUGA does not replace the existing Owner/Admin/User authorization or become a runtime dependency of the public website. The read-only API foothold now includes `GET /api/governance/changes` (Owner-only filtered/keyset-paginated list) and `GET /api/governance/changes/:id` (Owner-only detail with bounded reviews, approvals, validation runs and audit events). These endpoints do not mutate governance state; their handler tests use mocked D1 and do not establish Preview readiness.
+
+- [DUGA architecture](docs/DUGA-SPEC.md)
+- [DUGA implementation plan](docs/DUGA-IMPLEMENTATION-PLAN.md)
+- [Repository audit baseline](docs/DUGA-REPOSITORY-BASELINE.md)
+- [System registry](governance/registry/systems.json)
+- [Ownership and roles](governance/ownership/)
+- [Dependency baseline](governance/dependencies/systems.json)
+- [AI onboarding entry point](docs/AI-CONTINUITY/MASTER-ONBOARDING.md)
+
+The D1 schema draft has passed in-memory SQLite regression tests only; it has not been applied to Preview or Production. `GET /api/governance/health` is an authenticated Owner-only read-only D1 connectivity/schema-presence probe. It reports `not_installed`, `partial` or `ready` after checking expected tables, required columns, named indexes (including the unique single-platform-owner index) and required triggers. `ready` means those named structures are present, not exact DDL equivalence, migration-history validation or data integrity. Full D1-backed governance APIs, Control Center UI and executable Deep Cleaner remain unimplemented. Preview migration history and backup must be verified before proposing or applying a migration. Keep Preview and Production databases isolated; do not apply a governance migration to Production without a separately approved change.
+
+The design-only DUGA schema is also checked by `scripts/validate-duga-schema-structure.py`, which validates its table/column inventory, index uniqueness/partial flags, trigger body markers, key foreign keys and selected CHECK constraints in in-memory SQLite. This is not a live Preview D1 validation.

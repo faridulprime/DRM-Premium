@@ -1,0 +1,5 @@
+/* DUFS — DRM Universal Folder System design tokens and semantic surfaces. */
+:root{--dufs-surface:#0f0f0f;--dufs-surface-raised:#171717;--dufs-border:rgba(255,255,255,.12);--dufs-text:#f3f4f6;--dufs-muted:#969ba4;--dufs-accent:#3b82f6;--dufs-folder:#d7ad65}
+.dufs-system,.dufs-list{color:var(--dufs-text);background:var(--dufs-surface)}
+.dufs-system [data-dufs-folder]{min-width:0}
+.dufs-system .dufs-muted{color:var(--dufs-muted)}

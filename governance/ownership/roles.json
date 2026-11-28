@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "roles": [
+    {"id":"platform-owner","kind":"human","description":"Final human authority for platform-wide governance and high-risk actions.","permissions":["read","analyze","propose","approve","execute","recover","manage-governance"]},
+    {"id":"governance-manager","kind":"human","description":"Maintains registry and governance configuration within delegated scope.","permissions":["read","analyze","propose","manage-registry"]},
+    {"id":"system-owner","kind":"human","description":"Accountable owner for one or more registered systems.","permissions":["read","analyze","propose","approve-scoped"]},
+    {"id":"ai-maintainer","kind":"ai","description":"Performs scoped analysis and implementation on an approved feature branch.","permissions":["read","analyze","propose","implement-scoped"]},
+    {"id":"independent-ai-auditor","kind":"ai","description":"Reviews evidence and changes independently; cannot approve its own implementation.","permissions":["read","analyze","review"]},
+    {"id":"read-only-observer","kind":"human","description":"Can inspect governance records without mutation rights.","permissions":["read"]}
+  ],
+  "separationOfDuties": [
+    "The actor recorded as implementer cannot be the independent auditor for the same change.",
+    "AI roles cannot provide final human approval.",
+    "High-risk and destructive actions require explicit Platform Owner approval.",
+    "Role assignment changes require an authorized human actor and an audit event."
+  ]
+}

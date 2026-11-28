@@ -1,0 +1,203 @@
+/* DRM Universal Sizing System — interactive target baseline
+ * Visual icon and text dimensions remain owned by their component tokens.
+ * This sheet is deliberately loaded after page styles so legacy component
+ * height overrides cannot shrink primary interactive hit areas below 44px.
+ */
+.topbar>.yt-menu-trigger,
+.live-topbar>.yt-menu-trigger,
+.studio-global-topbar>.yt-menu-trigger {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.topbar a.brand,
+.live-topbar a.brand,
+.studio-global-topbar a.brand,
+.profile-topbar a.profile-brand {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.profile-topbar .profile-back {
+  display:inline-flex!important;
+  align-items:center;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.yt-search,
+.admin-search,
+.live-search {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.yt-search input,
+.yt-search button,
+.live-search input {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.yt-search button {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  flex-basis:var(--duss-touch-target-min, 44px)!important;
+}
+
+.live-back-link {
+  display:inline-flex!important;
+  align-items:center;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.live-banned-trigger,
+.save-profile,
+.side-link,
+.category-chip {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.category-chip {
+  display:inline-flex;
+  align-items:center;
+}
+
+.live-error-link {
+  display:inline-flex;
+  align-items:center;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+/* Header controls and search actions */
+.topbar>.yt-menu-trigger,
+.admin-topbar>.yt-menu-trigger,
+.live-topbar>.yt-menu-trigger,
+.studio-global-topbar>.yt-menu-trigger {
+  inline-size:var(--duss-touch-target-min, 44px)!important;
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+  flex:0 0 var(--duss-touch-target-min, 44px)!important;
+}
+
+.yt-search>button,
+.admin-search>button {
+  inline-size:var(--duss-touch-target-min, 44px)!important;
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+  flex:0 0 var(--duss-touch-target-min, 44px)!important;
+}
+
+.topbar .yt-auth-field {
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.topbar .yt-auth-field input {
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+  min-inline-size:44px!important;
+}
+
+.topbar>#headerLoginForm>.yt-login-action,
+.topbar .yt-create-button {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.admin-main .gate-panel input:not([type="checkbox"]),
+.admin-main .gate-panel select,
+.admin-main .gate-panel textarea,
+.admin-main .admin-login-panel input:not([type="checkbox"]),
+.admin-main .admin-login-panel select,
+.admin-main .admin-login-panel textarea {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+.admin-main .gate-panel .primary,
+.admin-main .admin-login-panel .primary {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+/* Compact Admin header actions must retain the universal 44px hit area. */
+#newVideo {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+  min-height:46px!important;
+}
+
+/* High-specificity component overrides: preserve each page's responsive layout. */
+#menuToggle {
+  inline-size:44px!important;
+  block-size:44px!important;
+  min-inline-size:44px!important;
+  min-block-size:44px!important;
+  flex:0 0 44px!important;
+}
+
+#searchSubmit,
+#adminSearchClear {
+  inline-size:44px!important;
+  block-size:44px!important;
+  min-inline-size:44px!important;
+  min-block-size:44px!important;
+  flex:0 0 44px!important;
+}
+
+.category-chip {
+  min-inline-size:44px!important;
+  justify-content:center;
+}
+
+.admin-main .gate-panel .primary,
+.admin-main .admin-login-panel .primary {
+  min-block-size:calc(var(--duss-touch-target-min, 44px) + 1px)!important;
+}
+
+/* Universal tabs and folder controls: preserve the DUSS 44px hit-area
+   even when later component styles declare compact visual heights. */
+.category-tabs>.category-chip,
+.dufn-tab,
+.dufn-folder,
+.dumc-nav-item,
+.live-restriction-tab,
+.upload-studio-page .page-tabs>.tab,
+.upload-studio-page .type-switch>.type,
+.upload-studio-page .device-switch>button {
+  min-height:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+.upload-studio-page .device-switch>button {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+/* DUFS dropdown header close control. */
+.dufn-panel-close {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+/* Minimum target sizing for workspace form controls and compact actions. */
+.profile-field input,
+.profile-field select,
+.admin-main input:not([type="checkbox"]),
+.admin-main select,
+.upload-studio-page .panel input:not([type="checkbox"]),
+.upload-studio-page .panel select,
+.upload-studio-page .panel textarea,
+.upload-studio-page .panel button:not(.preview-thumb),
+.admin-main .row-actions button,
+.admin-main .overview-actions button,
+.admin-main .overview-text-action,
+.avatar-actions .upload-button,
+.avatar-actions .remove-avatar {
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}
+.avatar-actions .upload-button,
+.avatar-actions .remove-avatar {
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+}
+
+/* Profile drawer opener/close controls retain a full 44px pointer and keyboard target. */
+.home-page .topbar .account-controls #profileMenuToggle,
+.profile-drawer .profile-drawer-close {
+  inline-size:var(--duss-touch-target-min, 44px)!important;
+  block-size:var(--duss-touch-target-min, 44px)!important;
+  min-inline-size:var(--duss-touch-target-min, 44px)!important;
+  min-block-size:var(--duss-touch-target-min, 44px)!important;
+}

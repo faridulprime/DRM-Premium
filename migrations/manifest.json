@@ -1,0 +1,132 @@
+{
+  "manifest_version": 1,
+  "purpose": "Documentation-only inventory and fresh-database execution order for existing D1 SQL migrations, including DUMC.",
+  "execution_policy": {
+    "automatic": false,
+    "wrangler_migrations_configured": false,
+    "requires_human_review": true,
+    "warning": "This manifest does not record which migrations have been applied to any database. Never infer applied state from this file."
+  },
+  "fresh_database_order": [
+    {
+      "order": 1,
+      "file": "0001_admin.sql",
+      "purpose": "Create core users, sessions, login attempts, videos, categories and settings; seed initial content and settings.",
+      "depends_on": [],
+      "notes": [
+        "Contains INSERT OR IGNORE seed statements."
+      ]
+    },
+    {
+      "order": 2,
+      "file": "0002_owner_roles_and_content_ownership.sql",
+      "purpose": "Add username and email verification fields, content ownership columns, promote the earliest account to Owner, and create related indexes.",
+      "depends_on": [
+        "0001_admin.sql"
+      ],
+      "notes": [
+        "Promotes the earliest existing user to Owner."
+      ]
+    },
+    {
+      "order": 3,
+      "file": "0003_single_owner_guard.sql",
+      "purpose": "Enforce at most one Owner with a partial unique index.",
+      "depends_on": [
+        "0002_owner_roles_and_content_ownership.sql"
+      ]
+    },
+    {
+      "order": 4,
+      "file": "0004_admin_analytics.sql",
+      "purpose": "Create analytics_events and admin_presence with indexes.",
+      "depends_on": [
+        "0001_admin.sql"
+      ],
+      "notes": [
+        "Shares numeric prefix 0004 with 0004_owner_email_otp.sql; both files are required."
+      ]
+    },
+    {
+      "order": 5,
+      "file": "0004_owner_email_otp.sql",
+      "purpose": "Create owner_setup_otps.",
+      "depends_on": [
+        "0001_admin.sql"
+      ],
+      "notes": [
+        "Shares numeric prefix 0004 with 0004_admin_analytics.sql; both files are required."
+      ]
+    },
+    {
+      "order": 6,
+      "file": "0005_site_builder_foundation.sql",
+      "purpose": "Create Website Builder document and revision tables.",
+      "depends_on": [
+        "0001_admin.sql"
+      ]
+    },
+    {
+      "order": 7,
+      "file": "0006_active_user_presence.sql",
+      "purpose": "Create visitor_presence and its indexes.",
+      "depends_on": [
+        "0001_admin.sql"
+      ]
+    },
+    {
+      "order": 8,
+      "file": "0007_user_registration.sql",
+      "purpose": "Create user_registration_otps and its indexes.",
+      "depends_on": [],
+      "notes": [
+        "Shares numeric prefix 0007 with 0007_user_restrictions_and_activity.sql; both files are required."
+      ]
+    },
+    {
+      "order": 9,
+      "file": "0007_user_restrictions_and_activity.sql",
+      "purpose": "Create user_restrictions and user_activity_hours with indexes.",
+      "depends_on": [
+        "0001_admin.sql"
+      ],
+      "notes": [
+        "Shares numeric prefix 0007 with 0007_user_registration.sql; both files are required."
+      ]
+    },
+    {
+      "order": 10,
+      "file": "0008_user_profiles.sql",
+      "purpose": "Create user_profiles and its index.",
+      "depends_on": [
+        "0001_admin.sql"
+      ]
+    },
+    {
+      "order": 11,
+      "file": "0009_dumc_movie_library.sql",
+      "purpose": "Create DUMC folder taxonomy, canonical movie metadata, multi-folder assignments, audio tracks and subtitles; seed 226 stable taxonomy nodes and backfill metadata rows for existing videos.",
+      "depends_on": [
+        "0001_admin.sql",
+        "0002_owner_roles_and_content_ownership.sql"
+      ],
+      "notes": [
+        "Additive migration; does not alter existing videos or categories.",
+        "Existing video metadata remains unknown unless verified; no language/industry is inferred.",
+        "Apply only after confirming the target D1 migration history."
+      ]
+    },
+    {
+      "order": 12,
+      "file": "0010_dumc_release_years_1956_1959.sql",
+      "purpose": "Add the missing 1956–1959 release-year folders under the pre-1960 year group, completing the public 1950–2026 range.",
+      "depends_on": [
+        "0009_dumc_movie_library.sql"
+      ],
+      "notes": [
+        "Additive and idempotent; inserts only four system folder records.",
+        "Existing 2027–2029 taxonomy nodes remain stored but are excluded from the public Year selector."
+      ]
+    }
+  ]
+}

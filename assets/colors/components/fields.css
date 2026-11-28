@@ -1,0 +1,51 @@
+/* DUCS form-field color aliases. */
+:root {
+  --ducs-field-bg: var(--ducs-surface-sunken);
+  --ducs-field-text: var(--ducs-text-primary);
+  --ducs-field-placeholder: var(--ducs-text-muted);
+  --ducs-field-border: var(--ducs-border-default);
+  --ducs-field-border-focus: var(--ducs-focus-ring);
+
+  /* Live Users search field — exact legacy values preserved. */
+  --ducs-live-field-bg: #171717;
+  --ducs-live-field-text: #eee;
+  --ducs-live-field-placeholder: #858585;
+  --ducs-live-field-border: #303030;
+  --ducs-live-field-border-focus: #555;
+
+  /* Admin dashboard fields — legacy colors preserved. */
+  --ducs-admin-field-border: #3f3f3f;
+  --ducs-admin-field-bg: #121212;
+  --ducs-admin-login-label: #aaa;
+  --ducs-admin-login-field-border: #303030;
+  --ducs-admin-login-focus-border: #555;
+
+  /* Shared shell search and authentication fields. */
+  --ducs-shell-search-placeholder: #888;
+  --ducs-shell-auth-field-border: #3f3f3f;
+  --ducs-shell-auth-field-focus-border: #8ab4f8;
+  --ducs-shell-auth-field-icon: #aaa;
+  --ducs-shell-auth-placeholder: #aaa;
+
+  /* Profile form fields. */
+  --ducs-profile-field-bg: #0c0c0c;
+  --ducs-profile-field-text: #eee;
+  --ducs-profile-field-border: #383838;
+  --ducs-profile-field-focus-border: #718c7a;
+  --ducs-profile-field-placeholder: #7d7d7d;
+
+  /* Upload Studio form controls. */
+  --ducs-upload-field-border: #353535;
+  --ducs-upload-field-focus-border: #6d9f86;
+  --ducs-upload-field-focus-ring: #7ce2bd18;
+  --ducs-upload-field-text: #ededed;
+  --ducs-upload-field-label: #d5d5d5;
+
+  /* Homepage account and builder fields. */
+  --ducs-home-header-field-border: #242321;
+  --ducs-home-header-field-placeholder: #393633;
+  --ducs-home-editor-field-border: #a8b9cc;
+  --ducs-home-builder-field-border: #cbd5df;
+  --ducs-home-register-field-border: #383838;
+  --ducs-home-register-focus-ring: rgba(255,255,255,.045);
+}

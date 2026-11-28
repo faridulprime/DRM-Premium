@@ -1,0 +1,114 @@
+# DRM Premium — Source Audit
+Date: 2026-11-25
+Target ref: `feature/full-admin-panel`
+Review mode: GitHub source inspection and repository-document reconciliation
+
+## Scope
+
+Inspected the current homepage, public scripts, Pages API catch-all, Admin, Live Users, Upload Studio, Profile styles, DUSS token definitions, README, DUSS specification, and continuity files. Reviewed the separate DUGA Draft PR #4 metadata and its linked validation records.
+
+This is a source-level audit. It is not a browser test, penetration test, Cloudflare configuration audit, or Production verification.
+
+## Work completed in this continuation
+
+- Advanced DUSS from v0.5.0 through v0.7.0.
+- Corrected the token stylesheet's stale version header and added a regression assertion so its marker must match DUSS v0.6.0; v0.7.0 keeps this check active.
+- Added 20 semantic icon/slot-size tokens and migrated their audited selector consumers without intentionally changing effective CSS dimensions.
+- Added a versioned DUSS v0.7 section marker for the expanded component-variant tokens and a regression check to keep it aligned with the stylesheet version.
+- Updated the five DUSS stylesheet cache keys to `duss-07`.
+- Added `scripts/test-duss-tokens.py` and `.github/workflows/duss-sizing-smoke.yml` for static regression checks.
+- Tokenized the two remaining audited icon variants and the later hardcoded responsive search overrides; removed one superseded 25px Profile brand declaration.
+- Completed the Admin search token wiring in both `admin.css` and `theme.css`, and migrated the Homepage mobile sidebar's 24px icon slot to the existing navigation-size token.
+- Strengthened regression checks to require token references in every matching compact-search and Profile brand selector block.
+- Confirmed DUSS v0.7.0 GitHub Actions runs #14 and #15 passed static source checks; run #15 also verifies the explicit v0.7 component-section marker. It reports 20 icon/slot tokens with 20 consumer references, plus all audited overrides and cache-key checks.
+- Updated the DUSS and DUGA workflow action versions to current v7 majors after Node 20 deprecation warnings; DUSS run #11 and DUGA runs #251–#253 verified their v7 action execution without the previous Node 20 warning.
+- Updated both DUGA schema-smoke workflow variants to checkout/setup-node/setup-python v7; the follow-up DUGA runs are pending.
+- Added confirmation prompts to both the legacy visual-style save/reset actions and the Builder's direct live-style save action.
+- Clarified the Builder's draft/live-style distinction in the UI and README.
+
+## Findings
+
+### F-01 — Website Builder has two different persistence paths
+
+**Evidence**
+- `/api/builder/state`, `/api/builder/draft`, and `/api/builder/history` operate on the versioned Builder document. The state response reports `publishEnabled: false`.
+- `/api/builder/style` instead writes `settings.visual_editor_config`.
+- The legacy visual editor writes the same setting through `/api/admin/settings`.
+- The homepage fetches `/api/settings`, parses `visual_editor_config`, and applies the resulting style overrides.
+
+**Conclusion**
+
+The JSON Builder document is an unpublished draft. The separate “Save website style” and legacy visual-style actions persist settings that the homepage applies. Treating every Builder action as draft-only was inaccurate.
+
+**Mitigation completed**
+
+The direct live-style save and reset actions now require confirmation. Their status messages identify the public-site effect. README distinguishes the draft JSON document from the separately persisted style overrides.
+
+**Not changed**
+
+No publish endpoint, public renderer, D1 schema, or Builder persistence model was added or altered.
+
+### F-02 — Public presence and analytics endpoints have no route-local request metering
+
+**Evidence**
+- `POST /api/presence` is handled before the general authenticated-user gate. It accepts both a valid session and an anonymous visitor cookie.
+- A signed-in presence heartbeat executes four D1 statements: an activity-hour upsert, activity-history cleanup, visitor-presence upsert, and stale-presence cleanup.
+- A guest heartbeat executes two D1 statements: visitor-presence upsert and stale-presence cleanup. The presence schema has an index on `visitor_presence(last_seen)`.
+- Frontend presence heartbeat functions in `app.js`, `admin.js`, and `live-users.js` use a 30-second interval. This is the legitimate baseline to preserve when sizing any future rate rule.
+- `POST /api/analytics/event` validates the `tab` value against a fixed allow-list, then inserts one `analytics_events` row for each accepted request. No per-IP quota or duplicate-event suppression is visible in this route.
+- `migrations/0004_admin_analytics.sql` creates an index on `analytics_events(tab,created_at)`. No analytics-event retention/delete path was found in the inspected Pages catch-all API; this does not exclude an external scheduled cleanup.
+- The shared non-GET guard requires a matching `Origin` and JSON content type. This is a browser-origin/CSRF gate, not a request-rate limit; an API client can send an `Origin` header.
+- `readBody(req)` checks the declared `Content-Length` against 20,000 bytes before calling `req.json()`. This is a header check rather than a measured streaming-byte limit when the header is absent or inaccurate.
+- Registration OTP uses separate controls: a 60-second per-email resend interval and at most five requests per IP hash in a 15-minute window. Those controls do not cover presence or analytics.
+- No Cloudflare WAF, bot-management, or rate-limit configuration was available in the repository source review.
+
+**Conclusion**
+
+The public write paths have a source-level resource-abuse exposure that needs edge-configuration verification. The available source proves repeated D1 writes are possible through these unauthenticated routes, but it does not prove that the deployed Cloudflare edge lacks protection or that abuse has occurred. Treat this as an unverified risk item, not a confirmed exploitable vulnerability.
+
+**Next action**
+
+Inspect the actual Pages/Cloudflare edge rules and establish normal traffic/heartbeat volume first. Then design endpoint-specific limits with enough burst headroom for the 30-second heartbeat, an event-deduplication policy, and an analytics retention/aggregation policy. Avoid raw-IP storage in D1 unless a documented privacy and retention basis exists. Do not change live route behavior or D1 schema until the controls have regression tests and separate approval.
+
+### F-03 — DUSS migration is source-level only
+
+DUSS v0.7.0 centralizes selected role-badge, Admin action-button, and 20 audited SVG/glyph/icon-slot dimensions. The latest source audit added the 11px Live Users role glyph and 15px Profile drawer logout glyph, and removed hardcoded duplicate search-icon overrides. The icon migration intentionally preserves current CSS dimensions. It does not claim optical equivalence or establish rendered visual alignment.
+
+**Outstanding validation**
+- DUSS GitHub Actions run #10 passed on commit `58c8cbaa4a392757a4c34cd4d472f568fd729f7a`; run #10 verifies source wiring only.
+- Compare rendered screenshots and computed bounding boxes across all five pages.
+- Check desktop/mobile, keyboard and touch operation, 200% zoom, and Bengali/Latin overflow.
+- Perform optical alignment review only after rendered evidence is available.
+
+### F-04 — DUGA remains separate from the website branch
+
+- DUGA review work is on `duga-foundation-review`, Draft PR #4, based on `main`.
+- PR #4 remains open, Draft, and unmerged.
+- After the DUGA workflow action upgrade, review-branch push run #251 (`45605522156`) and PR run #252 (`45605531276`) passed on `37f8e021793549478c0962c2eb22d7d621c048ba`; follow-up push run #254 (`45606013674`) and PR run #255 (`45606021392`) passed on current PR head `1b2bf55c157eddbed798b4cdbccc46c9b0c6be64`; feature-branch run #253 (`45605666896`) also passed on `9d82e249b8cac4b6627081a3526c9c97c3108271`. Worker syntax, schema SQLite, fixture parity, governance and malformed-input checks passed as applicable. The prior Node 20 action deprecation warning was absent. PR #4 remains open, Draft and unmerged.
+- PR #4 records an earlier authenticated disposable-D1 Worker acceptance PASS (run `53d70371-008c-46a0-8bc3-33522be990eb`) on the disposable database only.
+- The lifecycle review says the schema was subsequently extended with predecessor-link and AI-review constraints; revised-schema disposable D1 acceptance is still NOT RUN.
+- Shared Preview migration reconciliation, third-party independent review, trusted service identity, Git provenance, and application integration tests remain outstanding. DUGA Preview write readiness remains NO-GO.
+
+## Validation ledger
+
+| Check | Result |
+|---|---|
+| DUSS token and selector source assertions | Run #15 passed with 20 icon/slot tokens, 20 consumer references, v0.7 section marker and all audited duplicate override checks |
+| Five page cache keys | All five pages use `duss-07`; run #14 verified each |
+| DUSS GitHub Actions | Run #11 verified v7 actions without the previous Node 20 deprecation warning; run #15 verified 20-token source coverage and v0.7 section marker |
+| DUGA GitHub Actions | Review runs #251/#252 and #254/#255 plus feature run #253 passed after v7 action upgrades; CI is local SQLite/syntax only |
+| Browser screenshots / computed geometry | Not run |
+| JavaScript browser interaction regression | Not run |
+| Cloudflare edge/rate-limit configuration | Not inspected |
+| Shared Preview or Production D1 | No write performed |
+| Production deploy / merge | None |
+
+## Recommended next sequence
+
+1. Run the DUSS smoke workflow after the v7 action upgrade and inspect its logs.
+2. Complete browser-based geometry and interaction checks; no browser-rendered proof is currently available.
+3. Audit remaining icon variants, then buttons/badges across all page-specific surfaces.
+4. Inspect Cloudflare edge rate-limits for public presence and analytics writes; measure normal heartbeat traffic before setting thresholds.
+5. Define event deduplication and analytics retention requirements before changing the API or database.
+5. Keep DUGA's revised-schema disposable acceptance and independent review separate from the public-site branch.
+6. Do not apply DUGA migration to shared Preview or Production until the migration-history and review gates close.

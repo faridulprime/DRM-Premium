@@ -1,0 +1,337 @@
+/* DRM Universal Sizing System (DUSS) — v0.8.0
+ * Semantic sizing tokens are introduced incrementally. Component geometry
+ * remains unchanged unless an audited selector explicitly consumes a token.
+ */
+:root {
+  /* Typography */
+  --duss-font-size-micro: 0.625rem;
+  --duss-font-size-xs: 0.75rem;
+  --duss-font-size-sm: 0.875rem;
+  --duss-font-size-base: 1rem;
+  --duss-font-size-md: 1.125rem;
+  --duss-font-size-lg: 1.25rem;
+  --duss-font-size-xl: 1.5rem;
+  --duss-font-size-2xl: 1.875rem;
+  --duss-font-size-3xl: 2.25rem;
+  --duss-font-size-4xl: 3rem;
+  --duss-font-size-5xl: 3.75rem;
+  --duss-line-height-tight: 1.2;
+  --duss-line-height-snug: 1.35;
+  --duss-line-height-normal: 1.5;
+  --duss-line-height-relaxed: 1.65;
+  --duss-font-weight-regular: 400;
+  --duss-font-weight-medium: 500;
+  --duss-font-weight-semibold: 600;
+  --duss-font-weight-bold: 700;
+
+  /* Spacing */
+  --duss-space-1: 0.25rem;
+  --duss-space-2: 0.5rem;
+  --duss-space-3: 0.75rem;
+  --duss-space-4: 1rem;
+  --duss-space-5: 1.25rem;
+  --duss-space-6: 1.5rem;
+  --duss-space-8: 2rem;
+  --duss-space-10: 2.5rem;
+  --duss-space-12: 3rem;
+  --duss-space-16: 4rem;
+  --duss-space-20: 5rem;
+  --duss-space-24: 6rem;
+
+  /* Icon geometry */
+  --duss-icon-size-xs: 0.75rem;
+  --duss-icon-size-sm: 0.875rem;
+  --duss-icon-size-md: 1rem;
+  --duss-icon-size-lg: 1.125rem;
+  --duss-icon-size-xl: 1.25rem;
+  --duss-icon-size-2xl: 1.5rem;
+  --duss-icon-size-3xl: 1.75rem;
+  --duss-icon-size-4xl: 2rem;
+  --duss-icon-size-5xl: 2.5rem;
+  --duss-icon-size-6xl: 3rem;
+
+  /* Controls and touch targets */
+  --duss-control-height-compact: 2rem;
+  --duss-control-height-sm: 2.25rem;
+  --duss-control-height-md: 2.5rem;
+  --duss-control-height-comfort: 2.75rem;
+  --duss-control-height-touch: 3rem;
+  --duss-control-height-lg: 3.25rem;
+  --duss-touch-target-min: 2.75rem;
+  --duss-touch-target-comfort: 3rem;
+  --duss-control-padding-x-sm: 0.75rem;
+  --duss-control-padding-x-md: 1rem;
+  --duss-control-padding-x-lg: 1.25rem;
+
+  /* Badge presets */
+  --duss-badge-height-xs: 1.125rem;
+  --duss-badge-height-sm: 1.375rem;
+  --duss-badge-height-md: 1.625rem;
+  --duss-badge-height-lg: 1.875rem;
+  --duss-badge-font-size-xs: var(--duss-font-size-micro);
+  --duss-badge-font-size-sm: 0.6875rem;
+  --duss-badge-font-size-md: var(--duss-font-size-xs);
+  --duss-badge-font-size-lg: var(--duss-font-size-sm);
+
+  /* Avatar presets */
+  --duss-avatar-size-xs: 1.5rem;
+  --duss-avatar-size-sm: 2rem;
+  --duss-avatar-size-md: 2.5rem;
+  --duss-avatar-size-lg: 3rem;
+  --duss-avatar-size-xl: 4rem;
+  --duss-avatar-size-2xl: 5rem;
+
+  /* Surface geometry */
+  --duss-radius-xs: 0.25rem;
+  --duss-radius-sm: 0.5rem;
+  --duss-radius-md: 0.75rem;
+  --duss-radius-lg: 1rem;
+  --duss-radius-xl: 1.25rem;
+  --duss-radius-2xl: 1.5rem;
+  --duss-radius-pill: 999px;
+  --duss-card-padding-sm: var(--duss-space-3);
+  --duss-card-padding-md: var(--duss-space-4);
+  --duss-card-padding-lg: var(--duss-space-6);
+
+  /* Responsive layout */
+  --duss-page-gutter-mobile: var(--duss-space-4);
+  --duss-page-gutter-tablet: var(--duss-space-6);
+  --duss-page-gutter-desktop: var(--duss-space-8);
+  --duss-grid-gap-sm: var(--duss-space-3);
+  --duss-grid-gap-md: var(--duss-space-4);
+  --duss-grid-gap-lg: var(--duss-space-6);
+  --duss-container-max-reading: 72ch;
+  --duss-container-max-content: 80rem;
+
+  /* Density hooks: opt-in only; no global density is applied. */
+  --duss-density-space-factor: 1;
+  --duss-density-control-factor: 1;
+}
+
+@media (max-width: 760px) {
+  :root { --duss-page-gutter: var(--duss-page-gutter-mobile); }
+}
+@media (min-width: 761px) and (max-width: 1023px) {
+  :root { --duss-page-gutter: var(--duss-page-gutter-tablet); }
+}
+@media (min-width: 1024px) {
+  :root { --duss-page-gutter: var(--duss-page-gutter-desktop); }
+}
+
+
+/* DUSS v0.2 — semantic component aliases and first migration layer.
+   Keep page composition local; centralize reusable sizing decisions here. */
+:root {
+  /* Semantic typography */
+  --duss-text-micro: var(--duss-font-size-micro);
+  --duss-text-caption: var(--duss-font-size-xs);
+  --duss-text-secondary: var(--duss-font-size-sm);
+  --duss-text-body: var(--duss-font-size-base);
+  --duss-text-emphasis: var(--duss-font-size-md);
+  --duss-heading-section: var(--duss-font-size-lg);
+  --duss-heading-card: var(--duss-font-size-xl);
+  --duss-heading-page: var(--duss-font-size-2xl);
+  --duss-heading-hero: var(--duss-font-size-3xl);
+
+  /* Semantic control geometry */
+  --duss-control-height-nav: 2.75rem;
+  --duss-control-height-field: 2.75rem;
+  --duss-control-height-field-mobile: 2.875rem;
+  --duss-control-height-action: 2.75rem;
+  --duss-control-height-action-mobile: 2.875rem;
+  --duss-control-height-icon: 2.75rem;
+  --duss-control-padding-inline: var(--duss-space-3);
+  --duss-control-gap: var(--duss-space-2);
+  --duss-field-gap: var(--duss-space-2);
+  --duss-form-row-gap: var(--duss-space-4);
+
+  /* Semantic component geometry */
+  --duss-header-height-desktop: 4rem;
+  --duss-header-height-mobile: 3.625rem;
+  --duss-sidebar-width: 15rem;
+  --duss-modal-width-sm: 28.75rem;
+  --duss-modal-width-md: 40rem;
+  --duss-modal-width-lg: 56.25rem;
+  --duss-card-gap: var(--duss-space-4);
+  --duss-section-gap: var(--duss-space-8);
+  --duss-table-cell-padding-y: var(--duss-space-3);
+  --duss-table-cell-padding-x: var(--duss-space-4);
+  --duss-tooltip-max-width: 20rem;
+  --duss-toast-max-width: 24rem;
+
+  /* Explicit exceptions preserve established visual identity. */
+  --duss-home-auth-height: 1.875rem;
+  --duss-home-auth-height-mobile: 1.75rem;
+  --duss-profile-avatar-size: 5.5rem;
+  --duss-profile-avatar-size-mobile: 4.25rem;
+}
+
+/* First migration: shared form controls use semantic typography and geometry.
+   Component-specific widths, colors, and layout remain owned by page styles. */
+:where(.admin-main, .upload-studio-page, .profile-page)
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea) {
+  font-size: var(--duss-text-body);
+}
+
+:where(.admin-main, .upload-studio-page) .panel
+:where(input:not([type="checkbox"]), select) {
+  min-height: var(--duss-control-height-field);
+}
+
+.upload-studio-page .panel textarea {
+  font-size: var(--duss-text-body);
+}
+
+.profile-field input,
+.profile-field select {
+  min-height: var(--duss-control-height-field);
+}
+
+.profile-field textarea {
+  font-size: var(--duss-text-body);
+}
+
+.profile-card {
+  padding: var(--duss-card-padding-lg);
+}
+
+.avatar-preview {
+  width: var(--duss-profile-avatar-size);
+  height: var(--duss-profile-avatar-size);
+}
+
+.profile-field {
+  gap: var(--duss-field-gap);
+}
+
+.profile-fields {
+  row-gap: var(--duss-form-row-gap);
+}
+
+@media (max-width: 760px) {
+  :where(.admin-main, .upload-studio-page) .panel
+  :where(input:not([type="checkbox"]), select) {
+    min-height: var(--duss-control-height-field-mobile);
+  }
+
+  .profile-card {
+    padding: var(--duss-space-4) var(--duss-space-3);
+  }
+
+  .avatar-preview {
+    width: var(--duss-profile-avatar-size-mobile);
+    height: var(--duss-profile-avatar-size-mobile);
+  }
+}
+
+
+/* DUSS v0.3 — shared site shell geometry.
+   Values mirror the audited legacy dimensions; this layer centralizes them
+   without changing the rendered sizes. */
+:root {
+  --duss-header-height-desktop: 4rem;
+  --duss-header-height-mobile: 3.625rem;
+  --duss-category-bar-height-desktop: 3.25rem;
+  --duss-category-bar-height-mobile: 3.125rem;
+  --duss-home-shell-offset-desktop: calc(var(--duss-header-height-desktop) + var(--duss-category-bar-height-desktop));
+  --duss-home-shell-offset-mobile: calc(var(--duss-header-height-mobile) + var(--duss-category-bar-height-mobile));
+  --duss-sidebar-width: 15rem;
+  --duss-sidebar-width-mobile-max: 17.5rem;
+  --duss-nav-trigger-size-desktop: 2.5rem;
+  --duss-nav-trigger-size-mobile: 2.375rem;
+  --duss-nav-item-height: 2.625rem;
+  --duss-nav-item-gap: 1.25rem;
+  --duss-nav-icon-size: 1.5rem;
+  --duss-category-gap: 0.75rem;
+  --duss-category-chip-padding-y: 0.5rem;
+  --duss-category-chip-padding-x: 0.8125rem;
+  --duss-category-chip-text: 0.8125rem;
+  --duss-brand-icon-size-desktop: 1.75rem;
+  --duss-brand-icon-size-mobile: 1.5625rem;
+  --duss-page-gutter-home-desktop: 1.375rem;
+  --duss-page-gutter-home-mobile: 0.75rem;
+}
+
+
+/* DUSS v0.4 — semantic role-badge geometry.
+   Token values map exactly to the current role-badge cascade. This is a
+   source-level migration only; it does not intentionally alter rendered sizes. */
+:root {
+  --duss-role-badge-gap: 0.375rem;
+  --duss-role-badge-padding-y: 0.25rem;
+  --duss-role-badge-padding-x: 0.5rem;
+  --duss-role-badge-radius: 999px;
+  --duss-role-badge-font-size: 0.6875rem;
+  --duss-role-badge-line-height: 1.2;
+  --duss-role-badge-font-weight: 650;
+  --duss-role-badge-letter-spacing: 0.035em;
+
+  --duss-role-badge-dashboard-padding-y: 0.4375rem;
+  --duss-role-badge-dashboard-padding-x: 0.6875rem;
+  --duss-role-badge-dashboard-font-size: 0.6875rem;
+  --duss-role-badge-dashboard-letter-spacing: 0.08em;
+
+  --duss-role-badge-mobile-min-height: 1.375rem;
+  --duss-role-badge-mobile-padding-y: 0.1875rem;
+  --duss-role-badge-mobile-padding-x: 0.4375rem;
+  --duss-role-badge-mobile-font-size: 0.6875rem;
+
+  --duss-role-badge-live-padding-y: 0.125rem;
+  --duss-role-badge-live-padding-x: 0.4375rem;
+  --duss-role-badge-live-font-size: 0.5625rem;
+  --duss-role-badge-live-letter-spacing: 0.015em;
+
+  --duss-role-badge-drawer-padding-y: 0.3125rem;
+  --duss-role-badge-drawer-padding-x: 0.5rem;
+  --duss-role-badge-drawer-font-size: 0.5625rem;
+
+  --duss-role-badge-studio-font-size: 0.625rem;
+}
+
+
+/* DUSS v0.5 — Admin action-button geometry.
+   Values mirror the audited Admin action and row-action cascade. */
+:root {
+  --duss-button-admin-padding-y: 0.625rem;
+  --duss-button-admin-padding-x: 1rem;
+  --duss-button-admin-radius: 999px;
+  --duss-button-admin-font-size: 0.875rem;
+  --duss-button-admin-font-size-mobile: 0.8125rem;
+  --duss-button-admin-font-weight: 600;
+  --duss-button-admin-small-padding-y: 0.5rem;
+  --duss-button-admin-small-padding-x: 0.8125rem;
+  --duss-button-admin-row-padding-y: 0.5rem;
+  --duss-button-admin-row-padding-x: 0.75rem;
+  --duss-button-admin-mobile-min-height: 2.625rem;
+  --duss-button-admin-row-mobile-min-height: 2.375rem;
+}
+
+
+/* DUSS v0.6 — audited icon geometry.
+   Semantic variants preserve the existing source dimensions exactly. */
+:root {
+  --duss-icon-size-nav-menu: 1.5rem;
+  --duss-icon-size-search-default: 1.3125rem;
+  --duss-icon-size-auth-field: 1rem;
+  --duss-icon-size-auth-field-compact: 0.875rem;
+  --duss-icon-size-sidebar-logout: 1.375rem;
+  --duss-icon-size-sidebar-glyph: 1.25rem;
+  --duss-icon-size-sidebar-glyph-mobile: 1.1875rem;
+  --duss-icon-size-home-search-mobile: 1.0625rem;
+  --duss-icon-size-home-search-compact: 0.9375rem;
+  --duss-icon-size-admin-search-compact: 1rem;
+  --duss-icon-size-live-search: 0.9375rem;
+  --duss-icon-size-profile-brand: 1.875rem;
+  --duss-icon-size-profile-brand-mobile: 1.6875rem;
+  --duss-icon-size-field-glyph: 0.9375rem;
+  /* DUSS v0.7 — audited component variants and icon slots. */
+  /* Legacy component exceptions retained until a visual redesign is approved. */
+  --duss-icon-size-live-role: 0.6875rem;
+  --duss-icon-size-profile-drawer-logout: 0.9375rem;
+  --duss-icon-size-profile-complete-brand: 1rem;
+  --duss-icon-size-profile-complete-brand-mobile: 0.875rem;
+  --duss-icon-slot-size-live-drawer-action: 1.4375rem;
+  --duss-icon-size-live-drawer-action: 0.75rem;
+}
+
+/* DUSS v0.8 — 44px interactive-target consumer foundation (touch-targets.css). */

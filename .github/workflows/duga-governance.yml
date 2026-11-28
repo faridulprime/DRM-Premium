@@ -1,0 +1,84 @@
+name: DUGA Governance Metadata
+
+on:
+  pull_request:
+    paths:
+      - "docs/DUGA-API-AUTHORIZATION-DESIGN.md"
+      - "docs/DUGA-API-WRITE-CONTRACT.md"
+      - "docs/DUGA-API-INTEGRATION-READINESS.md"
+      - "docs/DUGA-D1-SCHEMA-DESIGN.md"
+      - "docs/DUGA-IMPLEMENTATION-PLAN.md"
+      - "README.md"
+      - "governance/**"
+      - "migrations/**"
+      - "docs/DUGA-SPEC.md"
+      - "docs/AI-CONTINUITY/**"
+      - "scripts/validate-governance.mjs"
+      - "scripts/validate-registry-schema.mjs"
+      - "scripts/test-registry-validator.mjs"
+      - "scripts/validate-migration-inventory.mjs"
+      - "scripts/test-duga-schema.py"
+      - "scripts/validate-duga-schema-structure.py"
+      - "scripts/test-governance-health-api.mjs"
+      - "functions/api/**"
+      - ".github/workflows/duga-governance.yml"
+  push:
+    branches:
+      - main
+      - feature/full-admin-panel
+    paths:
+      - "docs/DUGA-API-AUTHORIZATION-DESIGN.md"
+      - "docs/DUGA-API-WRITE-CONTRACT.md"
+      - "docs/DUGA-D1-SCHEMA-DESIGN.md"
+      - "docs/DUGA-IMPLEMENTATION-PLAN.md"
+      - "README.md"
+      - "governance/**"
+      - "migrations/**"
+      - "docs/DUGA-SPEC.md"
+      - "docs/AI-CONTINUITY/**"
+      - "scripts/validate-governance.mjs"
+      - "scripts/validate-registry-schema.mjs"
+      - "scripts/validate-migration-inventory.mjs"
+      - "scripts/test-duga-schema.py"
+      - "scripts/validate-duga-schema-structure.py"
+      - "scripts/test-governance-health-api.mjs"
+      - "functions/api/**"
+      - ".github/workflows/duga-governance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-governance:
+    name: Validate governance metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check API JavaScript syntax
+        run: |
+          node --check "functions/api/[[path]].js"
+      - name: Test Owner-only DUGA health API
+        run: node scripts/test-governance-health-api.mjs
+      - name: Validate registry, ownership and dependencies
+        run: node scripts/validate-governance.mjs
+      - name: Validate registry schema and dependency cycles
+        run: node scripts/validate-registry-schema.mjs
+      - name: Test registry validator edge cases
+        run: node scripts/test-registry-validator.mjs
+      - name: Validate D1 migration inventory (static only)
+        run: node scripts/validate-migration-inventory.mjs
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test DUGA schema draft in in-memory SQLite
+        run: python scripts/test-duga-schema.py
+      - name: Validate DUGA schema structure and constraints
+        run: python scripts/validate-duga-schema-structure.py

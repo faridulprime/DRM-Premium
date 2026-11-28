@@ -1,0 +1,122 @@
+/* DULM — DRM Universal List Manager. Scoped list surface and layout. */
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{
+ box-sizing:border-box!important;
+ background:#0F0F0F!important;
+ color:#f3f4f6!important;
+ border:1px solid rgba(255,255,255,.13)!important;
+ padding:12px 22px 12px 12px!important;
+ scrollbar-width:none!important;
+ overflow-x:hidden!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]::-webkit-scrollbar{display:none!important;width:0!important}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]>.dufn-panel-head{
+ background:#0F0F0F!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder-grid{
+ display:flex!important;
+ flex-direction:column!important;
+ flex-wrap:nowrap!important;
+ align-items:stretch!important;
+ gap:1px!important;
+ width:100%!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder{
+ box-sizing:border-box!important;
+ display:flex!important;
+ width:100%!important;
+ min-height:36px!important;
+ justify-content:flex-start!important;
+ background:transparent!important;
+ border-radius:6px!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder:hover,
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder:focus-visible{
+ background:rgba(255,255,255,.07)!important;
+ outline:none;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder.active{
+ background:rgba(59,130,246,.13)!important;
+ box-shadow:inset 2px 0 #3b82f6!important;
+}
+
+
+/* DULM adaptive width — grow to the widest folder label, bounded by the viewport. */
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{
+ width:max-content!important;
+ min-width:min(230px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;
+}
+.dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{
+ width:max-content!important;
+ min-width:min(172px,calc(100vw - 28px))!important;
+ max-width:calc(100vw - 28px)!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder-grid{
+ width:max-content!important;
+ min-width:100%!important;
+ max-width:100%!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dulm-folder-row{
+ width:max-content!important;
+ min-width:100%!important;
+ max-width:100%!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dulm-folder-row>.dufn-folder{
+ width:auto!important;
+ min-width:0!important;
+ flex:1 1 auto!important;
+}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-folder span{
+ white-space:nowrap!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+ overflow-wrap:normal!important;
+}
+@media(max-width:420px){
+ .dufn-tab-wrap .dufn-panel[data-dulm-list="true"]{
+  min-width:min(230px,calc(100vw - 20px))!important;
+  max-width:calc(100vw - 20px)!important;
+ }
+ .dufn-tab-wrap #dufnFolderPanel-year[data-dulm-list="true"]{
+  min-width:min(172px,calc(100vw - 20px))!important;
+  max-width:calc(100vw - 20px)!important;
+ }
+}
+
+/* DULM compact count-only header and muted upcoming year. */
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-panel-head{display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:38px!important;padding:9px 10px!important}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-panel-count{font-size:12px!important;font-weight:650!important;line-height:1.2!important;color:#e5e7eb!important;letter-spacing:.01em}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-future-year{opacity:.38!important}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-future-year:hover,.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-future-year:focus-visible{opacity:.58!important}
+.dufn-tab-wrap .dufn-panel[data-dulm-list="true"] .dufn-future-year.active{opacity:.65!important}
+
+/* DULM 1.1 — Owner folder rename mode and compact premium modal. */
+.dulm-folder-row{display:flex;align-items:center;gap:3px;width:100%;min-width:0}
+.dulm-folder-row>.dufn-folder{width:auto!important;min-width:0;max-width:none!important;flex:1 1 auto}
+.dulm-folder-edit{display:inline-grid;place-items:center;flex:0 0 27px;width:27px;height:27px;padding:0;border:1px solid rgba(215,173,101,.18);border-radius:7px;background:rgba(215,173,101,.055);color:#d7ad65;cursor:pointer;opacity:.88;transition:background .16s ease,border-color .16s ease,color .16s ease,transform .16s ease}
+.dulm-folder-edit[hidden]{display:none!important}
+.dulm-folder-edit svg{width:14px;height:14px;display:block}
+.dulm-folder-edit:hover,.dulm-folder-edit:focus-visible{background:rgba(215,173,101,.14);border-color:rgba(215,173,101,.56);color:#f0ca87;outline:none;transform:translateY(-1px)}
+#visualEditorToggle.dulm-editing{border-color:rgba(215,173,101,.8)!important;background:rgba(215,173,101,.13)!important;color:#f0c879!important;box-shadow:0 0 0 3px rgba(215,173,101,.12)!important}
+.dulm-rename-dialog{box-sizing:border-box;width:min(350px,calc(100vw - 32px));max-width:calc(100vw - 32px);margin:auto;padding:0;overflow:hidden;border:1px solid rgba(215,173,101,.25);border-radius:14px;background:#151515;color:#f2f2f2;box-shadow:0 24px 80px rgba(0,0,0,.68)}
+.dulm-rename-dialog::backdrop{background:rgba(0,0,0,.68);backdrop-filter:blur(3px)}
+.dulm-rename-form{display:flex;flex-direction:column;gap:15px;padding:19px}
+.dulm-rename-head{display:flex;align-items:center;justify-content:space-between}
+.dulm-rename-kicker{display:block;margin-bottom:5px;color:#d7ad65;font:600 9px/1.3 "Space Grotesk",sans-serif;letter-spacing:.16em}
+.dulm-rename-head h2{margin:0;color:#f7f7f7;font:650 17px/1.25 "Space Grotesk","Hind Siliguri",sans-serif}
+.dulm-rename-field{display:flex;flex-direction:column;gap:7px;color:#aeb4bd;font:600 11px/1.3 "Space Grotesk","Hind Siliguri",sans-serif}
+.dulm-rename-field input{box-sizing:border-box;width:100%;min-width:0;height:42px;padding:0 12px;border:1px solid #3c4149;border-radius:8px;outline:none;background:#0f0f0f;color:#f7f7f7;font:500 13px/1.3 "Space Grotesk","Hind Siliguri",sans-serif;transition:border-color .16s ease,box-shadow .16s ease}
+.dulm-rename-field input:focus{border-color:#b58c4e;box-shadow:0 0 0 3px rgba(215,173,101,.11)}
+.dulm-rename-status{min-height:0;margin:-6px 0 0;color:#e6a0a0;font-size:11px;line-height:1.4}
+.dulm-rename-status:empty{display:none}
+.dulm-rename-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:1px}
+.dulm-rename-actions button{min-width:82px;height:34px;padding:0 13px;border:1px solid transparent;border-radius:7px;font:650 11px/1 "Space Grotesk","Hind Siliguri",sans-serif;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease}
+.dulm-cancel{border-color:#3d4148!important;background:#22252a;color:#d4d7dc}
+.dulm-cancel:hover{background:#2d3138}
+.dulm-save{background:#d7ad65;color:#191919}
+.dulm-save:hover{background:#e4bf7d}
+.dulm-rename-actions button:disabled{opacity:.55;cursor:wait}
+.dulm-rename-actions button:focus-visible{outline:2px solid #e0ba75;outline-offset:2px}
+.dulm-toast{position:fixed;z-index:2147483600;left:50%;bottom:24px;transform:translate(-50%,10px);padding:10px 15px;border:1px solid rgba(215,173,101,.28);border-radius:9px;background:#181818;color:#f0e5d1;font:600 11px/1.4 "Space Grotesk","Hind Siliguri",sans-serif;box-shadow:0 10px 35px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease}
+.dulm-toast.is-visible{opacity:1;transform:translate(-50%,0)}
+@media(max-width:480px){.dulm-rename-form{padding:16px}.dulm-rename-dialog{width:min(330px,calc(100vw - 28px))}}

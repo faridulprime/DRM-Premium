@@ -1,0 +1,490 @@
+#!/usr/bin/env node
+/**
+ * Integration-style tests for the DUGA health, change listing/detail and audit routes.
+ * Loads the Pages handler as an ES module and supplies a minimal in-memory D1 mock.
+ * No Cloudflare account, network call, or real database is used.
+ */
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { createHash, webcrypto } from "node:crypto";
+
+globalThis.crypto ??= webcrypto;
+globalThis.btoa ??= (value) => Buffer.from(value, "binary").toString("base64");
+
+const source = await readFile(new URL("../functions/api/[[path]].js", import.meta.url), "utf8");
+const moduleUrl = "data:text/javascript;base64," + Buffer.from(source).toString("base64");
+const { onRequest } = await import(moduleUrl);
+
+const schemaSpec = {"duga_assignments":{"columns":["id","scope_type","scope_id","role_id","subject_type","user_id","principal_id","status","assigned_by_user_id","created_at","revoked_at","revoked_by_user_id"],"indexes":["uq_duga_assignment_human_active","uq_duga_assignment_ai_active","uq_duga_single_platform_owner","idx_duga_assignments_subject"],"triggers":["duga_assignment_grant_audit","duga_assignment_revoke_audit","duga_assignments_insert_guard","duga_assignments_no_delete","duga_assignments_update_guard"]},"duga_change_requests":{"columns":["id","title","summary","rationale","status","blocked_from_status","block_reason_code","risk_level","affected_systems_json","affected_paths_json","rollback_plan","requested_by_type","requested_by_user_id","requested_by_principal_id","source_branch","base_commit_sha","policy_commit_sha","implementer_type","implementer_user_id","implementer_principal_id","implementation_commit_sha","state_version","created_at","updated_at"],"indexes":["idx_duga_changes_status_updated","idx_duga_changes_created"],"triggers":["duga_change_requests_insert_guard","duga_change_requests_update_guard","duga_change_requests_no_delete","duga_change_request_transition_audit"]},"duga_reviews":{"columns":["id","change_request_id","review_type","reviewer_type","reviewer_user_id","reviewer_principal_id","decision","reviewed_commit_sha","evidence_json","created_at"],"indexes":["idx_duga_reviews_change_time"],"triggers":["duga_reviews_no_update","duga_reviews_no_delete","duga_review_no_implementer_self_audit"]},"duga_approvals":{"columns":["id","change_request_id","approver_user_id","approver_role","authorization_assignment_id","authorization_scope_type","authorization_scope_id","policy_commit_sha","decision","approved_commit_sha","rationale","created_at"],"indexes":["idx_duga_approvals_change_time"],"triggers":["duga_approval_authorization_guard","duga_approvals_no_update","duga_approvals_no_delete"]},"duga_validation_runs":{"columns":["id","change_request_id","commit_sha","status","validator","validator_version","results_json","started_at","completed_at","created_at"],"indexes":["idx_duga_validation_change_time","idx_duga_validation_status"],"triggers":["duga_validation_transition_audit","duga_validation_runs_insert_guard","duga_validation_runs_no_delete","duga_validation_runs_update_guard"]},"duga_audit_events":{"columns":["id","aggregate_type","aggregate_id","event_type","actor_type","actor_user_id","actor_principal_id","actor_system_id","payload_json","policy_commit_sha","created_at"],"indexes":["idx_duga_audit_aggregate_time","idx_duga_audit_actor_time","idx_duga_audit_time"],"triggers":["duga_audit_no_update","duga_audit_no_delete"]},"duga_analysis_findings":{"columns":["id","analyzer_version","repository_commit_sha","file_path","symbol","classification","confidence","evidence_json","status","created_at","reviewed_at","reviewed_by_user_id","state_version"],"indexes":["idx_duga_findings_status_time","idx_duga_findings_file_commit"],"triggers":["duga_finding_review_audit","duga_findings_insert_guard","duga_findings_update_guard","duga_findings_no_delete"]},"duga_jobs":{"columns":["id","job_type","status","input_json","result_json","attempts","available_at","lease_owner","lease_token","lease_generation","lease_expires_at","created_at","updated_at"],"indexes":["idx_duga_jobs_queue","uq_duga_jobs_active_lease_token"],"triggers":["duga_jobs_insert_guard","duga_jobs_lease_transition_guard"]}};
+
+function tokenHash(token) {
+  return createHash("sha256").update(token).digest("base64url");
+}
+function mockEnv({ failProbe = false, failSchemaProbe = false, failChanges = false, failChangeDetail = false, failAudit = false, failFindings = false, failOverview = false, overviewRows = {}, findingRows = [], auditRows = [], changeRows = [], changeDetail = null, relatedRows = {}, tables = [], completeSchema = false, omitColumn = null, misplaceTrigger = null, omitTrigger = null, dbEnabled = true } = {}) {
+  const users = new Map([
+    [tokenHash("owner-token"), { id: "owner-1", email: "owner@example.test", username: "owner", role: "owner" }],
+    [tokenHash("admin-token"), { id: "admin-1", email: "admin@example.test", username: "admin", role: "admin" }],
+    [tokenHash("user-token"), { id: "user-1", email: "user@example.test", username: "user", role: "user" }],
+  ]);
+  const DB = {
+    prepare(sql) {
+      return {
+        args: [],
+        bind(...args) { this.args = args; return this; },
+        async first() {
+          if (sql.includes("FROM sessions s JOIN users u")) return users.get(this.args[0]) || null;
+          if (sql.includes("FROM duga_change_requests WHERE id=?")) { if (failChangeDetail) throw new Error("simulated detail query failure"); return changeDetail; }
+          if (sql.includes("FROM user_restrictions WHERE user_id=?")) return null;
+          if (sql === "SELECT 1 AS ok") {
+            if (failProbe) throw new Error("simulated D1 outage");
+            return { ok: 1 };
+          }
+          throw new Error("Unexpected SQL in test: " + sql);
+        },
+        async all() {
+          if (/FROM duga_(change_requests|analysis_findings|jobs|assignments) GROUP BY status/.test(sql)) {
+            if (failOverview) throw new Error("simulated overview query failure");
+            const table = sql.match(/FROM (duga_[a-z_]+) GROUP BY status/)[1];
+            return { results: overviewRows[table] || [] };
+          }
+          if (sql.includes("FROM duga_analysis_findings")) { if (failFindings) throw new Error("simulated findings query failure"); return { results: findingRows }; }
+          if (sql.includes("FROM duga_reviews")) return { results: relatedRows.reviews || [] };
+          if (sql.includes("FROM duga_approvals")) return { results: relatedRows.approvals || [] };
+          if (sql.includes("FROM duga_validation_runs")) return { results: relatedRows.validationRuns || [] };
+          if (sql.includes("FROM duga_audit_events")) { if (failAudit) throw new Error("simulated audit query failure"); return { results: sql.includes("aggregate_type=?") ? auditRows : (relatedRows.auditEvents || []) }; }
+          if (sql.includes("FROM duga_change_requests")) {
+            if (failChanges) throw new Error("simulated DUGA query failure");
+            return { results: changeRows };
+          }
+          if (sql.includes("FROM sqlite_master")) {
+            if (failSchemaProbe) throw new Error("simulated schema probe outage");
+            const results = [];
+            for (const table of tables) {
+              results.push({ type: "table", name: table, tbl_name: table });
+              if (completeSchema) {
+                for (const name of schemaSpec[table]?.indexes || []) results.push({ type: "index", name, tbl_name: table });
+                for (const name of schemaSpec[table]?.triggers || []) {
+                  if (name === omitTrigger) continue;
+                  const definitions = Object.fromEntries(Object.entries({"duga_change_requests_insert_guard":["BEFORE INSERT ON duga_change_requests","DUGA change requests must begin proposed, version one and unassigned"],"duga_change_requests_update_guard":["BEFORE UPDATE ON duga_change_requests","Invalid DUGA change-request lifecycle transition or immutable-field mutation"],"duga_change_requests_no_delete":["BEFORE DELETE ON duga_change_requests","DUGA change requests are immutable evidence roots"],"duga_change_request_transition_audit":["AFTER UPDATE ON duga_change_requests","change_request.status_changed"],"duga_reviews_no_update":["BEFORE UPDATE ON duga_reviews","DUGA reviews are immutable evidence"],"duga_reviews_no_delete":["BEFORE DELETE ON duga_reviews","DUGA reviews are immutable evidence"],"duga_review_no_implementer_self_audit":["BEFORE INSERT ON duga_reviews","Implementer cannot independently audit the same change"],"duga_approval_authorization_guard":["BEFORE INSERT ON duga_approvals","Approval requires an active scoped assignment and matching policy revision"],"duga_approvals_no_update":["BEFORE UPDATE ON duga_approvals","DUGA approvals are immutable evidence"],"duga_approvals_no_delete":["BEFORE DELETE ON duga_approvals","DUGA approvals are immutable evidence"],"duga_audit_no_update":["BEFORE UPDATE ON duga_audit_events","DUGA audit events are append-only"],"duga_audit_no_delete":["BEFORE DELETE ON duga_audit_events","DUGA audit events are append-only"],"duga_assignment_grant_audit":["AFTER INSERT ON duga_assignments","assignment.granted"],"duga_assignment_revoke_audit":["AFTER UPDATE ON duga_assignments","assignment.revoked"],"duga_validation_transition_audit":["AFTER UPDATE ON duga_validation_runs","validation."],"duga_finding_review_audit":["AFTER UPDATE ON duga_analysis_findings","finding."],"duga_assignments_insert_guard":["BEFORE INSERT ON duga_assignments","DUGA assignments must begin active"],"duga_assignments_no_delete":["BEFORE DELETE ON duga_assignments","DUGA assignment grant evidence cannot be deleted"],"duga_validation_runs_insert_guard":["BEFORE INSERT ON duga_validation_runs","DUGA validation runs must begin queued"],"duga_validation_runs_no_delete":["BEFORE DELETE ON duga_validation_runs","DUGA validation evidence cannot be deleted"],"duga_findings_insert_guard":["BEFORE INSERT ON duga_analysis_findings","DUGA findings must begin open and unreviewed"],"duga_assignments_update_guard":["BEFORE UPDATE ON duga_assignments","DUGA assignment permits revocation only"],"duga_findings_update_guard":["BEFORE UPDATE ON duga_analysis_findings","Invalid DUGA finding review transition"],"duga_findings_no_delete":["BEFORE DELETE ON duga_analysis_findings","DUGA finding evidence is immutable"],"duga_validation_runs_update_guard":["BEFORE UPDATE ON duga_validation_runs","Invalid DUGA validation-run transition"],"duga_jobs_insert_guard":["BEFORE INSERT ON duga_jobs","DUGA jobs must begin queued without lease or result evidence"],"duga_jobs_lease_transition_guard":["BEFORE UPDATE ON duga_jobs","Invalid DUGA job lease transition or immutable job identity mutation"]}).map(([name,[event,marker]]) => [name, "CREATE TRIGGER "+name+" "+event+" BEGIN "+(event.startsWith("AFTER") ? "SELECT '"+marker+"';" : "SELECT RAISE(ABORT,'"+marker+"');")+" END"]));;
+                  results.push({ type: "trigger", name, tbl_name: misplaceTrigger === name ? "duga_jobs" : table, sql: name === misplaceTrigger ? "CREATE TRIGGER altered_trigger" : definitions[name] });
+                }
+              }
+            }
+            return { results };
+          }
+          if (sql.startsWith("PRAGMA table_info(")) {
+            const table = sql.slice("PRAGMA table_info(".length, -1);
+            const columns = (schemaSpec[table]?.columns || []).filter(name => !(omitColumn === table + "." + name));
+            return { results: columns.map(name => ({ name })) };
+          }
+          throw new Error("Unexpected SQL in test: " + sql);
+        },
+      };
+    },
+  };
+  return dbEnabled ? { DB } : {};
+}
+async function call({ token, method = "GET", path = "/api/governance/health", env = mockEnv(), origin = "https://example.test", contentType = "application/json", body } = {}) {
+  const headers = new Headers();
+  if (token) headers.set("Cookie", "frame_admin_session=" + token);
+  if (origin) headers.set("Origin", origin);
+  if (contentType) headers.set("Content-Type", contentType);
+  const request = new Request("https://example.test" + path, { method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+  const response = await onRequest({ request, env });
+  return { response, body: await response.json() };
+}
+const tests = [];
+async function test(name, fn) { await fn(); tests.push(name); }
+
+await test("Registration, verification and login reject malformed credentials before database access", async () => {
+  const env = {
+    SESSION_SECRET: "test-session-secret",
+    OWNER_EMAIL: "owner@example.test",
+    GOOGLE_APPS_SCRIPT_URL: "https://mailer.example.test/exec",
+    GOOGLE_APPS_SCRIPT_TOKEN: "test-token",
+    DB: { prepare() { throw new Error("DB must not be queried for malformed credentials"); } },
+  };
+  const register = await call({ method: "POST", path: "/api/auth/register-otp", body: { email: "not-an-email", username: "ab", password: "short" }, env });
+  const verify = await call({ method: "POST", path: "/api/auth/register-verify", body: { email: "member@example.test", username: "member", password: "valid-password", code: "12x" }, env });
+  const login = await call({ method: "POST", path: "/api/auth/login", body: { email: "not-an-email", password: "valid-password" }, env });
+  assert.equal(register.response.status, 400, "registration must reject malformed email/username/password");
+  assert.equal(verify.response.status, 400, "verification must reject a non-six-digit code");
+  assert.equal(login.response.status, 400, "login must reject malformed email");
+});
+
+await test("Shared JSON reader enforces the 20 KB streaming limit without Content-Length", async () => {
+  const payload = JSON.stringify({ email: "owner@example.test", username: "valid_user", password: "valid-password" });
+  const env = {
+    SESSION_SECRET: "test-session-secret",
+    OWNER_EMAIL: "owner@example.test",
+    GOOGLE_APPS_SCRIPT_URL: "https://mailer.example.test/exec",
+    GOOGLE_APPS_SCRIPT_TOKEN: "test-token",
+    DB: { prepare() { throw new Error("DB must not be queried for the reserved Owner email"); } },
+  };
+  async function post(raw, declaredLength = null) {
+    const encoded = new TextEncoder().encode(raw);
+    let offset = 0;
+    const body = new ReadableStream({
+      pull(controller) {
+        if (offset >= encoded.length) return controller.close();
+        const end = Math.min(offset + 8192, encoded.length);
+        controller.enqueue(encoded.slice(offset, end));
+        offset = end;
+      },
+    });
+    const request = new Request("https://example.test/api/auth/register-otp", {
+      method: "POST",
+      headers: { Origin: "https://example.test", "Content-Type": "application/json", ...(declaredLength === null ? {} : { "Content-Length": String(declaredLength) }) },
+      body,
+      duplex: "half",
+    });
+    return onRequest({ request, env });
+  }
+  const accepted = await post(payload);
+  assert.equal(accepted.status, 409, "a valid small JSON body should reach reserved-Owner validation");
+  const oversizedBody = payload + " ".repeat(21000);
+  const oversizedWithoutLength = await post(oversizedBody);
+  assert.equal(oversizedWithoutLength.status, 400, "an oversized streamed body without Content-Length must be rejected");
+  const oversizedWithFalseLength = await post(oversizedBody, 1);
+  assert.equal(oversizedWithFalseLength.status, 400, "an oversized streamed body with an understated Content-Length must be rejected");
+});
+
+await test("Owner can read D1 health", async () => {
+  const { response, body } = await call({ token: "owner-token" });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "not_installed");
+  assert.equal(body.expectedSchemaTables, 8);
+  assert.equal(body.missing.tables.length, 8);
+});
+await test("Health rejects each missing change-request lifecycle trigger", async () => {
+  const requiredTriggers = [
+    "duga_change_requests_insert_guard",
+    "duga_change_requests_update_guard",
+    "duga_change_requests_no_delete",
+    "duga_change_request_transition_audit",
+  ];
+  for (const triggerName of requiredTriggers) {
+    const { response, body } = await call({ token: "owner-token", env: mockEnv({
+      tables: Object.keys(schemaSpec),
+      completeSchema: true,
+      omitTrigger: triggerName,
+    }) });
+    assert.equal(response.status, 200, triggerName);
+    assert.equal(body.schema, "partial", triggerName);
+    assert.deepEqual(body.missing.triggers, [triggerName], triggerName);
+  }
+});
+
+await test("Health requires blocked-state metadata columns", async () => {
+  const { response, body } = await call({ token: "owner-token", env: mockEnv({
+    tables: Object.keys(schemaSpec),
+    completeSchema: true,
+    omitColumn: "duga_change_requests.block_reason_code",
+  }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "partial");
+  assert.deepEqual(body.missing.columns, ["duga_change_requests.block_reason_code"]);
+});
+
+await test("Health rejects a critical trigger with an incomplete definition", async () => {
+  const { response, body } = await call({ token: "owner-token", env: mockEnv({
+    tables: Object.keys(schemaSpec),
+    completeSchema: true,
+    misplaceTrigger: "duga_audit_no_delete",
+  }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "partial");
+  assert.deepEqual(body.missing.triggers, ["duga_audit_no_delete"]);
+});
+
+await test("Health rejects a required trigger attached to the wrong table", async () => {
+  const { response, body } = await call({ token: "owner-token", env: mockEnv({
+    tables: Object.keys(schemaSpec),
+    completeSchema: true,
+    misplaceTrigger: "duga_review_no_implementer_self_audit",
+  }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "partial");
+  assert.deepEqual(body.missing.triggers, ["duga_review_no_implementer_self_audit"]);
+});
+
+await test("Admin is explicitly forbidden", async () => {
+  const { response } = await call({ token: "admin-token" });
+  assert.equal(response.status, 403);
+});
+await test("Unauthenticated caller is rejected", async () => {
+  const { response } = await call();
+  assert.equal(response.status, 401);
+});
+await test("Ordinary User is rejected", async () => {
+  const { response } = await call({ token: "user-token" });
+  assert.equal(response.status, 401);
+});
+await test("Owner can read governance overview status counts", async () => {
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/overview", env: mockEnv({ overviewRows: {
+    duga_change_requests: [{ status: "proposed", count: 3 }, { status: "accepted", count: 2 }],
+    duga_analysis_findings: [{ status: "open", count: 4 }],
+    duga_jobs: [{ status: "queued", count: 1 }, { status: "failed", count: 2 }],
+    duga_assignments: [{ status: "active", count: 5 }],
+  } }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.changes.total, 5); assert.equal(body.changes.byStatus.proposed, 3);
+  assert.equal(body.findings.total, 4); assert.equal(body.jobs.total, 3); assert.equal(body.assignments.total, 5);
+});
+await test("Overview is Owner-only, GET-only and fails closed on missing DUGA tables", async () => {
+  const forbidden = await call({ token: "admin-token", path: "/api/governance/overview" });
+  const method = await call({ token: "owner-token", method: "POST", path: "/api/governance/overview" });
+  const failed = await call({ token: "owner-token", path: "/api/governance/overview", env: mockEnv({ failOverview: true }) });
+  assert.equal(forbidden.response.status, 403); assert.equal(method.response.status, 405); assert.equal(failed.response.status, 503);
+});
+await test("Owner can list change requests with bounded pagination", async () => {
+  const rows = [
+    { id: "change-3", title: "Third", summary: "s3", status: "proposed", risk_level: "low", affected_systems_json: '["DCP"]', affected_paths_json: '["src/a.js"]', created_at: 300, updated_at: 301 },
+    { id: "change-2", title: "Second", summary: "s2", status: "approved", risk_level: "medium", affected_systems_json: '[]', affected_paths_json: '[]', created_at: 200, updated_at: 201 },
+    { id: "change-1", title: "First", summary: "s1", status: "rejected", risk_level: "high", affected_systems_json: '[]', affected_paths_json: '[]', created_at: 100, updated_at: 101 },
+  ];
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/changes?limit=2", env: mockEnv({ changeRows: rows }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.items.length, 2);
+  assert.equal(body.items[0].id, "change-3");
+  assert.deepEqual(body.items[0].affected_systems, ["DCP"]);
+  assert.equal(body.page.hasMore, true);
+  assert.ok(body.page.nextCursor);
+});
+await test("Change request listing rejects non-Owner", async () => {
+  const { response } = await call({ token: "admin-token", path: "/api/governance/changes" });
+  assert.equal(response.status, 403);
+});
+await test("Change request listing validates limit and status", async () => {
+  const a = await call({ token: "owner-token", path: "/api/governance/changes?limit=500" });
+  const b = await call({ token: "owner-token", path: "/api/governance/changes?status=made-up" });
+  assert.equal(a.response.status, 400);
+  assert.equal(b.response.status, 400);
+});
+await test("Change request listing accepts a valid keyset cursor", async () => {
+  const cursor = Buffer.from("200:change-2").toString("base64url");
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/changes?limit=10&cursor=" + cursor });
+  assert.equal(response.status, 200);
+  assert.equal(body.page.hasMore, false);
+  assert.equal(body.page.nextCursor, null);
+});
+await test("Change request listing rejects control characters in search", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes?q=%00" });
+  assert.equal(response.status, 400);
+});
+await test("Change request listing rejects malformed cursor", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes?cursor=not-a-cursor" });
+  assert.equal(response.status, 400);
+});
+await test("Change request listing handles missing schema/storage", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes", env: mockEnv({ failChanges: true }) });
+  assert.equal(response.status, 503);
+});
+await test("Owner can read a change request with bounded related records", async () => {
+  const change = { id: "change-42", title: "Example", summary: "Summary", status: "proposed", risk_level: "low", affected_systems_json: '["DCP"]', affected_paths_json: '["src/a.js"]', created_at: 100, updated_at: 101 };
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/changes/change-42", env: mockEnv({ changeDetail: change, relatedRows: { reviews: [{ id: "review-1" }], approvals: [], validationRuns: [], auditEvents: [{ id: "event-1" }] } }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.change.id, "change-42");
+  assert.deepEqual(body.change.affected_systems, ["DCP"]);
+  assert.equal(body.reviews.length, 1);
+  assert.equal(body.auditEvents.length, 1);
+  assert.equal(body.limits.perRelatedCollection, 50);
+});
+await test("Missing change request returns 404", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes/not-found" });
+  assert.equal(response.status, 404);
+});
+await test("Change detail rejects malformed ID and non-Owner", async () => {
+  const malformed = await call({ token: "owner-token", path: "/api/governance/changes/%3Cscript%3E" });
+  const forbidden = await call({ token: "admin-token", path: "/api/governance/changes/change-42" });
+  assert.equal(malformed.response.status, 400);
+  assert.equal(forbidden.response.status, 403);
+});
+await test("Change detail storage failure returns controlled 503", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes/change-42", env: mockEnv({ failChangeDetail: true }) });
+  assert.equal(response.status, 503);
+});
+await test("Owner can list findings with filters and pagination", async () => {
+  const rows = [{ id: "finding-3", analyzer_version: "1.0", repository_commit_sha: "abc123", file_path: "src/a.js", symbol: "alpha", classification: "A", confidence: 0.98, evidence_json: "[]", status: "open", created_at: 300 }, { id: "finding-2", analyzer_version: "1.0", repository_commit_sha: "abc123", file_path: "src/b.js", symbol: "beta", classification: "B", confidence: 0.8, evidence_json: "[]", status: "under_review", created_at: 200 }, { id: "finding-1", analyzer_version: "1.0", repository_commit_sha: "abc123", file_path: "src/c.js", symbol: "gamma", classification: "C", confidence: 0.6, evidence_json: "[]", status: "dismissed", created_at: 100 }];
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/findings?limit=2&status=open&classification=A", env: mockEnv({ findingRows: rows }) });
+  assert.equal(response.status, 200); assert.equal(body.items.length, 2); assert.equal(body.items[0].id, "finding-3"); assert.equal(body.page.hasMore, true); assert.ok(body.page.nextCursor);
+});
+await test("Findings endpoint validates filters, cursor and search", async () => {
+  const a = await call({ token: "owner-token", path: "/api/governance/findings?status=unknown" });
+  const b = await call({ token: "owner-token", path: "/api/governance/findings?classification=Z" });
+  const d = await call({ token: "owner-token", path: "/api/governance/findings?cursor=bad" });
+  const e = await call({ token: "owner-token", path: "/api/governance/findings?q=%00" });
+  assert.equal(a.response.status, 400); assert.equal(b.response.status, 400); assert.equal(d.response.status, 400); assert.equal(e.response.status, 400);
+});
+await test("Findings endpoint is Owner-only and handles storage failure", async () => {
+  const forbidden = await call({ token: "admin-token", path: "/api/governance/findings" });
+  const failed = await call({ token: "owner-token", path: "/api/governance/findings", env: mockEnv({ failFindings: true }) });
+  assert.equal(forbidden.response.status, 403); assert.equal(failed.response.status, 503);
+});
+await test("Findings endpoint rejects non-GET methods", async () => {
+  const { response } = await call({ token: "owner-token", method: "POST", path: "/api/governance/findings" });
+  assert.equal(response.status, 405);
+});
+await test("Owner can read paginated append-only audit events", async () => {
+  const rows = [
+    { id: "event-3", aggregate_type: "change_request", aggregate_id: "change-3", event_type: "created", actor_type: "human", created_at: 300 },
+    { id: "event-2", aggregate_type: "platform", aggregate_id: "platform", event_type: "policy_updated", actor_type: "system", created_at: 200 },
+    { id: "event-1", aggregate_type: "assignment", aggregate_id: "assign-1", event_type: "assigned", actor_type: "human", created_at: 100 },
+  ];
+  const { response, body } = await call({ token: "owner-token", path: "/api/governance/audit?limit=2&aggregate_type=change_request", env: mockEnv({ auditRows: rows }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.items.length, 2);
+  assert.equal(body.items[0].id, "event-3");
+  assert.equal(body.page.hasMore, true);
+  assert.ok(body.page.nextCursor);
+});
+await test("Audit endpoint validates filters and cursor", async () => {
+  const a = await call({ token: "owner-token", path: "/api/governance/audit?aggregate_type=unknown" });
+  const b = await call({ token: "owner-token", path: "/api/governance/audit?limit=100" });
+  const d = await call({ token: "owner-token", path: "/api/governance/audit?cursor=bad" });
+  assert.equal(a.response.status, 400);
+  assert.equal(b.response.status, 400);
+  assert.equal(d.response.status, 400);
+});
+await test("Audit endpoint is Owner-only and returns controlled storage errors", async () => {
+  const forbidden = await call({ token: "admin-token", path: "/api/governance/audit" });
+  const failed = await call({ token: "owner-token", path: "/api/governance/audit", env: mockEnv({ failAudit: true }) });
+  assert.equal(forbidden.response.status, 403);
+  assert.equal(failed.response.status, 503);
+});
+await test("Change list and detail reject non-GET methods explicitly", async () => {
+  const list = await call({ token: "owner-token", method: "POST", path: "/api/governance/changes" });
+  const detail = await call({ token: "owner-token", method: "POST", path: "/api/governance/changes/change-42" });
+  const audit = await call({ token: "owner-token", method: "POST", path: "/api/governance/audit" });
+  assert.equal(list.response.status, 405);
+  assert.equal(detail.response.status, 405);
+  assert.equal(audit.response.status, 405);
+});
+await test("Unknown governance route is not exposed", async () => {
+  const { response } = await call({ token: "owner-token", path: "/api/governance/changes/unknown" });
+  assert.equal(response.status, 404);
+});
+await test("Non-GET health method is rejected", async () => {
+  const { response } = await call({ token: "owner-token", method: "POST" });
+  assert.equal(response.status, 405);
+});
+await test("Cross-origin mutation is rejected before route handling", async () => {
+  const { response } = await call({ token: "owner-token", method: "POST", origin: "https://attacker.example" });
+  assert.equal(response.status, 403);
+});
+await test("Partial DUGA schema is reported accurately", async () => {
+  const { response, body } = await call({
+    token: "owner-token",
+    env: mockEnv({ tables: ["duga_assignments", "duga_jobs", "users"] }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "partial");
+  assert.deepEqual(body.schemaTables, ["duga_assignments", "duga_jobs"]);
+  assert.ok(body.missing.indexes.length > 0);
+});
+await test("Complete DUGA schema is reported ready", async () => {
+  const expected = [
+    "duga_assignments", "duga_change_requests", "duga_reviews", "duga_approvals",
+    "duga_validation_runs", "duga_audit_events", "duga_analysis_findings", "duga_jobs",
+  ];
+  const { response, body } = await call({ token: "owner-token", env: mockEnv({ tables: expected, completeSchema: true }) });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "ready");
+  assert.equal(body.schemaVerification, "presence-and-critical-trigger-markers");
+  assert.equal(body.schemaTables.length, 8);
+  assert.deepEqual(body.missing, { tables: [], columns: [], indexes: [], triggers: [] });
+});
+await test("Missing required column prevents ready status", async () => {
+  const expected = Object.keys(schemaSpec);
+  const { response, body } = await call({
+    token: "owner-token",
+    env: mockEnv({ tables: expected, completeSchema: true, omitColumn: "duga_jobs.lease_expires_at" }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.schema, "partial");
+  assert.deepEqual(body.missing.columns, ["duga_jobs.lease_expires_at"]);
+});
+await test("Schema probe failure returns controlled 503", async () => {
+  const { response } = await call({ token: "owner-token", env: mockEnv({ failSchemaProbe: true }) });
+  assert.equal(response.status, 503);
+});
+await test("D1 probe failure returns controlled 503", async () => {
+  const { response } = await call({ token: "owner-token", env: mockEnv({ failProbe: true }) });
+  assert.equal(response.status, 503);
+});
+await test("Missing D1 binding returns 503", async () => {
+  const { response } = await call({ token: "owner-token", env: mockEnv({ dbEnabled: false }) });
+  assert.equal(response.status, 503);
+});
+
+await test("All paginated governance routes reject oversized cursors before decoding", async () => {
+  const cursor = "A".repeat(257);
+  const changes = await call({ token: "owner-token", path: "/api/governance/changes?cursor=" + cursor });
+  const findings = await call({ token: "owner-token", path: "/api/governance/findings?cursor=" + cursor });
+  const audit = await call({ token: "owner-token", path: "/api/governance/audit?cursor=" + cursor });
+  assert.equal(changes.response.status, 400);
+  assert.equal(findings.response.status, 400);
+  assert.equal(audit.response.status, 400);
+});
+ 
+await test("Every governance read endpoint enforces Owner-only authorization", async () => {
+  const routes = [
+    "/api/governance/health",
+    "/api/governance/overview",
+    "/api/governance/changes",
+    "/api/governance/changes/change-42",
+    "/api/governance/findings",
+    "/api/governance/audit",
+  ];
+  for (const path of routes) {
+    const admin = await call({ token: "admin-token", path });
+    const user = await call({ token: "user-token", path });
+    const anonymous = await call({ path });
+    assert.equal(admin.response.status, 403, "Admin must be denied: " + path);
+    assert.equal(user.response.status, 401, "User must be denied: " + path);
+    assert.equal(anonymous.response.status, 401, "Anonymous caller must be denied: " + path);
+  }
+});
+
+await test("Owner-only application account routes deny Admin, Member and anonymous sessions", async () => {
+  const routes = ["/api/admin/active-users", "/api/admin/users"];
+  for (const path of routes) {
+    const admin = await call({ token: "admin-token", path });
+    const member = await call({ token: "user-token", path });
+    const anonymous = await call({ path });
+    assert.equal(admin.response.status, 403, "Admin must be denied: " + path);
+    assert.equal(member.response.status, 401, "Member must be denied: " + path);
+    assert.equal(anonymous.response.status, 401, "Anonymous caller must be denied: " + path);
+  }
+});
+
+await test("Only Owner can mutate account roles and Owner self-protection is enforced", async () => {
+  const body = { role: "user" };
+  const adminPatch = await call({ token: "admin-token", method: "PATCH", path: "/api/admin/users/member-1", body });
+  const adminDelete = await call({ token: "admin-token", method: "DELETE", path: "/api/admin/users/admin-2" });
+  const ownerSelfPatch = await call({ token: "owner-token", method: "PATCH", path: "/api/admin/users/owner-1", body });
+  const ownerSelfDelete = await call({ token: "owner-token", method: "DELETE", path: "/api/admin/users/owner-1" });
+  assert.equal(adminPatch.response.status, 403, "Admin must not change account roles");
+  assert.equal(adminDelete.response.status, 403, "Admin must not remove accounts");
+  assert.equal(ownerSelfPatch.response.status, 400, "Owner must not change their own role");
+  assert.equal(ownerSelfDelete.response.status, 400, "Owner must not delete their own account");
+});
+
+await test("Every governance read endpoint rejects mutation methods", async () => {
+  const routes = [
+    "/api/governance/health",
+    "/api/governance/overview",
+    "/api/governance/changes",
+    "/api/governance/changes/change-42",
+    "/api/governance/findings",
+    "/api/governance/audit",
+  ];
+  for (const path of routes) {
+    const { response } = await call({ token: "owner-token", method: "POST", path });
+    assert.equal(response.status, 405, "POST must be rejected: " + path);
+  }
+});
+
+console.log("DUGA health, read-only change, findings, overview and audit API tests: PASS");
+for (const name of tests) console.log("PASS: " + name);
+console.log("LIMITATION: mocked D1 and local handler only; no live Cloudflare Pages deployment tested.");

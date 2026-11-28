@@ -1,0 +1,62 @@
+name: DUSS sizing token smoke test
+
+on:
+  push:
+    branches:
+      - feature/full-admin-panel
+    paths:
+      - "assets/sizing/tokens.css"
+      - "assets/sizing/touch-targets.css"
+      - "theme.css"
+      - "styles.css"
+      - "admin.css"
+      - "live-users.css"
+      - "upload-studio.css"
+      - "profile.css"
+      - "index.html"
+      - "admin.html"
+      - "live-users.html"
+      - "upload-studio.html"
+      - "profile.html"
+      - "docs/DUSS-SPEC.md"
+      - "scripts/test-duss-tokens.py"
+      - ".github/workflows/duss-sizing-smoke.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "assets/sizing/tokens.css"
+      - "assets/sizing/touch-targets.css"
+      - "theme.css"
+      - "styles.css"
+      - "admin.css"
+      - "live-users.css"
+      - "upload-studio.css"
+      - "profile.css"
+      - "index.html"
+      - "admin.html"
+      - "live-users.html"
+      - "upload-studio.html"
+      - "profile.html"
+      - "docs/DUSS-SPEC.md"
+      - "scripts/test-duss-tokens.py"
+      - ".github/workflows/duss-sizing-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sizing-source-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Validate DUSS sizing tokens and consumers
+        run: python scripts/test-duss-tokens.py

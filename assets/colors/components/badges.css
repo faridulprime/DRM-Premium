@@ -1,0 +1,143 @@
+/* DUCS status badge color aliases. */
+:root {
+  --ducs-badge-success-bg: var(--ducs-alpha-success-12);
+  --ducs-badge-success-text: var(--ducs-status-success);
+  --ducs-badge-warning-bg: var(--ducs-alpha-warning-12);
+  --ducs-badge-warning-text: var(--ducs-status-warning);
+  --ducs-badge-danger-bg: var(--ducs-alpha-danger-12);
+  --ducs-badge-danger-text: var(--ducs-status-danger);
+  --ducs-badge-info-bg: var(--ducs-alpha-info-12);
+  --ducs-badge-info-text: var(--ducs-status-info);
+
+  /* Live presence and restriction states — exact legacy values preserved. */
+  --ducs-live-status-online: #35bd72;
+  --ducs-live-status-online-text: #9bd7b2;
+  --ducs-live-status-danger: #ef8383;
+  --ducs-live-status-danger-bg: rgba(239, 131, 131, .10);
+  --ducs-live-status-danger-border: rgba(239, 131, 131, .24);
+  --ducs-live-owner-text: #d7c6e5;
+  --ducs-live-owner-border: #55495e;
+  --ducs-live-owner-bg: #28222d;
+  --ducs-live-admin-text: #a7d8b7;
+  --ducs-live-admin-border: #365241;
+  --ducs-live-restricted-text: #e1bd8d;
+  --ducs-live-restricted-border: #5b4933;
+  --ducs-live-danger-muted-text: #dfa0a0;
+  --ducs-live-danger-muted-border: #503434;
+  --ducs-live-warning-symbol-border: #51412e;
+  --ducs-live-warning-text: #dfbd8d;
+  --ducs-live-warning-border: #59482f;
+  --ducs-live-tab-active-text: #f0b0b0;
+  --ducs-live-tab-active-border: #694040;
+  --ducs-live-tab-active-count-bg: #593333;
+  --ducs-live-tab-active-count-text: #ffe0e0;
+
+  /* Admin Owner identity badge — distinct purple role identity. */
+  --ducs-admin-owner-text: #d8b4fe;
+  --ducs-admin-owner-bg: rgba(168, 85, 247, .14);
+  --ducs-admin-owner-border: rgba(192, 132, 252, .42);
+  --ducs-admin-danger-border: #74383d;
+  --ducs-admin-danger-text: #ffaaaa;
+
+  /* Shared shell identity and active navigation colors. */
+  --ducs-shell-brand-text: #f1f1f1;
+  --ducs-shell-brand-accent: #60a5fa;
+  --ducs-shell-admin-badge-text: #83efa5;
+  --ducs-shell-admin-badge-bg: rgba(131, 239, 165, .10);
+  --ducs-shell-admin-badge-border: rgba(131, 239, 165, .2);
+  --ducs-shell-category-chip-active-text: #0f0f0f;
+
+  /* Profile identity and action text. */
+  --ducs-profile-brand-text: #f1f1f1;
+  --ducs-profile-brand-accent: #8dbbfa;
+  --ducs-profile-avatar-text: #c8d3df;
+  --ducs-profile-upload-text: #a9f3bd;
+  --ducs-profile-save-text: #a5f2bd;
+
+  /* Upload Studio identity and editor accents. */
+  --ducs-upload-brand-text: #fff;
+  --ducs-upload-muted-accent: #b4a8ed;
+  --ducs-upload-nav-text: #bcb7d8;
+  --ducs-upload-heading-text: #ededed;
+  --ducs-upload-muted-text: #929292;
+  --ducs-upload-soft-text: #aaa;
+  --ducs-upload-preview-accent: #7ce2bd;
+  --ducs-upload-success-text: #b9efd2;
+  --ducs-upload-notice-error-text: #f0aaaa;
+
+  /* Homepage editorial text and brand palette. */
+  --ducs-home-brand-text: #111;
+  --ducs-home-muted-text: #66615b;
+  --ducs-home-nav-text: #292725;
+  --ducs-home-hero-text: #252321;
+  --ducs-home-footer-text: #5f5a54;
+  --ducs-home-card-muted: #737373;
+  --ducs-home-editor-text: #183d5c;
+  --ducs-home-builder-text: #243142;
+  --ducs-home-suspension-text: #edf1f6;
+  --ducs-home-suspension-muted: #aeb8c5;
+  --ducs-home-suspension-accent: #c7a97b;
+  --ducs-home-register-text: #ededed;
+  --ducs-home-register-label: #d8d8d8;
+  --ducs-home-profilebar-text: #d3dbe4;
+  /* Shared profile drawer and role badge identities. */
+  --ducs-shell-profile-drawer-kicker: #8492a4;
+  --ducs-shell-profile-drawer-close-text: #cbd3de;
+  --ducs-shell-profile-drawer-avatar-text: #e8f1fb;
+  --ducs-shell-profile-drawer-view-text: #9de0b8;
+  --ducs-shell-profile-drawer-detail-label: #7f8b9b;
+  --ducs-shell-profile-drawer-detail-text: #e1e6ed;
+  --ducs-shell-profile-drawer-footer-text: #7d8999;
+  --ducs-shell-role-owner-text: #d8b4fe;
+  --ducs-shell-role-owner-bg: rgba(168,85,247,.14);
+  --ducs-shell-role-owner-border: rgba(192,132,252,.42);
+  --ducs-shell-role-admin-text: #86efac;
+  --ducs-shell-role-admin-bg: rgba(34,197,94,.12);
+  --ducs-shell-role-admin-border: rgba(74,222,128,.38);
+  --ducs-shell-role-member-text: #f4f6fa;
+  --ducs-shell-role-member-bg: rgba(255,255,255,.075);
+  --ducs-shell-role-member-border: rgba(255,255,255,.28);
+
+  --ducs-shell-profile-menu-text: #e8edf5;
+  --ducs-shell-profile-drawer-text: #eef2f7;
+  --ducs-shell-profile-drawer-name-muted: #8995a4;
+  /* Live Users page chrome and list text roles. */
+  --ducs-live-brand-text: #eee;
+  --ducs-live-brand-muted: #999;
+  --ducs-live-mark-border: #555;
+  --ducs-live-back-link: #aaa;
+  --ducs-live-back-link-hover: #fff;
+  --ducs-live-kicker: #777;
+  --ducs-live-count-muted: #858585;
+  --ducs-live-subtitle: #777;
+  --ducs-live-list-meta: #858585;
+  --ducs-live-row-text: #e7e7e7;
+  --ducs-live-avatar-text: #ddd;
+  --ducs-live-role-text: #858585;
+  --ducs-live-row-arrow: #555;
+  --ducs-live-group-heading: #777;
+  --ducs-live-state-text: #777;
+  --ducs-live-state-error: #c88b8b;
+  --ducs-live-footnote: #666;
+  /* Live Users account drawer and dialog text roles. */
+  --ducs-live-drawer-kicker: #858585;
+  --ducs-live-drawer-title: #f0f0f0;
+  --ducs-live-drawer-close-text: #ddd;
+  --ducs-live-drawer-avatar-text: #eee;
+  --ducs-live-drawer-profile-name: #eee;
+  --ducs-live-drawer-profile-muted: #858585;
+  --ducs-live-drawer-chip-text: #aaa;
+  --ducs-live-drawer-section-title: #777;
+  --ducs-live-drawer-action-text: #d5d5d5;
+  --ducs-live-drawer-action-hover-text: #fff;
+  --ducs-live-drawer-action-icon: #aab8c7;
+  --ducs-live-drawer-protected-text: #999;
+  --ducs-live-dialog-text: #eee;
+  --ducs-live-dialog-detail-label: #888;
+  --ducs-live-dialog-detail-value: #e1e1e1;
+  --ducs-live-dialog-activity-muted: #888;
+  --ducs-live-dialog-activity-value: #eee;
+  --ducs-live-dialog-activity-label: #aaa;
+  --ducs-live-dialog-activity-count: #ddd;
+  --ducs-live-dialog-note: #858585;
+}

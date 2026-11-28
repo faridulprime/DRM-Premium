@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0d0d0d">
+<title>DRM PREMIUM — Live Users</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>(function(){try{var mode=localStorage.getItem("drm-theme-mode");document.documentElement.dataset.theme=(mode==="light"||mode==="dark")?mode:"dark";}catch(e){document.documentElement.dataset.theme="dark";}})();</script>
+<link rel="stylesheet" href="theme.css?v=ducs-shell-24">
+<link rel="stylesheet" href="live-users.css?v=ducs-live-04">
+<link rel="stylesheet" href="/assets/motion/motion.css?v=dume-03">
+<link rel="stylesheet" href="/assets/sizing/tokens.css?v=duss-08">
+<link rel="stylesheet" href="/assets/positioning/tokens.css?v=dups-04">
+<link rel="stylesheet" href="/assets/colors/index.css?v=ducs-tabs-30">
+<link rel="stylesheet" href="/assets/sizing/touch-targets.css?v=duss-08">
+  <link rel="stylesheet" href="/theme-mode.css?v=drm-theme-16">
+<script src="/theme-mode.js?v=drm-theme-06" defer></script>
+<link rel="stylesheet" href="/site-shell.css?v=site-shell-02">
+</head>
+<body class="live-users-page">
+<header class="live-topbar topbar">
+  <button class="yt-menu-trigger" id="liveMenuToggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6h17M3.5 12h17M3.5 18h17"/></svg>
+  </button>
+  <a class="brand" href="/" aria-label="DRM– Premium — Live">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2.8 27 7v8.1c0 7.1-4.7 11.8-11 14.1C9.7 26.9 5 22.2 5 15.1V7l11-4.2Z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><path d="m10.8 15.8 3.4 3.4 7.2-7.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="brand-word"><span class="brand-word-main">DRM–</span><span class="brand-word-accent">Premium</span><span class="brand-admin-suffix">Live</span></span>
+  </a>
+  <a class="live-back-link" href="/admin"><span aria-hidden="true">←</span> Admin Dashboard</a>
+</header>
+<div class="sidebar-backdrop" id="liveSidebarBackdrop" hidden></div>
+<aside class="yt-sidebar admin-sidebar" id="liveSidebar" aria-label="Main navigation">
+  <div class="sidebar-primary">
+    <a class="side-link" href="/"><span class="side-icon">⌂</span><span>Home</span></a>
+    <a class="side-link" href="/upload-studio.html"><span class="side-icon">＋</span><span>Upload Studio</span></a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Dashboard</div>
+    <a class="side-link" href="/admin"><span class="side-icon">▦</span><span>Overview</span></a>
+    <a class="side-link" href="/admin#tab-videos"><span class="side-icon">▶</span><span>ভিডিও</span></a>
+    <a class="side-link" href="/admin#tab-categories"><span class="side-icon">▤</span><span>ক্যাটাগরি</span></a>
+    <a class="side-link" href="/admin#tab-admins"><span class="side-icon">♙</span><span>Users & Admins</span></a>
+    <a class="side-link active" href="/live-users.html"><span class="side-icon">●</span><span>Live Users</span></a>
+  </div>
+</aside>
+<main class="live-layout">
+  <section class="live-panel" aria-labelledby="liveTitle">
+    <header class="live-heading">
+      <div class="live-kicker">DRM– PREMIUM / ADMINISTRATION</div>
+      <div class="live-title-line"><h1 id="liveTitle">Live Users</h1><span class="live-pill"><i></i> LIVE</span><button id="liveRestrictionsOpen" class="live-banned-trigger" type="button">Block List</button></div>
+      <div class="live-count-line"><strong id="liveCount">—</strong><span>ACTIVE NOW</span></div>
+      <p class="live-subtitle">Currently active accounts</p>
+    </header>
+    <label class="live-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+      <input id="liveSearch" type="search" placeholder="Search username or email..." autocomplete="off" aria-label="Search username or email">
+      <button id="liveSearchClear" type="button" aria-label="Clear search" hidden>×</button>
+    </label>
+    <div class="live-list-meta"><span>ONLINE USERS</span><span id="liveUpdated">CONNECTING…</span></div>
+    <div id="liveList" class="live-list" aria-live="polite"><div class="live-state">Checking secure access…</div></div>
+    <footer class="live-footnote">Presence refreshes automatically · Online window 90 seconds</footer>
+  </section>
+  <aside class="live-empty-space" aria-hidden="true"></aside>
+</main>
+  <aside id="liveUserDrawer" class="live-user-drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="drawerTitle" tabindex="-1" inert>
+    <div class="live-drawer-head">
+      <div><span class="live-drawer-kicker">ACCOUNT CONTROL / OWNER</span><h2 id="drawerTitle">Selected User</h2></div>
+      <button id="liveDrawerClose" class="live-drawer-close" type="button" aria-label="Close user panel">×</button>
+    </div>
+    <div id="liveDrawerBody" class="live-drawer-body"></div>
+  </aside>
+  <div id="liveDrawerBackdrop" class="live-drawer-backdrop" hidden></div>
+  <section id="liveRestrictionsModal" class="live-restrictions-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="liveRestrictionsTitle" tabindex="-1" inert>
+    <header class="live-restrictions-head">
+      <div><span class="live-drawer-kicker">ACCOUNT SECURITY / OWNER</span><h2 id="liveRestrictionsTitle">Restricted Users</h2></div>
+      <button id="liveRestrictionsClose" class="live-drawer-close" type="button" aria-label="Close restricted users">×</button>
+    </header>
+    <div class="live-restrictions-content">
+      <div class="live-restrictions-tabs" role="tablist" aria-label="Restricted account type">
+        <button type="button" id="liveBannedTab" class="live-restriction-tab is-active" data-restriction-view="ban" role="tab" aria-selected="true" aria-controls="liveRestrictionsList" tabindex="0"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6z"/><path d="m9 9 6 6m0-6-6 6"/></svg></span><span class="tab-label">Banned</span> <span id="liveBannedCount">0</span></button>
+        <button type="button" id="liveSuspendedTab" class="live-restriction-tab" data-restriction-view="suspend" role="tab" aria-selected="false" aria-controls="liveRestrictionsList" tabindex="-1"><span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 8v8M15 8v8"/></svg></span><span class="tab-label">Suspended</span> <span id="liveSuspendedCount">0</span></button>
+      </div>
+      <div id="liveRestrictionsList" class="live-restrictions-list" role="tabpanel" aria-labelledby="liveBannedTab" tabindex="0" aria-live="polite"></div>
+    </div>
+  </section>
+<dialog id="liveUserDialog" class="live-user-dialog" aria-labelledby="liveDialogTitle">
+  <header><h2 id="liveDialogTitle">Account Details</h2><button id="liveDialogClose" type="button" aria-label="Close">×</button></header>
+  <div id="liveDialogBody" class="live-dialog-body"></div>
+</dialog>
+<p id="liveNotice" class="live-notice" role="status" aria-live="polite"></p>
+<script src="/assets/motion/motion-controller.js?v=dume-03"></script>
+<script src="live-users.js?v=phantom-dimension-01"></script>
+<script src="/site-shell.js?v=site-shell-02" defer></script>
+</body>
+</html>

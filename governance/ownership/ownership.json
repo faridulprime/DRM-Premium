@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "assignments": [
+    {"systemId":"DCP","accountableRole":"platform-owner","implementationRole":"ai-maintainer","independentReviewRole":"independent-ai-auditor","humanIdentity":"unassigned"},
+    {"systemId":"DUME","accountableRole":"system-owner","implementationRole":"ai-maintainer","independentReviewRole":"independent-ai-auditor","humanIdentity":"unassigned"},
+    {"systemId":"DUSS","accountableRole":"system-owner","implementationRole":"ai-maintainer","independentReviewRole":"independent-ai-auditor","humanIdentity":"unassigned"},
+    {"systemId":"DUPS","accountableRole":"system-owner","implementationRole":"ai-maintainer","independentReviewRole":"independent-ai-auditor","humanIdentity":"unassigned"},
+    {"systemId":"DUCS","accountableRole":"system-owner","implementationRole":"ai-maintainer","independentReviewRole":"independent-ai-auditor","humanIdentity":"unassigned"},
+    {"systemId":"DACP","accountableRole":"platform-owner","implementationRole":"ai-maintainer","independentReviewRole":"independent-ai-auditor","humanIdentity":"unassigned"},
+    {"systemId":"DACE","accountableRole":"platform-owner","implementationRole":"ai-maintainer","independentReviewRole":"independent-ai-auditor","humanIdentity":"unassigned"}
+  ],
+  "notes": [
+    "Human identity assignments are intentionally unassigned until the Platform Owner explicitly confirms named owners.",
+    "System role labels are governance responsibilities, not existing application user roles.",
+    "Existing application Owner/Admin/User authorization remains authoritative for current website features until a separately reviewed integration is implemented."
+  ]
+}

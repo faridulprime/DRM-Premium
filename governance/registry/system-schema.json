@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://drm-premium.local/governance/registry/system-schema.json",
+  "title": "DUGA System Registry Entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id","name","version","status","description","ownerRole","maintainerRole","auditorRole","paths","dependencies","runtimeCritical"],
+  "properties": {
+    "id": {"type":"string","pattern":"^[A-Z][A-Z0-9-]{1,15}$"},
+    "name": {"type":"string","minLength":1},
+    "version": {"type":"string","pattern":"^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "status": {"enum":["proposed","active","deprecated","retired"]},
+    "description": {"type":"string","minLength":1},
+    "ownerRole": {"type":"string","minLength":1},
+    "maintainerRole": {"type":"string","minLength":1},
+    "auditorRole": {"type":"string","minLength":1},
+    "paths": {"type":"array","items":{"type":"string","minLength":1},"uniqueItems":true},
+    "dependencies": {"type":"array","items":{"type":"string","pattern":"^[A-Z][A-Z0-9-]{1,15}$"},"uniqueItems":true},
+    "runtimeCritical": {"type":"boolean"}
+  }
+}

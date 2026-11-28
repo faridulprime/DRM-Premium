@@ -1,0 +1,103 @@
+name: Design system browser audit
+
+on:
+  push:
+    branches:
+      - feature/full-admin-panel
+    paths:
+      - "index.html"
+      - "_redirects"
+      - "movies.html"
+      - "app.js"
+      - "assets/dumc/**"
+      - "assets/dufs/**"
+      - "assets/colors/**"
+      - "assets/sizing/**"
+      - "theme.css"
+      - "theme-mode.css"
+      - "theme-mode.js"
+      - "admin.html"
+      - "live-users.html"
+      - "upload-studio.html"
+      - "profile.html"
+      - "styles.css"
+      - "theme.css"
+      - "theme-mode.css"
+      - "theme-mode.js"
+      - "admin.css"
+      - "live-users.css"
+      - "upload-studio.css"
+      - "profile.css"
+      - "assets/motion/**"
+      - "assets/sizing/**"
+      - "assets/positioning/**"
+      - "assets/colors/**"
+      - "scripts/test-design-system-browser.py"
+      - "docs/DUME-SPEC.md"
+      - "docs/DUFS-SPEC.md"
+      - "requirements-browser.txt"
+      - ".github/workflows/design-system-browser-audit.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "_redirects"
+      - "movies.html"
+      - "app.js"
+      - "assets/dumc/**"
+      - "assets/dufs/**"
+      - "docs/DUME-SPEC.md"
+      - "docs/DUFS-SPEC.md"
+      - "theme-mode.css"
+      - "theme-mode.js"
+      - "admin.html"
+      - "live-users.html"
+      - "upload-studio.html"
+      - "profile.html"
+      - "styles.css"
+      - "theme.css"
+      - "admin.css"
+      - "live-users.css"
+      - "upload-studio.css"
+      - "profile.css"
+      - "assets/motion/**"
+      - "assets/sizing/**"
+      - "assets/positioning/**"
+      - "assets/colors/**"
+      - "scripts/test-design-system-browser.py"
+      - "requirements-browser.txt"
+      - ".github/workflows/design-system-browser-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  design-system-browser-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install browser test dependency
+        run: python -m pip install --disable-pip-version-check -r requirements-browser.txt
+
+      - name: Remove unrelated blocked Microsoft package source
+        run: |
+          sudo sh -c 'for source in /etc/apt/sources.list.d/*; do
+            [ -f "$source" ] || continue
+            if grep -q "packages.microsoft.com" "$source"; then rm -f "$source"; fi
+          done'
+
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Audit rendered pages and design-system behavior
+        run: python scripts/test-design-system-browser.py

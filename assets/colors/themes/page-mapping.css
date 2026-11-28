@@ -1,0 +1,63 @@
+/* DUCS page identity mappings. Descriptive compatibility tokens only:
+   component selectors are not migrated to these values yet. */
+body.home-page {
+  --ducs-page-bg: var(--ducs-bg-canvas);
+  --ducs-page-surface: var(--ducs-neutral-900);
+  --ducs-page-text: var(--ducs-neutral-75);
+  --ducs-page-muted: var(--ducs-neutral-450);
+  --ducs-page-border: var(--ducs-neutral-800);
+  --ducs-page-accent: var(--ducs-brand-blue-400);
+  --ducs-page-brand-accent: var(--ducs-brand-blue-400);
+  --ducs-page-status-success: var(--ducs-green-400);
+  --ducs-page-highlight: var(--ducs-brand-gold-400);
+}
+body.admin-gate-state,
+body.admin-dashboard-state {
+  --ducs-page-bg: var(--ducs-bg-canvas);
+  --ducs-page-surface: var(--ducs-neutral-900);
+  --ducs-page-text: var(--ducs-neutral-75);
+  --ducs-page-muted: var(--ducs-neutral-450);
+  --ducs-page-border: var(--ducs-neutral-800);
+  --ducs-page-accent: var(--ducs-brand-blue-400);
+  --ducs-page-brand-accent: var(--ducs-brand-blue-400);
+  --ducs-page-status-success: var(--ducs-green-400);
+  --ducs-page-status-danger: var(--ducs-red-350);
+}
+body.live-users-page {
+  --ducs-page-bg: var(--ducs-bg-canvas);
+  --ducs-page-surface: var(--ducs-neutral-925);
+  --ducs-page-text: var(--ducs-neutral-75);
+  --ducs-page-muted: var(--ducs-neutral-450);
+  --ducs-page-border: var(--ducs-neutral-800);
+  --ducs-page-accent: var(--ducs-brand-blue-400);
+  --ducs-page-brand-accent: var(--ducs-brand-blue-400);
+  --ducs-page-status-success: var(--ducs-green-450);
+  --ducs-page-status-danger: var(--ducs-red-400);
+  --ducs-page-status-warning: var(--ducs-yellow-400);
+}
+body.upload-studio-page {
+  --ducs-page-bg: var(--ducs-bg-canvas);
+  --ducs-page-surface: var(--ducs-neutral-925);
+  --ducs-page-text: var(--ducs-neutral-100);
+  --ducs-page-muted: var(--ducs-neutral-400);
+  --ducs-page-border: var(--ducs-neutral-800);
+  --ducs-page-accent: var(--ducs-brand-mint-400);
+  --ducs-page-brand-accent: var(--ducs-brand-violet-400);
+  --ducs-page-status-success: var(--ducs-green-400);
+  --ducs-page-status-danger: var(--ducs-brand-rose-400);
+  --ducs-page-creative-primary: var(--ducs-brand-violet-400);
+  --ducs-page-creative-secondary: var(--ducs-brand-indigo-500);
+  --ducs-page-creative-tertiary: var(--ducs-brand-mint-400);
+  --ducs-page-creative-text: var(--ducs-brand-lavender-50);
+}
+body.profile-page {
+  --ducs-page-bg: var(--ducs-bg-canvas);
+  --ducs-page-surface: var(--ducs-neutral-940);
+  --ducs-page-text: var(--ducs-neutral-100);
+  --ducs-page-muted: var(--ducs-neutral-400);
+  --ducs-page-border: var(--ducs-neutral-800);
+  --ducs-page-accent: var(--ducs-green-400);
+  --ducs-page-brand-accent: var(--ducs-green-400);
+  --ducs-page-status-success: var(--ducs-green-400);
+  --ducs-page-status-danger: var(--ducs-red-450);
+}

@@ -1,0 +1,33 @@
+/* DUCS notification and inline feedback color aliases. */
+:root {
+  --ducs-notice-success: var(--ducs-status-success);
+  --ducs-notice-warning: var(--ducs-status-warning);
+  --ducs-notice-danger: var(--ducs-status-danger);
+  --ducs-notice-info: var(--ducs-status-info);
+
+  /* Live Users transient notice. */
+  --ducs-live-notice-bg: #191919;
+  --ducs-live-notice-text: #ccc;
+  --ducs-live-notice-border: #343434;
+
+  /* Admin dashboard feedback and live indicators — legacy colors preserved. */
+  --ducs-admin-success-text: #a9d9b8;
+  --ducs-admin-error-text: #ff9292;
+  --ducs-admin-live-dot: #83efa5;
+  --ducs-admin-live-dot-halo: rgba(131, 239, 165, .10);
+
+  /* Shared shell focus and logout feedback. */
+  --ducs-shell-focus-ring: #8ab4f8;
+  --ducs-shell-logout-error: #ff8b8b;
+
+  /* Profile status and field focus. */
+  --ducs-profile-status-success: #a8d9b3;
+  --ducs-profile-status-error: #ff9b9b;
+  --ducs-profile-field-focus-ring: #83efa510;
+
+  /* Upload Studio validation and overlays. */
+  --ducs-upload-notice-error: #f0aaaa;
+  --ducs-upload-dialog-scrim: #000b;
+  --ducs-live-presence-border: #101010;
+  --ducs-live-presence-bg: #36bd73;
+}

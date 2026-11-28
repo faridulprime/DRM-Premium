@@ -1,0 +1,147 @@
+/* DRM Universal Positioning System (DUPS) — v0.1.0
+ * Token foundation only. No selectors are overridden and no existing
+ * component geometry is changed until each consumer is audited and migrated.
+ *
+ * Ownership: DUPS owns coordinate placement, positioning context, logical
+ * offsets, anchoring intent, and stacking layers. DUSS owns flow/grid/flex
+ * layout geometry, dimensions, spacing, and responsive sizing. DUME owns
+ * motion and transforms. DUCS owns color.
+ */
+:root {
+  /* Logical offset scale — values are reusable primitives, not mandates. */
+  --dups-offset-0: 0;
+  --dups-offset-1: 0.25rem;
+  --dups-offset-2: 0.5rem;
+  --dups-offset-3: 0.75rem;
+  --dups-offset-4: 1rem;
+  --dups-offset-6: 1.5rem;
+  --dups-offset-8: 2rem;
+
+  /* Semantic placement offsets. */
+  --dups-inset-edge: var(--dups-offset-4);
+  --dups-inset-edge-compact: var(--dups-offset-2);
+  --dups-overlay-inset: var(--dups-offset-4);
+  --dups-floating-clearance: var(--dups-offset-3);
+
+  /* Explicit stacking scale. Keep values sparse to allow local composition. */
+  --dups-layer-base: 0;
+  --dups-layer-raised: 10;
+  --dups-layer-sticky: 100;
+  --dups-layer-dropdown: 200;
+  --dups-layer-overlay: 300;
+  --dups-layer-drawer: 400;
+  --dups-layer-modal: 500;
+  --dups-layer-popover: 600;
+  --dups-layer-tooltip: 700;
+  --dups-layer-toast: 800;
+  --dups-layer-critical: 900;
+
+  /* Audited viewport placement coordinates for Live Users overlays. */
+  --dups-anchor-live-drawer-top: 51.1%;
+  --dups-anchor-live-drawer-left: calc(54.4% - 90px);
+  --dups-anchor-live-drawer-top-compact: 50%;
+  --dups-anchor-live-drawer-left-compact: 50%;
+  --dups-viewport-center: 50%;
+
+  /* Shared category-bar anchor; responsive/state overrides are consumer-scoped. */
+  --dups-anchor-category-bar-top: var(--duss-header-height-desktop, 64px);
+
+  /* Profile drawer displacement of the fixed Category Bar. */
+  --dups-anchor-profile-drawer-clearance: 390px;
+
+  /* Profile completion overlay anchors. */
+  --dups-anchor-profile-complete-top: 74px;
+  --dups-anchor-profile-complete-center: 50%;
+  --dups-anchor-profile-backdrop-inset: var(--dups-offset-0);
+
+  /* Visual editor fixed anchors; preserve existing desktop/mobile coordinates. */
+  --dups-anchor-visual-editor-legacy-top: var(--dups-offset-3);
+  --dups-anchor-visual-editor-legacy-left: var(--dups-offset-3);
+  --dups-anchor-visual-editor-panel-top: 3.5rem;
+  --dups-anchor-visual-editor-panel-left: var(--dups-offset-3);
+  --dups-anchor-visual-editor-edge: 0.875rem;
+  --dups-anchor-visual-editor-edge-compact: var(--dups-offset-3);
+
+  /* Live Users presence indicator micro-anchor. */
+  --dups-anchor-live-presence-edge: -1px;
+
+  /* Homepage hero decorative anchors. */
+  --dups-anchor-hero-corner-edge: var(--dups-offset-0);
+  --dups-anchor-hero-overlay-inset: var(--dups-offset-0);
+
+  /* Registration dialog close-control anchor. */
+  --dups-anchor-register-close-top: 17px;
+  --dups-anchor-register-close-right: 18px;
+
+  /* Live Users fixed notice anchor. */
+  --dups-anchor-live-notice-center: 50%;
+  --dups-anchor-live-notice-bottom: 18px;
+  --dups-anchor-live-notice-left-compact: 10px;
+  --dups-anchor-live-notice-right-compact: 10px;
+
+  /* Anchor relationship spacing. */
+  --dups-anchor-gap-xs: 0.25rem;
+  --dups-anchor-gap-status: var(--dups-anchor-gap-xs);
+  --dups-anchor-header-login-status-gap: 8px;
+  --dups-anchor-gap-sm: 0.5rem;
+  --dups-anchor-gap-md: 0.75rem;
+  --dups-anchor-gap-lg: 1rem;
+
+  /* Alignment reference values for positioned elements. */
+  --dups-align-start: start;
+  --dups-align-center: center;
+  --dups-align-end: end;
+
+  /* Audited shared-shell and profile overlay layers.
+     These aliases preserve the existing numeric stacking order. */
+  --dups-layer-category-bar: 90;
+  --dups-layer-sidebar: 95;
+  --dups-layer-page-header: 100;
+  --dups-layer-header-status: 110;
+  --dups-layer-sidebar-backdrop: 110;
+  --dups-layer-sidebar-mobile: 120;
+  --dups-layer-home-header-mobile: 150;
+  --dups-layer-profile-backdrop: 180;
+  --dups-layer-profile-drawer: 181;
+  --dups-layer-home-sidebar-backdrop: 290;
+  --dups-layer-home-sidebar-mobile: 300;
+
+  /* Audited floating UI and editor layers; preserve current numeric order. */
+  --dups-layer-live-header: 130;
+  --dups-layer-live-highlight: 115;
+  --dups-layer-live-drawer: 120;
+  --dups-layer-live-backdrop: 110;
+  --dups-layer-live-notice: 140;
+  --dups-layer-live-avatar: 1;
+  --dups-layer-live-presence: 2;
+  --dups-layer-live-effect: 5;
+  --dups-layer-live-effect-base: 4;
+  --dups-layer-live-effect-top: 6;
+  --dups-layer-visual-editor: 990;
+  --dups-layer-visual-editor-legacy: 90;
+  --dups-layer-visual-editor-panel-legacy: 91;
+  --dups-layer-visual-editor-panel: 991;
+  --dups-layer-site-builder: 1000;
+  --dups-layer-register-dialog: 1001;
+  --dups-layer-suspension-screen: 100000;
+  --dups-layer-profile-complete-backdrop: 10040;
+  --dups-layer-profile-complete-bar: 10050;
+  --dups-layer-studio-sidebar: 5;
+  --dups-layer-studio-inspector: 2;
+  --dups-layer-builder-inspector: 2;
+
+  /* Responsive Website Builder inspector anchors within its fixed shell. */
+  --dups-anchor-builder-inspector-top: 66px;
+  --dups-anchor-builder-inspector-right: var(--dups-offset-0);
+  --dups-anchor-builder-inspector-bottom: 34px;
+  --dups-layer-builder-live-overlay: 20;
+  --dups-layer-live-dialog-sticky-header: 1;
+  --dups-anchor-live-dialog-sticky-header-top: var(--dups-offset-0);
+}
+
+@media (max-width: 760px) {
+  :root { --dups-anchor-category-bar-top: var(--duss-header-height-mobile, 58px); }
+}
+
+/* DUPS intentionally ships no global position, inset, z-index, or transform
+   rules. Consumers opt into semantic tokens only after component review. */

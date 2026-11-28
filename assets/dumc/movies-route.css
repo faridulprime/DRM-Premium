@@ -1,0 +1,21 @@
+/* Dedicated /movies page: retain the shared shell and DUMC library only. */
+.movies-route main#home{max-width:none;margin:0;padding:0 var(--duss-page-gutter-home-desktop,22px)}
+.movies-route #home>:not(#movies){display:none!important}
+.movies-route #home>#movies{display:block!important;width:100%;min-width:0}
+.movies-route #movies{padding-top:0!important}
+.movies-route #movies .section-head{margin-bottom:22px}
+.movies-route .category-chip[href="/movies"]{cursor:pointer}
+@media(max-width:760px){
+ .movies-route main#home{padding-inline:14px}
+}
+
+/* Keep one movie search control: use the shared header search on /movies. */
+.movies-route .dumc-home-toolbar{grid-template-columns:minmax(0,1fr) auto!important}
+.movies-route .dumc-home-search{display:none!important}
+
+/* White icons for the secondary movie filter tabs only. */
+html[data-theme] body.movies-route #dumcHomeCategories .dufn-tabs .tab-icon,
+html[data-theme] body.movies-route #dumcHomeCategories .dufn-tabs .dufn-tab:hover .tab-icon,
+html[data-theme] body.movies-route #dumcHomeCategories .dufn-tabs .dufn-tab.is-open .tab-icon{
+  color:#F3F0ED!important;opacity:1!important;filter:drop-shadow(0 0 5px rgba(235,238,255,.24))!important;
+}
