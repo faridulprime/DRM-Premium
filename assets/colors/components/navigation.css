@@ -392,3 +392,13 @@ html[data-theme] body #dumcHomeCategories .dufn-folder.active .dumc-folder-icon{
 
 /* Set every folder name in the directory lists to 15px. */
 html[data-theme] body #dumcHomeCategories .dufn-folder{font-size:15px!important}
+
+/* Keep shared headers anchored while the desktop sidebar expands the page content area. */
+@media(min-width:761px){
+  body.sidebar-open :is(.topbar,.admin-topbar,.live-topbar,.studio-global-topbar){
+    box-sizing:border-box!important;
+    width:calc(100% + var(--duss-sidebar-width,240px))!important;
+    max-width:none!important;
+    margin-left:calc(0px - var(--duss-sidebar-width,240px))!important;
+  }
+}
