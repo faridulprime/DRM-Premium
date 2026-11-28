@@ -16,7 +16,7 @@
   --red:#f00;
 }
 [hidden]{display:none!important}
-html{min-width:320px;background:var(--paper);scroll-behavior:smooth;scroll-padding-top:126px}
+html{min-width:320px;background:var(--paper);scroll-behavior:smooth;scroll-padding-top:126px;scrollbar-gutter:stable}
 body{
   min-width:320px;min-height:100%;margin:0;padding:var(--duss-home-shell-offset-desktop, 116px) 0 0;
   background:var(--paper)!important;color:var(--ink)!important;
