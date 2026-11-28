@@ -492,10 +492,10 @@ html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-create-but
 html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-action{color:#C6D8EA!important}
 html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-create-button{color:#D6B779!important}
 html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-action:hover:not(:disabled){
-  color:#56E386!important;text-shadow:0 0 7px rgba(235,243,252,.72),0 0 18px rgba(150,190,235,.38)!important;
+  color:#C6D8EA!important;text-shadow:0 0 7px rgba(235,243,252,.72),0 0 18px rgba(150,190,235,.38)!important;
 }
 html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-create-button:hover:not(:disabled){
-  color:#DB2D0F!important;text-shadow:0 0 7px rgba(255,248,226,.68),0 0 18px rgba(214,183,121,.4)!important;
+  color:#D6B779!important;text-shadow:0 0 7px rgba(255,248,226,.68),0 0 18px rgba(214,183,121,.4)!important;
 }
 html[data-theme] body .topbar #headerLoginForm.yt-account-actions>.yt-login-action:disabled{opacity:.55!important;cursor:wait!important}
 @media(min-width:761px) and (max-width:1100px){
