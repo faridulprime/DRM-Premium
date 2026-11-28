@@ -177,14 +177,12 @@ async function handle(req,env){
  if(p[0]==="auth"&&p[1]==="login"&&m==="POST"){
   if(!env.SESSION_SECRET)return fail("Cloudflare SESSION_SECRET is not configured.",503);
   const d=await readBody(req);if(!emailOK(d?.email)||typeof d?.password!=="string")return fail("Email এবং password প্রয়োজন।");
-  const ip=req.headers.get("CF-Connecting-IP")||"unknown",ipHash=await hash(ip+env.SESSION_SECRET),now=Math.floor(Date.now()/1000);
-  await env.DB.prepare("DELETE FROM login_attempts WHERE attempted_at<?").bind(now-900).run();
-  const tries=await env.DB.prepare("SELECT COUNT(*) AS n FROM login_attempts WHERE ip_hash=? AND attempted_at>?").bind(ipHash,now-900).first();if(Number(tries.n)>=8)return fail("অনেকবার চেষ্টা হয়েছে। ১৫ মিনিট পরে আবার চেষ্টা করুন।",429);
+  const now=Math.floor(Date.now()/1000);
   const user=await env.DB.prepare("SELECT id,email,username,password_hash,role,email_verified FROM users WHERE email=?").bind(d.email.toLowerCase()).first();
-  if(!user||user.email_verified===0||!await verifyPassword(d.password,user.password_hash)){await env.DB.prepare("INSERT INTO login_attempts(ip_hash,attempted_at) VALUES(?,?)").bind(ipHash,now).run();return fail("Email অথবা password সঠিক নয়।",401)}
+  if(!user||user.email_verified===0||!await verifyPassword(d.password,user.password_hash))return fail("Email অথবা password সঠিক নয়।",401);
   const restriction=await env.DB.prepare("SELECT restriction_type,expires_at,reason FROM user_restrictions WHERE user_id=? AND (expires_at IS NULL OR expires_at>?)").bind(user.id,now).first();
   if(restriction){const until=restriction.expires_at?new Date(Number(restriction.expires_at)*1000).toISOString():"";return fail(restriction.restriction_type==="ban"?"এই অ্যাকাউন্ট স্থায়ীভাবে নিষিদ্ধ করা হয়েছে।":("এই অ্যাকাউন্ট সাময়িকভাবে স্থগিত। পুনরায় চেষ্টা করুন: "+until),403)}
-  await env.DB.prepare("DELETE FROM login_attempts WHERE ip_hash=?").bind(ipHash).run();await env.DB.prepare("DELETE FROM sessions WHERE expires_at<?").bind(now).run();
+  await env.DB.prepare("DELETE FROM sessions WHERE expires_at<?").bind(now).run();
   const token=await newSession(user.id,env);return json({ok:true},200,{"set-cookie":cookie(token)});
  }
  if(p[0]==="auth"&&p[1]==="access-state"&&m==="GET"){const u=await getSession(req,env);if(!u)return json({authenticated:false,restricted:false});const now=Math.floor(Date.now()/1000),r=await env.DB.prepare("SELECT restriction_type,expires_at,reason,created_at FROM user_restrictions WHERE user_id=? AND (expires_at IS NULL OR expires_at>?)").bind(u.id,now).first();return json({authenticated:true,restricted:!!r,user:u,restriction:r?{type:r.restriction_type,expiresAt:r.expires_at,reason:r.reason,createdAt:r.created_at}:null})}
