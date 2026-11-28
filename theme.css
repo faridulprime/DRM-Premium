@@ -802,7 +802,7 @@ body.profile-drawer-open .category-bar{right:var(--dups-anchor-profile-drawer-cl
  .home-page .category-chip{font-size:12px;padding-inline:10px}
 }
 @media(prefers-reduced-motion:reduce){
- .home-page .yt-sidebar,.home-page .sidebar-backdrop,.home-page .profile-drawer{transition:none!important}
+ .home-page .yt-sidebar,.home-page .sidebar-backdrop{transition:none!important}
 }
 
 
