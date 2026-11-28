@@ -1169,3 +1169,81 @@ html::-webkit-scrollbar-thumb{
 html::-webkit-scrollbar-thumb:hover{
  background:rgba(230,230,230,.8);
 }
+
+/* Match the profile panel to the shared text-only navigation drawer. */
+.profile-drawer{
+  background:#0F0F0F!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:#F3F0ED!important;
+}
+.profile-drawer-head,
+.profile-drawer-identity,
+.profile-drawer-details,
+.profile-drawer-footer{
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.profile-drawer-kicker,
+.profile-drawer-name span,
+.profile-drawer-detail>span,
+.profile-drawer-footer{
+  color:#A6A4A6!important;
+  text-shadow:0 1px 12px rgba(235,238,255,.18)!important;
+}
+.profile-drawer-name strong,
+.profile-drawer-detail p{
+  color:#F3F0ED!important;
+  text-shadow:0 1px 12px rgba(235,238,255,.18)!important;
+}
+.profile-drawer-close,
+.profile-drawer-view{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:#F3F0ED!important;
+  text-shadow:0 1px 12px rgba(235,238,255,.18)!important;
+}
+.profile-drawer-close:hover,
+.profile-drawer-view:hover{
+  border:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:#F4F2F0!important;
+  text-shadow:0 0 7px rgba(238,242,255,.66),0 0 18px rgba(211,223,255,.35)!important;
+}
+.profile-drawer-avatar{
+  border:1px solid rgba(255,255,255,.1)!important;
+  background:#111216!important;
+  color:#F3F0ED!important;
+  box-shadow:none!important;
+}
+.profile-drawer-divider{
+  background:rgba(255,255,255,.08)!important;
+}
+.profile-drawer .profile-drawer-logout-area{
+  border-top-color:rgba(255,255,255,.08)!important;
+}
+.profile-drawer .profile-drawer-logout-button{
+  min-height:42px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:#E99A9F!important;
+  text-shadow:0 1px 12px rgba(235,238,255,.18)!important;
+}
+.profile-drawer .profile-drawer-logout-button:hover{
+  border:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:#FFC0C3!important;
+  text-shadow:0 0 7px rgba(255,220,224,.62),0 0 18px rgba(233,154,159,.34)!important;
+  transform:none!important;
+}
