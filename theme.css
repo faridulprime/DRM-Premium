@@ -1666,3 +1666,9 @@ body.profile-drawer-open .category-bar{
     grid-column:1/-1!important;
   }
 }
+
+
+/* Keep email on its own row directly beneath location in the selected layout. */
+.profile-drawer-details>.profile-drawer-detail:last-child{
+  grid-column:1/-1!important;
+}
